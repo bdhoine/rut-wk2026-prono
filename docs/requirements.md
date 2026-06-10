@@ -36,9 +36,15 @@ Stored as static files; exact file layout to be finalised at scaffold time.
 - **Match**: `id`, round (group / R32 / R16 / QF / SF / 3rd-place / final), matchday (group stage), date/time, venue, home team, away team, status (`scheduled` / `live` / `finished`), result (`homeGoals`, `awayGoals`, after-120-min score for knockouts — penalties ignored per rules).
 - **Prediction**: `participantId`, `matchId`, `predHome`, `predAway`. (Late/missing → 0 points per rules.)
 - **Bonus outcomes** (tournament-level, filled in as the tournament resolves): actual top scorer, actual winner, actual country with most conceded, actual country with most scored.
+- **Scorer**: `player`, `teamId`, `goals` — for the stats page (penalties excluded, extra time included).
 - **Tournament settings**: round multipliers, deadlines (from `schedule.md`), prize distribution text.
 
 Knockout matches start with placeholder teams and are filled in as results come in.
+
+Data is stored as JSON in `src/data/`. A deterministic generator
+(`scripts/generate-data.mjs`) produces the full demo dataset (48 teams / 12 groups,
+104-match calendar, knockout placeholders, 40 dummy contestants + predictions,
+scorers); real data is entered by editing the JSON or adapting the generator.
 
 ---
 
@@ -60,7 +66,7 @@ The app must, for any finished match, be able to **explain how a participant's p
 
 ## 5. Pages & navigation
 
-Primary navigation (mobile bottom-nav / top-nav): **Ranking** · **Upcoming** · **Fixtures** · **Groups**.
+Primary navigation: **Klassement** · **Komende** · **Kalender** · **Knock-out** · **Poules** · **Stats**. Rendered as a horizontal bar on desktop and a **hamburger menu** on mobile.
 
 ### 5.1 Ranking (home / landing page)
 - Table with columns: **position**, **name**, **points**.
@@ -69,37 +75,47 @@ Primary navigation (mobile bottom-nav / top-nav): **Ranking** · **Upcoming** ·
 - Mobile-first table layout.
 
 ### 5.2 Participant detail
-- **Top:** participant's **current position** and **total score**.
+- **Top:** a prominent header card with the participant's **current position** (medal-coloured for 1/2/3) and **total score**, split into match + bonus points.
 - **Bonus predictions** section: the 4 predictions, each showing the pick (with flag where it's a country) and, once resolved, whether it was correct and points awarded.
-- **Match list:** all matches with this participant's predicted score. For matches with a **final score**, also show the **actual result** and a **breakdown of how the ranking points were determined** (per §4 — outcome correct?, goalsOff, base points, ×multiplier = points).
-- Grouped/filterable by round for readability.
+- **Match list:** all matches grouped by round. Each match card (consistent with the match-card style) shows the **prono as the main boxed score** with the **actual result smaller beneath it**, plus a colour-coded **points badge**. The §4 breakdown appears in a tooltip on hover (desktop) / tap (mobile).
 
 ### 5.3 Match detail
-- Match header: teams (with **flags**), date/time, venue, round, and result if finished.
+- Match header: teams (with **flags**), date/time, venue, round, and the result as **boxed numbers** if finished.
 - **List of all participants' predictions for this match, sorted by score** (points earned for that match, descending). For not-yet-played matches, show predictions with no score (default order by current ranking).
-- For finished matches, show each prediction's computed points using the §4 breakdown.
+- For finished matches, each prediction shows a colour-coded points badge with the §4 breakdown on hover/tap.
+
+### Score boxes & points badge (shared UI)
+- Scores render as **boxed numbers** (`[2] – [1]`); an unknown score shows an empty dash, never `0–0`.
+- The **points badge** is colour-coded: **red** for 0, **green** when points are scored, a distinct **amber** tint for an exact score (9 base). The explanation text uses correct `goal`/`goals` pluralisation.
 
 ### 5.4 Upcoming matches
 - List of matches with status `scheduled`, soonest first, with countdown/time, teams (flags), venue, round.
 - Each match clickable → **Match detail**.
 - Surface the relevant **submission deadline** for the upcoming round (from `schedule.md`).
 
-### 5.5 Fixtures
+### 5.5 Fixtures (Kalender)
 - Full list of all 104 matches, grouped by round and date.
 - Show result where finished; clickable → **Match detail**.
-- Filter by round and/or group.
 
-### 5.6 Group rankings (Groups)
+### 5.6 Knock-out schedule
+- The knockout rounds (Round of 32 → Round of 16 → quarter-finals → semi-finals → third-place play-off → final) shown as a schedule, grouped by round with dates.
+- Matches start as **placeholders** and fill in with teams as group/knockout results are entered. Each clickable → **Match detail**.
+
+### 5.7 Group rankings (Groups)
 - The 12 groups (A–L), each as a **standings table**: country (flag + Dutch name), played, W/D/L, goals for/against, goal difference, points.
 - Standings computed from finished group-stage results (3/1/0; tie-break GD → goals scored).
 - Indicate qualification: top 2 of each group qualify directly.
 - **Best third-placed ranking:** a separate cross-group table ranking the 12 third-placed teams (points → GD → goals scored), highlighting the **8 best** that advance to the Round of 32. Shown on the Groups page.
 - Each country clickable → **Country detail**.
 
-### 5.7 Country detail
+### 5.8 Country detail
 - Country header with **flag** and Dutch name, group.
 - **Full schedule** for that country (all its matches, results where played), clickable → Match detail.
 - That country's **group standings** table.
+
+### 5.9 Stats
+- **Top scorers** ranking (player, country flag, goals).
+- **Most goals scored** and **most goals conceded** per team, computed from finished results (penalty shoot-outs excluded, extra time included — see `rules.md`).
 
 ---
 
@@ -139,7 +155,7 @@ These were decided by default; flag if you want them changed:
 1. **Tie-break in ranking:** equal totals share a position, secondary order alphabetical. *(Alternative: order ties by number of exact scores, or by bonus points.)*
 2. **Flag library:** SVG set keyed by ISO code (`flag-icons` or `circle-flags`).
 3. **Match detail ordering for unplayed matches:** by current participant ranking (no per-match score exists yet).
-4. **Data file format** (JSON vs CSV per entity) finalised at scaffold time; predictions likely CSV (bulk paper entry), reference data JSON.
+4. **Data file format:** all entities are stored as JSON in `src/data/`, generated/refreshed via `scripts/generate-data.mjs`.
 5. **Knockout brackets** are filled in progressively as results are entered; until then matches show placeholders (e.g. "Winnaar Groep A").
 
 ---
