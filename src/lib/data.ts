@@ -237,6 +237,37 @@ export const topMatchesByPoints = (limit = 10) =>
 export const topMatchesByWrong = (limit = 10) =>
   [...matchPointStats()].sort((a, b) => b.wrong - a.wrong || a.avg - b.avg).slice(0, limit);
 
+/** Most-picked eindwinnaar across all participants. */
+export function topChosenWinners(limit = 5): { team: Team; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const p of participants) {
+    const id = p.bonus.winnerTeamId;
+    if (id) counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([id, count]) => ({ team: getTeam(id), count }))
+    .filter((x): x is { team: Team; count: number } => !!x.team)
+    .sort((a, b) => b.count - a.count || a.team.name.localeCompare(b.team.name, 'nl'))
+    .slice(0, limit);
+}
+
+/** Most-picked top scorer across all participants. */
+export function topChosenTopScorers(limit = 5): { player: string; team?: Team; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const p of participants) {
+    const s = p.bonus.topScorer;
+    if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
+  }
+  const teamOf = (player: string) => {
+    const sc = scorers.find((s) => s.player === player);
+    return sc ? getTeam(sc.teamId) : undefined;
+  };
+  return [...counts.entries()]
+    .map(([player, count]) => ({ player, team: teamOf(player), count }))
+    .sort((a, b) => b.count - a.count || a.player.localeCompare(b.player, 'nl'))
+    .slice(0, limit);
+}
+
 /** Overall average points scored per (participant, finished match). */
 export function averageMatchPoints(): number {
   const stats = matchPointStats();

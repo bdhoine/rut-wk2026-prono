@@ -1,82 +1,82 @@
 [
   {
-    "player": "Kevin De Bruyne",
-    "teamId": "gre",
-    "goals": 5
-  },
-  {
-    "player": "Lamine Yamal",
-    "teamId": "aut",
-    "goals": 5
-  },
-  {
-    "player": "Rafael Leão",
-    "teamId": "col",
-    "goals": 5
-  },
-  {
-    "player": "Victor Osimhen",
-    "teamId": "arg",
-    "goals": 5
-  },
-  {
-    "player": "Achraf Hakimi",
-    "teamId": "mli",
-    "goals": 5
-  },
-  {
-    "player": "Phil Foden",
-    "teamId": "alg",
-    "goals": 5
-  },
-  {
-    "player": "Cristiano Ronaldo",
-    "teamId": "nor",
-    "goals": 4
-  },
-  {
-    "player": "Vinícius Júnior",
-    "teamId": "tun",
-    "goals": 3
-  },
-  {
-    "player": "Erling Haaland",
-    "teamId": "eng",
-    "goals": 3
-  },
-  {
-    "player": "Lautaro Martínez",
-    "teamId": "pol",
-    "goals": 3
-  },
-  {
-    "player": "Federico Valverde",
-    "teamId": "bra",
-    "goals": 3
-  },
-  {
     "player": "Kylian Mbappé",
-    "teamId": "esp",
-    "goals": 2
+    "teamId": "fr",
+    "goals": 7
   },
   {
     "player": "Harry Kane",
-    "teamId": "tun",
-    "goals": 2
+    "teamId": "gbeng",
+    "goals": 6
   },
   {
-    "player": "Heung-min Son",
-    "teamId": "can",
-    "goals": 2
+    "player": "Vinícius Júnior",
+    "teamId": "br",
+    "goals": 5
+  },
+  {
+    "player": "Erling Haaland",
+    "teamId": "no",
+    "goals": 5
+  },
+  {
+    "player": "Lautaro Martínez",
+    "teamId": "ar",
+    "goals": 4
+  },
+  {
+    "player": "Kevin De Bruyne",
+    "teamId": "be",
+    "goals": 4
+  },
+  {
+    "player": "Lamine Yamal",
+    "teamId": "es",
+    "goals": 3
   },
   {
     "player": "Jude Bellingham",
-    "teamId": "swe",
+    "teamId": "gbeng",
+    "goals": 3
+  },
+  {
+    "player": "Cristiano Ronaldo",
+    "teamId": "pt",
+    "goals": 3
+  },
+  {
+    "player": "Heung-min Son",
+    "teamId": "kr",
+    "goals": 2
+  },
+  {
+    "player": "Achraf Hakimi",
+    "teamId": "ma",
+    "goals": 2
+  },
+  {
+    "player": "Cody Gakpo",
+    "teamId": "nl",
+    "goals": 2
+  },
+  {
+    "player": "Mohamed Salah",
+    "teamId": "eg",
+    "goals": 2
+  },
+  {
+    "player": "Luka Modrić",
+    "teamId": "hr",
     "goals": 1
   },
   {
-    "player": "Julián Álvarez",
-    "teamId": "bra",
+    "player": "Federico Valverde",
+    "teamId": "uy",
+    "goals": 1
+  },
+  {
+    "player": "Takefusa Kubo",
+    "teamId": "jp",
     "goals": 1
   }
 ]
