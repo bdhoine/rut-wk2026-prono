@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
-import { matches, getMatch, sideLabel, predictionsForMatch } from '@/lib/data';
+import { matches, getMatch, sideLabel, predictionsForMatch, ranking } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
 import { outcomeOf } from '@/lib/scoring';
 import { explainScore, formatKickoff } from '@/lib/format';
@@ -38,12 +38,14 @@ const stats = [
 ];
 
 // Split predictions by predicted outcome (1 / X / 2). For finished matches the
-// actual outcome is highlighted and rows are sorted by points; otherwise by name.
+// actual outcome is highlighted. Within each bucket, participants are ordered by
+// their global ranking (total score in the klassement).
 const actualOutcome = finished ? outcomeOf(match.result!.home, match.result!.away) : null;
+const globalPos = new Map(ranking().map((r) => [r.participantId, r.position]));
 const bucket = (test: (h: number, a: number) => boolean) =>
   rows
     .filter((r) => r.prediction && test(r.prediction.home, r.prediction.away))
-    .sort((a, b) => (b.score?.points ?? 0) - (a.score?.points ?? 0) || a.participant.name.localeCompare(b.participant.name, 'nl'));
+    .sort((a, b) => (globalPos.get(a.participant.id) ?? 1e9) - (globalPos.get(b.participant.id) ?? 1e9) || a.participant.name.localeCompare(b.participant.name, 'nl'));
 const outcomeGroups = [
   { key: 'home', title: `${home.label} wint`, iso: home.team?.iso ?? null, rows: bucket((h, a) => h > a) },
   { key: 'draw', title: 'Gelijkspel', iso: null, rows: bucket((h, a) => h === a) },
@@ -105,7 +107,12 @@ const outcomeGroups = [
             <p class="rounded-xl border border-dashed px-3 py-3 text-sm text-muted-foreground">Niemand.</p>
           ) : (
             <div class="overflow-hidden rounded-xl border bg-card">
-              <table class="w-full text-sm">
+              <table class="w-full table-fixed text-sm">
+                <colgroup>
+                  <col />
+                  <col class="w-24" />
+                  {finished && <col class="w-16" />}
+                </colgroup>
                 <tbody>
                   {g.rows.map(({ participant, prediction, score }) => (
                     <tr class="border-b last:border-0">
