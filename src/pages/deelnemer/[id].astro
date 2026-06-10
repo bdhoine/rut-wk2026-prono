@@ -37,6 +37,15 @@ const byRound = ROUND_ORDER
   .filter((g) => g.items.length > 0);
 
 const pick = (key: keyof BonusPicks) => participant.bonus[key];
+
+// Form: last 5 finished matches (chronological) as coloured dots.
+const formScores = rows
+  .filter((r) => r.score)
+  .sort((a, b) => a.match.kickoff.localeCompare(b.match.kickoff))
+  .slice(-5)
+  .map((r) => ({
+    cls: r.score!.exact ? 'bg-emerald-500' : r.score!.points > 0 ? 'bg-amber-400' : 'bg-red-500',
+  }));
 const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position === 2 ? 'bg-zinc-200 text-black' : rank?.position === 3 ? 'bg-[oklch(0.62_0.12_55)] text-white' : 'bg-white/20 text-white';
 ---
 <Layout title={`${participant.name} — Rut Prono WK 2026`}>
@@ -56,10 +65,19 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
         <div class="mt-1 text-xs text-primary-foreground/80">punten</div>
       </div>
     </div>
-    <div class="flex items-center gap-3 border-t border-white/15 px-5 py-2.5 text-xs text-primary-foreground/90">
-      <span><strong class="font-semibold tabular-nums">{rank?.matchPoints ?? 0}</strong> uit wedstrijden</span>
-      <span class="text-primary-foreground/40">•</span>
-      <span><strong class="font-semibold tabular-nums">{rank?.bonusPoints ?? 0}</strong> bonus</span>
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-white/15 px-5 py-2.5 text-xs text-primary-foreground/90">
+      <div class="flex items-center gap-3">
+        <span><strong class="font-semibold tabular-nums">{rank?.matchPoints ?? 0}</strong> uit wedstrijden</span>
+        <span class="text-primary-foreground/40">•</span>
+        <span><strong class="font-semibold tabular-nums">{rank?.bonusPoints ?? 0}</strong> bonus</span>
+      </div>
+      {formScores.length > 0 && (
+        <div class="flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1.5 shadow-sm">
+          {formScores.map((f) => (
+            <span class:list={['size-2.5 rounded-full', f.cls]}></span>
+          ))}
+        </div>
+      )}
     </div>
   </header>
 

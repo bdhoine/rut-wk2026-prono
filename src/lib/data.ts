@@ -47,6 +47,23 @@ export function positionOf(participantId: string): RankRow | undefined {
   return ranking().find((r) => r.participantId === participantId);
 }
 
+export type FormResult = 'exact' | 'partial' | 'wrong';
+
+/** A participant's last `n` finished matches (chronological), as form results. */
+export function participantForm(participantId: string, n = 5): FormResult[] {
+  const byMatch = new Map(predictions.filter((p) => p.participantId === participantId).map((p) => [p.matchId, p]));
+  const finished = matches
+    .filter((m) => m.status === 'finished' && m.result)
+    .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
+  const out: FormResult[] = [];
+  for (const m of finished) {
+    const s = scoreMatch(byMatch.get(m.id), m, settings);
+    if (!s) continue;
+    out.push(s.exact ? 'exact' : s.points > 0 ? 'partial' : 'wrong');
+  }
+  return out.slice(-n);
+}
+
 /** All of a participant's predictions joined to their match + computed score. */
 export interface PredictionRow {
   match: Match;

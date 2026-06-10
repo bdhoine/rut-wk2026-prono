@@ -108,7 +108,7 @@ const topWrong = topMatchesByWrong(10);
     <p class="mb-2 text-xs text-muted-foreground">Gemiddeld aantal punten dat deelnemers per wedstrijd scoorden.</p>
     <div class="space-y-2">
       {topPoints.map((s, i) => (
-        <MatchStatRow match={s.match} rank={i + 1} metric={s.avg.toFixed(1)} metricClass="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300" />
+        <MatchStatRow match={s.match} rank={i + 1} metric={s.avg.toFixed(1)} metricClass="bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300" />
       ))}
     </div>
   </section>
@@ -118,7 +118,7 @@ const topWrong = topMatchesByWrong(10);
     <p class="mb-2 text-xs text-muted-foreground">Aantal deelnemers met 0 punten voor de wedstrijd.</p>
     <div class="space-y-2">
       {topWrong.map((s, i) => (
-        <MatchStatRow match={s.match} rank={i + 1} metric={String(s.wrong)} metricClass="bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300" />
+        <MatchStatRow match={s.match} rank={i + 1} metric={String(s.wrong)} metricClass="bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300" />
       ))}
     </div>
   </section>

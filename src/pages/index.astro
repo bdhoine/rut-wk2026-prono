@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import RankingTable from '@/components/RankingTable.tsx';
-import { ranking, getParticipant, getTeam } from '@/lib/data';
+import { ranking, getParticipant, getTeam, participantForm } from '@/lib/data';
 
 const rows = ranking().map((r) => {
   const winner = getTeam(getParticipant(r.participantId)?.bonus.winnerTeamId);
@@ -14,6 +14,7 @@ const rows = ranking().map((r) => {
     bonusPoints: r.bonusPoints,
     winnerIso: winner?.iso ?? null,
     winnerName: winner?.name ?? null,
+    form: participantForm(r.participantId, 5),
   };
 });
 ---

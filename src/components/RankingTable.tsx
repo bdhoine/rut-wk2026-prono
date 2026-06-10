@@ -10,9 +10,32 @@ export interface RankingTableRow {
   bonusPoints: number;
   winnerIso: string | null;
   winnerName: string | null;
+  form: string[];
 }
 
 const FAV_KEY = "rut-wk2026-favorieten";
+
+const FORM_COLOR: Record<string, string> = {
+  exact: "bg-emerald-500",
+  partial: "bg-amber-400",
+  wrong: "bg-red-500",
+};
+const FORM_TITLE: Record<string, string> = {
+  exact: "Exacte uitslag",
+  partial: "Juiste 1X2",
+  wrong: "Fout",
+};
+
+function FormDots({ form }: { form: string[] }) {
+  if (!form?.length) return <span className="text-muted-foreground">–</span>;
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      {form.map((r, i) => (
+        <span key={i} title={FORM_TITLE[r]} className={`size-2 rounded-full ${FORM_COLOR[r] ?? "bg-muted"}`} />
+      ))}
+    </span>
+  );
+}
 
 function Star({ filled, className = "size-5" }: { filled: boolean; className?: string }) {
   return (
@@ -66,7 +89,7 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
           <TableHead className="w-10" />
           <TableHead className="w-10 text-center">#</TableHead>
           <TableHead>Naam</TableHead>
-          <TableHead className="w-14 text-center">Winnaar</TableHead>
+          <TableHead className="text-right">Vorm</TableHead>
           <TableHead className="w-16 text-right">Punten</TableHead>
         </TableRow>
       </TableHeader>
@@ -87,12 +110,15 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
                 </button>
               </TableCell>
               <TableCell className="text-center">{positionBadge(row.position)}</TableCell>
-              <TableCell className="font-medium">{row.name}</TableCell>
-              <TableCell className="text-center">
-                {row.winnerIso
-                  ? <span className={`fi fi-${row.winnerIso} rounded-[2px] align-middle text-base shadow-sm`} title={row.winnerName ?? undefined} role="img" aria-label={row.winnerName ?? undefined} />
-                  : <span className="text-muted-foreground">–</span>}
+              <TableCell className="font-medium">
+                <div className="flex min-w-0 items-center gap-2">
+                  {row.winnerIso && (
+                    <span className={`fi fi-${row.winnerIso} shrink-0 rounded-[2px] text-base shadow-sm`} title={row.winnerName ?? undefined} role="img" aria-label={row.winnerName ?? undefined} />
+                  )}
+                  <span className="truncate">{row.name}</span>
+                </div>
               </TableCell>
+              <TableCell className="text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
               <TableCell className="text-right font-bold tabular-nums">{row.total}</TableCell>
             </TableRow>
           );
