@@ -14,10 +14,11 @@ export interface RankingTableRow {
 type SortKey = "position" | "name" | "total";
 
 function positionBadge(position: number) {
-  if (position === 1) return <Badge className="bg-[oklch(0.78_0.15_85)] text-black">1</Badge>;
-  if (position === 2) return <Badge variant="muted">2</Badge>;
-  if (position === 3) return <Badge className="bg-[oklch(0.62_0.12_55)] text-white">3</Badge>;
-  return <span className="text-muted-foreground tabular-nums">{position}</span>;
+  const base = "inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-semibold tabular-nums";
+  if (position === 1) return <span className={`${base} bg-[oklch(0.78_0.15_85)] text-black`}>1</span>;
+  if (position === 2) return <span className={`${base} bg-muted text-foreground`}>2</span>;
+  if (position === 3) return <span className={`${base} bg-[oklch(0.62_0.12_55)] text-white`}>3</span>;
+  return <span className={`${base} text-muted-foreground`}>{position}</span>;
 }
 
 export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {

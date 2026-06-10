@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
-import MatchTeams from '@/components/MatchTeams.astro';
+import MatchCard from '@/components/MatchCard.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
 import { teams, getTeam, matchesForTeam, standingsForGroup } from '@/lib/data';
 
@@ -33,7 +33,7 @@ const standings = standingsForGroup(team.group);
       <p class="text-muted-foreground">Nog geen wedstrijden.</p>
     ) : (
       <div class="space-y-2">
-        {fixtures.map((m) => <MatchTeams match={m} href={`/wedstrijd/${m.id}`} />)}
+        {fixtures.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
       </div>
     )}
   </section>

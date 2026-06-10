@@ -9,11 +9,12 @@ const { title = 'Rut Prono WK 2026' } = Astro.props;
 const path = Astro.url.pathname;
 
 const nav = [
-  { href: '/', label: 'Klassement', match: (p: string) => p === '/' || p.startsWith('/deelnemer') },
-  { href: '/komende', label: 'Komende', match: (p: string) => p.startsWith('/komende') },
-  { href: '/kalender', label: 'Kalender', match: (p: string) => p.startsWith('/kalender') || p.startsWith('/wedstrijd') },
-  { href: '/poules', label: 'Poules', match: (p: string) => p.startsWith('/poules') || p.startsWith('/land') },
-  { href: '/stats', label: 'Stats', match: (p: string) => p.startsWith('/stats') },
+  { href: '/', label: 'Klassement', active: path === '/' || path.startsWith('/deelnemer') },
+  { href: '/komende', label: 'Komende', active: path.startsWith('/komende') },
+  { href: '/kalender', label: 'Kalender', active: path.startsWith('/kalender') || path.startsWith('/wedstrijd') },
+  { href: '/knockout', label: 'Knock-out', active: path.startsWith('/knockout') },
+  { href: '/poules', label: 'Poules', active: path.startsWith('/poules') || path.startsWith('/land') },
+  { href: '/stats', label: 'Stats', active: path.startsWith('/stats') },
 ];
 ---
 <!doctype html>
@@ -24,43 +25,64 @@ const nav = [
     <meta name="description" content="Klassement en pronostieken van de Rut Prono WK 2026." />
     <title>{title}</title>
   </head>
-  <body class="min-h-screen pb-20 md:pb-0">
-    <header class="sticky top-0 z-20 border-b bg-background/90 backdrop-blur">
+  <body class="min-h-screen">
+    <header class="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
       <div class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
         <a href="/" class="flex items-center gap-2 font-bold tracking-tight">
-          <span class="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground text-sm">⚽</span>
+          <span class="grid size-7 place-items-center rounded-md bg-primary text-sm text-primary-foreground">⚽</span>
           <span>Rut Prono <span class="text-primary">WK 2026</span></span>
         </a>
+
         <nav class="hidden gap-1 md:flex">
           {nav.map((item) => (
             <a
               href={item.href}
               class:list={[
-                'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
-                item.match(path) ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground hover:text-foreground',
+                'rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
+                item.active ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground hover:text-foreground',
               ]}
             >{item.label}</a>
           ))}
         </nav>
+
+        <button id="menu-toggle" type="button" aria-label="Menu openen" class="-mr-1 grid size-9 place-items-center rounded-md text-foreground hover:bg-muted md:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-5"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
+        </button>
       </div>
     </header>
+
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div id="menu-backdrop" class="fixed inset-0 z-40 bg-black/40"></div>
+      <nav class="fixed right-0 top-0 z-50 flex h-full w-64 flex-col gap-1 bg-background p-4 shadow-xl">
+        <div class="mb-2 flex items-center justify-between">
+          <span class="font-bold tracking-tight">Menu</span>
+          <button id="menu-close" type="button" aria-label="Menu sluiten" class="grid size-9 place-items-center rounded-md hover:bg-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-5"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        {nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
+              item.active ? 'bg-secondary text-secondary-foreground' : 'text-foreground hover:bg-muted',
+            ]}
+          >{item.label}</a>
+        ))}
+      </nav>
+    </div>
 
     <main class="mx-auto max-w-3xl px-4 py-6">
       <slot />
     </main>
 
-    <nav class="fixed inset-x-0 bottom-0 z-20 border-t bg-background/95 backdrop-blur md:hidden">
-      <div class="mx-auto grid max-w-3xl grid-cols-5">
-        {nav.map((item) => (
-          <a
-            href={item.href}
-            class:list={[
-              'flex flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition-colors',
-              item.match(path) ? 'text-primary' : 'text-muted-foreground',
-            ]}
-          >{item.label}</a>
-        ))}
-      </div>
-    </nav>
+    <script>
+      const menu = document.getElementById('mobile-menu');
+      const open = () => menu?.classList.remove('hidden');
+      const close = () => menu?.classList.add('hidden');
+      document.getElementById('menu-toggle')?.addEventListener('click', open);
+      document.getElementById('menu-close')?.addEventListener('click', close);
+      document.getElementById('menu-backdrop')?.addEventListener('click', close);
+    </script>
   </body>
 </html>

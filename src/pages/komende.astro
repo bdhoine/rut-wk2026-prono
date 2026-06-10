@@ -1,9 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import MatchTeams from '@/components/MatchTeams.astro';
+import MatchCard from '@/components/MatchCard.astro';
 import { upcomingMatches } from '@/lib/data';
-import { ROUND_LABELS } from '@/lib/types';
-import { formatDay } from '@/lib/format';
 
 const matches = upcomingMatches();
 ---
@@ -13,15 +11,7 @@ const matches = upcomingMatches();
     <p class="text-muted-foreground">Geen komende wedstrijden.</p>
   ) : (
     <div class="space-y-3">
-      {matches.map((m) => (
-        <div>
-          <div class="mb-1 flex items-center justify-between px-1 text-xs text-muted-foreground">
-            <span>{ROUND_LABELS[m.round]}</span>
-            <span>{formatDay(m.kickoff)}</span>
-          </div>
-          <MatchTeams match={m} href={`/wedstrijd/${m.id}`} />
-        </div>
-      ))}
+      {matches.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
     </div>
   )}
 </Layout>
