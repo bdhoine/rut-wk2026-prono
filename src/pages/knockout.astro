@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import MatchCard from '@/components/MatchCard.astro';
+import DeadlineBadge from '@/components/DeadlineBadge.astro';
 import { matches } from '@/lib/data';
 import { ROUND_LABELS, type RoundId } from '@/lib/types';
 
@@ -19,7 +20,10 @@ const byRound = KO_ROUNDS
   <div class="space-y-6">
     {byRound.map((g) => (
       <section>
-        <h2 class="mb-2 text-lg font-semibold">{ROUND_LABELS[g.round]}</h2>
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-lg font-semibold">{ROUND_LABELS[g.round]}</h2>
+          <DeadlineBadge round={g.round} />
+        </div>
         <div class="space-y-2">
           {g.items.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
         </div>

@@ -8,35 +8,45 @@ interface Props {
 }
 const { rows, highlightTop = 2 } = Astro.props;
 ---
-<div class="overflow-x-auto rounded-xl border bg-card">
-  <table class="w-full text-sm">
+<div class="overflow-hidden rounded-xl border bg-card">
+  <table class="w-full table-fixed text-sm">
+    <colgroup>
+      <col class="w-8" />
+      <col />
+      <col class="w-9" />
+      <col class="w-9" />
+      <col class="w-9" />
+      <col class="w-9" />
+      <col class="w-12" />
+      <col class="w-12" />
+    </colgroup>
     <thead>
       <tr class="border-b text-muted-foreground">
-        <th class="w-6 px-2 py-2 text-left font-medium">#</th>
+        <th class="px-2 py-2 text-center font-medium">#</th>
         <th class="px-2 py-2 text-left font-medium">Land</th>
-        <th class="px-1 py-2 text-center font-medium" title="Gespeeld">M</th>
-        <th class="px-1 py-2 text-center font-medium" title="Winst">W</th>
-        <th class="px-1 py-2 text-center font-medium" title="Gelijk">G</th>
-        <th class="px-1 py-2 text-center font-medium" title="Verlies">V</th>
-        <th class="px-1 py-2 text-center font-medium" title="Doelsaldo">+/-</th>
+        <th class="py-2 text-center font-medium" title="Gespeeld">M</th>
+        <th class="py-2 text-center font-medium" title="Winst">W</th>
+        <th class="py-2 text-center font-medium" title="Gelijk">G</th>
+        <th class="py-2 text-center font-medium" title="Verlies">V</th>
+        <th class="py-2 text-center font-medium" title="Doelsaldo">+/-</th>
         <th class="px-2 py-2 text-right font-medium" title="Punten">Ptn</th>
       </tr>
     </thead>
     <tbody>
       {rows.map((r) => (
         <tr class:list={['border-b last:border-0', r.rank <= highlightTop && 'bg-emerald-50 dark:bg-emerald-950/40']}>
-          <td class="px-2 py-2 tabular-nums text-muted-foreground">{r.rank}</td>
+          <td class="px-2 py-2 text-center tabular-nums text-muted-foreground">{r.rank}</td>
           <td class="px-2 py-2">
             <a href={`/land/${r.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
-              <Flag iso={r.team.iso} name={r.team.name} class="text-base" />
-              <span>{r.team.name}</span>
+              <Flag iso={r.team.iso} name={r.team.name} class="shrink-0 text-base" />
+              <span class="truncate">{r.team.name}</span>
             </a>
           </td>
-          <td class="px-1 py-2 text-center tabular-nums">{r.played}</td>
-          <td class="px-1 py-2 text-center tabular-nums">{r.won}</td>
-          <td class="px-1 py-2 text-center tabular-nums">{r.drawn}</td>
-          <td class="px-1 py-2 text-center tabular-nums">{r.lost}</td>
-          <td class="px-1 py-2 text-center tabular-nums">{r.goalDiff > 0 ? `+${r.goalDiff}` : r.goalDiff}</td>
+          <td class="py-2 text-center tabular-nums">{r.played}</td>
+          <td class="py-2 text-center tabular-nums">{r.won}</td>
+          <td class="py-2 text-center tabular-nums">{r.drawn}</td>
+          <td class="py-2 text-center tabular-nums">{r.lost}</td>
+          <td class="py-2 text-center tabular-nums">{r.goalDiff > 0 ? `+${r.goalDiff}` : r.goalDiff}</td>
           <td class="px-2 py-2 text-right font-bold tabular-nums">{r.points}</td>
         </tr>
       ))}

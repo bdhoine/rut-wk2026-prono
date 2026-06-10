@@ -19,19 +19,20 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 | Route | Page |
 |-------|------|
-| `/` | Klassement (ranking) — tap a participant for details |
-| `/deelnemer/[id]` | Participant detail: position, total, bonus picks, all predictions + score breakdown |
-| `/wedstrijd/[id]` | Match detail: all participants' predictions, sorted by points |
-| `/komende` | Upcoming matches |
-| `/kalender` | Full fixtures, grouped by round |
-| `/knockout` | Knock-out schedule (Round of 32 → final), fills in as results come in |
+| `/` | Klassement (ranking) — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details |
+| `/deelnemer/[id]` | Participant detail: position, total, bonus picks, all predictions (sorted by kickoff) + score breakdown |
+| `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + all predictions sorted by points |
+| `/komende` | Upcoming matches (planning order) |
+| `/kalender` | Full fixtures grouped by speeldag / round, with prono submission deadlines |
+| `/knockout` | Knock-out schedule (Round of 32 → final) with submission deadlines, fills in as results come in |
 | `/poules` | Group standings + best third-placed ranking |
 | `/land/[id]` | Country detail: full schedule + group standings |
 | `/stats` | Top scorers, most goals scored, most goals conceded |
 
-Navigation is a horizontal bar on desktop and a hamburger menu on mobile. Score
-explanations on the participant and match pages appear on hover (desktop) / tap
-(mobile); the points badge is colour-coded (red = 0, green = scored, amber = exact).
+Navigation is a horizontal bar on desktop and a hamburger menu on mobile. All
+game lists are ordered by kickoff (planning). Score explanations on the
+participant and match pages appear on hover (desktop) / tap (mobile); the points
+badge is colour-coded (red = 0, green = scored, amber = exact).
 
 ## Development
 

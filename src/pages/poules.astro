@@ -23,29 +23,36 @@ const thirds = bestThirdPlaced();
   <section class="mt-8">
     <h2 class="mb-1 text-lg font-semibold">Beste nummers 3</h2>
     <p class="mb-2 text-sm text-muted-foreground">De 8 beste derdes plaatsen zich voor de 1/16de finales (groen).</p>
-    <div class="overflow-x-auto rounded-xl border bg-card">
-      <table class="w-full text-sm">
+    <div class="overflow-hidden rounded-xl border bg-card">
+      <table class="w-full table-fixed text-sm">
+        <colgroup>
+          <col class="w-8" />
+          <col />
+          <col class="w-16" />
+          <col class="w-12" />
+          <col class="w-12" />
+        </colgroup>
         <thead>
           <tr class="border-b text-muted-foreground">
-            <th class="w-6 px-2 py-2 text-left font-medium">#</th>
+            <th class="px-2 py-2 text-center font-medium">#</th>
             <th class="px-2 py-2 text-left font-medium">Land</th>
-            <th class="px-2 py-2 text-center font-medium">Groep</th>
-            <th class="px-1 py-2 text-center font-medium" title="Doelsaldo">+/-</th>
+            <th class="py-2 text-center font-medium">Groep</th>
+            <th class="py-2 text-center font-medium" title="Doelsaldo">+/-</th>
             <th class="px-2 py-2 text-right font-medium">Ptn</th>
           </tr>
         </thead>
         <tbody>
           {thirds.map((t, i) => (
             <tr class:list={['border-b last:border-0', t.qualifies && 'bg-emerald-50 dark:bg-emerald-950/40']}>
-              <td class="px-2 py-2 tabular-nums text-muted-foreground">{i + 1}</td>
+              <td class="px-2 py-2 text-center tabular-nums text-muted-foreground">{i + 1}</td>
               <td class="px-2 py-2">
                 <a href={`/land/${t.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
-                  <Flag iso={t.team.iso} name={t.team.name} class="text-base" />
-                  <span>{t.team.name}</span>
+                  <Flag iso={t.team.iso} name={t.team.name} class="shrink-0 text-base" />
+                  <span class="truncate">{t.team.name}</span>
                 </a>
               </td>
-              <td class="px-2 py-2 text-center">{t.group}</td>
-              <td class="px-1 py-2 text-center tabular-nums">{t.goalDiff > 0 ? `+${t.goalDiff}` : t.goalDiff}</td>
+              <td class="py-2 text-center tabular-nums">{t.group}</td>
+              <td class="py-2 text-center tabular-nums">{t.goalDiff > 0 ? `+${t.goalDiff}` : t.goalDiff}</td>
               <td class="px-2 py-2 text-right font-bold tabular-nums">{t.points}</td>
             </tr>
           ))}

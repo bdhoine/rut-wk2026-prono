@@ -1,26 +1,53 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import MatchCard from '@/components/MatchCard.astro';
+import DeadlineBadge from '@/components/DeadlineBadge.astro';
 import { matches } from '@/lib/data';
-import { ROUND_LABELS, ROUND_ORDER } from '@/lib/types';
+import { ROUND_LABELS, type RoundId } from '@/lib/types';
 
-const byRound = ROUND_ORDER
-  .map((round) => ({
-    round,
-    items: matches.filter((m) => m.round === round).sort((a, b) => a.kickoff.localeCompare(b.kickoff)),
-  }))
+const byKickoff = (a: { kickoff: string }, b: { kickoff: string }) => a.kickoff.localeCompare(b.kickoff);
+
+// Group stage split per matchday (speeldag).
+const matchdays = [1, 2, 3].map((md) => ({
+  md,
+  items: matches.filter((m) => m.round === 'group' && m.matchday === md).sort(byKickoff),
+}));
+
+// Knockout rounds, each its own section.
+const KO_ROUNDS: RoundId[] = ['r32', 'r16', 'qf', 'sf', 'third', 'final'];
+const koRounds = KO_ROUNDS
+  .map((round) => ({ round, items: matches.filter((m) => m.round === round).sort(byKickoff) }))
   .filter((g) => g.items.length > 0);
 ---
 <Layout title="Kalender">
-  <h1 class="mb-4 text-2xl font-bold tracking-tight">Kalender</h1>
-  <div class="space-y-6">
-    {byRound.map((g) => (
-      <section>
-        <h2 class="mb-2 text-lg font-semibold">{ROUND_LABELS[g.round]}</h2>
-        <div class="space-y-2">
-          {g.items.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
+  <h1 class="mb-5 text-2xl font-bold tracking-tight">Kalender</h1>
+
+  <section class="mb-8">
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-lg font-semibold">{ROUND_LABELS.group}</h2>
+      <DeadlineBadge round="group" />
+    </div>
+    <div class="space-y-5">
+      {matchdays.map((d) => (
+        <div>
+          <h3 class="mb-2 text-sm font-semibold text-muted-foreground">Speeldag {d.md}</h3>
+          <div class="space-y-2">
+            {d.items.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
+          </div>
         </div>
-      </section>
-    ))}
-  </div>
+      ))}
+    </div>
+  </section>
+
+  {koRounds.map((g) => (
+    <section class="mb-8">
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-lg font-semibold">{ROUND_LABELS[g.round]}</h2>
+        <DeadlineBadge round={g.round} />
+      </div>
+      <div class="space-y-2">
+        {g.items.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
+      </div>
+    </section>
+  ))}
 </Layout>

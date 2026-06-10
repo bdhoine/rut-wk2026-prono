@@ -19,6 +19,20 @@ const home = sideLabel(match, 'home');
 const away = sideLabel(match, 'away');
 const rows = predictionsForMatch(match.id);
 const finished = match.status === 'finished' && match.result;
+
+// Per-match stats across all participants (finished matches only).
+const scored = (finished ? rows.map((r) => r.score) : []).filter((s): s is NonNullable<typeof s> => s !== null);
+const n = scored.length;
+const avgPoints = n ? scored.reduce((sum, s) => sum + s.points, 0) / n : 0;
+const exactCount = scored.filter((s) => s.exact).length;
+const resultCount = scored.filter((s) => s.outcomeCorrect && !s.exact).length;
+const wrongCount = scored.filter((s) => s.points === 0).length;
+const stats = [
+  { label: 'Gem. punten', value: avgPoints.toFixed(1) },
+  { label: 'Exacte uitslag', value: exactCount },
+  { label: 'Juiste 1X2', value: resultCount },
+  { label: 'Fout', value: wrongCount },
+];
 ---
 <Layout title={`${home.label} – ${away.label}`}>
   <a href="/kalender" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Kalender</a>
@@ -45,6 +59,17 @@ const finished = match.status === 'finished' && match.result;
     </div>
     <p class="mt-4 text-center text-xs text-muted-foreground">{match.venue}</p>
   </header>
+
+  {finished && (
+    <div class="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {stats.map((s) => (
+        <div class="rounded-xl border bg-card p-3 text-center shadow-sm">
+          <div class="text-2xl font-bold tabular-nums">{s.value}</div>
+          <div class="mt-0.5 text-xs text-muted-foreground">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  )}
 
   <section>
     <h2 class="mb-2 text-lg font-semibold">Pronostieken {finished ? '(gesorteerd op punten)' : ''}</h2>

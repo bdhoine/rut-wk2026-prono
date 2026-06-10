@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 
 export interface RankingTableRow {
   position: number;
@@ -9,9 +8,25 @@ export interface RankingTableRow {
   total: number;
   matchPoints: number;
   bonusPoints: number;
+  winnerIso: string | null;
+  winnerName: string | null;
 }
 
-type SortKey = "position" | "name" | "total";
+const FAV_KEY = "rut-wk2026-favorieten";
+
+function Star({ filled, className = "size-5" }: { filled: boolean; className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      strokeWidth={1.8}
+      strokeLinejoin="round"
+      className={`${className} ${filled ? "fill-amber-400 stroke-amber-500" : "fill-transparent stroke-zinc-400"}`}
+      aria-hidden="true"
+    >
+      <path d="M11.48 3.5a.6.6 0 0 1 1.04 0l2.34 4.74 5.23.76a.6.6 0 0 1 .33 1.02l-3.78 3.69.89 5.21a.6.6 0 0 1-.87.63L12 17.9l-4.68 2.46a.6.6 0 0 1-.87-.63l.9-5.21-3.79-3.69a.6.6 0 0 1 .33-1.02l5.23-.76L11.48 3.5z" />
+    </svg>
+  );
+}
 
 function positionBadge(position: number) {
   const base = "inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-semibold tabular-nums";
@@ -22,38 +37,84 @@ function positionBadge(position: number) {
 }
 
 export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
-  const [sort, setSort] = React.useState<SortKey>("position");
+  const [favs, setFavs] = React.useState<string[]>([]);
 
-  const sorted = React.useMemo(() => {
-    const copy = [...rows];
-    if (sort === "name") copy.sort((a, b) => a.name.localeCompare(b.name, "nl"));
-    else if (sort === "total") copy.sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, "nl"));
-    else copy.sort((a, b) => a.position - b.position || a.name.localeCompare(b.name, "nl"));
-    return copy;
-  }, [rows, sort]);
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem(FAV_KEY);
+      if (stored) setFavs(JSON.parse(stored));
+    } catch { /* ignore */ }
+  }, []);
 
-  const go = (id: string) => {
-    window.location.href = `/deelnemer/${id}`;
-  };
+  const favSet = React.useMemo(() => new Set(favs), [favs]);
 
-  return (
+  const toggle = (id: string) =>
+    setFavs((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      try { localStorage.setItem(FAV_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+
+  const go = (id: string) => { window.location.href = `/deelnemer/${id}`; };
+
+  const favRows = rows.filter((r) => favSet.has(r.participantId));
+
+  const renderTable = (data: RankingTableRow[]) => (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-12 cursor-pointer select-none" onClick={() => setSort("position")}>#</TableHead>
-          <TableHead className="cursor-pointer select-none" onClick={() => setSort("name")}>Naam</TableHead>
-          <TableHead className="w-20 text-right cursor-pointer select-none" onClick={() => setSort("total")}>Punten</TableHead>
+          <TableHead className="w-10" />
+          <TableHead className="w-10 text-center">#</TableHead>
+          <TableHead>Naam</TableHead>
+          <TableHead className="w-14 text-center">Winnaar</TableHead>
+          <TableHead className="w-16 text-right">Punten</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sorted.map((row) => (
-          <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)}>
-            <TableCell>{positionBadge(row.position)}</TableCell>
-            <TableCell className="font-medium">{row.name}</TableCell>
-            <TableCell className="text-right font-bold tabular-nums">{row.total}</TableCell>
-          </TableRow>
-        ))}
+        {data.map((row) => {
+          const fav = favSet.has(row.participantId);
+          return (
+            <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)}>
+              <TableCell>
+                <button
+                  type="button"
+                  aria-label={fav ? `${row.name} uit favorieten` : `${row.name} als favoriet`}
+                  aria-pressed={fav}
+                  onClick={(e) => { e.stopPropagation(); toggle(row.participantId); }}
+                  className="grid size-8 place-items-center rounded-md hover:bg-muted"
+                >
+                  <Star filled={fav} />
+                </button>
+              </TableCell>
+              <TableCell className="text-center">{positionBadge(row.position)}</TableCell>
+              <TableCell className="font-medium">{row.name}</TableCell>
+              <TableCell className="text-center">
+                {row.winnerIso
+                  ? <span className={`fi fi-${row.winnerIso} rounded-[2px] align-middle text-base shadow-sm`} title={row.winnerName ?? undefined} role="img" aria-label={row.winnerName ?? undefined} />
+                  : <span className="text-muted-foreground">–</span>}
+              </TableCell>
+              <TableCell className="text-right font-bold tabular-nums">{row.total}</TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
+  );
+
+  return (
+    <div className="space-y-6">
+      {favRows.length > 0 && (
+        <section>
+          <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold">
+            <Star filled className="size-5" /> Favorieten
+          </h2>
+          <div className="rounded-xl border bg-card p-1">{renderTable(favRows)}</div>
+        </section>
+      )}
+      <section>
+        {favRows.length > 0 && <h2 className="mb-2 text-lg font-semibold">Volledig klassement</h2>}
+        <div className="rounded-xl border bg-card p-1">{renderTable(rows)}</div>
+      </section>
+    </div>
   );
 }

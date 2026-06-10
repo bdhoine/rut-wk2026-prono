@@ -86,3 +86,16 @@ export const ROUND_LABELS: Record<RoundId, string> = {
 };
 
 export const ROUND_ORDER: RoundId[] = ['group', 'r32', 'r16', 'qf', 'sf', 'third', 'final'];
+
+// Prono submission deadlines per round (local Belgian time), from docs/schedule.md.
+// All group-stage predictions are due before the tournament starts; each knockout
+// round has its own deadline ~1 hour before the round's first match.
+export const ROUND_DEADLINES: Record<RoundId, string> = {
+  group: '2026-06-11T20:00:00+02:00',
+  r32: '2026-06-28T20:00:00+02:00',
+  r16: '2026-07-04T18:00:00+02:00',
+  qf: '2026-07-09T21:00:00+02:00',
+  sf: '2026-07-14T20:00:00+02:00',
+  third: '2026-07-18T22:00:00+02:00',
+  final: '2026-07-18T22:00:00+02:00',
+};

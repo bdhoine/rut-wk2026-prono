@@ -1,21 +1,24 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import RankingTable from '@/components/RankingTable.tsx';
-import { ranking } from '@/lib/data';
+import { ranking, getParticipant, getTeam } from '@/lib/data';
 
-const rows = ranking().map((r) => ({
-  position: r.position,
-  participantId: r.participantId,
-  name: r.name,
-  total: r.total,
-  matchPoints: r.matchPoints,
-  bonusPoints: r.bonusPoints,
-}));
+const rows = ranking().map((r) => {
+  const winner = getTeam(getParticipant(r.participantId)?.bonus.winnerTeamId);
+  return {
+    position: r.position,
+    participantId: r.participantId,
+    name: r.name,
+    total: r.total,
+    matchPoints: r.matchPoints,
+    bonusPoints: r.bonusPoints,
+    winnerIso: winner?.iso ?? null,
+    winnerName: winner?.name ?? null,
+  };
+});
 ---
 <Layout title="Klassement — Rut Prono WK 2026">
   <h1 class="mb-1 text-2xl font-bold tracking-tight">Klassement</h1>
-  <p class="mb-4 text-sm text-muted-foreground">Tik op een deelnemer voor zijn pronostieken en puntenverdeling.</p>
-  <div class="rounded-xl border bg-card p-1">
-    <RankingTable client:load rows={rows} />
-  </div>
+  <p class="mb-4 text-sm text-muted-foreground">Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar.</p>
+  <RankingTable client:load rows={rows} />
 </Layout>

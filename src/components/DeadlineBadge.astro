@@ -1,0 +1,15 @@
+---
+// Small pill showing the prono submission deadline for a round.
+import { formatKickoff } from '@/lib/format';
+import { ROUND_DEADLINES, type RoundId } from '@/lib/types';
+
+interface Props {
+  round: RoundId;
+}
+const { round } = Astro.props;
+const deadline = ROUND_DEADLINES[round];
+---
+<span class="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:border-amber-500/40 dark:bg-amber-950/40 dark:text-amber-300">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+  <span>Indienen vóór {formatKickoff(deadline)}</span>
+</span>

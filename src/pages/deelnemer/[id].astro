@@ -30,7 +30,10 @@ const BONUS_LABELS: Record<keyof BonusPicks, string> = {
 };
 
 const byRound = ROUND_ORDER
-  .map((round) => ({ round, items: rows.filter((r) => r.match.round === round) }))
+  .map((round) => ({
+    round,
+    items: rows.filter((r) => r.match.round === round).sort((a, b) => a.match.kickoff.localeCompare(b.match.kickoff)),
+  }))
   .filter((g) => g.items.length > 0);
 
 const pick = (key: keyof BonusPicks) => participant.bonus[key];
@@ -109,11 +112,11 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
                     <div class="shrink-0 text-center leading-none">
                       <div class="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">prono</div>
                       <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" />
-                      {match.result && (
-                        <div class="mt-1.5">
-                          <ScoreBoxes home={match.result.home} away={match.result.away} size="sm" muted />
-                        </div>
-                      )}
+                      <div class="mt-1.5 flex h-6 items-center justify-center">
+                        {match.result
+                          ? <ScoreBoxes home={match.result.home} away={match.result.away} size="sm" muted />
+                          : <span class="text-xs text-muted-foreground">–</span>}
+                      </div>
                     </div>
                     <div class="flex min-w-0 flex-1 items-center gap-2">
                       <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
