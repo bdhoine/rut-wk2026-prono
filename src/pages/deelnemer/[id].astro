@@ -1,0 +1,121 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Flag from '@/components/Flag.astro';
+import {
+  participants, getParticipant, getTeam, sideLabel, positionOf, predictionsForParticipant, outcomes, settings,
+} from '@/lib/data';
+import { bonusBreakdown } from '@/lib/scoring';
+import { ROUND_LABELS, ROUND_ORDER, type BonusPicks } from '@/lib/types';
+import { explainScore, formatKickoff } from '@/lib/format';
+
+export function getStaticPaths() {
+  return participants.map((p) => ({ params: { id: p.id } }));
+}
+
+const { id } = Astro.params;
+const participant = getParticipant(id!);
+if (!participant) return Astro.redirect('/404');
+
+const rank = positionOf(participant.id);
+const rows = predictionsForParticipant(participant.id);
+const bonus = bonusBreakdown(participant.bonus, outcomes, settings);
+
+const BONUS_LABELS: Record<keyof BonusPicks, string> = {
+  topScorer: 'Topschutter',
+  winnerTeamId: 'Eindwinnaar',
+  mostConcededTeamId: 'Meeste tegendoelpunten',
+  mostScoredTeamId: 'Meeste doelpunten',
+};
+
+const byRound = ROUND_ORDER
+  .map((round) => ({ round, items: rows.filter((r) => r.match.round === round) }))
+  .filter((g) => g.items.length > 0);
+
+const pick = (key: keyof BonusPicks) => participant.bonus[key];
+---
+<Layout title={`${participant.name} — Rut Prono WK 2026`}>
+  <a href="/" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Klassement</a>
+
+  <header class="mb-6 flex items-center justify-between rounded-xl border bg-card p-4">
+    <div>
+      <div class="text-sm text-muted-foreground">Positie {rank?.position ?? '—'}</div>
+      <h1 class="text-2xl font-bold tracking-tight">{participant.name}</h1>
+    </div>
+    <div class="text-right">
+      <div class="text-3xl font-bold tabular-nums">{rank?.total ?? 0}</div>
+      <div class="text-xs text-muted-foreground">{rank?.matchPoints ?? 0} match + {rank?.bonusPoints ?? 0} bonus</div>
+    </div>
+  </header>
+
+  <section class="mb-8">
+    <h2 class="mb-2 text-lg font-semibold">Bonusvoorspellingen</h2>
+    <div class="grid grid-cols-2 gap-2">
+      {bonus.items.map((item) => {
+        const value = pick(item.key);
+        const team = item.key === 'topScorer' ? undefined : getTeam(value);
+        return (
+          <div class:list={[
+            'rounded-lg border bg-card p-3',
+            item.correct === true && 'border-emerald-500/60 bg-emerald-50 dark:bg-emerald-950/30',
+            item.correct === false && 'opacity-70',
+          ]}>
+            <div class="text-xs text-muted-foreground">{BONUS_LABELS[item.key]}</div>
+            <div class="mt-1 flex items-center gap-2 font-medium">
+              {team && <Flag iso={team.iso} name={team.name} class="text-base" />}
+              <span class="truncate">{team ? team.name : (value || '—')}</span>
+            </div>
+            <div class="mt-1 text-xs">
+              {item.correct === null ? <span class="text-muted-foreground">Nog niet bekend</span>
+                : item.correct ? <span class="font-semibold text-emerald-600">+{item.points}</span>
+                : <span class="text-muted-foreground">0 punten</span>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <section>
+    <h2 class="mb-2 text-lg font-semibold">Pronostieken</h2>
+    <div class="space-y-6">
+      {byRound.map((g) => (
+        <div>
+          <h3 class="mb-2 text-sm font-semibold text-muted-foreground">{ROUND_LABELS[g.round]}</h3>
+          <div class="space-y-2">
+            {g.items.map(({ match, prediction, score }) => {
+              const home = sideLabel(match, 'home');
+              const away = sideLabel(match, 'away');
+              return (
+                <a href={`/wedstrijd/${match.id}`} class="block rounded-lg border bg-card p-3 transition-colors hover:bg-muted/60">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0 flex-1 space-y-1 text-sm">
+                      <div class="flex items-center gap-2"><Flag iso={home.team?.iso} name={home.label} class="text-base" /><span class="truncate">{home.label}</span></div>
+                      <div class="flex items-center gap-2"><Flag iso={away.team?.iso} name={away.label} class="text-base" /><span class="truncate">{away.label}</span></div>
+                    </div>
+                    <div class="shrink-0 text-center text-xs text-muted-foreground">
+                      <div class="font-medium text-foreground">Prono</div>
+                      <div class="tabular-nums text-base font-bold text-foreground">{prediction ? `${prediction.home}–${prediction.away}` : '—'}</div>
+                    </div>
+                    <div class="shrink-0 text-center text-xs text-muted-foreground">
+                      <div>Uitslag</div>
+                      <div class="tabular-nums text-base font-bold text-foreground">{match.result ? `${match.result.home}–${match.result.away}` : formatKickoff(match.kickoff)}</div>
+                    </div>
+                    <div class="shrink-0 text-right">
+                      {score ? (
+                        <span class:list={[
+                          'inline-flex min-w-9 justify-center rounded-md px-2 py-1 text-sm font-bold tabular-nums',
+                          score.points === 0 ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground',
+                        ]}>{score.points}</span>
+                      ) : <span class="text-xs text-muted-foreground">—</span>}
+                    </div>
+                  </div>
+                  {score && <p class="mt-2 text-xs text-muted-foreground">{explainScore(score)}</p>}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

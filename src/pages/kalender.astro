@@ -1,0 +1,26 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import MatchTeams from '@/components/MatchTeams.astro';
+import { matches } from '@/lib/data';
+import { ROUND_LABELS, ROUND_ORDER } from '@/lib/types';
+
+const byRound = ROUND_ORDER
+  .map((round) => ({
+    round,
+    items: matches.filter((m) => m.round === round).sort((a, b) => a.kickoff.localeCompare(b.kickoff)),
+  }))
+  .filter((g) => g.items.length > 0);
+---
+<Layout title="Kalender">
+  <h1 class="mb-4 text-2xl font-bold tracking-tight">Kalender</h1>
+  <div class="space-y-6">
+    {byRound.map((g) => (
+      <section>
+        <h2 class="mb-2 text-lg font-semibold">{ROUND_LABELS[g.round]}</h2>
+        <div class="space-y-2">
+          {g.items.map((m) => <MatchTeams match={m} href={`/wedstrijd/${m.id}`} />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</Layout>

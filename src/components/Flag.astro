@@ -1,0 +1,15 @@
+---
+// Renders an SVG country flag via flag-icons. Size is controlled with font-size
+// (flag-icons spans scale to the current em). Pass a Tailwind text size in `class`.
+interface Props {
+  iso?: string | null;
+  name?: string;
+  class?: string;
+}
+const { iso, name, class: cls = 'text-lg' } = Astro.props;
+---
+{iso ? (
+  <span class={`fi fi-${iso} rounded-[2px] shadow-sm ${cls}`} role="img" aria-label={name ?? iso} title={name}></span>
+) : (
+  <span class={`inline-block aspect-[4/3] w-[1.333em] rounded-[2px] bg-muted ${cls}`} aria-hidden="true"></span>
+)}

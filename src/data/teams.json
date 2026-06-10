@@ -1,0 +1,10 @@
+[
+  { "id": "mex", "iso": "mx", "name": "Mexico", "group": "A" },
+  { "id": "mar", "iso": "ma", "name": "Marokko", "group": "A" },
+  { "id": "cro", "iso": "hr", "name": "Kroatië", "group": "A" },
+  { "id": "jpn", "iso": "jp", "name": "Japan", "group": "A" },
+  { "id": "can", "iso": "ca", "name": "Canada", "group": "B" },
+  { "id": "bel", "iso": "be", "name": "België", "group": "B" },
+  { "id": "sen", "iso": "sn", "name": "Senegal", "group": "B" },
+  { "id": "kor", "iso": "kr", "name": "Zuid-Korea", "group": "B" }
+]

@@ -1,0 +1,45 @@
+---
+// Compact match line: home/away with flags, plus result or kickoff time.
+import Flag from './Flag.astro';
+import { sideLabel } from '@/lib/data';
+import { formatKickoff } from '@/lib/format';
+import type { Match } from '@/lib/types';
+
+interface Props {
+  match: Match;
+  href?: string;
+}
+const { match, href } = Astro.props;
+const home = sideLabel(match, 'home');
+const away = sideLabel(match, 'away');
+const finished = match.status === 'finished' && match.result;
+const Tag = href ? 'a' : 'div';
+---
+<Tag
+  {...(href ? { href } : {})}
+  class:list={[
+    'flex items-center gap-3 rounded-lg border bg-card px-3 py-2.5',
+    href && 'transition-colors hover:bg-muted/60',
+  ]}
+>
+  <div class="flex-1 min-w-0 space-y-1">
+    <div class="flex items-center gap-2">
+      <Flag iso={home.team?.iso} name={home.label} />
+      <span class="truncate font-medium">{home.label}</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <Flag iso={away.team?.iso} name={away.label} />
+      <span class="truncate font-medium">{away.label}</span>
+    </div>
+  </div>
+  <div class="shrink-0 text-right">
+    {finished ? (
+      <div class="font-bold tabular-nums leading-tight">
+        <div>{match.result!.home}</div>
+        <div>{match.result!.away}</div>
+      </div>
+    ) : (
+      <div class="text-xs text-muted-foreground whitespace-nowrap">{formatKickoff(match.kickoff)}</div>
+    )}
+  </div>
+</Tag>

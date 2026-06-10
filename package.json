@@ -1,0 +1,34 @@
+{
+  "name": "rut-wk2026-prono",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rut Prono WK 2026 — ranking web app for the De Rut World Cup 2026 prediction competition",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "^7.0.13",
+    "@astrojs/react": "^5.0.7",
+    "@tailwindcss/postcss": "^4.3.0",
+    "astro": "^6.4.6",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "flag-icons": "^7.5.0",
+    "lucide-react": "^1.17.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
+  }
+}

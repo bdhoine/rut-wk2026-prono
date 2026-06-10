@@ -1,0 +1,21 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import RankingTable from '@/components/RankingTable.tsx';
+import { ranking } from '@/lib/data';
+
+const rows = ranking().map((r) => ({
+  position: r.position,
+  participantId: r.participantId,
+  name: r.name,
+  total: r.total,
+  matchPoints: r.matchPoints,
+  bonusPoints: r.bonusPoints,
+}));
+---
+<Layout title="Klassement — Rut Prono WK 2026">
+  <h1 class="mb-1 text-2xl font-bold tracking-tight">Klassement</h1>
+  <p class="mb-4 text-sm text-muted-foreground">Tik op een deelnemer voor zijn pronostieken en puntenverdeling.</p>
+  <div class="rounded-xl border bg-card p-1">
+    <RankingTable client:load rows={rows} />
+  </div>
+</Layout>

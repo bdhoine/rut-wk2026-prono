@@ -1,0 +1,6 @@
+[
+  { "id": "hakke", "name": "Hakke", "bonus": { "topScorer": "Kylian Mbappé", "winnerTeamId": "bel", "mostConcededTeamId": "sen", "mostScoredTeamId": "bel" } },
+  { "id": "ruub", "name": "Ruub", "bonus": { "topScorer": "Harry Kane", "winnerTeamId": "mex", "mostConcededTeamId": "kor", "mostScoredTeamId": "mex" } },
+  { "id": "an", "name": "An", "bonus": { "topScorer": "Vinícius Júnior", "winnerTeamId": "cro", "mostConcededTeamId": "mar", "mostScoredTeamId": "cro" } },
+  { "id": "bram", "name": "Bram", "bonus": { "topScorer": "Erling Haaland", "winnerTeamId": "bel", "mostConcededTeamId": "can", "mostScoredTeamId": "jpn" } }
+]

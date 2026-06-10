@@ -1,0 +1,4 @@
+[
+  { "id": "A", "teamIds": ["mex", "mar", "cro", "jpn"] },
+  { "id": "B", "teamIds": ["can", "bel", "sen", "kor"] }
+]

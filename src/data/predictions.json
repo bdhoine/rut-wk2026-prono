@@ -1,0 +1,29 @@
+[
+  { "participantId": "hakke", "matchId": "m-a1", "home": 2, "away": 1 },
+  { "participantId": "hakke", "matchId": "m-a2", "home": 0, "away": 0 },
+  { "participantId": "hakke", "matchId": "m-a3", "home": 1, "away": 0 },
+  { "participantId": "hakke", "matchId": "m-a4", "home": 1, "away": 1 },
+  { "participantId": "hakke", "matchId": "m-a5", "home": 1, "away": 2 },
+  { "participantId": "hakke", "matchId": "m-a6", "home": 1, "away": 1 },
+
+  { "participantId": "ruub", "matchId": "m-a1", "home": 3, "away": 1 },
+  { "participantId": "ruub", "matchId": "m-a2", "home": 1, "away": 1 },
+  { "participantId": "ruub", "matchId": "m-a3", "home": 2, "away": 0 },
+  { "participantId": "ruub", "matchId": "m-a4", "home": 2, "away": 2 },
+  { "participantId": "ruub", "matchId": "m-a5", "home": 0, "away": 1 },
+  { "participantId": "ruub", "matchId": "m-a6", "home": 2, "away": 0 },
+
+  { "participantId": "an", "matchId": "m-a1", "home": 1, "away": 0 },
+  { "participantId": "an", "matchId": "m-a2", "home": 2, "away": 2 },
+  { "participantId": "an", "matchId": "m-a3", "home": 1, "away": 0 },
+  { "participantId": "an", "matchId": "m-a4", "home": 0, "away": 0 },
+  { "participantId": "an", "matchId": "m-a5", "home": 1, "away": 1 },
+  { "participantId": "an", "matchId": "m-a6", "home": 0, "away": 2 },
+
+  { "participantId": "bram", "matchId": "m-a1", "home": 0, "away": 1 },
+  { "participantId": "bram", "matchId": "m-a2", "home": 1, "away": 0 },
+  { "participantId": "bram", "matchId": "m-a3", "home": 2, "away": 1 },
+  { "participantId": "bram", "matchId": "m-a4", "home": 3, "away": 1 },
+  { "participantId": "bram", "matchId": "m-a5", "home": 2, "away": 2 },
+  { "participantId": "bram", "matchId": "m-a6", "home": 1, "away": 3 }
+]

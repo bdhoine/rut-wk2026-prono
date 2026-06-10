@@ -1,0 +1,27 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import MatchTeams from '@/components/MatchTeams.astro';
+import { upcomingMatches } from '@/lib/data';
+import { ROUND_LABELS } from '@/lib/types';
+import { formatDay } from '@/lib/format';
+
+const matches = upcomingMatches();
+---
+<Layout title="Komende wedstrijden">
+  <h1 class="mb-4 text-2xl font-bold tracking-tight">Komende wedstrijden</h1>
+  {matches.length === 0 ? (
+    <p class="text-muted-foreground">Geen komende wedstrijden.</p>
+  ) : (
+    <div class="space-y-3">
+      {matches.map((m) => (
+        <div>
+          <div class="mb-1 flex items-center justify-between px-1 text-xs text-muted-foreground">
+            <span>{ROUND_LABELS[m.round]}</span>
+            <span>{formatDay(m.kickoff)}</span>
+          </div>
+          <MatchTeams match={m} href={`/wedstrijd/${m.id}`} />
+        </div>
+      ))}
+    </div>
+  )}
+</Layout>

@@ -1,0 +1,11 @@
+[
+  { "id": "m-a1", "round": "group", "matchday": 1, "kickoff": "2026-06-11T18:00:00+02:00", "venue": "Estadio Azteca, Mexico-Stad", "homeTeamId": "mex", "awayTeamId": "mar", "status": "finished", "result": { "home": 2, "away": 1 } },
+  { "id": "m-a2", "round": "group", "matchday": 1, "kickoff": "2026-06-12T21:00:00+02:00", "venue": "SoFi Stadium, Los Angeles", "homeTeamId": "cro", "awayTeamId": "jpn", "status": "finished", "result": { "home": 0, "away": 0 } },
+  { "id": "m-a3", "round": "group", "matchday": 2, "kickoff": "2026-06-18T21:00:00+02:00", "venue": "Estadio Akron, Guadalajara", "homeTeamId": "mex", "awayTeamId": "cro", "status": "finished", "result": { "home": 1, "away": 0 } },
+  { "id": "m-a4", "round": "group", "matchday": 2, "kickoff": "2026-06-19T18:00:00+02:00", "venue": "Levi's Stadium, San Francisco", "homeTeamId": "jpn", "awayTeamId": "mar", "status": "finished", "result": { "home": 2, "away": 2 } },
+  { "id": "m-a5", "round": "group", "matchday": 3, "kickoff": "2026-06-24T20:00:00+02:00", "venue": "Estadio Azteca, Mexico-Stad", "homeTeamId": "jpn", "awayTeamId": "mex", "status": "scheduled" },
+  { "id": "m-a6", "round": "group", "matchday": 3, "kickoff": "2026-06-24T20:00:00+02:00", "venue": "Estadio Akron, Guadalajara", "homeTeamId": "mar", "awayTeamId": "cro", "status": "scheduled" },
+  { "id": "m-b1", "round": "group", "matchday": 1, "kickoff": "2026-06-12T18:00:00+02:00", "venue": "BMO Field, Toronto", "homeTeamId": "can", "awayTeamId": "bel", "status": "scheduled" },
+  { "id": "m-b2", "round": "group", "matchday": 1, "kickoff": "2026-06-13T21:00:00+02:00", "venue": "BC Place, Vancouver", "homeTeamId": "sen", "awayTeamId": "kor", "status": "scheduled" },
+  { "id": "m-r32-1", "round": "r32", "kickoff": "2026-06-28T21:00:00+02:00", "venue": "SoFi Stadium, Los Angeles", "homeTeamId": null, "awayTeamId": null, "homePlaceholder": "2e Groep A", "awayPlaceholder": "2e Groep B", "status": "scheduled" }
+]
