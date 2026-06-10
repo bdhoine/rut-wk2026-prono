@@ -5,6 +5,7 @@ import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
 import { matches, getMatch, sideLabel, predictionsForMatch } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
+import { outcomeOf } from '@/lib/scoring';
 import { explainScore, formatKickoff } from '@/lib/format';
 
 export function getStaticPaths() {
@@ -17,6 +18,8 @@ if (!match) return Astro.redirect('/404');
 
 const home = sideLabel(match, 'home');
 const away = sideLabel(match, 'away');
+const homeHref = home.team ? `/land/${home.team.id}` : undefined;
+const awayHref = away.team ? `/land/${away.team.id}` : undefined;
 const rows = predictionsForMatch(match.id);
 const finished = match.status === 'finished' && match.result;
 
@@ -33,6 +36,20 @@ const stats = [
   { label: 'Juiste 1X2', value: resultCount },
   { label: 'Fout', value: wrongCount },
 ];
+
+// For finished matches, split predictions by predicted outcome (1 / X / 2).
+const actualOutcome = finished ? outcomeOf(match.result!.home, match.result!.away) : null;
+const bucket = (test: (h: number, a: number) => boolean) =>
+  rows
+    .filter((r) => r.prediction && test(r.prediction.home, r.prediction.away))
+    .sort((a, b) => (b.score?.points ?? 0) - (a.score?.points ?? 0) || a.participant.name.localeCompare(b.participant.name, 'nl'));
+const outcomeGroups = finished
+  ? [
+      { key: 'home', title: `${home.label} wint`, iso: home.team?.iso ?? null, rows: bucket((h, a) => h > a) },
+      { key: 'draw', title: 'Gelijkspel', iso: null, rows: bucket((h, a) => h === a) },
+      { key: 'away', title: `${away.label} wint`, iso: away.team?.iso ?? null, rows: bucket((h, a) => h < a) },
+    ]
+  : [];
 ---
 <Layout title={`${home.label} – ${away.label}`}>
   <a href="/kalender" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Kalender</a>
@@ -43,19 +60,19 @@ const stats = [
       <span>{formatKickoff(match.kickoff)}</span>
     </div>
     <div class="flex items-center justify-between gap-4">
-      <div class="flex flex-1 flex-col items-center gap-2 text-center">
-        <Flag iso={home.team?.iso} name={home.label} class="text-4xl" />
-        <span class="text-sm font-medium">{home.label}</span>
-      </div>
+      <a href={homeHref} class:list={['flex flex-1 flex-col items-center gap-2 text-center', homeHref && 'group']}>
+        <Flag iso={home.team?.iso} name={home.label} class="text-4xl transition-transform group-hover:scale-105" />
+        <span class:list={['text-sm font-medium', homeHref && 'group-hover:underline']}>{home.label}</span>
+      </a>
       <div class="shrink-0">
         {finished
           ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="lg" />
           : <span class="text-xl font-bold text-muted-foreground">vs</span>}
       </div>
-      <div class="flex flex-1 flex-col items-center gap-2 text-center">
-        <Flag iso={away.team?.iso} name={away.label} class="text-4xl" />
-        <span class="text-sm font-medium">{away.label}</span>
-      </div>
+      <a href={awayHref} class:list={['flex flex-1 flex-col items-center gap-2 text-center', awayHref && 'group']}>
+        <Flag iso={away.team?.iso} name={away.label} class="text-4xl transition-transform group-hover:scale-105" />
+        <span class:list={['text-sm font-medium', awayHref && 'group-hover:underline']}>{away.label}</span>
+      </a>
     </div>
     <p class="mt-4 text-center text-xs text-muted-foreground">{match.venue}</p>
   </header>
@@ -72,38 +89,63 @@ const stats = [
   )}
 
   <section>
-    <h2 class="mb-2 text-lg font-semibold">Pronostieken {finished ? '(gesorteerd op punten)' : ''}</h2>
-    <div class="overflow-hidden rounded-xl border bg-card">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b text-muted-foreground">
-            <th class="px-3 py-2 text-left font-medium">Deelnemer</th>
-            <th class="px-2 py-2 text-center font-medium">Prono</th>
-            {finished && <th class="px-3 py-2 text-right font-medium">Punten</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ participant, prediction, score }) => (
-            <tr class="border-b last:border-0">
-              <td class="px-3 py-2.5">
-                <a href={`/deelnemer/${participant.id}`} class="font-medium hover:underline">{participant.name}</a>
-              </td>
-              <td class="px-2 py-2.5">
-                <div class="flex justify-center">
-                  <ScoreBoxes home={prediction?.home} away={prediction?.away} size="sm" />
-                </div>
-              </td>
-              {finished && (
-                <td class="px-3 py-2.5">
-                  <div class="flex justify-end">
-                    {score ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} /> : <span class="text-muted-foreground">0</span>}
-                  </div>
-                </td>
+    <h2 class="mb-3 text-lg font-semibold">Pronostieken</h2>
+
+    {finished ? (
+      <div class="space-y-5">
+        {outcomeGroups.map((g) => (
+          <div>
+            <div class="mb-2 flex flex-wrap items-center gap-2">
+              {g.iso && <Flag iso={g.iso} class="text-base" />}
+              <h3 class="font-semibold">{g.title}</h3>
+              <span class="text-sm text-muted-foreground">({g.rows.length})</span>
+              {g.key === actualOutcome && (
+                <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">juiste uitslag</span>
               )}
+            </div>
+            {g.rows.length === 0 ? (
+              <p class="rounded-xl border border-dashed px-3 py-3 text-sm text-muted-foreground">Niemand.</p>
+            ) : (
+              <div class="overflow-hidden rounded-xl border bg-card">
+                <table class="w-full text-sm">
+                  <tbody>
+                    {g.rows.map(({ participant, prediction, score }) => (
+                      <tr class="border-b last:border-0">
+                        <td class="px-3 py-2.5">
+                          <a href={`/deelnemer/${participant.id}`} class="font-medium hover:underline">{participant.name}</a>
+                        </td>
+                        <td class="px-2 py-2.5"><div class="flex justify-center"><ScoreBoxes home={prediction?.home} away={prediction?.away} size="sm" /></div></td>
+                        <td class="px-3 py-2.5"><div class="flex justify-end">{score ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} /> : <span class="text-muted-foreground">0</span>}</div></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="overflow-hidden rounded-xl border bg-card">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b text-muted-foreground">
+              <th class="px-3 py-2 text-left font-medium">Deelnemer</th>
+              <th class="px-2 py-2 text-center font-medium">Prono</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {rows.map(({ participant, prediction }) => (
+              <tr class="border-b last:border-0">
+                <td class="px-3 py-2.5">
+                  <a href={`/deelnemer/${participant.id}`} class="font-medium hover:underline">{participant.name}</a>
+                </td>
+                <td class="px-2 py-2.5"><div class="flex justify-center"><ScoreBoxes home={prediction?.home} away={prediction?.away} size="sm" /></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
   </section>
 </Layout>

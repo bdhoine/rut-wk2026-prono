@@ -185,3 +185,45 @@ export function teamGoalStats(): TeamGoalStat[] {
 
 export const mostGoalsScored = () => [...teamGoalStats()].sort((a, b) => b.scored - a.scored || a.team.name.localeCompare(b.team.name, 'nl'));
 export const mostGoalsConceded = () => [...teamGoalStats()].sort((a, b) => b.conceded - a.conceded || a.team.name.localeCompare(b.team.name, 'nl'));
+
+// Per-finished-match aggregate of all participants' scores.
+export interface MatchPointStat {
+  match: Match;
+  total: number;
+  avg: number;
+  wrong: number;
+  exact: number;
+  n: number;
+}
+
+export function matchPointStats(): MatchPointStat[] {
+  const out: MatchPointStat[] = [];
+  for (const m of matches) {
+    if (m.status !== 'finished' || !m.result) continue;
+    const byPart = new Map(predictions.filter((p) => p.matchId === m.id).map((p) => [p.participantId, p]));
+    let total = 0, wrong = 0, exact = 0, n = 0;
+    for (const part of participants) {
+      const s = scoreMatch(byPart.get(part.id), m, settings);
+      if (!s) continue;
+      n++; total += s.points;
+      if (s.points === 0) wrong++;
+      if (s.exact) exact++;
+    }
+    out.push({ match: m, total, avg: n ? total / n : 0, wrong, exact, n });
+  }
+  return out;
+}
+
+export const topMatchesByPoints = (limit = 10) =>
+  [...matchPointStats()].sort((a, b) => b.avg - a.avg || b.exact - a.exact).slice(0, limit);
+
+export const topMatchesByWrong = (limit = 10) =>
+  [...matchPointStats()].sort((a, b) => b.wrong - a.wrong || a.avg - b.avg).slice(0, limit);
+
+/** Overall average points scored per (participant, finished match). */
+export function averageMatchPoints(): number {
+  const stats = matchPointStats();
+  const total = stats.reduce((s, m) => s + m.total, 0);
+  const count = stats.reduce((s, m) => s + m.n, 0);
+  return count ? total / count : 0;
+}

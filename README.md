@@ -23,11 +23,10 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/deelnemer/[id]` | Participant detail: position, total, bonus picks, all predictions (sorted by kickoff) + score breakdown |
 | `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + all predictions sorted by points |
 | `/komende` | Upcoming matches (planning order) |
-| `/kalender` | Full fixtures grouped by speeldag / round, with prono submission deadlines |
-| `/knockout` | Knock-out schedule (Round of 32 → final) with submission deadlines, fills in as results come in |
+| `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with prono submission deadlines |
 | `/poules` | Group standings + best third-placed ranking |
 | `/land/[id]` | Country detail: full schedule + group standings |
-| `/stats` | Top scorers, most goals scored, most goals conceded |
+| `/stats` | Top scorers, most goals scored/conceded, top-10 matches by points and by wrong predictions |
 
 Navigation is a horizontal bar on desktop and a hamburger menu on mobile. All
 game lists are ordered by kickoff (planning). Score explanations on the

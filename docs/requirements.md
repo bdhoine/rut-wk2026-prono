@@ -94,28 +94,27 @@ Primary navigation: **Klassement** · **Komende** · **Kalender** · **Knock-out
 - Surface the relevant **submission deadline** for the upcoming round (from `schedule.md`).
 
 ### 5.5 Fixtures (Kalender)
-- Full list of all 104 matches, grouped by round and date.
-- Show result where finished; clickable → **Match detail**.
+- Full list of all 104 matches. The group stage is split per **speeldag** (matchday 1–3); the knockout rounds (Round of 32 → … → final) follow, each as its own section.
+- Each section shows the **prono submission deadline** for that round.
+- Knockout matches start as **placeholders** and fill in with teams as results are entered. Show result where finished; each clickable → **Match detail**.
+- (There is no separate knockout page — the calendar already covers it.)
 
-### 5.6 Knock-out schedule
-- The knockout rounds (Round of 32 → Round of 16 → quarter-finals → semi-finals → third-place play-off → final) shown as a schedule, grouped by round with dates.
-- Matches start as **placeholders** and fill in with teams as group/knockout results are entered. Each clickable → **Match detail**.
-
-### 5.7 Group rankings (Groups)
+### 5.6 Group rankings (Groups)
 - The 12 groups (A–L), each as a **standings table**: country (flag + Dutch name), played, W/D/L, goals for/against, goal difference, points.
 - Standings computed from finished group-stage results (3/1/0; tie-break GD → goals scored).
 - Indicate qualification: top 2 of each group qualify directly.
 - **Best third-placed ranking:** a separate cross-group table ranking the 12 third-placed teams (points → GD → goals scored), highlighting the **8 best** that advance to the Round of 32. Shown on the Groups page.
 - Each country clickable → **Country detail**.
 
-### 5.8 Country detail
+### 5.7 Country detail
 - Country header with **flag** and Dutch name, group.
 - **Full schedule** for that country (all its matches, results where played), clickable → Match detail.
 - That country's **group standings** table.
 
-### 5.9 Stats
+### 5.8 Stats
 - **Top scorers** ranking (player, country flag, goals).
 - **Most goals scored** and **most goals conceded** per team, computed from finished results (penalty shoot-outs excluded, extra time included — see `rules.md`).
+- **Top 10 matches by points** (highest average points scored) and **top 10 by wrong predictions** (most 0-point pronos), each linking to the match. Shown at the bottom of the page.
 
 ---
 

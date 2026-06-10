@@ -104,23 +104,19 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
               return (
                 <div class="relative flex items-center gap-3 rounded-xl border bg-card px-4 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
                   <a href={`/wedstrijd/${match.id}`} class="absolute inset-0 rounded-xl" aria-label={`${home.label} tegen ${away.label}`}></a>
-                  <div class="flex min-w-0 flex-1 items-center justify-center gap-3">
-                    <div class="flex min-w-0 flex-1 items-center justify-end gap-2">
-                      <span class="truncate text-right text-sm font-medium">{home.label}</span>
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-1 text-center text-[10px] font-medium uppercase tracking-wide text-muted-foreground">prono</div>
+                    <div class="flex items-center justify-center gap-2.5">
+                      <span class="min-w-0 flex-1 truncate text-right text-sm font-medium">{home.label}</span>
                       <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
-                    </div>
-                    <div class="shrink-0 text-center leading-none">
-                      <div class="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">prono</div>
                       <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" />
-                      <div class="mt-1.5 flex h-6 items-center justify-center">
-                        {match.result
-                          ? <ScoreBoxes home={match.result.home} away={match.result.away} size="sm" muted />
-                          : <span class="text-xs text-muted-foreground">–</span>}
-                      </div>
-                    </div>
-                    <div class="flex min-w-0 flex-1 items-center gap-2">
                       <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
-                      <span class="truncate text-sm font-medium">{away.label}</span>
+                      <span class="min-w-0 flex-1 truncate text-sm font-medium">{away.label}</span>
+                    </div>
+                    <div class="mt-1.5 flex h-5 items-center justify-center">
+                      {match.result
+                        ? <ScoreBoxes home={match.result.home} away={match.result.away} size="sm" muted />
+                        : <span class="text-xs text-muted-foreground">–</span>}
                     </div>
                   </div>
                   <div class="relative z-10 shrink-0">

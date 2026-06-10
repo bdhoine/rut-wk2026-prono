@@ -1,11 +1,14 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded } from '@/lib/data';
+import MatchStatRow from '@/components/MatchStatRow.astro';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong } from '@/lib/data';
 
 const scorers = topScorers();
 const scored = mostGoalsScored();
 const conceded = mostGoalsConceded();
+const topPoints = topMatchesByPoints(10);
+const topWrong = topMatchesByWrong(10);
 ---
 <Layout title="Statistieken">
   <h1 class="mb-1 text-2xl font-bold tracking-tight">Statistieken</h1>
@@ -99,4 +102,24 @@ const conceded = mostGoalsConceded();
       </div>
     </section>
   </div>
+
+  <section class="mt-8">
+    <h2 class="mb-1 text-lg font-semibold">Top 10 — meeste punten</h2>
+    <p class="mb-2 text-xs text-muted-foreground">Gemiddeld aantal punten dat deelnemers per wedstrijd scoorden.</p>
+    <div class="space-y-2">
+      {topPoints.map((s, i) => (
+        <MatchStatRow match={s.match} rank={i + 1} metric={s.avg.toFixed(1)} metricClass="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300" />
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-8">
+    <h2 class="mb-1 text-lg font-semibold">Top 10 — meeste foute prono's</h2>
+    <p class="mb-2 text-xs text-muted-foreground">Aantal deelnemers met 0 punten voor de wedstrijd.</p>
+    <div class="space-y-2">
+      {topWrong.map((s, i) => (
+        <MatchStatRow match={s.match} rank={i + 1} metric={String(s.wrong)} metricClass="bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300" />
+      ))}
+    </div>
+  </section>
 </Layout>

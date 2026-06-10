@@ -12,7 +12,6 @@ const nav = [
   { href: '/', label: 'Klassement', active: path === '/' || path.startsWith('/deelnemer') },
   { href: '/komende', label: 'Komende', active: path.startsWith('/komende') },
   { href: '/kalender', label: 'Kalender', active: path.startsWith('/kalender') || path.startsWith('/wedstrijd') },
-  { href: '/knockout', label: 'Knock-out', active: path.startsWith('/knockout') },
   { href: '/poules', label: 'Poules', active: path.startsWith('/poules') || path.startsWith('/land') },
   { href: '/stats', label: 'Stats', active: path.startsWith('/stats') },
 ];
@@ -23,13 +22,14 @@ const nav = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Klassement en pronostieken van de Rut Prono WK 2026." />
+    <link rel="icon" type="image/png" href="/logo.png" />
     <title>{title}</title>
   </head>
   <body class="min-h-screen">
     <header class="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
       <div class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
-        <a href="/" class="flex items-center gap-2 font-bold tracking-tight">
-          <span class="grid size-7 place-items-center rounded-md bg-primary text-sm text-primary-foreground">⚽</span>
+        <a href="/" class="flex items-center gap-2.5 font-bold tracking-tight">
+          <img src="/logo.png" alt="Café De Rut" width="36" height="36" class="size-9 rounded-full" />
           <span>Rut Prono <span class="text-primary">WK 2026</span></span>
         </a>
 
@@ -75,6 +75,20 @@ const nav = [
     <main class="mx-auto max-w-3xl px-4 py-6">
       <slot />
     </main>
+
+    <footer class="mt-4 border-t">
+      <div class="mx-auto max-w-3xl px-4 py-6 text-center text-xs text-muted-foreground">
+        <p>Rut Prono WK 2026 · Café De Rut, Weerde</p>
+        <p class="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+          <a href="https://github.com/bdhoine/rut-wk2026-prono" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 hover:text-foreground hover:underline">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z" /></svg>
+            Broncode op GitHub
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="https://github.com/bdhoine/rut-wk2026-prono/issues/new" target="_blank" rel="noopener" class="hover:text-foreground hover:underline">Probleem melden</a>
+        </p>
+      </div>
+    </footer>
 
     <script>
       const menu = document.getElementById('mobile-menu');

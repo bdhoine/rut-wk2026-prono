@@ -1,0 +1,31 @@
+---
+// Compact ranked match row for the stats lists: rank, teams+flags+score, metric.
+import Flag from './Flag.astro';
+import ScoreBoxes from './ScoreBoxes.astro';
+import { sideLabel } from '@/lib/data';
+import type { Match } from '@/lib/types';
+
+interface Props {
+  match: Match;
+  rank: number;
+  metric: string;
+  metricClass?: string;
+}
+const { match, rank, metric, metricClass = 'bg-muted text-foreground' } = Astro.props;
+const home = sideLabel(match, 'home');
+const away = sideLabel(match, 'away');
+---
+<a
+  href={`/wedstrijd/${match.id}`}
+  class="flex items-center gap-3 rounded-xl border bg-card px-3 py-2.5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+>
+  <span class="w-5 shrink-0 text-center text-sm font-medium tabular-nums text-muted-foreground">{rank}</span>
+  <div class="flex min-w-0 flex-1 items-center justify-center gap-2">
+    <span class="min-w-0 flex-1 truncate text-right text-sm font-medium">{home.label}</span>
+    <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
+    <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" />
+    <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
+    <span class="min-w-0 flex-1 truncate text-sm font-medium">{away.label}</span>
+  </div>
+  <span class:list={['inline-flex min-w-11 shrink-0 justify-center rounded-md px-2 py-1 text-sm font-bold tabular-nums', metricClass]}>{metric}</span>
+</a>
