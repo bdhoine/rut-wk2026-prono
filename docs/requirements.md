@@ -30,7 +30,7 @@ A public, read-only web app where participants and visitors can follow the compe
 
 Stored as static files; exact file layout to be finalised at scaffold time.
 
-- **Participant**: `id`, `name`, `phone` (private — not displayed publicly), bonus predictions (top scorer, winner, most goals conceded, most goals scored).
+- **Participant**: `id`, `name`, bonus predictions (top scorer, winner, most goals conceded, most goals scored). **Phone numbers are not part of the app data** — they stay with the organisers (WhatsApp group) and never enter the repo.
 - **Country / Team**: `id`, ISO code (for flag), Dutch name, group.
 - **Group**: `id` (A–L), list of countries.
 - **Match**: `id`, round (group / R32 / R16 / QF / SF / 3rd-place / final), matchday (group stage), date/time, venue, home team, away team, status (`scheduled` / `live` / `finished`), result (`homeGoals`, `awayGoals`, after-120-min score for knockouts — penalties ignored per rules).
@@ -92,7 +92,8 @@ Primary navigation (mobile bottom-nav / top-nav): **Ranking** · **Upcoming** ·
 ### 5.6 Group rankings (Groups)
 - The 12 groups (A–L), each as a **standings table**: country (flag + Dutch name), played, W/D/L, goals for/against, goal difference, points.
 - Standings computed from finished group-stage results (3/1/0; tie-break GD → goals scored).
-- Indicate qualification (top 2 per group; optionally the 8 best third-placed — see §9).
+- Indicate qualification: top 2 of each group qualify directly.
+- **Best third-placed ranking:** a separate cross-group table ranking the 12 third-placed teams (points → GD → goals scored), highlighting the **8 best** that advance to the Round of 32. Shown on the Groups page.
 - Each country clickable → **Country detail**.
 
 ### 5.7 Country detail
@@ -117,7 +118,7 @@ Primary navigation (mobile bottom-nav / top-nav): **Ranking** · **Upcoming** ·
 
 - **Deployable on Netlify** from the git repo; pushes trigger rebuilds.
 - Performance budget suited to mobile networks; lazy-load non-critical JS.
-- No personal data exposed publicly (phone numbers stay out of the build output / are not rendered).
+- **No personal data exposed publicly: participant phone numbers are not part of the app data at all** — they never enter the repo or build output, so there is nothing to leak. Only names and predictions are stored.
 - Maintainable data files with a documented format so admins can enter predictions/results.
 
 ---
@@ -138,9 +139,8 @@ These were decided by default; flag if you want them changed:
 1. **Tie-break in ranking:** equal totals share a position, secondary order alphabetical. *(Alternative: order ties by number of exact scores, or by bonus points.)*
 2. **Flag library:** SVG set keyed by ISO code (`flag-icons` or `circle-flags`).
 3. **Match detail ordering for unplayed matches:** by current participant ranking (no per-match score exists yet).
-4. **8 best third-placed teams:** group tables can show third-placed qualification, but the cross-group "best thirds" ranking is a nice-to-have, not required for v1.
-5. **Data file format** (JSON vs CSV per entity) finalised at scaffold time; predictions likely CSV (bulk paper entry), reference data JSON.
-6. **Knockout brackets** are filled in progressively as results are entered; until then matches show placeholders (e.g. "Winnaar Groep A").
+4. **Data file format** (JSON vs CSV per entity) finalised at scaffold time; predictions likely CSV (bulk paper entry), reference data JSON.
+5. **Knockout brackets** are filled in progressively as results are entered; until then matches show placeholders (e.g. "Winnaar Groep A").
 
 ---
 
