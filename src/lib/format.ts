@@ -19,9 +19,10 @@ export function explainScore(s: MatchScore): string {
   else if (s.exact) base = 'Exacte uitslag → 9 basispunten';
   else {
     const raw = 7 - s.goalsOff;
+    const noun = s.goalsOff === 1 ? 'goal' : 'goals';
     base = raw < 3
-      ? `Juiste winnaar, ${s.goalsOff} goal(s) ernaast → 7 − ${s.goalsOff} = ${raw}, minimum 3 basispunten`
-      : `Juiste winnaar, ${s.goalsOff} goal(s) ernaast → 7 − ${s.goalsOff} = ${s.basePoints} basispunten`;
+      ? `Juiste winnaar, ${s.goalsOff} ${noun} ernaast → 7 − ${s.goalsOff} = ${raw}, minimum 3 basispunten`
+      : `Juiste winnaar, ${s.goalsOff} ${noun} ernaast → 7 − ${s.goalsOff} = ${s.basePoints} basispunten`;
   }
   if (s.multiplier > 1 && s.basePoints > 0) {
     return `${base} × ${s.multiplier} = ${s.points} punten`;

@@ -1,0 +1,44 @@
+---
+// Compact, single-line match card: centered date/time on the first line,
+// then home flag+name [score] name+flag away on the second line.
+// Shows boxed score when finished, otherwise "vs" (no 0-0).
+import Flag from './Flag.astro';
+import ScoreBoxes from './ScoreBoxes.astro';
+import { sideLabel } from '@/lib/data';
+import { formatKickoff } from '@/lib/format';
+import type { Match } from '@/lib/types';
+
+interface Props {
+  match: Match;
+  href?: string;
+}
+const { match, href } = Astro.props;
+const home = sideLabel(match, 'home');
+const away = sideLabel(match, 'away');
+const finished = match.status === 'finished' && match.result;
+const Tag = href ? 'a' : 'div';
+---
+<Tag
+  {...(href ? { href } : {})}
+  class:list={[
+    'block rounded-xl border bg-card px-4 py-3 shadow-sm',
+    href && 'transition-all hover:border-primary/40 hover:shadow-md',
+  ]}
+>
+  <div class="mb-2 text-center text-xs font-medium text-muted-foreground">{formatKickoff(match.kickoff)}</div>
+  <div class="flex items-center justify-center gap-3">
+    <div class="flex min-w-0 flex-1 items-center justify-end gap-2">
+      <span class="truncate text-right font-medium">{home.label}</span>
+      <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-lg" />
+    </div>
+    <div class="shrink-0">
+      {finished
+        ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="md" />
+        : <span class="px-1 text-sm font-semibold text-muted-foreground">vs</span>}
+    </div>
+    <div class="flex min-w-0 flex-1 items-center gap-2">
+      <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-lg" />
+      <span class="truncate font-medium">{away.label}</span>
+    </div>
+  </div>
+</Tag>

@@ -1,4 +1,12 @@
 {
-  "multipliers": { "group": 1, "r32": 2, "r16": 3, "qf": 4, "sf": 4, "third": 4, "final": 5 },
+  "multipliers": {
+    "group": 1,
+    "r32": 2,
+    "r16": 3,
+    "qf": 4,
+    "sf": 4,
+    "third": 4,
+    "final": 5
+  },
   "bonusPoints": 30
 }

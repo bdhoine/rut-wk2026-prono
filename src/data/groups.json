@@ -1,4 +1,110 @@
 [
-  { "id": "A", "teamIds": ["mex", "mar", "cro", "jpn"] },
-  { "id": "B", "teamIds": ["can", "bel", "sen", "kor"] }
+  {
+    "id": "A",
+    "teamIds": [
+      "mex",
+      "ita",
+      "civ",
+      "pol"
+    ]
+  },
+  {
+    "id": "B",
+    "teamIds": [
+      "can",
+      "cro",
+      "tun",
+      "srb"
+    ]
+  },
+  {
+    "id": "C",
+    "teamIds": [
+      "usa",
+      "uru",
+      "aus",
+      "aut"
+    ]
+  },
+  {
+    "id": "D",
+    "teamIds": [
+      "arg",
+      "col",
+      "irn",
+      "swe"
+    ]
+  },
+  {
+    "id": "E",
+    "teamIds": [
+      "bra",
+      "jpn",
+      "ksa",
+      "nor"
+    ]
+  },
+  {
+    "id": "F",
+    "teamIds": [
+      "fra",
+      "kor",
+      "qat",
+      "sco"
+    ]
+  },
+  {
+    "id": "G",
+    "teamIds": [
+      "eng",
+      "mar",
+      "ecu",
+      "tur"
+    ]
+  },
+  {
+    "id": "H",
+    "teamIds": [
+      "esp",
+      "sen",
+      "per",
+      "ukr"
+    ]
+  },
+  {
+    "id": "I",
+    "teamIds": [
+      "ger",
+      "nga",
+      "chi",
+      "gre"
+    ]
+  },
+  {
+    "id": "J",
+    "teamIds": [
+      "por",
+      "gha",
+      "par",
+      "alg"
+    ]
+  },
+  {
+    "id": "K",
+    "teamIds": [
+      "ned",
+      "cmr",
+      "sui",
+      "mli"
+    ]
+  },
+  {
+    "id": "L",
+    "teamIds": [
+      "bel",
+      "egy",
+      "den",
+      "nzl"
+    ]
+  }
 ]

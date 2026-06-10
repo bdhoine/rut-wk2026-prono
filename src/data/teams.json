@@ -1,10 +1,290 @@
 [
-  { "id": "mex", "iso": "mx", "name": "Mexico", "group": "A" },
-  { "id": "mar", "iso": "ma", "name": "Marokko", "group": "A" },
-  { "id": "cro", "iso": "hr", "name": "Kroatië", "group": "A" },
-  { "id": "jpn", "iso": "jp", "name": "Japan", "group": "A" },
-  { "id": "can", "iso": "ca", "name": "Canada", "group": "B" },
-  { "id": "bel", "iso": "be", "name": "België", "group": "B" },
-  { "id": "sen", "iso": "sn", "name": "Senegal", "group": "B" },
-  { "id": "kor", "iso": "kr", "name": "Zuid-Korea", "group": "B" }
+  {
+    "id": "mex",
+    "iso": "mx",
+    "name": "Mexico",
+    "group": "A"
+  },
+  {
+    "id": "can",
+    "iso": "ca",
+    "name": "Canada",
+    "group": "B"
+  },
+  {
+    "id": "usa",
+    "iso": "us",
+    "name": "Verenigde Staten",
+    "group": "C"
+  },
+  {
+    "id": "arg",
+    "iso": "ar",
+    "name": "Argentinië",
+    "group": "D"
+  },
+  {
+    "id": "bra",
+    "iso": "br",
+    "name": "Brazilië",
+    "group": "E"
+  },
+  {
+    "id": "fra",
+    "iso": "fr",
+    "name": "Frankrijk",
+    "group": "F"
+  },
+  {
+    "id": "eng",
+    "iso": "gb-eng",
+    "name": "Engeland",
+    "group": "G"
+  },
+  {
+    "id": "esp",
+    "iso": "es",
+    "name": "Spanje",
+    "group": "H"
+  },
+  {
+    "id": "ger",
+    "iso": "de",
+    "name": "Duitsland",
+    "group": "I"
+  },
+  {
+    "id": "por",
+    "iso": "pt",
+    "name": "Portugal",
+    "group": "J"
+  },
+  {
+    "id": "ned",
+    "iso": "nl",
+    "name": "Nederland",
+    "group": "K"
+  },
+  {
+    "id": "bel",
+    "iso": "be",
+    "name": "België",
+    "group": "L"
+  },
+  {
+    "id": "ita",
+    "iso": "it",
+    "name": "Italië",
+    "group": "A"
+  },
+  {
+    "id": "cro",
+    "iso": "hr",
+    "name": "Kroatië",
+    "group": "B"
+  },
+  {
+    "id": "uru",
+    "iso": "uy",
+    "name": "Uruguay",
+    "group": "C"
+  },
+  {
+    "id": "col",
+    "iso": "co",
+    "name": "Colombia",
+    "group": "D"
+  },
+  {
+    "id": "jpn",
+    "iso": "jp",
+    "name": "Japan",
+    "group": "E"
+  },
+  {
+    "id": "kor",
+    "iso": "kr",
+    "name": "Zuid-Korea",
+    "group": "F"
+  },
+  {
+    "id": "mar",
+    "iso": "ma",
+    "name": "Marokko",
+    "group": "G"
+  },
+  {
+    "id": "sen",
+    "iso": "sn",
+    "name": "Senegal",
+    "group": "H"
+  },
+  {
+    "id": "nga",
+    "iso": "ng",
+    "name": "Nigeria",
+    "group": "I"
+  },
+  {
+    "id": "gha",
+    "iso": "gh",
+    "name": "Ghana",
+    "group": "J"
+  },
+  {
+    "id": "cmr",
+    "iso": "cm",
+    "name": "Kameroen",
+    "group": "K"
+  },
+  {
+    "id": "egy",
+    "iso": "eg",
+    "name": "Egypte",
+    "group": "L"
+  },
+  {
+    "id": "civ",
+    "iso": "ci",
+    "name": "Ivoorkust",
+    "group": "A"
+  },
+  {
+    "id": "tun",
+    "iso": "tn",
+    "name": "Tunesië",
+    "group": "B"
+  },
+  {
+    "id": "aus",
+    "iso": "au",
+    "name": "Australië",
+    "group": "C"
+  },
+  {
+    "id": "irn",
+    "iso": "ir",
+    "name": "Iran",
+    "group": "D"
+  },
+  {
+    "id": "ksa",
+    "iso": "sa",
+    "name": "Saoedi-Arabië",
+    "group": "E"
+  },
+  {
+    "id": "qat",
+    "iso": "qa",
+    "name": "Qatar",
+    "group": "F"
+  },
+  {
+    "id": "ecu",
+    "iso": "ec",
+    "name": "Ecuador",
+    "group": "G"
+  },
+  {
+    "id": "per",
+    "iso": "pe",
+    "name": "Peru",
+    "group": "H"
+  },
+  {
+    "id": "chi",
+    "iso": "cl",
+    "name": "Chili",
+    "group": "I"
+  },
+  {
+    "id": "par",
+    "iso": "py",
+    "name": "Paraguay",
+    "group": "J"
+  },
+  {
+    "id": "sui",
+    "iso": "ch",
+    "name": "Zwitserland",
+    "group": "K"
+  },
+  {
+    "id": "den",
+    "iso": "dk",
+    "name": "Denemarken",
+    "group": "L"
+  },
+  {
+    "id": "pol",
+    "iso": "pl",
+    "name": "Polen",
+    "group": "A"
+  },
+  {
+    "id": "srb",
+    "iso": "rs",
+    "name": "Servië",
+    "group": "B"
+  },
+  {
+    "id": "aut",
+    "iso": "at",
+    "name": "Oostenrijk",
+    "group": "C"
+  },
+  {
+    "id": "swe",
+    "iso": "se",
+    "name": "Zweden",
+    "group": "D"
+  },
+  {
+    "id": "nor",
+    "iso": "no",
+    "name": "Noorwegen",
+    "group": "E"
+  },
+  {
+    "id": "sco",
+    "iso": "gb-sct",
+    "name": "Schotland",
+    "group": "F"
+  },
+  {
+    "id": "tur",
+    "iso": "tr",
+    "name": "Turkije",
+    "group": "G"
+  },
+  {
+    "id": "ukr",
+    "iso": "ua",
+    "name": "Oekraïne",
+    "group": "H"
+  },
+  {
+    "id": "gre",
+    "iso": "gr",
+    "name": "Griekenland",
+    "group": "I"
+  },
+  {
+    "id": "alg",
+    "iso": "dz",
+    "name": "Algerije",
+    "group": "J"
+  },
+  {
+    "id": "mli",
+    "iso": "ml",
+    "name": "Mali",
+    "group": "K"
+  },
+  {
+    "id": "nzl",
+    "iso": "nz",
+    "name": "Nieuw-Zeeland",
+    "group": "L"
+  }
 ]

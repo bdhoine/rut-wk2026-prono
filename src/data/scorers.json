@@ -1,8 +1,82 @@
 [
-  { "player": "Youssef En-Nesyri", "teamId": "mar", "goals": 2 },
-  { "player": "Raúl Jiménez", "teamId": "mex", "goals": 2 },
-  { "player": "Hirving Lozano", "teamId": "mex", "goals": 1 },
-  { "player": "Achraf Hakimi", "teamId": "mar", "goals": 1 },
-  { "player": "Kaoru Mitoma", "teamId": "jpn", "goals": 1 },
-  { "player": "Takefusa Kubo", "teamId": "jpn", "goals": 1 }
+  {
+    "player": "Kevin De Bruyne",
+    "teamId": "gre",
+    "goals": 5
+  },
+  {
+    "player": "Lamine Yamal",
+    "teamId": "aut",
+    "goals": 5
+  },
+  {
+    "player": "Rafael Leão",
+    "teamId": "col",
+    "goals": 5
+  },
+  {
+    "player": "Victor Osimhen",
+    "teamId": "arg",
+    "goals": 5
+  },
+  {
+    "player": "Achraf Hakimi",
+    "teamId": "mli",
+    "goals": 5
+  },
+  {
+    "player": "Phil Foden",
+    "teamId": "alg",
+    "goals": 5
+  },
+  {
+    "player": "Cristiano Ronaldo",
+    "teamId": "nor",
+    "goals": 4
+  },
+  {
+    "player": "Vinícius Júnior",
+    "teamId": "tun",
+    "goals": 3
+  },
+  {
+    "player": "Erling Haaland",
+    "teamId": "eng",
+    "goals": 3
+  },
+  {
+    "player": "Lautaro Martínez",
+    "teamId": "pol",
+    "goals": 3
+  },
+  {
+    "player": "Federico Valverde",
+    "teamId": "bra",
+    "goals": 3
+  },
+  {
+    "player": "Kylian Mbappé",
+    "teamId": "esp",
+    "goals": 2
+  },
+  {
+    "player": "Harry Kane",
+    "teamId": "tun",
+    "goals": 2
+  },
+  {
+    "player": "Heung-min Son",
+    "teamId": "can",
+    "goals": 2
+  },
+  {
+    "player": "Jude Bellingham",
+    "teamId": "swe",
+    "goals": 1
+  },
+  {
+    "player": "Julián Álvarez",
+    "teamId": "bra",
+    "goals": 1
+  }
 ]

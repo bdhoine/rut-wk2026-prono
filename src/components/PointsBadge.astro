@@ -1,0 +1,29 @@
+---
+// Coloured points badge with an explanation shown on hover (desktop) / tap (mobile).
+// Pure CSS: the tooltip is revealed via group-hover and group-focus-within, so no JS.
+//  - 0 points        -> red
+//  - exact score (9) -> distinct "perfect" tint (amber)
+//  - other > 0       -> green
+interface Props {
+  points: number;
+  exact: boolean;
+  explanation: string;
+}
+const { points, exact, explanation } = Astro.props;
+const color = points === 0
+  ? 'bg-red-600 text-white'
+  : exact
+    ? 'bg-amber-400 text-black'
+    : 'bg-emerald-600 text-white';
+---
+<span class="group relative inline-flex">
+  <button
+    type="button"
+    aria-label={`${points} punten — toon uitleg`}
+    class:list={['inline-flex min-w-9 items-center justify-center rounded-md px-2 py-1.5 text-sm font-bold tabular-nums focus:outline-none focus-visible:ring-2 focus-visible:ring-ring', color]}
+  >{points}</button>
+  <span
+    role="tooltip"
+    class="pointer-events-none absolute right-0 top-full z-30 mt-1.5 hidden w-56 rounded-md border bg-popover p-2 text-left text-xs font-normal text-popover-foreground shadow-md group-hover:block group-focus-within:block"
+  >{explanation}</span>
+</span>
