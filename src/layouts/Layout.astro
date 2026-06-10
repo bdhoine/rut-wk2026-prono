@@ -53,19 +53,19 @@ const nav = [
 
     <div id="mobile-menu" class="hidden md:hidden">
       <div id="menu-backdrop" class="fixed inset-0 z-40 bg-black/40"></div>
-      <nav class="fixed right-0 top-0 z-50 flex h-full w-64 flex-col gap-1 bg-background p-4 shadow-xl">
+      <nav class="fixed right-0 top-0 z-50 flex h-full w-72 max-w-[80vw] flex-col gap-1.5 bg-background p-4 shadow-xl">
         <div class="mb-2 flex items-center justify-between">
-          <span class="font-bold tracking-tight">Menu</span>
-          <button id="menu-close" type="button" aria-label="Menu sluiten" class="grid size-9 place-items-center rounded-md hover:bg-muted">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-5"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          <span class="text-lg font-bold tracking-tight">Menu</span>
+          <button id="menu-close" type="button" aria-label="Menu sluiten" class="grid size-11 place-items-center rounded-md hover:bg-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-6"><path d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
         </div>
         {nav.map((item) => (
           <a
             href={item.href}
             class:list={[
-              'rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
-              item.active ? 'bg-secondary text-secondary-foreground' : 'text-foreground hover:bg-muted',
+              'flex min-h-12 items-center rounded-lg px-4 text-base font-medium transition-colors',
+              item.active ? 'bg-secondary text-secondary-foreground' : 'text-foreground hover:bg-muted active:bg-muted',
             ]}
           >{item.label}</a>
         ))}
