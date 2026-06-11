@@ -149,8 +149,8 @@ const scoringPayload =
     };
     const key = (h: string, a: string) => `${h}|${a}`;
     const minLabel = (m: any) => (m.status === 'HT' ? 'rust' : m.elapsed != null ? `${m.elapsed}'` : 'live');
-    const teamName = (iso: string, fallback: string) => teamMap[iso]?.name || fallback || iso;
-    const flag = (iso: string, name: string) => `<span class="fi fi-${iso} shrink-0 rounded-[2px] text-lg" role="img" aria-label="${name}"></span>`;
+    const teamName = (id: string, fallback: string) => teamMap[id]?.name || fallback || id;
+    const flag = (id: string, name: string) => `<span class="fi fi-${teamMap[id]?.iso || id} shrink-0 rounded-[2px] text-lg" role="img" aria-label="${name}"></span>`;
     const livePill = (gh: number, ga: number) =>
       `<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-0.5 text-base font-bold tabular-nums text-red-800">${gh}<span class="px-1 text-red-400">–</span>${ga}</span>`;
     const finalPill = (gh: number, ga: number) =>
@@ -158,16 +158,16 @@ const scoringPayload =
     const liveBadge = (m: any) =>
       `<span class="live-badge inline-flex items-center gap-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"><span class="size-1.5 animate-pulse rounded-full bg-white"></span>${minLabel(m)}</span>`;
 
-    function card(homeIso: string, awayIso: string, hName: string, aName: string, meta: string, scoreHtml: string) {
+    function card(homeId: string, awayId: string, hName: string, aName: string, meta: string, scoreHtml: string) {
       const el = document.createElement('div');
       el.className = 'rounded-xl border bg-card px-4 py-3 shadow-sm';
-      el.dataset.key = key(homeIso, awayIso);
+      el.dataset.key = key(homeId, awayId);
       el.innerHTML = `
         <div class="mb-2 flex items-center justify-center gap-2 text-center text-xs font-medium text-muted-foreground">${meta}</div>
         <div class="flex items-center justify-center gap-3">
-          <div class="flex min-w-0 flex-1 items-center justify-end gap-2"><span class="truncate text-right font-medium">${hName}</span>${flag(homeIso, hName)}</div>
+          <div class="flex min-w-0 flex-1 items-center justify-end gap-2"><span class="truncate text-right font-medium">${hName}</span>${flag(homeId, hName)}</div>
           <div class="shrink-0">${scoreHtml}</div>
-          <div class="flex min-w-0 flex-1 items-center gap-2">${flag(awayIso, aName)}<span class="truncate font-medium">${aName}</span></div>
+          <div class="flex min-w-0 flex-1 items-center gap-2">${flag(awayId, aName)}<span class="truncate font-medium">${aName}</span></div>
         </div>`;
       return el;
     }
@@ -209,11 +209,11 @@ const scoringPayload =
       }
     }
 
-    function findCard(homeIso: string, awayIso: string) {
-      const sel = (h: string, a: string) => document.querySelector<HTMLElement>(`[data-match-card][data-home-iso="${h}"][data-away-iso="${a}"]`);
-      const direct = sel(homeIso, awayIso);
+    function findCard(homeId: string, awayId: string) {
+      const sel = (h: string, a: string) => document.querySelector<HTMLElement>(`[data-match-card][data-home-team="${h}"][data-away-team="${a}"]`);
+      const direct = sel(homeId, awayId);
       if (direct) return { card: direct, swapped: false };
-      const swapped = sel(awayIso, homeIso);
+      const swapped = sel(awayId, homeId);
       if (swapped) return { card: swapped, swapped: true };
       return null;
     }

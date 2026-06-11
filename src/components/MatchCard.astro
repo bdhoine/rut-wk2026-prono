@@ -21,8 +21,8 @@ const Tag = href ? 'a' : 'div';
 <Tag
   {...(href ? { href } : {})}
   data-match-card
-  data-home-iso={home.team?.iso}
-  data-away-iso={away.team?.iso}
+  data-home-team={home.team?.id}
+  data-away-team={away.team?.id}
   class:list={[
     'block rounded-xl border bg-card px-4 py-3 shadow-sm',
     href && 'transition-all hover:border-primary/40 hover:shadow-md',

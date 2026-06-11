@@ -35,28 +35,32 @@ badge is colour-coded (red = 0, green = scored, amber = exact).
 
 ## Live scores & automatic results
 
-Two integrations keep the app current during the tournament, both backed by
-[API-Football](https://www.api-football.com) (free plan, FIFA World Cup =
-league 1, season 2026). Set the API key once as `API_FOOTBALL_KEY`.
+Two integrations keep the app current during the tournament, both backed by the
+free, open [worldcup26.ir](https://worldcup26.ir) WK 2026 API. **No API key is
+required.** (It's a community service, so the code degrades gracefully when it's
+temporarily unavailable.)
 
 - **Final results (build-time data).** A GitHub Actions workflow
   ([`.github/workflows/update-results.yml`](./.github/workflows/update-results.yml))
-  runs [`scripts/update-results.mjs`](./scripts/update-results.mjs) on a cron,
-  writing finished-match scores (120-min, penalty shoot-outs excluded), filling
-  knockout teams as brackets resolve, refreshing `scorers.json`, and resolving
-  the bonus `outcomes.json` once the final is played. It commits any changes,
-  which triggers a Netlify rebuild. Add the key under **Settings → Secrets and
-  variables → Actions → `API_FOOTBALL_KEY`**. Run locally with
-  `API_FOOTBALL_KEY=… npm run results:update`.
+  runs [`scripts/update-results.mjs`](./scripts/update-results.mjs) on a cron. It
+  links each fixture to our match (by team pair or kickoff wall-clock + round),
+  writes finished-match scores, fills knockout teams as brackets resolve,
+  aggregates `scorers.json`, and resolves the bonus `outcomes.json` once the
+  final is played. It commits any changes, which triggers a Netlify rebuild. Run
+  locally with `npm run results:update`.
 - **Live scores (client-side).** A "Live scores" toggle on the home, Programma
   and Kalender pages fetches the in-progress scores and then auto-refreshes
   every minute while on (plus a manual "Ververs" button). On the home page the
   live (and recently-finished, ≤ 8 h) matches show as cards and the **klassement
   recomputes provisional points live**. Requests go through a Netlify Function
   ([`netlify/functions/live.mjs`](./netlify/functions/live.mjs), at
-  `/.netlify/functions/live`) so the key stays server-side; it caches 5 minutes
-  (CDN + memory) and degrades gracefully on rate-limit/error. Add the same key
-  in the **Netlify** site environment variables.
+  `/.netlify/functions/live`) that caches 60 seconds (CDN + memory) and serves
+  the last good payload on error. The shared client/resolver lives in
+  [`scripts/lib/worldcup.mjs`](./scripts/lib/worldcup.mjs).
+
+> Knockout scores from this source are the score as reported (no separate
+> after-120-min / penalty handling); double-check knockout results against
+> `docs/rules.md` if needed.
 
 ## Development
 
