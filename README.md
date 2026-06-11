@@ -51,6 +51,7 @@ The data is produced by the deterministic generator [`scripts/generate-data.mjs`
 which can emit the dataset for any **tournament phase** — switch with one command:
 
 ```bash
+npm run data:start    # tournament not started: full schedule, no results, only Barry's real predictions
 npm run data:md2      # after matchday 2 (MD1+MD2 played; MD3 + knockout to come)
 npm run data:groups   # group stage complete (MD1-3 played; Round of 32 teams known)
 npm run data:final    # whole tournament played (champion decided, bonus outcomes resolved)

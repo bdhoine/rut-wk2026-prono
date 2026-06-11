@@ -3,6 +3,7 @@
 // venue's UTC offset, so the frontend (Europe/Brussels) shows Belgium time.
 //
 // PHASES (pass as the first CLI arg, default "groups"):
+//   start   – tournament not started: full schedule, no results, only Barry's real predictions
 //   md2     – after matchday 2 (MD1+MD2 played; MD3 + knockout to come)
 //   groups  – group stage complete (MD1-3 played; Round of 32 teams known, not played)
 //   final   – whole tournament played (champion decided, bonus outcomes resolved)
@@ -23,10 +24,12 @@ const DATA = join(__dirname, '..', 'src', 'data');
 mkdirSync(DATA, { recursive: true });
 
 const PHASE = (process.argv[2] || 'groups').toLowerCase();
-if (!['md2', 'groups', 'final'].includes(PHASE)) {
-  console.error(`Unknown phase "${PHASE}". Use: md2 | groups | final`);
+if (!['start', 'md2', 'groups', 'final'].includes(PHASE)) {
+  console.error(`Unknown phase "${PHASE}". Use: start | md2 | groups | final`);
   process.exit(1);
 }
+const NO_RESULTS = PHASE === 'start'; // tournament not started: schedule only, no results
+const ONLY_BARRY = PHASE === 'start'; // only the real personal entry, no dummy contestants
 const GROUP3_DONE = PHASE === 'groups' || PHASE === 'final';
 const KO_RESOLVED = PHASE === 'groups' || PHASE === 'final'; // knockout teams known
 const KO_PLAYED = PHASE === 'final';
@@ -199,7 +202,7 @@ for (const [group, md, date, time, city, homeEN, awayEN] of GROUP_FIXTURES) {
   const key = `${group}-${md}`;
   perGroupMd[key] = (perGroupMd[key] || 0) + 1;
   const homeId = byEnglish.get(homeEN), awayId = byEnglish.get(awayEN);
-  const finished = md <= 2 || (md === 3 && GROUP3_DONE);
+  const finished = !NO_RESULTS && (md <= 2 || (md === 3 && GROUP3_DONE));
   const m = {
     id: `g${group}-md${md}-${perGroupMd[key]}`, round: 'group', matchday: md,
     kickoff: kickoff(date, time, city), venue: venueOf(city),
@@ -331,7 +334,7 @@ const dummies = NAMES.map((name) => ({
     mostConcededTeamId: pick(allTeamIds, predR), mostScoredTeamId: pick(winnerPool, predR),
   },
 }));
-const participants = [barry, ...dummies];
+const participants = ONLY_BARRY ? [barry] : [barry, ...dummies];
 
 // Barry's provided group predictions (keyed by normalised home|away).
 const USER_LINES = [
@@ -383,7 +386,7 @@ for (const stage of ['group', 'ko']) {
 
 // ---- scorers + bonus outcomes ----
 const goalsSeq = [7, 6, 5, 5, 4, 4, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1];
-const scorers = PLAYERS.map(([player, iso], i) => ({ player, teamId: idOf(iso), goals: goalsSeq[i] ?? 1 }));
+const scorers = NO_RESULTS ? [] : PLAYERS.map(([player, iso], i) => ({ player, teamId: idOf(iso), goals: goalsSeq[i] ?? 1 }));
 
 const outcomes = { topScorer: '', winnerTeamId: '', mostConcededTeamId: '', mostScoredTeamId: '' };
 if (PHASE === 'final') {
