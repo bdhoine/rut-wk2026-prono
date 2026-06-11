@@ -28,5 +28,25 @@
       "mostConcededTeamId": "ht",
       "mostScoredTeamId": "es"
     }
+  },
+  {
+    "id": "hakke",
+    "name": "Hakke",
+    "bonus": {
+      "topScorer": "Lamine Yamal",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "ruub",
+    "name": "Ruub",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "gbeng",
+      "mostConcededTeamId": "pa",
+      "mostScoredTeamId": "es"
+    }
   }
 ]

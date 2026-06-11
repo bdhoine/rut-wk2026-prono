@@ -383,15 +383,63 @@ const MAXIM_LINES = [
   ['Noorwegen', 'Frankrijk', 1, 1], ['Senegal', 'Irak', 2, 0], ['Kaapverdië', 'Saoedi-Arabië', 1, 1], ['Kroatië', 'Ghana', 1, 0],
   ['Panama', 'Engeland', 0, 3], ['Colombia', 'Portugal', 1, 1], ['DR Congo', 'Oezbekistan', 1, 2], ['Algerije', 'Oostenrijk', 1, 2],
 ];
+const HAKKE_LINES = [
+  // matchday 1
+  ['Mexico', 'Zuid-Afrika', 2, 0], ['Zuid-Korea', 'Tsjechië', 1, 1], ['Canada', 'Bosnië-Herzegovina', 1, 0], ['Verenigde Staten', 'Paraguay', 1, 1],
+  ['Qatar', 'Zwitserland', 1, 2], ['Brazilië', 'Marokko', 2, 2], ['Haïti', 'Schotland', 0, 1], ['Australië', 'Turkije', 2, 1],
+  ['Duitsland', 'Curaçao', 4, 0], ['Nederland', 'Japan', 1, 1], ['Ivoorkust', 'Ecuador', 1, 1], ['Zweden', 'Tunesië', 0, 1],
+  ['Spanje', 'Kaapverdië', 4, 0], ['België', 'Egypte', 3, 0], ['Saoedi-Arabië', 'Uruguay', 0, 1], ['Iran', 'Nieuw-Zeeland', 1, 0],
+  ['Frankrijk', 'Senegal', 2, 1], ['Irak', 'Noorwegen', 0, 1], ['Argentinië', 'Algerije', 2, 0], ['Oostenrijk', 'Jordanië', 1, 0],
+  ['Portugal', 'DR Congo', 3, 0], ['Engeland', 'Kroatië', 2, 1], ['Ghana', 'Panama', 1, 0], ['Oezbekistan', 'Colombia', 0, 2],
+  // matchday 2
+  ['Tsjechië', 'Zuid-Afrika', 0, 0], ['Zwitserland', 'Bosnië-Herzegovina', 1, 1], ['Canada', 'Qatar', 2, 1], ['Mexico', 'Zuid-Korea', 1, 0],
+  ['Verenigde Staten', 'Australië', 1, 1], ['Schotland', 'Marokko', 0, 1], ['Brazilië', 'Haïti', 3, 0], ['Turkije', 'Paraguay', 2, 1],
+  ['Nederland', 'Zweden', 3, 1], ['Duitsland', 'Ivoorkust', 3, 0], ['Ecuador', 'Curaçao', 2, 0], ['Tunesië', 'Japan', 1, 2],
+  ['Spanje', 'Saoedi-Arabië', 3, 0], ['België', 'Iran', 2, 0], ['Uruguay', 'Kaapverdië', 3, 0], ['Nieuw-Zeeland', 'Egypte', 1, 2],
+  ['Argentinië', 'Oostenrijk', 2, 0], ['Frankrijk', 'Irak', 3, 1], ['Noorwegen', 'Senegal', 1, 1], ['Jordanië', 'Algerije', 0, 0],
+  ['Portugal', 'Oezbekistan', 3, 0], ['Engeland', 'Ghana', 2, 0], ['Panama', 'Kroatië', 0, 2], ['Colombia', 'DR Congo', 2, 1],
+  // matchday 3
+  ['Zwitserland', 'Canada', 2, 2], ['Bosnië-Herzegovina', 'Qatar', 0, 0], ['Marokko', 'Haïti', 3, 0], ['Schotland', 'Brazilië', 1, 1],
+  ['Zuid-Afrika', 'Zuid-Korea', 0, 1], ['Tsjechië', 'Mexico', 1, 1], ['Curaçao', 'Ivoorkust', 1, 1], ['Ecuador', 'Duitsland', 1, 2],
+  ['Japan', 'Zweden', 2, 0], ['Tunesië', 'Nederland', 1, 1], ['Paraguay', 'Australië', 0, 1], ['Turkije', 'Verenigde Staten', 1, 1],
+  ['Noorwegen', 'Frankrijk', 0, 2], ['Senegal', 'Irak', 2, 0], ['Kaapverdië', 'Saoedi-Arabië', 0, 0], ['Uruguay', 'Spanje', 1, 3],
+  ['Egypte', 'Iran', 1, 1], ['Nieuw-Zeeland', 'België', 0, 2], ['Kroatië', 'Ghana', 1, 1], ['Panama', 'Engeland', 0, 3],
+  ['Colombia', 'Portugal', 1, 1], ['DR Congo', 'Oezbekistan', 1, 1], ['Algerije', 'Oostenrijk', 1, 1], ['Jordanië', 'Argentinië', 0, 2],
+];
+const RUUB_LINES = [
+  // matchday 1
+  ['Mexico', 'Zuid-Afrika', 2, 1], ['Zuid-Korea', 'Tsjechië', 1, 1], ['Canada', 'Bosnië-Herzegovina', 2, 0], ['Verenigde Staten', 'Paraguay', 2, 1],
+  ['Qatar', 'Zwitserland', 1, 3], ['Brazilië', 'Marokko', 2, 1], ['Haïti', 'Schotland', 0, 2], ['Australië', 'Turkije', 1, 1],
+  ['Duitsland', 'Curaçao', 4, 0], ['Nederland', 'Japan', 2, 1], ['Ivoorkust', 'Ecuador', 1, 1], ['Zweden', 'Tunesië', 2, 0],
+  ['Spanje', 'Kaapverdië', 3, 0], ['België', 'Egypte', 2, 1], ['Saoedi-Arabië', 'Uruguay', 0, 2], ['Iran', 'Nieuw-Zeeland', 2, 0],
+  ['Frankrijk', 'Senegal', 2, 1], ['Irak', 'Noorwegen', 0, 2], ['Argentinië', 'Algerije', 3, 0], ['Oostenrijk', 'Jordanië', 2, 0],
+  ['Portugal', 'DR Congo', 3, 0], ['Engeland', 'Kroatië', 2, 0], ['Ghana', 'Panama', 2, 1], ['Oezbekistan', 'Colombia', 0, 2],
+  // matchday 2
+  ['Tsjechië', 'Zuid-Afrika', 2, 1], ['Zwitserland', 'Bosnië-Herzegovina', 2, 0], ['Canada', 'Qatar', 2, 1], ['Mexico', 'Zuid-Korea', 2, 1],
+  ['Verenigde Staten', 'Australië', 2, 0], ['Schotland', 'Marokko', 2, 1], ['Brazilië', 'Haïti', 4, 0], ['Turkije', 'Paraguay', 1, 1],
+  ['Nederland', 'Zweden', 2, 1], ['Duitsland', 'Ivoorkust', 3, 1], ['Ecuador', 'Curaçao', 3, 0], ['Tunesië', 'Japan', 1, 2],
+  ['Spanje', 'Saoedi-Arabië', 3, 0], ['België', 'Iran', 3, 0], ['Uruguay', 'Kaapverdië', 2, 0], ['Nieuw-Zeeland', 'Egypte', 0, 2],
+  ['Argentinië', 'Oostenrijk', 2, 1], ['Frankrijk', 'Irak', 3, 0], ['Noorwegen', 'Senegal', 1, 1], ['Jordanië', 'Algerije', 2, 0],
+  ['Portugal', 'Oezbekistan', 3, 0], ['Engeland', 'Ghana', 3, 1], ['Panama', 'Kroatië', 0, 2], ['Colombia', 'DR Congo', 2, 0],
+  // matchday 3
+  ['Zwitserland', 'Canada', 1, 1], ['Bosnië-Herzegovina', 'Qatar', 2, 1], ['Marokko', 'Haïti', 3, 0], ['Schotland', 'Brazilië', 3, 1],
+  ['Zuid-Afrika', 'Zuid-Korea', 1, 1], ['Tsjechië', 'Mexico', 1, 1], ['Curaçao', 'Ivoorkust', 0, 2], ['Ecuador', 'Duitsland', 1, 2],
+  ['Japan', 'Zweden', 1, 2], ['Tunesië', 'Nederland', 0, 2], ['Paraguay', 'Australië', 2, 1], ['Turkije', 'Verenigde Staten', 1, 2],
+  ['Noorwegen', 'Frankrijk', 0, 2], ['Senegal', 'Irak', 2, 0], ['Kaapverdië', 'Saoedi-Arabië', 1, 1], ['Uruguay', 'Spanje', 1, 2],
+  ['Egypte', 'Iran', 0, 1], ['Nieuw-Zeeland', 'België', 0, 3], ['Kroatië', 'Ghana', 2, 1], ['Panama', 'Engeland', 0, 2],
+  ['Colombia', 'Portugal', 1, 2], ['DR Congo', 'Oezbekistan', 1, 1], ['Algerije', 'Oostenrijk', 1, 2], ['Jordanië', 'Argentinië', 0, 3],
+];
 const deFijne = { id: 'defijne', name: 'De Fijne', skill: 0.7, predMap: dutchMap(DEFIJNE_LINES), bonus: { topScorer: 'Kylian Mbappé', winnerTeamId: 'fr', mostConcededTeamId: 'ht', mostScoredTeamId: 'fr' } };
 const maxim = { id: 'maxim', name: 'Maxim Breugelmans', skill: 0.7, predMap: dutchMap(MAXIM_LINES), bonus: { topScorer: 'Erling Haaland', winnerTeamId: 'es', mostConcededTeamId: 'ht', mostScoredTeamId: 'es' } };
+const hakke = { id: 'hakke', name: 'Hakke', skill: 0.7, predMap: dutchMap(HAKKE_LINES), bonus: { topScorer: 'Lamine Yamal', winnerTeamId: 'fr', mostConcededTeamId: 'ht', mostScoredTeamId: 'es' } };
+const ruub = { id: 'ruub', name: 'Ruub', skill: 0.7, predMap: dutchMap(RUUB_LINES), bonus: { topScorer: 'Harry Kane', winnerTeamId: 'gbeng', mostConcededTeamId: 'pa', mostScoredTeamId: 'es' } };
 function dutchMapPred(p, m) {
   const h = norm(teamNlById.get(m.homeTeamId)), a = norm(teamNlById.get(m.awayTeamId));
   const d = p.predMap.get(`${h}|${a}`); if (d) return { home: d[0], away: d[1] };
   const r = p.predMap.get(`${a}|${h}`); if (r) return { home: r[1], away: r[0] };
   return null;
 }
-const REAL = [barry, deFijne, maxim];
+const REAL = [barry, deFijne, maxim, hakke, ruub];
 const participants = NO_DUMMIES ? REAL : [...REAL, ...dummies];
 
 // Barry's provided group predictions (keyed by normalised home|away).
