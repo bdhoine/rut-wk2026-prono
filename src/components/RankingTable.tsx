@@ -111,14 +111,14 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
   const favRows = displayRows.filter((r) => favSet.has(r.participantId));
 
   const renderTable = (data: DisplayRow[]) => (
-    <Table>
+    <Table className="table-fixed">
       <TableHeader>
         <TableRow>
-          <TableHead className="w-10" />
-          <TableHead className="w-10 text-center">#</TableHead>
-          <TableHead>Naam</TableHead>
-          <TableHead className="hidden text-right md:table-cell">Vorm</TableHead>
-          <TableHead className="w-14 text-right">Punten</TableHead>
+          <TableHead className="w-8 px-1" />
+          <TableHead className="w-8 px-1 text-center">#</TableHead>
+          <TableHead className="px-2">Naam</TableHead>
+          <TableHead className="w-[4.5rem] px-1.5 text-right">Vorm</TableHead>
+          <TableHead className="w-14 px-2 text-right">Punten</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -126,32 +126,29 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
           const fav = favSet.has(row.participantId);
           return (
             <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)}>
-              <TableCell>
+              <TableCell className="px-1">
                 <button
                   type="button"
                   aria-label={fav ? `${row.name} uit favorieten` : `${row.name} als favoriet`}
                   aria-pressed={fav}
                   onClick={(e) => { e.stopPropagation(); toggle(row.participantId); }}
-                  className="grid size-8 place-items-center rounded-md hover:bg-muted"
+                  className="grid size-7 place-items-center rounded-md hover:bg-muted"
                 >
-                  <Star filled={fav} />
+                  <Star filled={fav} className="size-[18px]" />
                 </button>
               </TableCell>
-              <TableCell className="text-center">{positionBadge(row.position)}</TableCell>
-              <TableCell className="font-medium">
+              <TableCell className="px-1 text-center">{positionBadge(row.position)}</TableCell>
+              <TableCell className="px-2 font-medium">
                 <div className="flex min-w-0 items-center gap-2">
                   {row.winnerIso && (
                     <span className={`fi fi-${row.winnerIso} shrink-0 rounded-[2px] text-base shadow-sm`} title={row.winnerName ?? undefined} role="img" aria-label={row.winnerName ?? undefined} />
                   )}
-                  <div className="min-w-0">
-                    <span className="block truncate">{row.name}</span>
-                    {row.form?.length > 0 && <div className="mt-1 md:hidden"><FormDots form={row.form} /></div>}
-                  </div>
+                  <span className="truncate">{row.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="hidden text-right md:table-cell"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
-              <TableCell className="text-right font-bold tabular-nums">
-                <div className="flex items-center justify-end gap-1.5">
+              <TableCell className="px-1.5 text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
+              <TableCell className="px-2 text-right font-bold tabular-nums">
+                <div className="flex items-center justify-end gap-1">
                   {row.delta > 0 && (
                     <span className="rounded bg-red-100 px-1 py-0.5 text-[10px] font-semibold tabular-nums text-red-700" title="voorlopige live-punten">+{row.delta}</span>
                   )}

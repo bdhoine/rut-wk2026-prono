@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import RankingTable from '@/components/RankingTable.tsx';
 import LiveScores from '@/components/LiveScores.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
 import { ranking, getParticipant, getTeam, participantForm } from '@/lib/data';
 
 const rows = ranking().map((r) => {
@@ -20,8 +21,10 @@ const rows = ranking().map((r) => {
 });
 ---
 <Layout title="Klassement — Rut Prono WK 2026">
-  <h1 class="mb-1 text-2xl font-bold tracking-tight">Klassement</h1>
-  <p class="mb-4 text-sm text-muted-foreground">Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar.</p>
+  <div class="mb-4 flex flex-wrap items-center gap-2">
+    <h1 class="text-2xl font-bold tracking-tight">Klassement</h1>
+    <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar." />
+  </div>
   <LiveScores mode="list" />
   <RankingTable client:load rows={rows} />
 </Layout>

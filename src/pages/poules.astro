@@ -2,14 +2,17 @@
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
 import { groups, standingsForGroup, bestThirdPlaced } from '@/lib/data';
 
 const groupTables = groups.map((g) => ({ id: g.id, rows: standingsForGroup(g.id) }));
 const thirds = bestThirdPlaced();
 ---
 <Layout title="Poules">
-  <h1 class="mb-1 text-2xl font-bold tracking-tight">Poulestand</h1>
-  <p class="mb-5 text-sm text-muted-foreground">Top 2 per poule plaatst zich rechtstreeks. Tik op een land voor het programma.</p>
+  <div class="mb-5 flex flex-wrap items-center gap-2">
+    <h1 class="text-2xl font-bold tracking-tight">Poulestand</h1>
+    <InfoToggle text="Top 2 per poule plaatst zich rechtstreeks. Tik op een land voor het programma." />
+  </div>
 
   <div class="space-y-6">
     {groupTables.map((g) => (
@@ -21,8 +24,10 @@ const thirds = bestThirdPlaced();
   </div>
 
   <section class="mt-8">
-    <h2 class="mb-1 text-lg font-semibold">Beste nummers 3</h2>
-    <p class="mb-2 text-sm text-muted-foreground">De 8 beste derdes plaatsen zich voor de 1/16de finales (groen).</p>
+    <div class="mb-2 flex flex-wrap items-center gap-2">
+      <h2 class="text-lg font-semibold">Beste nummers 3</h2>
+      <InfoToggle text="De 8 beste derdes plaatsen zich voor de 1/16de finales (groen)." />
+    </div>
     <div class="overflow-hidden rounded-xl border bg-card">
       <table class="w-full table-fixed text-sm">
         <colgroup>

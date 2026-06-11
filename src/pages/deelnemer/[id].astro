@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
 import {
   participants, getParticipant, getTeam, sideLabel, positionOf, predictionsForParticipant, outcomes, settings,
   eliminatedTeamIds, currentBonusLeaders,
@@ -143,8 +144,10 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
   </section>
 
   <section>
-    <h2 class="mb-1 text-lg font-semibold">Pronostieken</h2>
-    <p class="mb-3 text-sm text-muted-foreground">De grote score is de voorspelling, daaronder staat de uitslag van de wedstrijd.</p>
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <h2 class="text-lg font-semibold">Pronostieken</h2>
+      <InfoToggle text="De grote score is de voorspelling, daaronder staat de uitslag van de wedstrijd." />
+    </div>
     <div class="space-y-6">
       {byRound.map((g) => (
         <div>
@@ -169,7 +172,9 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
                     </div>
                   </div>
                   <div class="relative z-10 shrink-0">
-                    {score ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} /> : <span class="text-xs text-muted-foreground">—</span>}
+                    {score
+                      ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} />
+                      : <span class="inline-flex min-w-9 items-center justify-center rounded-md border border-dashed border-muted-foreground/25 px-2 py-1.5 text-sm text-muted-foreground/40">·</span>}
                   </div>
                 </div>
               );
