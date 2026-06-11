@@ -107,7 +107,7 @@ const outcomeGroups = [
             <p class="rounded-xl border border-dashed px-3 py-3 text-sm text-muted-foreground">Niemand.</p>
           ) : (
             <div class="overflow-hidden rounded-xl border bg-card">
-              <table class="w-full table-fixed text-sm">
+              <table class="w-full table-fixed text-sm" data-bucket>
                 <colgroup>
                   <col />
                   <col class="w-24" />
@@ -115,7 +115,7 @@ const outcomeGroups = [
                 </colgroup>
                 <tbody>
                   {g.rows.map(({ participant, prediction, score }) => (
-                    <tr class="border-b last:border-0">
+                    <tr class="border-b last:border-0" data-pid={participant.id}>
                       <td class="px-3 py-2.5">
                         <a href={`/deelnemer/${participant.id}`} class="font-medium hover:underline">{participant.name}</a>
                       </td>
@@ -133,4 +133,27 @@ const outcomeGroups = [
       ))}
     </div>
   </section>
+
+  <script>
+    // Lift favourited participants to the top of each outcome bucket (favourites
+    // are stored client-side in localStorage by the klassement table).
+    const favs = new Set(JSON.parse(localStorage.getItem('rut-wk2026-favorieten') || '[]'));
+    if (favs.size) {
+      document.querySelectorAll('table[data-bucket] tbody').forEach((tbody) => {
+        const favRows = [...tbody.querySelectorAll('tr[data-pid]')].filter((r) => favs.has(r.dataset.pid));
+        favRows.reverse().forEach((r) => {
+          r.classList.add('fav-row');
+          const cell = r.querySelector('td');
+          if (cell && !cell.querySelector('.fav-star')) {
+            const star = document.createElement('span');
+            star.className = 'fav-star';
+            star.textContent = '★';
+            star.setAttribute('aria-hidden', 'true');
+            cell.prepend(star);
+          }
+          tbody.prepend(r);
+        });
+      });
+    }
+  </script>
 </Layout>

@@ -78,6 +78,16 @@
   --color-ring: var(--ring);
 }
 
+/* Favourited participants highlighted on match-detail buckets (toggled via JS). */
+.fav-row {
+  background-color: color-mix(in srgb, #f59e0b 12%, transparent);
+}
+.fav-star {
+  color: #f59e0b;
+  margin-right: 0.375rem;
+  font-size: 0.85em;
+}
+
 @layer base {
   * {
     border-color: var(--border);
