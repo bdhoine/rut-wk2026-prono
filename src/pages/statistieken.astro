@@ -2,8 +2,9 @@
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import MatchStatRow from '@/components/MatchStatRow.astro';
+import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers } from '@/lib/data';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines } from '@/lib/data';
 
 const scorers = topScorers();
 const scored = mostGoalsScored();
@@ -12,6 +13,8 @@ const topPoints = topMatchesByPoints(10);
 const topWrong = topMatchesByWrong(10);
 const chosenWinners = topChosenWinners(5);
 const chosenScorers = topChosenTopScorers(5);
+const popular = popularScorelines(8);
+const popularMax = popular[0]?.count ?? 1;
 ---
 <Layout title="Statistieken">
   <div class="mb-6 flex flex-wrap items-center gap-2">
@@ -155,6 +158,28 @@ const chosenScorers = topChosenTopScorers(5);
       ))}
     </div>
   </section>
+
+  {popular.length > 0 && (
+    <section class="mt-8">
+      <div class="mb-2 flex flex-wrap items-center gap-2">
+        <h2 class="text-lg font-semibold">Populairste uitslagen</h2>
+        <InfoToggle text="De scores die deelnemers het vaakst tipten, over alle wedstrijden samen." />
+      </div>
+      <div class="rounded-xl border bg-card p-4">
+        <div class="space-y-2.5">
+          {popular.map((s) => (
+            <div class="flex items-center gap-3">
+              <div class="shrink-0"><ScoreBoxes home={s.home} away={s.away} size="sm" /></div>
+              <div class="h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
+                <div class="h-full rounded-full bg-gold" style={`width:${Math.round((s.count / popularMax) * 100)}%`}></div>
+              </div>
+              <span class="w-10 shrink-0 text-right text-sm font-bold tabular-nums">{s.count}×</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <div class="mt-8 grid gap-8 md:grid-cols-2">
     <section>

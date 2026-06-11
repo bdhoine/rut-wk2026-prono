@@ -107,6 +107,30 @@ const submissions: { round: RoundId; what: string }[] = [
     </div>
   </section>
 
+  <!-- Prijzengeld -->
+  <section class="mb-8">
+    <h2 class="mb-2 text-lg font-semibold">Prijzengeld</h2>
+    <p class="mb-2 text-sm text-muted-foreground">De eerste vijf in het eindklassement winnen een prijs.</p>
+    <div class="overflow-hidden rounded-xl border bg-card">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b text-muted-foreground">
+            <th class="px-3 py-2 text-left font-medium">Plaats</th>
+            <th class="px-3 py-2 text-right font-medium">Prijs</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[[1, 320], [2, 200], [3, 120], [4, 90], [5, 60]].map(([pos, prize]) => (
+            <tr class="border-b last:border-0">
+              <td class="px-3 py-2.5 font-medium">{pos}<sup>e</sup> plaats</td>
+              <td class="px-3 py-2.5 text-right font-bold tabular-nums">€{prize}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- Deelname & indienen -->
   <section>
     <h2 class="mb-2 text-lg font-semibold">Deelname & indienen</h2>

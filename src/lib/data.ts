@@ -305,6 +305,22 @@ export function topChosenTopScorers(limit = 5): { player: string; team?: Team; c
     .slice(0, limit);
 }
 
+/** Most-predicted scorelines across all participants' predictions. */
+export function popularScorelines(limit = 8): { home: number; away: number; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const p of predictions) {
+    const key = `${p.home}-${p.away}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([key, count]) => {
+      const [home, away] = key.split('-').map(Number);
+      return { home, away, count };
+    })
+    .sort((a, b) => b.count - a.count || a.home + a.away - (b.home + b.away))
+    .slice(0, limit);
+}
+
 /** Overall average points scored per (participant, finished match). */
 export function averageMatchPoints(): number {
   const stats = matchPointStats();

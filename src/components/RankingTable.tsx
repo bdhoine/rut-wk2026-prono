@@ -15,6 +15,10 @@ export interface RankingTableRow {
 
 const FAV_KEY = "rut-wk2026-favorieten";
 
+// Prize money per final position (euro). Shown on the klassement with a divider
+// after the last paid spot. The official ranking in the WhatsApp group counts.
+const PRIZES: Record<number, number> = { 1: 320, 2: 200, 3: 120, 4: 90, 5: 60 };
+
 const FORM_COLOR: Record<string, string> = {
   exact: "bg-emerald-500",
   partial: "bg-amber-400",
@@ -110,7 +114,7 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
 
   const favRows = displayRows.filter((r) => favSet.has(r.participantId));
 
-  const renderTable = (data: DisplayRow[]) => (
+  const renderTable = (data: DisplayRow[], showPrizeCut = false) => (
     <Table className="table-fixed">
       <TableHeader>
         <TableRow>
@@ -124,8 +128,9 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
       <TableBody>
         {data.map((row) => {
           const fav = favSet.has(row.participantId);
+          const inMoney = showPrizeCut && PRIZES[row.position] != null;
           return (
-            <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)}>
+            <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)} className={inMoney ? "bg-gold/10" : undefined}>
               <TableCell className="px-1">
                 <button
                   type="button"
@@ -179,7 +184,7 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
             <span className="size-2 animate-pulse rounded-full bg-red-600" /> Voorlopige stand — inclusief live-wedstrijden
           </p>
         )}
-        <div className="rounded-xl border bg-card p-1">{renderTable(displayRows)}</div>
+        <div className="rounded-xl border bg-card p-1">{renderTable(displayRows, true)}</div>
       </section>
     </div>
   );

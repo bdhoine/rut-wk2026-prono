@@ -29,11 +29,12 @@ const nav = [
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
     <script is:inline>
-      // Apply the theme before paint: stored override wins, otherwise follow the OS.
+      // Apply the theme before paint. Stored mode: 'light' | 'dark' | else 'auto'
+      // (follows the OS).
       (() => {
         try {
-          const stored = localStorage.getItem('rut-theme');
-          const dark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+          const m = localStorage.getItem('rut-theme');
+          const dark = m === 'dark' || (m !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
           document.documentElement.classList.toggle('dark', dark);
         } catch { /* ignore */ }
       })();
@@ -60,9 +61,13 @@ const nav = [
             ))}
           </nav>
 
-          <button id="theme-toggle" type="button" aria-label="Licht/donker wisselen" class="grid size-9 place-items-center rounded-md text-white hover:bg-white/10">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 dark:hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden size-5 dark:block"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+          <button id="theme-toggle" type="button" aria-label="Thema: auto, licht of donker" title="Thema wisselen (auto / licht / donker)" class="grid size-9 place-items-center rounded-md text-white hover:bg-white/10">
+            <!-- auto (contrast) -->
+            <svg data-mode="auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none" /></svg>
+            <!-- light (sun) -->
+            <svg data-mode="light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden size-5"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+            <!-- dark (moon) -->
+            <svg data-mode="dark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden size-5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
           </button>
 
           <button id="menu-toggle" type="button" aria-label="Menu openen" class="-mr-1 grid size-9 place-items-center rounded-md text-white hover:bg-white/10 md:hidden">
@@ -122,12 +127,22 @@ const nav = [
       document.getElementById('menu-close')?.addEventListener('click', close);
       document.getElementById('menu-backdrop')?.addEventListener('click', close);
 
-      // Light/dark override (defaults to the OS setting via the inline head script).
-      document.getElementById('theme-toggle')?.addEventListener('click', () => {
-        const dark = !document.documentElement.classList.contains('dark');
-        document.documentElement.classList.toggle('dark', dark);
-        try { localStorage.setItem('rut-theme', dark ? 'dark' : 'light'); } catch { /* ignore */ }
-      });
+      // Theme: cycles auto → light → dark. 'auto' follows the OS setting.
+      const themeBtn = document.getElementById('theme-toggle');
+      const mql = matchMedia('(prefers-color-scheme: dark)');
+      const readMode = () => {
+        try { const m = localStorage.getItem('rut-theme'); return m === 'light' || m === 'dark' ? m : 'auto'; } catch { return 'auto'; }
+      };
+      let mode = readMode();
+      const applyMode = (m) => {
+        mode = m;
+        try { m === 'auto' ? localStorage.removeItem('rut-theme') : localStorage.setItem('rut-theme', m); } catch { /* ignore */ }
+        document.documentElement.classList.toggle('dark', m === 'dark' || (m === 'auto' && mql.matches));
+        themeBtn?.querySelectorAll('[data-mode]').forEach((el) => el.classList.toggle('hidden', el.getAttribute('data-mode') !== m));
+      };
+      applyMode(mode); // sync the icon on load
+      themeBtn?.addEventListener('click', () => applyMode(mode === 'auto' ? 'light' : mode === 'light' ? 'dark' : 'auto'));
+      mql.addEventListener('change', () => { if (mode === 'auto') applyMode('auto'); });
     </script>
   </body>
 </html>
