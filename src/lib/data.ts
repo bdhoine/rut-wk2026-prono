@@ -160,6 +160,43 @@ export function bestThirdPlaced(): (StandingRow & { group: string; qualifies: bo
   return thirds.map((t, i) => ({ ...t, qualifies: i < 8 }));
 }
 
+/** Teams that can no longer win the tournament: knockout losers, plus group
+ *  non-qualifiers once the whole group stage is finished. */
+export function eliminatedTeamIds(): Set<string> {
+  const out = new Set<string>();
+  for (const m of matches) {
+    if (m.round === 'group' || m.status !== 'finished' || !m.result || !m.homeTeamId || !m.awayTeamId) continue;
+    const winner = m.winnerTeamId
+      ?? (m.result.home > m.result.away ? m.homeTeamId : m.result.away > m.result.home ? m.awayTeamId : null);
+    if (winner) out.add(winner === m.homeTeamId ? m.awayTeamId : m.homeTeamId);
+  }
+  const groupMatches = matches.filter((m) => m.round === 'group');
+  if (groupMatches.length > 0 && groupMatches.every((m) => m.status === 'finished')) {
+    const qualified = new Set<string>();
+    for (const g of groups) {
+      const s = standingsForGroup(g.id);
+      if (s[0]) qualified.add(s[0].team.id);
+      if (s[1]) qualified.add(s[1].team.id);
+    }
+    for (const t of bestThirdPlaced()) if (t.qualifies) qualified.add(t.team.id);
+    for (const t of teams) if (!qualified.has(t.id)) out.add(t.id);
+  }
+  return out;
+}
+
+/** Current (provisional) bonus leaders, used to flag whether a bonus pick is on
+ *  track. Returns empty strings when there's nothing decided yet. */
+export function currentBonusLeaders(): { topScorer: string; mostScoredTeamId: string; mostConcededTeamId: string } {
+  const sc = topScorers()[0];
+  const ms = mostGoalsScored()[0];
+  const mc = mostGoalsConceded()[0];
+  return {
+    topScorer: sc && sc.goals > 0 ? sc.player : '',
+    mostScoredTeamId: ms && ms.scored > 0 ? ms.team.id : '',
+    mostConcededTeamId: mc && mc.conceded > 0 ? mc.team.id : '',
+  };
+}
+
 export function matchesForTeam(teamId: string): Match[] {
   return matches
     .filter((m) => m.homeTeamId === teamId || m.awayTeamId === teamId)

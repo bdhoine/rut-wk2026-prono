@@ -5,6 +5,7 @@ import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
 import {
   participants, getParticipant, getTeam, sideLabel, positionOf, predictionsForParticipant, outcomes, settings,
+  eliminatedTeamIds, currentBonusLeaders,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
 import { ROUND_LABELS, ROUND_ORDER, type BonusPicks } from '@/lib/types';
@@ -38,6 +39,27 @@ const byRound = ROUND_ORDER
 
 const pick = (key: keyof BonusPicks) => participant.bonus[key];
 
+// Provisional bonus state (without affecting the points calculation).
+const eliminated = eliminatedTeamIds();
+const leaders = currentBonusLeaders();
+/** Returns how a bonus pick currently stands while the tournament is ongoing. */
+function provisional(key: keyof BonusPicks): { tone: 'good' | 'bad' | 'open'; label: string } | null {
+  const value = pick(key);
+  if (!value) return null;
+  if (key === 'winnerTeamId') {
+    return eliminated.has(value)
+      ? { tone: 'bad', label: 'Niet meer mogelijk' }
+      : { tone: 'open', label: 'Nog in de running' };
+  }
+  const leaderKey = key === 'topScorer' ? leaders.topScorer
+    : key === 'mostScoredTeamId' ? leaders.mostScoredTeamId
+    : leaders.mostConcededTeamId;
+  if (!leaderKey) return { tone: 'open', label: 'Voorlopig geen punten' };
+  return value === leaderKey
+    ? { tone: 'good', label: `Voorlopig juist · +${settings.bonusPoints}` }
+    : { tone: 'open', label: 'Voorlopig geen punten' };
+}
+
 // Form: last 5 finished matches (chronological) as coloured dots.
 const formScores = rows
   .filter((r) => r.score)
@@ -56,7 +78,6 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
       <div class="flex items-center gap-3">
         <div class:list={['grid size-12 shrink-0 place-items-center rounded-full text-lg font-bold tabular-nums', medal]}>{rank?.position ?? '—'}</div>
         <div>
-          <div class="text-xs font-medium uppercase tracking-wide text-primary-foreground/70">Deelnemer</div>
           <h1 class="text-2xl font-bold leading-tight">{participant.name}</h1>
         </div>
       </div>
@@ -87,11 +108,14 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
       {bonus.items.map((item) => {
         const value = pick(item.key);
         const team = item.key === 'topScorer' ? undefined : getTeam(value);
+        const prov = item.correct === null ? provisional(item.key) : null;
         return (
           <div class:list={[
             'rounded-xl border bg-card p-3',
             item.correct === true && 'border-emerald-500/60 bg-emerald-50 dark:bg-emerald-950/30',
             item.correct === false && 'opacity-70',
+            prov?.tone === 'good' && 'border-emerald-500/50 bg-emerald-50/60 dark:bg-emerald-950/20',
+            prov?.tone === 'bad' && 'border-red-400/50 bg-red-50/70 dark:bg-red-950/20',
           ]}>
             <div class="text-xs text-muted-foreground">{BONUS_LABELS[item.key]}</div>
             {team ? (
@@ -105,9 +129,12 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
               </div>
             )}
             <div class="mt-1 text-xs">
-              {item.correct === null ? <span class="text-muted-foreground">Nog niet bekend</span>
-                : item.correct ? <span class="font-semibold text-emerald-600">+{item.points}</span>
-                : <span class="text-muted-foreground">0 punten</span>}
+              {item.correct === true ? <span class="font-semibold text-emerald-600">+{item.points}</span>
+                : item.correct === false ? <span class="text-muted-foreground">0 punten</span>
+                : prov?.tone === 'good' ? <span class="font-semibold text-emerald-600">{prov.label}</span>
+                : prov?.tone === 'bad' ? <span class="font-medium text-red-600">{prov.label}</span>
+                : prov ? <span class="text-muted-foreground">{prov.label}</span>
+                : null}
             </div>
           </div>
         );
@@ -116,7 +143,8 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
   </section>
 
   <section>
-    <h2 class="mb-2 text-lg font-semibold">Pronostieken</h2>
+    <h2 class="mb-1 text-lg font-semibold">Pronostieken</h2>
+    <p class="mb-3 text-sm text-muted-foreground">De grote score is de voorspelling, daaronder staat de uitslag van de wedstrijd.</p>
     <div class="space-y-6">
       {byRound.map((g) => (
         <div>
@@ -129,7 +157,6 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
                 <div class="relative flex items-center gap-3 rounded-xl border bg-card px-4 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
                   <a href={`/wedstrijd/${match.id}`} class="absolute inset-0 rounded-xl" aria-label={`${home.label} tegen ${away.label}`}></a>
                   <div class="min-w-0 flex-1">
-                    <div class="mb-1 text-center text-[10px] font-medium uppercase tracking-wide text-muted-foreground">prono</div>
                     <div class="flex items-center justify-center gap-2.5">
                       <span class="min-w-0 flex-1 truncate text-right text-sm font-medium">{home.label}</span>
                       <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
@@ -137,10 +164,8 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
                       <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
                       <span class="min-w-0 flex-1 truncate text-sm font-medium">{away.label}</span>
                     </div>
-                    <div class="mt-1.5 flex h-5 items-center justify-center">
-                      {match.result
-                        ? <ScoreBoxes home={match.result.home} away={match.result.away} size="sm" muted />
-                        : <span class="text-xs text-muted-foreground">–</span>}
+                    <div class="mt-1.5 flex h-6 items-center justify-center">
+                      <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" muted placeholder />
                     </div>
                   </div>
                   <div class="relative z-10 shrink-0">

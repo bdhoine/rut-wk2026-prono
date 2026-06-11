@@ -1,9 +1,9 @@
 ---
-// Coloured points badge with an explanation shown on hover (desktop) / tap (mobile).
-// Pure CSS: the tooltip is revealed via group-hover and group-focus-within, so no JS.
+// Coloured points badge with an explanation shown on hover (desktop) or on
+// tap (mobile, via the small delegated script below).
 //  - 0 points        -> red
-//  - exact score (9) -> distinct "perfect" tint (amber)
-//  - other > 0       -> green
+//  - exact score (9) -> distinct "perfect" tint (emerald)
+//  - other > 0       -> amber
 interface Props {
   points: number;
   exact: boolean;
@@ -20,10 +20,26 @@ const color = points === 0
   <button
     type="button"
     aria-label={`${points} punten — toon uitleg`}
-    class:list={['inline-flex min-w-9 items-center justify-center rounded-md px-2 py-1.5 text-sm font-bold tabular-nums focus:outline-none focus-visible:ring-2 focus-visible:ring-ring', color]}
+    class:list={['points-badge inline-flex min-w-9 items-center justify-center rounded-md px-2 py-1.5 text-sm font-bold tabular-nums focus:outline-none focus-visible:ring-2 focus-visible:ring-ring', color]}
   >{points}</button>
   <span
     role="tooltip"
-    class="pointer-events-none absolute right-0 top-full z-30 mt-1.5 hidden w-56 rounded-md border bg-popover p-2 text-left text-xs font-normal text-popover-foreground shadow-md group-hover:block group-focus-within:block"
+    class="points-tip pointer-events-none absolute right-0 top-full z-30 mt-1.5 hidden w-56 rounded-md border bg-popover p-2 text-left text-xs font-normal text-popover-foreground shadow-md group-hover:block"
   >{explanation}</span>
 </span>
+
+<script>
+  // Tap-to-toggle on touch devices (hover handles desktop). Bundled once.
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement)?.closest('.points-badge');
+    const openTip = btn?.parentElement?.querySelector('.points-tip');
+    // Close any other open tooltips.
+    document.querySelectorAll('.points-tip.\\!block').forEach((t) => {
+      if (t !== openTip) t.classList.remove('!block');
+    });
+    if (btn && openTip) {
+      e.preventDefault();
+      openTip.classList.toggle('!block');
+    }
+  });
+</script>

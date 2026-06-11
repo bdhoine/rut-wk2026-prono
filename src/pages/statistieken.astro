@@ -30,7 +30,7 @@ const chosenScorers = topChosenTopScorers(5);
         </thead>
         <tbody>
           {scorers.map((s, i) => (
-            <tr class="border-b last:border-0">
+            <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
               <td class="px-2 py-2 tabular-nums text-muted-foreground">{i + 1}</td>
               <td class="px-2 py-2 font-medium">{s.player}</td>
               <td class="px-2 py-2">
@@ -47,6 +47,9 @@ const chosenScorers = topChosenTopScorers(5);
         </tbody>
       </table>
     </div>
+    {scorers.length > 10 && (
+      <button type="button" data-show-more data-label={`Toon alle ${scorers.length}`} class="mt-2 text-sm font-medium text-primary hover:underline">Toon alle {scorers.length}</button>
+    )}
   </section>
 
   <div class="grid gap-8 md:grid-cols-2">
@@ -61,8 +64,8 @@ const chosenScorers = topChosenTopScorers(5);
             </tr>
           </thead>
           <tbody>
-            {scored.map((t) => (
-              <tr class="border-b last:border-0">
+            {scored.map((t, i) => (
+              <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
                 <td class="px-2 py-2">
                   <a href={`/land/${t.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
                     <Flag iso={t.team.iso} name={t.team.name} class="text-base" />
@@ -75,6 +78,9 @@ const chosenScorers = topChosenTopScorers(5);
           </tbody>
         </table>
       </div>
+      {scored.length > 10 && (
+        <button type="button" data-show-more data-label={`Toon alle ${scored.length}`} class="mt-2 text-sm font-medium text-primary hover:underline">Toon alle {scored.length}</button>
+      )}
     </section>
 
     <section>
@@ -88,8 +94,8 @@ const chosenScorers = topChosenTopScorers(5);
             </tr>
           </thead>
           <tbody>
-            {conceded.map((t) => (
-              <tr class="border-b last:border-0">
+            {conceded.map((t, i) => (
+              <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
                 <td class="px-2 py-2">
                   <a href={`/land/${t.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
                     <Flag iso={t.team.iso} name={t.team.name} class="text-base" />
@@ -102,6 +108,9 @@ const chosenScorers = topChosenTopScorers(5);
           </tbody>
         </table>
       </div>
+      {conceded.length > 10 && (
+        <button type="button" data-show-more data-label={`Toon alle ${conceded.length}`} class="mt-2 text-sm font-medium text-primary hover:underline">Toon alle {conceded.length}</button>
+      )}
     </section>
   </div>
 
@@ -170,4 +179,17 @@ const chosenScorers = topChosenTopScorers(5);
       </div>
     </section>
   </div>
+
+  <script>
+    document.querySelectorAll('[data-show-more]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const section = btn.closest('section');
+        const rows = section?.querySelectorAll('.more-row');
+        if (!rows?.length) return;
+        const show = rows[0].classList.contains('hidden');
+        rows.forEach((r) => r.classList.toggle('hidden', !show));
+        btn.textContent = show ? 'Toon minder' : (btn.getAttribute('data-label') || 'Toon meer');
+      });
+    });
+  </script>
 </Layout>

@@ -141,6 +141,11 @@ const scoringPayload =
         return new Intl.DateTimeFormat('nl-BE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels' }).format(new Date(iso));
       } catch { return ''; }
     };
+    const fmtDateTime = (iso: string) => {
+      try {
+        return new Intl.DateTimeFormat('nl-BE', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels' }).format(new Date(iso));
+      } catch { return ''; }
+    };
     const key = (h: string, a: string) => `${h}|${a}`;
     const minLabel = (m: any) => (m.status === 'HT' ? 'rust' : m.elapsed != null ? `${m.elapsed}'` : 'live');
     const teamName = (id: string, fallback: string) => teamMap[id]?.name || fallback || id;
@@ -176,7 +181,7 @@ const scoringPayload =
         if (liveKeys.has(key(m.homeTeamId, m.awayTeamId))) continue; // shown as live instead
         recentCards.appendChild(
           card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
-            `<span>afgelopen • ${fmtTime(m.kickoff)}</span>`, finalPill(m.goalsHome, m.goalsAway)),
+            `<span>${fmtDateTime(m.kickoff)}</span>`, finalPill(m.goalsHome, m.goalsAway)),
         );
       }
       updateListVisibility();
@@ -249,7 +254,7 @@ const scoringPayload =
     }
 
     async function load() {
-      if (loading) return;
+      if (loading || document.hidden) return; // don't poll a hidden tab
       loading = true;
       status.textContent = 'Laden…';
       try {
@@ -266,10 +271,9 @@ const scoringPayload =
         const shown = applyMatches(data.matches || []);
         dispatchRanking(data.matches || []);
         const stamp = data.updatedAt ? fmtTime(data.updatedAt) : '';
-        const suffix = data.stale || data.cached ? ' (gecachet)' : '';
         status.textContent = shown > 0
-          ? `${shown} live • bijgewerkt ${stamp}${suffix}`
-          : `Geen wedstrijden live${stamp ? ` • ${stamp}` : ''}${suffix}`;
+          ? `${shown} live • bijgewerkt ${stamp}`
+          : `Geen wedstrijden live${stamp ? ` • ${stamp}` : ''}`;
       } catch {
         status.textContent = 'Live tijdelijk niet beschikbaar.';
       } finally {
@@ -297,6 +301,17 @@ const scoringPayload =
     }
 
     toggle.addEventListener('click', () => setEnabled(!enabled));
+
+    // Pause polling while the tab is hidden; refresh + resume when it returns.
+    document.addEventListener('visibilitychange', () => {
+      if (!enabled) return;
+      if (document.hidden) {
+        if (timer) { clearInterval(timer); timer = null; }
+      } else {
+        load();
+        if (!timer) timer = setInterval(load, POLL_MS);
+      }
+    });
 
     // Recently-finished matches show automatically (no API needed).
     if (mode === 'list') renderRecent();

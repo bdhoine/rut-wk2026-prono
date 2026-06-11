@@ -117,8 +117,8 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
           <TableHead className="w-10" />
           <TableHead className="w-10 text-center">#</TableHead>
           <TableHead>Naam</TableHead>
-          <TableHead className="text-right">Vorm</TableHead>
-          <TableHead className="w-16 text-right">Punten</TableHead>
+          <TableHead className="hidden text-right md:table-cell">Vorm</TableHead>
+          <TableHead className="w-14 text-right">Punten</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -143,10 +143,13 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
                   {row.winnerIso && (
                     <span className={`fi fi-${row.winnerIso} shrink-0 rounded-[2px] text-base shadow-sm`} title={row.winnerName ?? undefined} role="img" aria-label={row.winnerName ?? undefined} />
                   )}
-                  <span className="truncate">{row.name}</span>
+                  <div className="min-w-0">
+                    <span className="block truncate">{row.name}</span>
+                    {row.form?.length > 0 && <div className="mt-1 md:hidden"><FormDots form={row.form} /></div>}
+                  </div>
                 </div>
               </TableCell>
-              <TableCell className="text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
+              <TableCell className="hidden text-right md:table-cell"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
               <TableCell className="text-right font-bold tabular-nums">
                 <div className="flex items-center justify-end gap-1.5">
                   {row.delta > 0 && (
