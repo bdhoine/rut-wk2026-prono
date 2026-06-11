@@ -86,6 +86,7 @@ const scoringPayload =
   const root = document.querySelector('[data-live-root]') as HTMLElement | null;
   if (root) {
     const mode = root.dataset.liveMode || 'overlay';
+    const LIVE_KEY = 'rut-wk2026-live'; // persists the toggle across page navigation
     const toggle = document.getElementById('live-toggle')!;
     const dot = document.getElementById('live-dot')!;
     const label = document.getElementById('live-label')!;
@@ -276,8 +277,9 @@ const scoringPayload =
       }
     }
 
-    function setEnabled(on: boolean) {
+    function setEnabled(on: boolean, persist = true) {
       enabled = on;
+      if (persist) { try { localStorage.setItem(LIVE_KEY, on ? '1' : '0'); } catch { /* ignore */ } }
       toggle.setAttribute('aria-pressed', String(on));
       dot.className = on ? 'size-2 rounded-full bg-red-600 animate-pulse' : 'size-2 rounded-full bg-muted-foreground/50';
       label.textContent = on ? 'Live aan' : 'Live scores';
@@ -298,5 +300,10 @@ const scoringPayload =
 
     // Recently-finished matches show automatically (no API needed).
     if (mode === 'list') renderRecent();
+
+    // Restore the toggle from a previous page (persisted in localStorage).
+    let wasOn = false;
+    try { wasOn = localStorage.getItem(LIVE_KEY) === '1'; } catch { /* ignore */ }
+    if (wasOn) setEnabled(true);
   }
 </script>
