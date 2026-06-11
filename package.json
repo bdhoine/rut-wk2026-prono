@@ -13,7 +13,8 @@
     "data:start": "node scripts/generate-data.mjs start",
     "data:md2": "node scripts/generate-data.mjs md2",
     "data:groups": "node scripts/generate-data.mjs groups",
-    "data:final": "node scripts/generate-data.mjs final"
+    "data:final": "node scripts/generate-data.mjs final",
+    "results:update": "node scripts/update-results.mjs"
   },
   "dependencies": {
     "@astrojs/netlify": "^7.0.13",

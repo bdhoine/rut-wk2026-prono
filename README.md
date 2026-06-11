@@ -19,7 +19,7 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 | Route | Page |
 |-------|------|
-| `/` | Klassement (ranking) — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details |
+| `/` | Klassement (ranking) — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details. A **Live scores** toggle shows in-progress + recently-finished matches and a provisional live ranking |
 | `/deelnemer/[id]` | Participant detail: position, total, bonus picks, all predictions (sorted by kickoff) + score breakdown |
 | `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + all predictions sorted by points |
 | `/komende` | Upcoming matches (planning order) |
@@ -32,6 +32,31 @@ Navigation is a horizontal bar on desktop and a hamburger menu on mobile. All
 game lists are ordered by kickoff (planning). Score explanations on the
 participant and match pages appear on hover (desktop) / tap (mobile); the points
 badge is colour-coded (red = 0, green = scored, amber = exact).
+
+## Live scores & automatic results
+
+Two integrations keep the app current during the tournament, both backed by
+[API-Football](https://www.api-football.com) (free plan, FIFA World Cup =
+league 1, season 2026). Set the API key once as `API_FOOTBALL_KEY`.
+
+- **Final results (build-time data).** A GitHub Actions workflow
+  ([`.github/workflows/update-results.yml`](./.github/workflows/update-results.yml))
+  runs [`scripts/update-results.mjs`](./scripts/update-results.mjs) on a cron,
+  writing finished-match scores (120-min, penalty shoot-outs excluded), filling
+  knockout teams as brackets resolve, refreshing `scorers.json`, and resolving
+  the bonus `outcomes.json` once the final is played. It commits any changes,
+  which triggers a Netlify rebuild. Add the key under **Settings → Secrets and
+  variables → Actions → `API_FOOTBALL_KEY`**. Run locally with
+  `API_FOOTBALL_KEY=… npm run results:update`.
+- **Live scores (client-side).** A "Live scores" toggle on the home, Programma
+  and Kalender pages fetches the in-progress scores and then auto-refreshes
+  every minute while on (plus a manual "Ververs" button). On the home page the
+  live (and recently-finished, ≤ 8 h) matches show as cards and the **klassement
+  recomputes provisional points live**. Requests go through a Netlify Function
+  ([`netlify/functions/live.mjs`](./netlify/functions/live.mjs), at
+  `/.netlify/functions/live`) so the key stays server-side; it caches 5 minutes
+  (CDN + memory) and degrades gracefully on rate-limit/error. Add the same key
+  in the **Netlify** site environment variables.
 
 ## Development
 
@@ -66,7 +91,7 @@ through the bracket). Edit the JSON in `src/data/` directly for real data.
 |------|----------|
 | `teams.json` | Teams: `id`, `iso` (lowercase ISO 3166-1 alpha-2 for flags), Dutch `name`, `group` |
 | `groups.json` | Groups A–L → team ids |
-| `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result` |
+| `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result`, plus `apiId` / `winnerTeamId` filled by the results updater |
 | `participants.json` | Participants: `id`, `name`, `bonus` picks. **No phone numbers** (kept off the repo by design) |
 | `predictions.json` | Per-participant, per-match predicted scores (`late: true` ⇒ 0 points) |
 | `outcomes.json` | Actual tournament bonus outcomes (top scorer, winner, most scored/conceded) |
@@ -74,6 +99,9 @@ through the bracket). Edit the JSON in `src/data/` directly for real data.
 | `settings.json` | Round multipliers and bonus points |
 
 ### Updating during the tournament
+
+Normally the **GitHub Actions results workflow** (see *Live scores & automatic
+results* above) does this automatically. To update by hand instead:
 
 1. Enter final scores on the relevant match in `matches.json` (set `status: "finished"` and `result`). For knockouts, use the **score after 120 min** (penalties are ignored — see `docs/rules.md`).
 2. Fill in `homeTeamId` / `awayTeamId` on knockout matches as brackets resolve.

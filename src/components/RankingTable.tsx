@@ -59,8 +59,11 @@ function positionBadge(position: number) {
   return <span className={`${base} text-muted-foreground`}>{position}</span>;
 }
 
+type DisplayRow = RankingTableRow & { delta: number };
+
 export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
   const [favs, setFavs] = React.useState<string[]>([]);
+  const [deltas, setDeltas] = React.useState<Record<string, number>>({});
 
   React.useEffect(() => {
     try {
@@ -68,6 +71,31 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
       if (stored) setFavs(JSON.parse(stored));
     } catch { /* ignore */ }
   }, []);
+
+  // Live provisional points from in-progress matches (dispatched by LiveScores).
+  React.useEffect(() => {
+    const apply = (d: Record<string, number> | undefined) => setDeltas(d && Object.keys(d).length ? d : {});
+    apply((window as unknown as { __rutLiveDeltas?: Record<string, number> }).__rutLiveDeltas);
+    const onLive = (e: Event) => apply((e as CustomEvent).detail?.deltas);
+    window.addEventListener("rut:live-ranking", onLive);
+    return () => window.removeEventListener("rut:live-ranking", onLive);
+  }, []);
+
+  const hasLive = Object.keys(deltas).length > 0;
+
+  // Recompute totals + standard-competition positions when live deltas are active.
+  const displayRows = React.useMemo<DisplayRow[]>(() => {
+    if (!hasLive) return rows.map((r) => ({ ...r, delta: 0 }));
+    const adjusted = rows
+      .map((r) => ({ ...r, delta: deltas[r.participantId] || 0, total: r.total + (deltas[r.participantId] || 0) }))
+      .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, "nl"));
+    let position = 0;
+    let lastTotal: number | null = null;
+    return adjusted.map((row, i) => {
+      if (lastTotal === null || row.total !== lastTotal) { position = i + 1; lastTotal = row.total; }
+      return { ...row, position };
+    });
+  }, [rows, deltas, hasLive]);
 
   const favSet = React.useMemo(() => new Set(favs), [favs]);
 
@@ -80,9 +108,9 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
 
   const go = (id: string) => { window.location.href = `/deelnemer/${id}`; };
 
-  const favRows = rows.filter((r) => favSet.has(r.participantId));
+  const favRows = displayRows.filter((r) => favSet.has(r.participantId));
 
-  const renderTable = (data: RankingTableRow[]) => (
+  const renderTable = (data: DisplayRow[]) => (
     <Table>
       <TableHeader>
         <TableRow>
@@ -119,7 +147,14 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
                 </div>
               </TableCell>
               <TableCell className="text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
-              <TableCell className="text-right font-bold tabular-nums">{row.total}</TableCell>
+              <TableCell className="text-right font-bold tabular-nums">
+                <div className="flex items-center justify-end gap-1.5">
+                  {row.delta > 0 && (
+                    <span className="rounded bg-red-100 px-1 py-0.5 text-[10px] font-semibold tabular-nums text-red-700" title="voorlopige live-punten">+{row.delta}</span>
+                  )}
+                  <span>{row.total}</span>
+                </div>
+              </TableCell>
             </TableRow>
           );
         })}
@@ -139,7 +174,12 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
       )}
       <section>
         {favRows.length > 0 && <h2 className="mb-2 text-lg font-semibold">Volledig klassement</h2>}
-        <div className="rounded-xl border bg-card p-1">{renderTable(rows)}</div>
+        {hasLive && (
+          <p className="mb-2 flex items-center gap-1.5 text-xs text-red-700">
+            <span className="size-2 animate-pulse rounded-full bg-red-600" /> Voorlopige stand — inclusief live-wedstrijden
+          </p>
+        )}
+        <div className="rounded-xl border bg-card p-1">{renderTable(displayRows)}</div>
       </section>
     </div>
   );

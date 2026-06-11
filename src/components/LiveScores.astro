@@ -1,0 +1,311 @@
+---
+// Live-scores control bar + client script. The toggle fetches the live function
+// and then auto-refreshes every minute while on (the function caches 5 min, so
+// this stays within the API rate limit); "Ververs" forces a refresh.
+//
+// Two modes:
+//  - mode="overlay" (default): overlay the live score onto MatchCards already on
+//    the page, matched by team iso pair (used on /programma and /kalender).
+//  - mode="list": render in-progress matches as their own cards (used on the
+//    home/klassement page, which has no match cards). In this mode `recent`
+//    (matches finished within the last ~8h) are shown automatically without the
+//    toggle, since that needs no API call — the toggle only adds live matches.
+import { teams, matches, predictions, settings, getTeam } from '@/lib/data';
+
+interface Props {
+  mode?: 'overlay' | 'list';
+}
+const { mode = 'overlay' } = Astro.props;
+const teamMap = Object.fromEntries(teams.map((t) => [t.id, { name: t.name, iso: t.iso }]));
+
+// Recently-finished matches the client may keep on the home page (it filters to
+// the last ~8h by kickoff). Only meaningful in list mode.
+const recent =
+  mode === 'list'
+    ? matches
+        .filter((m) => m.status === 'finished' && m.result && m.homeTeamId && m.awayTeamId)
+        .map((m) => ({
+          homeTeamId: m.homeTeamId,
+          awayTeamId: m.awayTeamId,
+          home: getTeam(m.homeTeamId)?.name ?? '',
+          away: getTeam(m.awayTeamId)?.name ?? '',
+          goalsHome: m.result!.home,
+          goalsAway: m.result!.away,
+          kickoff: m.kickoff,
+        }))
+    : [];
+
+// Data to recompute provisional ranking points client-side from live scores
+// (list mode / home only). Covers matches not yet finished — finished matches
+// already fold into the static ranking. Maps team iso pair -> predictions.
+const liveMatches = matches.filter((m) => m.status !== 'finished' && m.homeTeamId && m.awayTeamId);
+const liveMatchIds = new Set(liveMatches.map((m) => m.id));
+const predsByMatch: Record<string, Record<string, [number, number]>> = {};
+if (mode === 'list') {
+  for (const p of predictions) {
+    if (!liveMatchIds.has(p.matchId) || p.late) continue;
+    (predsByMatch[p.matchId] ??= {})[p.participantId] = [p.home, p.away];
+  }
+}
+const scoringPayload =
+  mode === 'list'
+    ? {
+        multipliers: settings.multipliers,
+        matches: liveMatches.map((m) => ({ id: m.id, h: m.homeTeamId, a: m.awayTeamId, round: m.round })),
+        preds: predsByMatch,
+      }
+    : null;
+---
+<div data-live-root data-live-mode={mode}>
+  <div class="mb-4 flex flex-wrap items-center gap-2">
+    <button
+      id="live-toggle"
+      type="button"
+      aria-pressed="false"
+      class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
+    >
+      <span id="live-dot" class="size-2 rounded-full bg-muted-foreground/50"></span>
+      <span id="live-label">Live scores</span>
+    </button>
+    <button
+      id="live-refresh"
+      type="button"
+      class="hidden rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
+    >Ververs</button>
+    <span id="live-status" class="text-xs text-muted-foreground"></span>
+  </div>
+
+  {mode === 'list' && (
+    <div id="live-list" class="mb-6 hidden space-y-3">
+      <h2 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Nu live &amp; recent gespeeld</h2>
+      <div id="live-list-cards" class="space-y-3"></div>
+      <div id="recent-list-cards" class="space-y-3"></div>
+    </div>
+  )}
+
+  <script type="application/json" id="live-teams" set:html={JSON.stringify(teamMap)}></script>
+  {mode === 'list' && <script type="application/json" id="live-recent" set:html={JSON.stringify(recent)}></script>}
+  {mode === 'list' && <script type="application/json" id="live-scoring" set:html={JSON.stringify(scoringPayload)}></script>}
+</div>
+
+<script>
+  const root = document.querySelector('[data-live-root]') as HTMLElement | null;
+  if (root) {
+    const mode = root.dataset.liveMode || 'overlay';
+    const toggle = document.getElementById('live-toggle')!;
+    const refresh = document.getElementById('live-refresh')!;
+    const dot = document.getElementById('live-dot')!;
+    const label = document.getElementById('live-label')!;
+    const status = document.getElementById('live-status')!;
+    const listWrap = document.getElementById('live-list');
+    const liveCards = document.getElementById('live-list-cards');
+    const recentCards = document.getElementById('recent-list-cards');
+    const teamMap = JSON.parse(document.getElementById('live-teams')?.textContent || '{}');
+    const recentData = JSON.parse(document.getElementById('live-recent')?.textContent || '[]');
+    const scoring = JSON.parse(document.getElementById('live-scoring')?.textContent || 'null');
+    const scoringByPair = new Map<string, any>();
+    if (scoring) for (const m of scoring.matches) { scoringByPair.set(`${m.h}|${m.a}`, m); scoringByPair.set(`${m.a}|${m.h}`, m); }
+
+    // Provisional ranking points from a live score (mirrors src/lib/scoring.ts).
+    const basePts = (ph: number, pa: number, rh: number, ra: number) => {
+      if (ph === rh && pa === ra) return 9;
+      if (Math.sign(ph - pa) !== Math.sign(rh - ra)) return 0;
+      return Math.max(3, 7 - (Math.abs(ph - rh) + Math.abs(pa - ra)));
+    };
+
+    function dispatchRanking(list: any[]) {
+      if (!scoring) return;
+      const deltas: Record<string, number> = {};
+      for (const lm of list) {
+        const m = scoringByPair.get(`${lm.homeTeamId}|${lm.awayTeamId}`);
+        if (!m) continue;
+        const swapped = m.h !== lm.homeTeamId; // align live goals to our home/away
+        const rh = swapped ? lm.goalsAway : lm.goalsHome;
+        const ra = swapped ? lm.goalsHome : lm.goalsAway;
+        const mult = scoring.multipliers[m.round] ?? 1;
+        const preds = scoring.preds[m.id] || {};
+        for (const pid of Object.keys(preds)) {
+          const [ph, pa] = preds[pid];
+          deltas[pid] = (deltas[pid] || 0) + basePts(ph, pa, rh, ra) * mult;
+        }
+      }
+      (window as any).__rutLiveDeltas = deltas;
+      window.dispatchEvent(new CustomEvent('rut:live-ranking', { detail: { deltas } }));
+    }
+
+    const RECENT_WINDOW_MS = 10.5 * 60 * 60 * 1000; // ~8h after a match ends (kickoff + ~2.5h play)
+    const POLL_MS = 60 * 1000; // auto-refresh cadence while live is on (the function caches 5 min, so this is rate-safe)
+
+    let enabled = false;
+    let loading = false;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const touched = new Set<HTMLElement>();
+    let liveKeys = new Set<string>();
+
+    const fmtTime = (iso: string) => {
+      try {
+        return new Intl.DateTimeFormat('nl-BE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels' }).format(new Date(iso));
+      } catch { return ''; }
+    };
+    const key = (h: string, a: string) => `${h}|${a}`;
+    const minLabel = (m: any) => (m.status === 'HT' ? 'rust' : m.elapsed != null ? `${m.elapsed}'` : 'live');
+    const teamName = (iso: string, fallback: string) => teamMap[iso]?.name || fallback || iso;
+    const flag = (iso: string, name: string) => `<span class="fi fi-${iso} shrink-0 rounded-[2px] text-lg" role="img" aria-label="${name}"></span>`;
+    const livePill = (gh: number, ga: number) =>
+      `<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-0.5 text-base font-bold tabular-nums text-red-800">${gh}<span class="px-1 text-red-400">–</span>${ga}</span>`;
+    const finalPill = (gh: number, ga: number) =>
+      `<span class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-base font-bold tabular-nums">${gh}<span class="px-1 text-muted-foreground">–</span>${ga}</span>`;
+    const liveBadge = (m: any) =>
+      `<span class="live-badge inline-flex items-center gap-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"><span class="size-1.5 animate-pulse rounded-full bg-white"></span>${minLabel(m)}</span>`;
+
+    function card(homeIso: string, awayIso: string, hName: string, aName: string, meta: string, scoreHtml: string) {
+      const el = document.createElement('div');
+      el.className = 'rounded-xl border bg-card px-4 py-3 shadow-sm';
+      el.dataset.key = key(homeIso, awayIso);
+      el.innerHTML = `
+        <div class="mb-2 flex items-center justify-center gap-2 text-center text-xs font-medium text-muted-foreground">${meta}</div>
+        <div class="flex items-center justify-center gap-3">
+          <div class="flex min-w-0 flex-1 items-center justify-end gap-2"><span class="truncate text-right font-medium">${hName}</span>${flag(homeIso, hName)}</div>
+          <div class="shrink-0">${scoreHtml}</div>
+          <div class="flex min-w-0 flex-1 items-center gap-2">${flag(awayIso, aName)}<span class="truncate font-medium">${aName}</span></div>
+        </div>`;
+      return el;
+    }
+
+    function renderRecent() {
+      if (!recentCards) return;
+      recentCards.innerHTML = '';
+      const now = Date.now();
+      for (const m of recentData) {
+        const age = now - new Date(m.kickoff).getTime();
+        if (age < 0 || age > RECENT_WINDOW_MS) continue;
+        if (liveKeys.has(key(m.homeTeamId, m.awayTeamId))) continue; // shown as live instead
+        recentCards.appendChild(
+          card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
+            `<span>afgelopen • ${fmtTime(m.kickoff)}</span>`, finalPill(m.goalsHome, m.goalsAway)),
+        );
+      }
+      updateListVisibility();
+    }
+
+    function updateListVisibility() {
+      if (!listWrap) return;
+      const has = (liveCards?.childElementCount || 0) + (recentCards?.childElementCount || 0) > 0;
+      listWrap.classList.toggle('hidden', !has);
+    }
+
+    function clearLive() {
+      if (mode === 'list') {
+        if (liveCards) liveCards.innerHTML = '';
+        liveKeys = new Set();
+        renderRecent();
+      } else {
+        for (const c of touched) {
+          const score = c.querySelector('.match-score');
+          if (score && c.dataset.origScore != null) score.innerHTML = c.dataset.origScore;
+          c.querySelector('.live-badge')?.remove();
+        }
+        touched.clear();
+      }
+    }
+
+    function findCard(homeIso: string, awayIso: string) {
+      const sel = (h: string, a: string) => document.querySelector<HTMLElement>(`[data-match-card][data-home-iso="${h}"][data-away-iso="${a}"]`);
+      const direct = sel(homeIso, awayIso);
+      if (direct) return { card: direct, swapped: false };
+      const swapped = sel(awayIso, homeIso);
+      if (swapped) return { card: swapped, swapped: true };
+      return null;
+    }
+
+    function applyMatches(list: any[]) {
+      clearLive();
+      let shown = 0;
+      if (mode === 'list') {
+        liveKeys = new Set(list.map((m) => key(m.homeTeamId, m.awayTeamId)));
+        if (liveCards) {
+          for (const m of list) {
+            liveCards.appendChild(
+              card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
+                liveBadge(m), livePill(m.goalsHome, m.goalsAway)),
+            );
+            shown++;
+          }
+        }
+        renderRecent();
+        return shown;
+      }
+      for (const m of list) {
+        const hit = findCard(m.homeTeamId, m.awayTeamId);
+        if (!hit) continue;
+        const { card: c, swapped } = hit;
+        const gh = swapped ? m.goalsAway : m.goalsHome;
+        const ga = swapped ? m.goalsHome : m.goalsAway;
+        const score = c.querySelector('.match-score');
+        if (score) {
+          if (c.dataset.origScore == null) c.dataset.origScore = score.innerHTML;
+          score.innerHTML = livePill(gh, ga);
+        }
+        const meta = c.querySelector('.match-meta');
+        if (meta && !meta.querySelector('.live-badge')) meta.insertAdjacentHTML('afterbegin', liveBadge(m));
+        touched.add(c);
+        shown++;
+      }
+      return shown;
+    }
+
+    async function load() {
+      if (loading) return;
+      loading = true;
+      status.textContent = 'Laden…';
+      try {
+        const res = await fetch('/.netlify/functions/live', { headers: { accept: 'application/json' } });
+        if (res.status === 404) { status.textContent = 'Live werkt enkel op de gepubliceerde site.'; return; }
+        const data = await res.json();
+        if (!data.ok) {
+          clearLive();
+          status.textContent = data.error === 'rate-limit' ? 'Te veel aanvragen, probeer straks opnieuw.'
+            : data.error === 'no-key' ? 'Live is nog niet geconfigureerd.'
+            : 'Live tijdelijk niet beschikbaar.';
+          return;
+        }
+        const shown = applyMatches(data.matches || []);
+        dispatchRanking(data.matches || []);
+        const stamp = data.updatedAt ? fmtTime(data.updatedAt) : '';
+        const suffix = data.stale || data.cached ? ' (gecachet)' : '';
+        status.textContent = shown > 0
+          ? `${shown} live • bijgewerkt ${stamp}${suffix}`
+          : `Geen wedstrijden live${stamp ? ` • ${stamp}` : ''}${suffix}`;
+      } catch {
+        status.textContent = 'Live tijdelijk niet beschikbaar.';
+      } finally {
+        loading = false;
+      }
+    }
+
+    function setEnabled(on: boolean) {
+      enabled = on;
+      toggle.setAttribute('aria-pressed', String(on));
+      dot.className = on ? 'size-2 rounded-full bg-red-600 animate-pulse' : 'size-2 rounded-full bg-muted-foreground/50';
+      label.textContent = on ? 'Live aan' : 'Live scores';
+      toggle.classList.toggle('border-red-300', on);
+      toggle.classList.toggle('bg-red-50', on);
+      refresh.classList.toggle('hidden', !on);
+      if (timer) { clearInterval(timer); timer = null; }
+      if (on) {
+        load();
+        timer = setInterval(load, POLL_MS); // auto-refresh while live (function caches 5 min → rate-safe)
+      } else {
+        clearLive();
+        dispatchRanking([]); // revert klassement to static totals
+        status.textContent = '';
+      }
+    }
+
+    toggle.addEventListener('click', () => setEnabled(!enabled));
+    refresh.addEventListener('click', () => { if (enabled) load(); });
+
+    // Recently-finished matches show automatically (no API needed).
+    if (mode === 'list') renderRecent();
+  }
+</script>

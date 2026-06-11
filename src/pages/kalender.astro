@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import MatchCard from '@/components/MatchCard.astro';
 import DeadlineBadge from '@/components/DeadlineBadge.astro';
+import LiveScores from '@/components/LiveScores.astro';
 import { matches } from '@/lib/data';
 import { ROUND_LABELS, type RoundId } from '@/lib/types';
 
@@ -21,6 +22,7 @@ const koRounds = KO_ROUNDS
 ---
 <Layout title="Kalender">
   <h1 class="mb-5 text-2xl font-bold tracking-tight">Kalender</h1>
+  <LiveScores />
 
   <section class="mb-8">
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">

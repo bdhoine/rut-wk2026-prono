@@ -33,6 +33,8 @@ export interface Match {
   awayPlaceholder?: string; // e.g. '2e Groep B'
   status: MatchStatus;
   result?: Score; // score after 120 min for knockouts; penalties ignored
+  apiId?: number; // API-Football fixture id, set by scripts/update-results.mjs
+  winnerTeamId?: string; // knockout winner (incl. on penalties), set by the updater
 }
 
 export interface BonusPicks {
