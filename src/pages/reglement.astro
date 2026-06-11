@@ -1,0 +1,117 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { settings } from '@/lib/data';
+import { ROUND_LABELS, ROUND_ORDER, ROUND_DEADLINES, type RoundId } from '@/lib/types';
+import { formatKickoff } from '@/lib/format';
+
+// Multiplier per round (group ×1 … final ×5).
+const multiplierRows = ROUND_ORDER.map((r) => ({
+  label: ROUND_LABELS[r],
+  mult: settings.multipliers[r],
+  max: 9 * settings.multipliers[r],
+}));
+
+// What to hand in by when (one row per submission moment).
+const submissions: { round: RoundId; what: string }[] = [
+  { round: 'group', what: 'Alle poulewedstrijden (speeldag 1, 2 én 3) + de tornooivoorspellingen' },
+  { round: 'r32', what: '1/16de finales' },
+  { round: 'r16', what: '1/8ste finales' },
+  { round: 'qf', what: 'Kwartfinales' },
+  { round: 'sf', what: 'Halve finales' },
+  { round: 'third', what: 'Troostfinale + finale' },
+];
+---
+<Layout title="Reglement">
+  <h1 class="mb-1 text-2xl font-bold tracking-tight">Reglement</h1>
+  <p class="mb-6 text-sm text-muted-foreground">De spelregels van de Rut Prono en wanneer je wat moet indienen.</p>
+
+  <!-- Puntenverdeling -->
+  <section class="mb-8">
+    <h2 class="mb-2 text-lg font-semibold">Puntenverdeling per wedstrijd</h2>
+    <div class="space-y-2 rounded-xl border bg-card p-4 text-sm leading-relaxed">
+      <p>Het is de bedoeling de uitslag zo correct mogelijk te voorspellen. Enkel de winnaar aanduiden is niet genoeg. Per wedstrijd zijn er maximaal <strong>9 punten</strong> te verdienen:</p>
+      <ul class="ml-1 space-y-1.5">
+        <li class="flex gap-2"><span class="w-10 shrink-0 text-center font-bold tabular-nums text-emerald-700">9</span><span>Exacte uitslag juist.</span></li>
+        <li class="flex gap-2"><span class="w-10 shrink-0 whitespace-nowrap text-center font-bold tabular-nums text-amber-700">3–7</span><span>Juiste winnaar (of gelijkspel): <strong>7 punten min het aantal goals dat je ernaast zit</strong>, met een minimum van 3.</span></li>
+        <li class="flex gap-2"><span class="w-10 shrink-0 text-center font-bold tabular-nums text-red-700">0</span><span>Verkeerde winnaar → geen punten.</span></li>
+      </ul>
+      <p class="text-muted-foreground">Bij verlengingen telt de stand na 120 minuten. Strafschoppenreeksen tellen niet mee.</p>
+    </div>
+  </section>
+
+  <!-- Multipliers -->
+  <section class="mb-8">
+    <h2 class="mb-2 text-lg font-semibold">Punten per ronde</h2>
+    <p class="mb-2 text-sm text-muted-foreground">Hoe verder in het tornooi, hoe zwaarder de punten tellen.</p>
+    <div class="overflow-hidden rounded-xl border bg-card">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b text-muted-foreground">
+            <th class="px-3 py-2 text-left font-medium">Ronde</th>
+            <th class="px-3 py-2 text-center font-medium">Factor</th>
+            <th class="px-3 py-2 text-right font-medium">Max. punten</th>
+          </tr>
+        </thead>
+        <tbody>
+          {multiplierRows.map((r) => (
+            <tr class="border-b last:border-0">
+              <td class="px-3 py-2.5 font-medium">{r.label}</td>
+              <td class="px-3 py-2.5 text-center tabular-nums">×{r.mult}</td>
+              <td class="px-3 py-2.5 text-right font-bold tabular-nums">{r.max}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Bonus -->
+  <section class="mb-8">
+    <h2 class="mb-2 text-lg font-semibold">Bonusvoorspellingen</h2>
+    <div class="rounded-xl border bg-card p-4 text-sm leading-relaxed">
+      <p class="mb-2">Op het eerste pronostiekblad voorspel je ook 4 zaken over het hele tornooi. Elk juist = <strong>{settings.bonusPoints} punten</strong>:</p>
+      <ul class="ml-4 list-disc space-y-1">
+        <li>Topschutter</li>
+        <li>Eindwinnaar</li>
+        <li>Land met de meeste gemaakte doelpunten</li>
+        <li>Land met de meeste tegendoelpunten</li>
+      </ul>
+      <p class="mt-2 text-muted-foreground">Doelpunten in de verlengingen tellen mee. Strafschoppenreeksen niet.</p>
+    </div>
+  </section>
+
+  <!-- Deadlines -->
+  <section class="mb-8">
+    <h2 class="mb-2 text-lg font-semibold">Wanneer wat indienen?</h2>
+    <p class="mb-2 text-sm text-muted-foreground">Telkens ten laatste 1 uur vóór de eerste wedstrijd van de ronde (Belgische tijd).</p>
+    <div class="overflow-hidden rounded-xl border bg-card">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b text-muted-foreground">
+            <th class="px-3 py-2 text-left font-medium">In te dienen</th>
+            <th class="px-3 py-2 text-right font-medium">Deadline</th>
+          </tr>
+        </thead>
+        <tbody>
+          {submissions.map((s) => (
+            <tr class="border-b last:border-0">
+              <td class="px-3 py-2.5">{s.what}</td>
+              <td class="px-3 py-2.5 text-right font-semibold tabular-nums whitespace-nowrap">{formatKickoff(ROUND_DEADLINES[s.round])}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Deelname & indienen -->
+  <section>
+    <h2 class="mb-2 text-lg font-semibold">Deelname & indienen</h2>
+    <div class="space-y-2 rounded-xl border bg-card p-4 text-sm leading-relaxed">
+      <p><strong>Inzet:</strong> €10, te betalen aan den toog in café De Rut. Inschrijven kan enkel in het café. Je deelname is pas geldig na afgifte van de poulebladen én betaling.</p>
+      <p><strong>Poulefase:</strong> alle pronostieken van de poulewedstrijden breng je <strong>op papier</strong> binnen in De Rut, vóór de start van het WK.</p>
+      <p><strong>Vanaf de knock-outfase:</strong> op papier in de box aan den toog, of als een duidelijke foto via WhatsApp naar <strong>0478 64 77 06</strong> (Hakke). Zet je naam steeds op de foto.</p>
+      <p class="text-muted-foreground">Te laat ingediend = 0 punten voor de reeds gestarte wedstrijden. Eenmaal ingediend kan een blad niet meer aangepast worden.</p>
+    </div>
+  </section>
+</Layout>

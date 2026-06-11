@@ -94,10 +94,16 @@ const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position 
             item.correct === false && 'opacity-70',
           ]}>
             <div class="text-xs text-muted-foreground">{BONUS_LABELS[item.key]}</div>
-            <div class="mt-1 flex items-center gap-2 font-medium">
-              {team && <Flag iso={team.iso} name={team.name} class="text-base" />}
-              <span class="truncate">{team ? team.name : (value || '—')}</span>
-            </div>
+            {team ? (
+              <a href={`/land/${team.id}`} class="mt-1 flex items-center gap-2 font-medium hover:underline">
+                <Flag iso={team.iso} name={team.name} class="shrink-0 text-base" />
+                <span class="truncate">{team.name}</span>
+              </a>
+            ) : (
+              <div class="mt-1 flex items-center gap-2 font-medium">
+                <span class="truncate">{value || '—'}</span>
+              </div>
+            )}
             <div class="mt-1 text-xs">
               {item.correct === null ? <span class="text-muted-foreground">Nog niet bekend</span>
                 : item.correct ? <span class="font-semibold text-emerald-600">+{item.points}</span>
