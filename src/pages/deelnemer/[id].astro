@@ -69,25 +69,28 @@ const formScores = rows
   .map((r) => ({
     cls: r.score!.exact ? 'bg-emerald-500' : r.score!.points > 0 ? 'bg-amber-400' : 'bg-red-500',
   }));
-const medal = rank?.position === 1 ? 'bg-amber-300 text-black' : rank?.position === 2 ? 'bg-zinc-200 text-black' : rank?.position === 3 ? 'bg-[oklch(0.62_0.12_55)] text-white' : 'bg-white/20 text-white';
+const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21f] text-[#5a3d08] ring-2 ring-[#caa12e]/60'
+  : rank?.position === 2 ? 'bg-gradient-to-b from-zinc-100 to-zinc-300 text-zinc-700 ring-2 ring-zinc-400/50'
+  : rank?.position === 3 ? 'bg-gradient-to-b from-[#e3b27e] to-[#a96a32] text-white ring-2 ring-[#8a531f]/50'
+  : 'bg-white/15 text-white ring-2 ring-white/20';
 ---
 <Layout title={`${participant.name} — Rut Prono WK 2026`}>
   <a href="/" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Klassement</a>
 
-  <header class="mb-6 overflow-hidden rounded-2xl border bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm">
+  <header class="mb-6 overflow-hidden rounded-2xl border border-white/10 border-t-4 border-t-gold bg-gradient-to-br from-ink to-[oklch(0.30_0.03_80)] text-ink-foreground shadow-sm">
     <div class="flex items-center justify-between gap-4 p-5">
-      <div class="flex items-center gap-3">
-        <div class:list={['grid size-12 shrink-0 place-items-center rounded-full text-lg font-bold tabular-nums', medal]}>{rank?.position ?? '—'}</div>
-        <div>
-          <h1 class="text-2xl font-bold leading-tight">{participant.name}</h1>
+      <div class="flex min-w-0 items-center gap-3">
+        <div class:list={['grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold tabular-nums', medal]}>{rank?.position ?? '—'}</div>
+        <div class="min-w-0">
+          <h1 class="truncate text-2xl font-extrabold leading-tight">{participant.name}</h1>
         </div>
       </div>
-      <div class="text-right">
-        <div class="text-4xl font-bold leading-none tabular-nums">{rank?.total ?? 0}</div>
-        <div class="mt-1 text-xs text-primary-foreground/80">punten</div>
+      <div class="shrink-0 text-right">
+        <div class="font-display text-4xl font-extrabold leading-none tabular-nums text-gold">{rank?.total ?? 0}</div>
+        <div class="mt-1 text-xs text-ink-foreground/70">punten</div>
       </div>
     </div>
-    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-white/15 px-5 py-2.5 text-xs text-primary-foreground/90">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-white/10 px-5 py-2.5 text-xs text-ink-foreground/80">
       <div class="flex items-center gap-3">
         <span><strong class="font-semibold tabular-nums">{rank?.matchPoints ?? 0}</strong> uit wedstrijden</span>
         <span class="text-primary-foreground/40">•</span>

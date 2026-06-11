@@ -52,11 +52,11 @@ function Star({ filled, className = "size-5" }: { filled: boolean; className?: s
 }
 
 function positionBadge(position: number) {
-  const base = "inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-semibold tabular-nums";
-  if (position === 1) return <span className={`${base} bg-[oklch(0.78_0.15_85)] text-black`}>1</span>;
-  if (position === 2) return <span className={`${base} bg-muted text-foreground`}>2</span>;
-  if (position === 3) return <span className={`${base} bg-[oklch(0.62_0.12_55)] text-white`}>3</span>;
-  return <span className={`${base} text-muted-foreground`}>{position}</span>;
+  const base = "inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-bold tabular-nums font-display";
+  if (position === 1) return <span className={`${base} bg-gradient-to-b from-[#f6d873] to-[#dca21f] text-[#5a3d08] ring-1 ring-[#caa12e]/60 shadow-sm`}>1</span>;
+  if (position === 2) return <span className={`${base} bg-gradient-to-b from-zinc-100 to-zinc-300 text-zinc-700 ring-1 ring-zinc-400/50 shadow-sm`}>2</span>;
+  if (position === 3) return <span className={`${base} bg-gradient-to-b from-[#e3b27e] to-[#a96a32] text-white ring-1 ring-[#8a531f]/50 shadow-sm`}>3</span>;
+  return <span className={`${base} font-semibold text-muted-foreground`}>{position}</span>;
 }
 
 type DisplayRow = RankingTableRow & { delta: number };

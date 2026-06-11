@@ -38,7 +38,7 @@ const Tag = href ? 'a' : 'div';
     </div>
     <div class="match-score shrink-0">
       {finished
-        ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="md" />
+        ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="md" tone="scoreboard" />
         : <span class="px-1 text-sm font-semibold text-muted-foreground">vs</span>}
     </div>
     <div class="flex min-w-0 flex-1 items-center gap-2">

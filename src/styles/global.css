@@ -4,50 +4,63 @@
 
 :root {
   --radius: 0.625rem;
-  /* Warm "café" palette — cream background, espresso text (see Café De Rut logo). */
-  --background: oklch(0.953 0.014 83);
-  --foreground: oklch(0.255 0.018 55);
-  --card: oklch(0.988 0.007 84);
-  --card-foreground: oklch(0.255 0.018 55);
-  --popover: oklch(0.988 0.007 84);
-  --popover-foreground: oklch(0.255 0.018 55);
-  --primary: oklch(0.47 0.17 28);
-  --primary-foreground: oklch(0.985 0.01 84);
-  --secondary: oklch(0.915 0.022 82);
-  --secondary-foreground: oklch(0.28 0.02 55);
-  --muted: oklch(0.925 0.02 82);
-  --muted-foreground: oklch(0.505 0.022 62);
-  --accent: oklch(0.915 0.022 82);
-  --accent-foreground: oklch(0.28 0.02 55);
+  /* FIFA WK 2026-geïnspireerd: prestige zwart + goud, schone lichte content.
+     Goud is het primaire accent; "ink" is het bijna-zwart van het merkframe. */
+  --background: oklch(0.966 0.006 85);
+  --foreground: oklch(0.22 0.014 65);
+  --card: oklch(0.995 0.004 85);
+  --card-foreground: oklch(0.22 0.014 65);
+  --popover: oklch(0.995 0.004 85);
+  --popover-foreground: oklch(0.22 0.014 65);
+  --primary: oklch(0.555 0.118 74); /* deep gold — readable links/accents on light */
+  --primary-foreground: oklch(0.99 0.01 90);
+  --secondary: oklch(0.928 0.012 85);
+  --secondary-foreground: oklch(0.28 0.016 70);
+  --muted: oklch(0.94 0.011 85);
+  --muted-foreground: oklch(0.505 0.018 70);
+  --accent: oklch(0.928 0.012 85);
+  --accent-foreground: oklch(0.28 0.016 70);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
   --success: oklch(0.62 0.17 145);
-  --border: oklch(0.872 0.022 80);
-  --input: oklch(0.872 0.022 80);
-  --ring: oklch(0.47 0.17 28);
+  --border: oklch(0.885 0.012 82);
+  --input: oklch(0.885 0.012 82);
+  --ring: oklch(0.555 0.118 74);
+  /* Brand accents */
+  --gold: oklch(0.81 0.135 86);
+  --gold-foreground: oklch(0.22 0.03 80);
+  --ink: oklch(0.205 0.012 75);
+  --ink-foreground: oklch(0.97 0.008 85);
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Noto Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 .dark {
-  --background: oklch(0.205 0.012 60);
-  --foreground: oklch(0.96 0.01 85);
-  --card: oklch(0.255 0.012 60);
-  --card-foreground: oklch(0.96 0.01 85);
-  --popover: oklch(0.255 0.012 60);
-  --popover-foreground: oklch(0.96 0.01 85);
-  --primary: oklch(0.6 0.19 28);
-  --primary-foreground: oklch(0.985 0.01 84);
-  --secondary: oklch(0.31 0.014 60);
-  --secondary-foreground: oklch(0.96 0.01 85);
-  --muted: oklch(0.31 0.014 60);
-  --muted-foreground: oklch(0.72 0.014 70);
-  --accent: oklch(0.31 0.014 60);
-  --accent-foreground: oklch(0.96 0.01 85);
+  /* WK 2026 dark: near-black canvas, gold accent. */
+  --background: oklch(0.168 0.011 70);
+  --foreground: oklch(0.95 0.008 85);
+  --card: oklch(0.228 0.012 70);
+  --card-foreground: oklch(0.95 0.008 85);
+  --popover: oklch(0.228 0.012 70);
+  --popover-foreground: oklch(0.95 0.008 85);
+  --primary: oklch(0.81 0.135 85); /* bright gold on dark */
+  --primary-foreground: oklch(0.22 0.03 80);
+  --secondary: oklch(0.30 0.013 70);
+  --secondary-foreground: oklch(0.95 0.008 85);
+  --muted: oklch(0.30 0.013 70);
+  --muted-foreground: oklch(0.72 0.014 78);
+  --accent: oklch(0.30 0.013 70);
+  --accent-foreground: oklch(0.95 0.008 85);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.985 0 0);
-  --success: oklch(0.7 0.16 145);
+  --success: oklch(0.72 0.16 145);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.6 0.19 28);
+  --ring: oklch(0.81 0.135 85);
+  --gold: oklch(0.82 0.135 86);
+  --gold-foreground: oklch(0.20 0.03 80);
+  --ink: oklch(0.125 0.008 70); /* header/footer darker than the canvas */
+  --ink-foreground: oklch(0.96 0.008 85);
 }
 
 @theme inline {
@@ -76,6 +89,27 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+/* Diagonally-cut multicolor "celebration" band — echoes the FIFA wordmark's
+   angled bars and the WK 2026 multicolor system. Used under the header and above
+   the footer; purely decorative, fixed height (no layout impact). */
+.brand-stripe {
+  height: 4px;
+  background: repeating-linear-gradient(
+    120deg,
+    var(--gold) 0 16px,
+    oklch(0.62 0.17 145) 16px 32px,
+    oklch(0.6 0.15 250) 32px 48px,
+    oklch(0.6 0.2 25) 48px 64px
+  );
 }
 
 /* Favourited participants highlighted on match-detail buckets (toggled via JS). */
@@ -98,6 +132,11 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-sans);
+  }
+  /* Bold geometric display type for headings — echoes the WK 2026 brand. */
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
   }
 }

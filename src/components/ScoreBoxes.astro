@@ -7,21 +7,26 @@ interface Props {
   size?: 'sm' | 'md' | 'lg';
   muted?: boolean;
   placeholder?: boolean; // render empty boxes (instead of a dash) when no score yet
+  tone?: 'default' | 'scoreboard'; // scoreboard = dark "stadium" boxes with a gold separator
 }
-const { home, away, size = 'md', muted = false, placeholder = false } = Astro.props;
+const { home, away, size = 'md', muted = false, placeholder = false, tone = 'default' } = Astro.props;
 const has = home !== null && home !== undefined && away !== null && away !== undefined;
 const sizes = {
   sm: 'h-6 min-w-6 text-xs',
   md: 'h-8 min-w-8 text-base',
   lg: 'h-12 min-w-12 text-2xl',
 };
-const box = `inline-flex items-center justify-center rounded-md border px-1.5 font-bold tabular-nums ${sizes[size]} ${muted ? 'border-transparent bg-muted/70 text-muted-foreground' : 'bg-muted'}`;
+const fill = tone === 'scoreboard'
+  ? 'border-transparent bg-ink text-ink-foreground shadow-sm'
+  : muted ? 'border-transparent bg-muted/70 text-muted-foreground' : 'bg-muted';
+const box = `inline-flex items-center justify-center rounded-md border px-1.5 font-bold tabular-nums ${sizes[size]} ${fill}`;
+const sep = tone === 'scoreboard' ? 'font-bold text-gold' : 'text-muted-foreground';
 const emptyBox = `inline-flex items-center justify-center rounded-md border border-dashed border-muted-foreground/25 px-1.5 text-muted-foreground/40 ${sizes[size]}`;
 ---
 {has ? (
   <span class="inline-flex items-center gap-1.5">
     <span class={box}>{home}</span>
-    <span class="text-muted-foreground">–</span>
+    <span class={sep}>–</span>
     <span class={box}>{away}</span>
   </span>
 ) : placeholder ? (
