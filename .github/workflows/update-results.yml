@@ -1,0 +1,44 @@
+name: Update results
+
+# Pulls WK 2026 results + top scorers from the free worldcup26.ir API and commits
+# any changes, which triggers a Netlify rebuild. No API key/secret is required.
+#
+# The schedule below (every 30 min) is generous; adjust or disable the cron
+# outside the tournament window. You can also run it manually.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-results
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Update result data
+        run: node scripts/update-results.mjs
+
+      - name: Commit & push changes
+        run: |
+          if [ -n "$(git status --porcelain src/data)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add src/data
+            git commit -m "Update WK 2026 results (automated)"
+            git push
+          else
+            echo "No data changes."
+          fi
