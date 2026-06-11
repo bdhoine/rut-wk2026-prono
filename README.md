@@ -50,7 +50,7 @@ temporarily unavailable.)
   locally with `npm run results:update`.
 - **Live scores (client-side).** A "Live scores" toggle on the home, Programma
   and Kalender pages fetches the in-progress scores and then auto-refreshes
-  every minute while on (plus a manual "Ververs" button). On the home page the
+  every minute while on. On the home page the
   live (and recently-finished, ≤ 8 h) matches show as cards and the **klassement
   recomputes provisional points live**. Requests go through a Netlify Function
   ([`netlify/functions/live.mjs`](./netlify/functions/live.mjs), at

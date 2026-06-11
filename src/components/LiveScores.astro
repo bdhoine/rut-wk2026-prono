@@ -1,7 +1,6 @@
 ---
 // Live-scores control bar + client script. The toggle fetches the live function
-// and then auto-refreshes every minute while on (the function caches 5 min, so
-// this stays within the API rate limit); "Ververs" forces a refresh.
+// and then auto-refreshes every minute while on (the function caches 60s).
 //
 // Two modes:
 //  - mode="overlay" (default): overlay the live score onto MatchCards already on
@@ -67,11 +66,6 @@ const scoringPayload =
       <span id="live-dot" class="size-2 rounded-full bg-muted-foreground/50"></span>
       <span id="live-label">Live scores</span>
     </button>
-    <button
-      id="live-refresh"
-      type="button"
-      class="hidden rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
-    >Ververs</button>
     <span id="live-status" class="text-xs text-muted-foreground"></span>
   </div>
 
@@ -93,7 +87,6 @@ const scoringPayload =
   if (root) {
     const mode = root.dataset.liveMode || 'overlay';
     const toggle = document.getElementById('live-toggle')!;
-    const refresh = document.getElementById('live-refresh')!;
     const dot = document.getElementById('live-dot')!;
     const label = document.getElementById('live-label')!;
     const status = document.getElementById('live-status')!;
@@ -134,7 +127,7 @@ const scoringPayload =
     }
 
     const RECENT_WINDOW_MS = 10.5 * 60 * 60 * 1000; // ~8h after a match ends (kickoff + ~2.5h play)
-    const POLL_MS = 60 * 1000; // auto-refresh cadence while live is on (the function caches 5 min, so this is rate-safe)
+    const POLL_MS = 60 * 1000; // auto-refresh cadence while live is on (matches the function's 60s cache)
 
     let enabled = false;
     let loading = false;
@@ -290,11 +283,10 @@ const scoringPayload =
       label.textContent = on ? 'Live aan' : 'Live scores';
       toggle.classList.toggle('border-red-300', on);
       toggle.classList.toggle('bg-red-50', on);
-      refresh.classList.toggle('hidden', !on);
       if (timer) { clearInterval(timer); timer = null; }
       if (on) {
         load();
-        timer = setInterval(load, POLL_MS); // auto-refresh while live (function caches 5 min → rate-safe)
+        timer = setInterval(load, POLL_MS); // auto-refresh while live
       } else {
         clearLive();
         dispatchRanking([]); // revert klassement to static totals
@@ -303,7 +295,6 @@ const scoringPayload =
     }
 
     toggle.addEventListener('click', () => setEnabled(!enabled));
-    refresh.addEventListener('click', () => { if (enabled) load(); });
 
     // Recently-finished matches show automatically (no API needed).
     if (mode === 'list') renderRecent();
