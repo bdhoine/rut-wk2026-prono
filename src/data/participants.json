@@ -8,5 +8,25 @@
       "mostConcededTeamId": "cw",
       "mostScoredTeamId": "es"
     }
+  },
+  {
+    "id": "defijne",
+    "name": "De Fijne",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "maxim",
+    "name": "Maxim Breugelmans",
+    "bonus": {
+      "topScorer": "Erling Haaland",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
   }
 ]

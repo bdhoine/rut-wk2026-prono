@@ -16,3 +16,4 @@ build/
 # OS / editor
 .DS_Store
 *.log
+.claude/settings.local.json

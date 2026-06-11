@@ -29,7 +29,7 @@ if (!['start', 'md2', 'groups', 'final'].includes(PHASE)) {
   process.exit(1);
 }
 const NO_RESULTS = PHASE === 'start'; // tournament not started: schedule only, no results
-const ONLY_BARRY = PHASE === 'start'; // only the real personal entry, no dummy contestants
+const NO_DUMMIES = PHASE === 'start'; // only the real entries, no dummy contestants
 const GROUP3_DONE = PHASE === 'groups' || PHASE === 'final';
 const KO_RESOLVED = PHASE === 'groups' || PHASE === 'final'; // knockout teams known
 const KO_PLAYED = PHASE === 'final';
@@ -334,7 +334,65 @@ const dummies = NAMES.map((name) => ({
     mostConcededTeamId: pick(allTeamIds, predR), mostScoredTeamId: pick(winnerPool, predR),
   },
 }));
-const participants = ONLY_BARRY ? [barry] : [barry, ...dummies];
+const teamNlById = new Map(teams.map((t) => [t.id, t.name]));
+const dutchMap = (lines) => new Map(lines.map(([h, a, gh, ga]) => [`${norm(h)}|${norm(a)}`, [gh, ga]]));
+// De Fijne & Maxim Breugelmans — group predictions transcribed from their paper
+// forms (WhatsApp photos). Cells that weren't clearly legible are omitted (skipped),
+// so those matches simply have no prediction for that player.
+const DEFIJNE_LINES = [
+  // matchday 1 (re-read from clearer photos, cross-checked across two duplicate photos;
+  // only cells where both photos clearly agree are kept)
+  ['Mexico', 'Zuid-Afrika', 2, 1], ['Zuid-Korea', 'Tsjechië', 0, 2], ['Canada', 'Bosnië-Herzegovina', 1, 1], ['Verenigde Staten', 'Paraguay', 2, 1],
+  ['Qatar', 'Zwitserland', 0, 2], ['Brazilië', 'Marokko', 1, 0], ['Haïti', 'Schotland', 0, 3], ['Australië', 'Turkije', 0, 3],
+  ['Duitsland', 'Curaçao', 3, 0], ['Nederland', 'Japan', 3, 0], ['Zweden', 'Tunesië', 1, 0], ['Spanje', 'Kaapverdië', 4, 0],
+  ['België', 'Egypte', 2, 1], ['Saoedi-Arabië', 'Uruguay', 1, 2], ['Iran', 'Nieuw-Zeeland', 1, 1], ['Frankrijk', 'Senegal', 1, 2],
+  ['Irak', 'Noorwegen', 0, 0], ['Argentinië', 'Algerije', 3, 0], ['Oostenrijk', 'Jordanië', 2, 0], ['Portugal', 'DR Congo', 1, 2],
+  ['Oezbekistan', 'Colombia', 0, 3],
+  // matchday 2
+  ['Tsjechië', 'Zuid-Afrika', 2, 1], ['Zwitserland', 'Bosnië-Herzegovina', 3, 0], ['Canada', 'Qatar', 2, 0], ['Mexico', 'Zuid-Korea', 2, 1],
+  ['Verenigde Staten', 'Australië', 0, 1], ['Brazilië', 'Haïti', 5, 0], ['Turkije', 'Paraguay', 2, 0], ['Nederland', 'Zweden', 1, 2],
+  ['Duitsland', 'Ivoorkust', 2, 1], ['Ecuador', 'Curaçao', 3, 1], ['Tunesië', 'Japan', 1, 2], ['Spanje', 'Saoedi-Arabië', 4, 0],
+  ['België', 'Iran', 3, 0], ['Uruguay', 'Kaapverdië', 4, 0], ['Nieuw-Zeeland', 'Egypte', 1, 3], ['Argentinië', 'Oostenrijk', 4, 1],
+  ['Frankrijk', 'Irak', 3, 0], ['Noorwegen', 'Senegal', 1, 3], ['Jordanië', 'Algerije', 0, 3],
+  // matchday 3 (now legible from two duplicate photos; only cells where both photos clearly agree)
+  ['Zwitserland', 'Canada', 2, 0], ['Bosnië-Herzegovina', 'Qatar', 3, 0], ['Marokko', 'Haïti', 3, 0], ['Schotland', 'Brazilië', 0, 1],
+  ['Zuid-Afrika', 'Zuid-Korea', 2, 1], ['Curaçao', 'Ivoorkust', 0, 4], ['Ecuador', 'Duitsland', 0, 3], ['Japan', 'Zweden', 3, 3],
+  ['Paraguay', 'Australië', 0, 1], ['Algerije', 'Oostenrijk', 3, 1], ['Jordanië', 'Argentinië', 0, 4],
+];
+const MAXIM_LINES = [
+  // matchday 1
+  ['Mexico', 'Zuid-Afrika', 2, 0], ['Zuid-Korea', 'Tsjechië', 1, 1], ['Canada', 'Bosnië-Herzegovina', 1, 1], ['Verenigde Staten', 'Paraguay', 2, 1],
+  ['Qatar', 'Zwitserland', 0, 2], ['Brazilië', 'Marokko', 2, 0], ['Haïti', 'Schotland', 0, 2], ['Australië', 'Turkije', 1, 2],
+  ['Duitsland', 'Curaçao', 4, 0], ['Nederland', 'Japan', 2, 1], ['Ivoorkust', 'Ecuador', 2, 0], ['Zweden', 'Tunesië', 4, 0],
+  ['Spanje', 'Kaapverdië', 2, 0], ['Argentinië', 'Algerije', 3, 0], ['Oostenrijk', 'Jordanië', 2, 0], ['Portugal', 'DR Congo', 3, 0],
+  ['Engeland', 'Kroatië', 2, 1], ['Oezbekistan', 'Colombia', 1, 2],
+  ['België', 'Egypte', 2, 0], ['Saoedi-Arabië', 'Uruguay', 0, 2], ['Iran', 'Nieuw-Zeeland', 2, 1], ['Frankrijk', 'Senegal', 2, 0],
+  ['Irak', 'Noorwegen', 0, 3], ['Ghana', 'Panama', 2, 1],
+  // matchday 2
+  ['Tsjechië', 'Zuid-Afrika', 2, 0], ['Zwitserland', 'Bosnië-Herzegovina', 2, 1], ['Canada', 'Qatar', 2, 0], ['Mexico', 'Zuid-Korea', 2, 1],
+  ['Verenigde Staten', 'Australië', 2, 0], ['Schotland', 'Marokko', 1, 1], ['Brazilië', 'Haïti', 4, 0], ['Turkije', 'Paraguay', 2, 1],
+  ['Nederland', 'Zweden', 1, 0], ['Duitsland', 'Ivoorkust', 2, 0], ['Ecuador', 'Curaçao', 3, 0], ['Tunesië', 'Japan', 1, 2],
+  ['Spanje', 'Saoedi-Arabië', 3, 0], ['België', 'Iran', 2, 1], ['Uruguay', 'Kaapverdië', 2, 0], ['Nieuw-Zeeland', 'Egypte', 0, 2],
+  ['Argentinië', 'Oostenrijk', 2, 1], ['Frankrijk', 'Irak', 2, 0], ['Noorwegen', 'Senegal', 2, 1], ['Jordanië', 'Algerije', 0, 1],
+  ['Portugal', 'Oezbekistan', 2, 0], ['Engeland', 'Ghana', 2, 0], ['Panama', 'Kroatië', 1, 2], ['Colombia', 'DR Congo', 3, 0],
+  // matchday 3
+  ['Zwitserland', 'Canada', 1, 1], ['Bosnië-Herzegovina', 'Qatar', 2, 1], ['Marokko', 'Haïti', 3, 0], ['Schotland', 'Brazilië', 0, 2],
+  ['Zuid-Afrika', 'Zuid-Korea', 1, 1], ['Tsjechië', 'Mexico', 1, 2], ['Curaçao', 'Ivoorkust', 0, 2], ['Ecuador', 'Duitsland', 1, 2],
+  ['Japan', 'Zweden', 1, 1], ['Tunesië', 'Nederland', 0, 2], ['Paraguay', 'Australië', 1, 1], ['Turkije', 'Verenigde Staten', 1, 1],
+  ['Uruguay', 'Spanje', 1, 2], ['Egypte', 'Iran', 1, 1], ['Nieuw-Zeeland', 'België', 0, 4], ['Jordanië', 'Argentinië', 0, 3],
+  ['Noorwegen', 'Frankrijk', 1, 1], ['Senegal', 'Irak', 2, 0], ['Kaapverdië', 'Saoedi-Arabië', 1, 1], ['Kroatië', 'Ghana', 1, 0],
+  ['Panama', 'Engeland', 0, 3], ['Colombia', 'Portugal', 1, 1], ['DR Congo', 'Oezbekistan', 1, 2], ['Algerije', 'Oostenrijk', 1, 2],
+];
+const deFijne = { id: 'defijne', name: 'De Fijne', skill: 0.7, predMap: dutchMap(DEFIJNE_LINES), bonus: { topScorer: 'Kylian Mbappé', winnerTeamId: 'fr', mostConcededTeamId: 'ht', mostScoredTeamId: 'fr' } };
+const maxim = { id: 'maxim', name: 'Maxim Breugelmans', skill: 0.7, predMap: dutchMap(MAXIM_LINES), bonus: { topScorer: 'Erling Haaland', winnerTeamId: 'es', mostConcededTeamId: 'ht', mostScoredTeamId: 'es' } };
+function dutchMapPred(p, m) {
+  const h = norm(teamNlById.get(m.homeTeamId)), a = norm(teamNlById.get(m.awayTeamId));
+  const d = p.predMap.get(`${h}|${a}`); if (d) return { home: d[0], away: d[1] };
+  const r = p.predMap.get(`${a}|${h}`); if (r) return { home: r[1], away: r[0] };
+  return null;
+}
+const REAL = [barry, deFijne, maxim];
+const participants = NO_DUMMIES ? REAL : [...REAL, ...dummies];
 
 // Barry's provided group predictions (keyed by normalised home|away).
 const USER_LINES = [
@@ -377,8 +435,14 @@ for (const stage of ['group', 'ko']) {
       if (stage === 'group' !== isGroup) continue;
       if (!m.homeTeamId || !m.awayTeamId) continue; // unresolved knockout slot
       let pred;
-      if (p.id === 'barry' && isGroup) pred = barryGroupPred(m);
-      else pred = m.result ? predictFromResult(m.result, p.skill) : plausible();
+      if (isGroup) {
+        if (p.id === 'barry') pred = barryGroupPred(m);
+        else if (p.predMap) pred = dutchMapPred(p, m); // De Fijne / Maxim: only their read predictions (may be null -> skip)
+        else pred = m.result ? predictFromResult(m.result, p.skill) : plausible();
+      } else {
+        if (p.predMap) pred = null; // De Fijne / Maxim: no knockout predictions provided
+        else pred = m.result ? predictFromResult(m.result, p.skill) : plausible();
+      }
       addPred(p.id, m, pred);
     }
   }
@@ -404,7 +468,7 @@ if (PHASE === 'final') {
 
 const settings = { multipliers: { group: 1, r32: 2, r16: 3, qf: 4, sf: 4, third: 4, final: 5 }, bonusPoints: 30 };
 
-const participantsOut = participants.map(({ skill, ...p }) => p);
+const participantsOut = participants.map(({ skill, predMap, ...p }) => p);
 const write = (name, data) => writeFileSync(join(DATA, name), JSON.stringify(data, null, 2) + '\n');
 write('teams.json', teamsOut);
 write('groups.json', groups);
