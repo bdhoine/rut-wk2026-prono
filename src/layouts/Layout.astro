@@ -10,10 +10,10 @@ const path = Astro.url.pathname;
 
 const nav = [
   { href: '/', label: 'Klassement', active: path === '/' || path.startsWith('/deelnemer') },
-  { href: '/komende', label: 'Programma', active: path.startsWith('/komende') },
+  { href: '/programma', label: 'Programma', active: path.startsWith('/programma') },
   { href: '/kalender', label: 'Kalender', active: path.startsWith('/kalender') || path.startsWith('/wedstrijd') },
   { href: '/poules', label: 'Poules', active: path.startsWith('/poules') || path.startsWith('/land') },
-  { href: '/stats', label: 'Statistieken', active: path.startsWith('/stats') },
+  { href: '/statistieken', label: 'Statistieken', active: path.startsWith('/statistieken') },
   { href: '/reglement', label: 'Reglement', active: path.startsWith('/reglement') },
 ];
 ---
