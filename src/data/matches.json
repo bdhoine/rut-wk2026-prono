@@ -63,7 +63,11 @@
     "venue": "Estadio Azteca, Mexico-Stad",
     "homeTeamId": "cz",
     "awayTeamId": "mx",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 0,
+      "away": 0
+    }
   },
   {
     "id": "gA-md3-2",
@@ -73,7 +77,11 @@
     "venue": "Estadio BBVA, Monterrey",
     "homeTeamId": "za",
     "awayTeamId": "kr",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 2,
+      "away": 0
+    }
   },
   {
     "id": "gB-md1-1",
@@ -139,7 +147,11 @@
     "venue": "BC Place, Vancouver",
     "homeTeamId": "ch",
     "awayTeamId": "ca",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 1,
+      "away": 1
+    }
   },
   {
     "id": "gB-md3-2",
@@ -149,7 +161,11 @@
     "venue": "Lumen Field, Seattle",
     "homeTeamId": "ba",
     "awayTeamId": "qa",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 4,
+      "away": 0
+    }
   },
   {
     "id": "gC-md1-1",
@@ -215,7 +231,11 @@
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": "gbsct",
     "awayTeamId": "br",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 1,
+      "away": 2
+    }
   },
   {
     "id": "gC-md3-2",
@@ -225,7 +245,11 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "ma",
     "awayTeamId": "ht",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 0,
+      "away": 1
+    }
   },
   {
     "id": "gD-md1-1",
@@ -291,7 +315,11 @@
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": "tr",
     "awayTeamId": "us",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 0,
+      "away": 2
+    }
   },
   {
     "id": "gD-md3-2",
@@ -301,7 +329,11 @@
     "venue": "Levi's Stadium, San Francisco",
     "homeTeamId": "py",
     "awayTeamId": "au",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 3,
+      "away": 0
+    }
   },
   {
     "id": "gE-md1-1",
@@ -367,7 +399,11 @@
     "venue": "Lincoln Financial Field, Philadelphia",
     "homeTeamId": "cw",
     "awayTeamId": "ci",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 0,
+      "away": 1
+    }
   },
   {
     "id": "gE-md3-2",
@@ -377,7 +413,11 @@
     "venue": "MetLife Stadium, New York",
     "homeTeamId": "ec",
     "awayTeamId": "de",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 2,
+      "away": 1
+    }
   },
   {
     "id": "gF-md1-1",
@@ -443,7 +483,11 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "jp",
     "awayTeamId": "se",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 1,
+      "away": 0
+    }
   },
   {
     "id": "gF-md3-2",
@@ -453,7 +497,11 @@
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": "tn",
     "awayTeamId": "nl",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 0,
+      "away": 2
+    }
   },
   {
     "id": "gG-md1-1",
@@ -519,7 +567,11 @@
     "venue": "Lumen Field, Seattle",
     "homeTeamId": "eg",
     "awayTeamId": "ir",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 4,
+      "away": 0
+    }
   },
   {
     "id": "gG-md3-2",
@@ -529,7 +581,11 @@
     "venue": "BC Place, Vancouver",
     "homeTeamId": "nz",
     "awayTeamId": "be",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 1,
+      "away": 2
+    }
   },
   {
     "id": "gH-md1-1",
@@ -595,7 +651,11 @@
     "venue": "NRG Stadium, Houston",
     "homeTeamId": "cv",
     "awayTeamId": "sa",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 3,
+      "away": 2
+    }
   },
   {
     "id": "gH-md3-2",
@@ -605,7 +665,11 @@
     "venue": "Estadio Akron, Guadalajara",
     "homeTeamId": "uy",
     "awayTeamId": "es",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 0,
+      "away": 2
+    }
   },
   {
     "id": "gI-md1-1",
@@ -671,7 +735,11 @@
     "venue": "Gillette Stadium, Boston",
     "homeTeamId": "no",
     "awayTeamId": "fr",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 0,
+      "away": 2
+    }
   },
   {
     "id": "gI-md3-2",
@@ -681,7 +749,11 @@
     "venue": "BMO Field, Toronto",
     "homeTeamId": "sn",
     "awayTeamId": "iq",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 2,
+      "away": 1
+    }
   },
   {
     "id": "gJ-md1-1",
@@ -747,7 +819,11 @@
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": "dz",
     "awayTeamId": "at",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 5,
+      "away": 2
+    }
   },
   {
     "id": "gJ-md3-2",
@@ -757,7 +833,11 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "jo",
     "awayTeamId": "ar",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 1,
+      "away": 0
+    }
   },
   {
     "id": "gK-md1-1",
@@ -823,7 +903,11 @@
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": "co",
     "awayTeamId": "pt",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 4,
+      "away": 1
+    }
   },
   {
     "id": "gK-md3-2",
@@ -833,7 +917,11 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "cd",
     "awayTeamId": "uz",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 2,
+      "away": 0
+    }
   },
   {
     "id": "gL-md1-1",
@@ -899,7 +987,11 @@
     "venue": "MetLife Stadium, New York",
     "homeTeamId": "pa",
     "awayTeamId": "gbeng",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 1,
+      "away": 3
+    }
   },
   {
     "id": "gL-md3-2",
@@ -909,17 +1001,19 @@
     "venue": "Lincoln Financial Field, Philadelphia",
     "homeTeamId": "hr",
     "awayTeamId": "gh",
-    "status": "scheduled"
+    "status": "finished",
+    "result": {
+      "home": 1,
+      "away": 0
+    }
   },
   {
     "id": "r32-1",
     "round": "r32",
     "kickoff": "2026-06-28T18:00:00-07:00",
     "venue": "SoFi Stadium, Los Angeles",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "2e Groep A",
-    "awayPlaceholder": "2e Groep B",
+    "homeTeamId": "cz",
+    "awayTeamId": "ca",
     "status": "scheduled"
   },
   {
@@ -927,10 +1021,8 @@
     "round": "r32",
     "kickoff": "2026-06-29T21:00:00-04:00",
     "venue": "Gillette Stadium, Boston",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep E",
-    "awayPlaceholder": "Beste 3e (A/B/C/D/F)",
+    "homeTeamId": "ec",
+    "awayTeamId": "sn",
     "status": "scheduled"
   },
   {
@@ -938,10 +1030,8 @@
     "round": "r32",
     "kickoff": "2026-06-29T18:00:00-06:00",
     "venue": "Estadio BBVA, Monterrey",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep F",
-    "awayPlaceholder": "2e Groep C",
+    "homeTeamId": "nl",
+    "awayTeamId": "gbsct",
     "status": "scheduled"
   },
   {
@@ -949,10 +1039,8 @@
     "round": "r32",
     "kickoff": "2026-06-29T21:00:00-05:00",
     "venue": "NRG Stadium, Houston",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep C",
-    "awayPlaceholder": "2e Groep F",
+    "homeTeamId": "br",
+    "awayTeamId": "jp",
     "status": "scheduled"
   },
   {
@@ -960,10 +1048,8 @@
     "round": "r32",
     "kickoff": "2026-06-30T18:00:00-04:00",
     "venue": "MetLife Stadium, New York",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep I",
-    "awayPlaceholder": "Beste 3e (C/D/F/G/H)",
+    "homeTeamId": "fr",
+    "awayTeamId": "ci",
     "status": "scheduled"
   },
   {
@@ -971,10 +1057,8 @@
     "round": "r32",
     "kickoff": "2026-06-30T21:00:00-05:00",
     "venue": "AT&T Stadium, Dallas",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "2e Groep E",
-    "awayPlaceholder": "2e Groep I",
+    "homeTeamId": "de",
+    "awayTeamId": "no",
     "status": "scheduled"
   },
   {
@@ -982,10 +1066,8 @@
     "round": "r32",
     "kickoff": "2026-06-30T18:00:00-06:00",
     "venue": "Estadio Azteca, Mexico-Stad",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep A",
-    "awayPlaceholder": "Beste 3e (C/E/F/H/I)",
+    "homeTeamId": "mx",
+    "awayTeamId": "ba",
     "status": "scheduled"
   },
   {
@@ -993,10 +1075,8 @@
     "round": "r32",
     "kickoff": "2026-07-01T21:00:00-04:00",
     "venue": "Mercedes-Benz Stadium, Atlanta",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep L",
-    "awayPlaceholder": "Beste 3e (E/H/I/J/K)",
+    "homeTeamId": "gbeng",
+    "awayTeamId": "py",
     "status": "scheduled"
   },
   {
@@ -1004,10 +1084,8 @@
     "round": "r32",
     "kickoff": "2026-07-01T18:00:00-07:00",
     "venue": "Levi's Stadium, San Francisco",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep D",
-    "awayPlaceholder": "Beste 3e (B/E/F/I/J)",
+    "homeTeamId": "us",
+    "awayTeamId": "za",
     "status": "scheduled"
   },
   {
@@ -1015,10 +1093,8 @@
     "round": "r32",
     "kickoff": "2026-07-01T21:00:00-07:00",
     "venue": "Lumen Field, Seattle",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep G",
-    "awayPlaceholder": "Beste 3e (A/E/H/I/J)",
+    "homeTeamId": "be",
+    "awayTeamId": "cd",
     "status": "scheduled"
   },
   {
@@ -1026,10 +1102,8 @@
     "round": "r32",
     "kickoff": "2026-07-02T18:00:00-04:00",
     "venue": "BMO Field, Toronto",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "2e Groep K",
-    "awayPlaceholder": "2e Groep L",
+    "homeTeamId": "pt",
+    "awayTeamId": "hr",
     "status": "scheduled"
   },
   {
@@ -1037,10 +1111,8 @@
     "round": "r32",
     "kickoff": "2026-07-02T21:00:00-07:00",
     "venue": "SoFi Stadium, Los Angeles",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep H",
-    "awayPlaceholder": "2e Groep J",
+    "homeTeamId": "es",
+    "awayTeamId": "dz",
     "status": "scheduled"
   },
   {
@@ -1048,10 +1120,8 @@
     "round": "r32",
     "kickoff": "2026-07-02T18:00:00-07:00",
     "venue": "BC Place, Vancouver",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep B",
-    "awayPlaceholder": "Beste 3e (E/F/G/I/J)",
+    "homeTeamId": "ch",
+    "awayTeamId": "at",
     "status": "scheduled"
   },
   {
@@ -1059,10 +1129,8 @@
     "round": "r32",
     "kickoff": "2026-07-03T21:00:00-04:00",
     "venue": "Hard Rock Stadium, Miami",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep J",
-    "awayPlaceholder": "2e Groep H",
+    "homeTeamId": "ar",
+    "awayTeamId": "uy",
     "status": "scheduled"
   },
   {
@@ -1070,10 +1138,8 @@
     "round": "r32",
     "kickoff": "2026-07-03T18:00:00-05:00",
     "venue": "Arrowhead Stadium, Kansas City",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "Winnaar Groep K",
-    "awayPlaceholder": "Beste 3e (D/E/I/J/L)",
+    "homeTeamId": "co",
+    "awayTeamId": "se",
     "status": "scheduled"
   },
   {
@@ -1081,10 +1147,8 @@
     "round": "r32",
     "kickoff": "2026-07-03T21:00:00-05:00",
     "venue": "AT&T Stadium, Dallas",
-    "homeTeamId": null,
-    "awayTeamId": null,
-    "homePlaceholder": "2e Groep D",
-    "awayPlaceholder": "2e Groep G",
+    "homeTeamId": "tr",
+    "awayTeamId": "eg",
     "status": "scheduled"
   },
   {
@@ -1094,9 +1158,9 @@
     "venue": "Lincoln Financial Field, Philadelphia",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-2",
-    "awayPlaceholder": "Winnaar R32-5",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-5"
   },
   {
     "id": "r16-2",
@@ -1105,9 +1169,9 @@
     "venue": "NRG Stadium, Houston",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-1",
-    "awayPlaceholder": "Winnaar R32-3",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-3"
   },
   {
     "id": "r16-3",
@@ -1116,9 +1180,9 @@
     "venue": "MetLife Stadium, New York",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-4",
-    "awayPlaceholder": "Winnaar R32-6",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-6"
   },
   {
     "id": "r16-4",
@@ -1127,9 +1191,9 @@
     "venue": "Estadio Azteca, Mexico-Stad",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-7",
-    "awayPlaceholder": "Winnaar R32-8",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-8"
   },
   {
     "id": "r16-5",
@@ -1138,9 +1202,9 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-11",
-    "awayPlaceholder": "Winnaar R32-12",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-12"
   },
   {
     "id": "r16-6",
@@ -1149,9 +1213,9 @@
     "venue": "Lumen Field, Seattle",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-9",
-    "awayPlaceholder": "Winnaar R32-10",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-10"
   },
   {
     "id": "r16-7",
@@ -1160,9 +1224,9 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-14",
-    "awayPlaceholder": "Winnaar R32-16",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-16"
   },
   {
     "id": "r16-8",
@@ -1171,9 +1235,9 @@
     "venue": "BC Place, Vancouver",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar R32-13",
-    "awayPlaceholder": "Winnaar R32-15",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar R32-15"
   },
   {
     "id": "qf-1",
@@ -1182,9 +1246,9 @@
     "venue": "Gillette Stadium, Boston",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar 1/8 1",
-    "awayPlaceholder": "Winnaar 1/8 2",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar 1/8 2"
   },
   {
     "id": "qf-2",
@@ -1193,9 +1257,9 @@
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar 1/8 5",
-    "awayPlaceholder": "Winnaar 1/8 6",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar 1/8 6"
   },
   {
     "id": "qf-3",
@@ -1204,9 +1268,9 @@
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar 1/8 3",
-    "awayPlaceholder": "Winnaar 1/8 4",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar 1/8 4"
   },
   {
     "id": "qf-4",
@@ -1215,9 +1279,9 @@
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar 1/8 7",
-    "awayPlaceholder": "Winnaar 1/8 8",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar 1/8 8"
   },
   {
     "id": "sf-1",
@@ -1226,9 +1290,9 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar KF 1",
-    "awayPlaceholder": "Winnaar KF 2",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar KF 2"
   },
   {
     "id": "sf-2",
@@ -1237,9 +1301,9 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar KF 3",
-    "awayPlaceholder": "Winnaar KF 4",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar KF 4"
   },
   {
     "id": "third-1",
@@ -1248,9 +1312,9 @@
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Verliezer HF 1",
-    "awayPlaceholder": "Verliezer HF 2",
-    "status": "scheduled"
+    "awayPlaceholder": "Verliezer HF 2"
   },
   {
     "id": "final-1",
@@ -1259,8 +1323,8 @@
     "venue": "MetLife Stadium, New York",
     "homeTeamId": null,
     "awayTeamId": null,
+    "status": "scheduled",
     "homePlaceholder": "Winnaar HF 1",
-    "awayPlaceholder": "Winnaar HF 2",
-    "status": "scheduled"
+    "awayPlaceholder": "Winnaar HF 2"
   }
 ]

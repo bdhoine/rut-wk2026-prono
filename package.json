@@ -9,7 +9,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "data:md2": "node scripts/generate-data.mjs md2",
+    "data:groups": "node scripts/generate-data.mjs groups",
+    "data:final": "node scripts/generate-data.mjs final"
   },
   "dependencies": {
     "@astrojs/netlify": "^7.0.13",
