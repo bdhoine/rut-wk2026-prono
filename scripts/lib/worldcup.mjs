@@ -89,6 +89,24 @@ export function gameStatus(g) {
   return 'scheduled';
 }
 
+/** Map raw games to the live-scores payload shape the UI consumes (the live
+ *  function and its scheduled refresher both build this). */
+export function liveMatchesFromGames(games) {
+  return (games ?? [])
+    .filter((g) => gameStatus(g) === 'live')
+    .map((g) => ({
+      homeTeamId: resolveTeamId(g.home_team_name_en),
+      awayTeamId: resolveTeamId(g.away_team_name_en),
+      home: g.home_team_name_en ?? null,
+      away: g.away_team_name_en ?? null,
+      goalsHome: parseInt(g.home_score, 10) || 0,
+      goalsAway: parseInt(g.away_score, 10) || 0,
+      elapsed: null, // worldcup26 reports status only, not the minute
+      status: 'LIVE',
+    }))
+    .filter((m) => m.homeTeamId && m.awayTeamId);
+}
+
 /** "MM/DD/YYYY HH:mm" -> "YYYY-MM-DD HH:mm" (venue-local wall clock). */
 export function wallclockFromLocal(s) {
   const m = String(s ?? '').match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);

@@ -78,10 +78,17 @@ temporarily unavailable.)
   recently-finished ones (max 4 total) and the **klassement recomputes
   provisional points live**; on Programma/Kalender the live score overlays the
   match card (badge above the score pill); on Poules the playing countries get a
-  pulsing red dot with their live score. Requests go through a Netlify Function
-  ([`netlify/functions/live.mjs`](./netlify/functions/live.mjs), at
-  `/.netlify/functions/live`) that caches 60 seconds (CDN + memory) and serves
-  the last good payload on error. The shared client/resolver lives in
+  pulsing red dot with their live score. The client polls
+  [`netlify/functions/live.mjs`](./netlify/functions/live.mjs) (at
+  `/.netlify/functions/live`), which returns in ~80 ms by reading the latest
+  payload from a **Netlify Blob** rather than calling the upstream itself — the
+  worldcup26 API is slow (10-16 s, exceeding the synchronous-function limit), so
+  a scheduled function
+  ([`netlify/functions/live-refresh.mjs`](./netlify/functions/live-refresh.mjs))
+  polls it in the background every 2 minutes and writes the blob. To stay within
+  the free tier that refresher only hits the upstream while a match is actually
+  in progress (gated on `matches.json` kickoff windows); between matches it's a
+  no-op. The shared resolver/mapper lives in
   [`scripts/lib/worldcup.mjs`](./scripts/lib/worldcup.mjs).
 
 > Knockout scores from this source are the score as reported (no separate
