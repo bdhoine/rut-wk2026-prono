@@ -3,10 +3,35 @@
 // ink "prestige" panel. All data is computed at build time; a tiny inline
 // script hides next-match entries that have already kicked off, so a stale
 // prerender between result-update builds never shows a past match.
+import { execSync } from 'node:child_process';
+import { statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import Flag from './Flag.astro';
 import { upcomingMatches, matches, sideLabel } from '@/lib/data';
 import { formatKickoff } from '@/lib/format';
 import { ROUND_LABELS } from '@/lib/types';
+
+// "Last updated" of the static result data, computed at build time (this
+// frontmatter is server-side only). Prefer the git commit time of the data
+// files — the automated results updater commits them, so this is the real
+// "results changed" moment — and fall back to newest file mtime, then now.
+const DATA_FILES = ['src/data/matches.json', 'src/data/scorers.json', 'src/data/outcomes.json'];
+function dataUpdatedAt(): Date {
+  try {
+    const iso = execSync(`git log -1 --format=%cI -- ${DATA_FILES.join(' ')}`, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    if (iso) return new Date(iso);
+  } catch { /* git unavailable (e.g. some CI) — fall through */ }
+  try {
+    const root = fileURLToPath(new URL('../../', import.meta.url));
+    return new Date(Math.max(...DATA_FILES.map((f) => statSync(root + f).mtimeMs)));
+  } catch {
+    return new Date();
+  }
+}
+const updatedAt = dataUpdatedAt();
 
 const groupMatches = matches.filter((m) => m.round === 'group');
 const finishedCount = matches.filter((m) => m.status === 'finished').length;
@@ -33,6 +58,9 @@ const next = nextUp.slice(0, 3).map((m) => ({
     <div class="p-5">
       <p class="font-display text-xs font-bold uppercase tracking-[0.2em] text-gold">{phaseLabel} · {finishedCount}/{matches.length} gespeeld</p>
       <h1 class="mt-1 font-display text-2xl font-extrabold tracking-tight">Klassement</h1>
+      <p class="mt-1.5 text-xs text-ink-foreground/55">
+        Resultaten bijgewerkt: <time datetime={updatedAt.toISOString()}>{formatKickoff(updatedAt.toISOString())}</time>
+      </p>
     </div>
     {next.length > 0 && (
       <div class="border-t border-white/10 px-5 py-4 sm:w-72 sm:border-l sm:border-t-0" data-next-matches>

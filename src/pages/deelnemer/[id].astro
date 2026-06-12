@@ -170,8 +170,7 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
     <div class="space-y-3">
       {matchdays.map((g) => (
         <details open={g.finished > 0 || g.md === currentMd} class="group rounded-xl border bg-card shadow-sm">
-          <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
-            <span class="bar-cut" aria-hidden="true"></span>
+          <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
             Speeldag {g.md}
             <span class="text-sm font-normal text-muted-foreground">{g.finished}/{g.items.length} gespeeld</span>
             {g.finished > 0 && <span class="ml-auto rounded-md bg-gold/15 px-2 py-0.5 text-sm font-bold tabular-nums text-primary">{g.points} ptn</span>}
@@ -183,14 +182,23 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
         </details>
       ))}
 
-      {koRounds.map((g) => (
-        <div class="pt-3">
-          <h3 class="mb-2 text-sm font-semibold text-muted-foreground">{ROUND_LABELS[g.round]}</h3>
-          <div class="space-y-2">
-            {g.items.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
-          </div>
-        </div>
-      ))}
+      {koRounds.map((g) => {
+        const finished = g.items.filter((r) => r.score).length;
+        const points = g.items.reduce((s, r) => s + (r.score?.points ?? 0), 0);
+        return (
+          <details open={finished > 0} class="group rounded-xl border bg-card shadow-sm">
+            <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+              {ROUND_LABELS[g.round]}
+              <span class="text-sm font-normal text-muted-foreground">{finished}/{g.items.length} gespeeld</span>
+              {finished > 0 && <span class="ml-auto rounded-md bg-gold/15 px-2 py-0.5 text-sm font-bold tabular-nums text-primary">{points} ptn</span>}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class:list={['size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180', finished === 0 && 'ml-auto']}><path d="m6 9 6 6 6-6" /></svg>
+            </summary>
+            <div class="space-y-2 border-t px-3 py-3">
+              {g.items.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
+            </div>
+          </details>
+        );
+      })}
     </div>
   </section>
 </Layout>

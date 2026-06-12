@@ -1,0 +1,31 @@
+[
+  {
+    "date": "2026-06-12",
+    "title": "Live scores betrouwbaar + opfrissing",
+    "items": [
+      "Live scores werken nu ook als de officiële API traag is: een achtergrondtaak haalt de tussenstanden elke 2 minuten op tijdens wedstrijden, de site leest een snelle cache.",
+      "Poules-pagina toont een live-stip met de tussenstand naast de landen die spelen.",
+      "\"Nu live & recent gespeeld\" toont maximaal 4 wedstrijden — live altijd bovenaan, aangevuld met de recentst gespeelde.",
+      "Menu herwerkt: een Wedstrijden-menu (Programma, Kalender, Poules) en een Meer-menu (Reglement, Changelog).",
+      "Homepagina toont sinds wanneer de resultaten laatst zijn bijgewerkt.",
+      "Opfrissing: warmere achtergrond met WK-kleuren, gelijk uitgelijnde punten- en knockout-blokken, en duidelijkere bonus- en statistiektabellen."
+    ]
+  },
+  {
+    "date": "2026-06-12",
+    "title": "FIFA WK 2026-look",
+    "items": [
+      "Volledige restyling in de FIFA WK 2026-stijl: zwart met goud, donkere modus en kleuraccenten.",
+      "Statistieken uitgebreid met populairste uitslagen en prijzengeld.",
+      "Klassement opnieuw ingedeeld met info-knoppen en favorieten."
+    ]
+  },
+  {
+    "date": "2026-06-11",
+    "title": "Eerste versie",
+    "items": [
+      "Eerste online versie met klassement, pronostieken per deelnemer en wedstrijddetails.",
+      "Live-scoreknop en automatische verwerking van uitslagen tijdens het toernooi."
+    ]
+  }
+]

@@ -1,0 +1,45 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
+import changelogRaw from '@/data/changelog.json';
+
+interface ChangelogBlock {
+  date: string; // YYYY-MM-DD
+  title?: string;
+  items: string[];
+}
+const blocks = changelogRaw as ChangelogBlock[];
+
+const dateFmt = new Intl.DateTimeFormat('nl-BE', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'Europe/Brussels',
+});
+const formatDate = (d: string) => dateFmt.format(new Date(`${d}T12:00:00`));
+---
+<Layout title="Changelog — Rut Prono WK 2026">
+  <PageHeader title="Changelog">
+    <InfoToggle text="Wat er per update aan de site veranderd is, nieuwste bovenaan." />
+  </PageHeader>
+
+  <div class="space-y-4">
+    {blocks.map((block) => (
+      <section class="rounded-xl border bg-card p-4 shadow-sm sm:p-5">
+        <div class="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          {block.title && <h2 class="font-display text-base font-bold tracking-tight">{block.title}</h2>}
+          <time datetime={block.date} class="text-xs font-medium uppercase tracking-wide text-muted-foreground">{formatDate(block.date)}</time>
+        </div>
+        <ul class="space-y-1.5">
+          {block.items.map((item) => (
+            <li class="flex gap-2.5 text-sm leading-relaxed">
+              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-gold" aria-hidden="true"></span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Layout>

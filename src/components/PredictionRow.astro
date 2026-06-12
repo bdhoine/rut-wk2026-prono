@@ -25,7 +25,7 @@ const away = sideLabel(match, 'away');
       <span class="hidden min-w-0 flex-1 truncate text-right text-sm font-medium sm:block">{home.label}</span>
       <span class="min-w-0 flex-1 truncate text-right text-sm font-medium sm:hidden">{home.short}</span>
       <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
-      <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" />
+      <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" placeholder />
       <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
       <span class="hidden min-w-0 flex-1 truncate text-sm font-medium sm:block">{away.label}</span>
       <span class="min-w-0 flex-1 truncate text-sm font-medium sm:hidden">{away.short}</span>

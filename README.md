@@ -28,12 +28,14 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/land/[id]` | Country detail: full schedule + group standings |
 | `/statistieken` | Top scorers, most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, popular scorelines, most-picked winner/top scorer |
 | `/reglement` | Competition rules, deadlines and prizes |
+| `/changelog` | Per-update changelog (blocks newest-first), driven by `src/data/changelog.json` — see `CLAUDE.md` for the per-session upkeep rule |
 | any other URL | Branded 404 page ("Buitenspel!") |
 
-Navigation is `Klassement · Wedstrijden ▾ · Statistieken` on desktop — the
-Wedstrijden dropdown groups Programma, Kalender and Poules — and a hamburger
-drawer on mobile mirroring the same grouping. Reglement links from the footer,
-and `/klassement` redirects to `/` so every label has a matching URL. All game
+Navigation is `Klassement · Wedstrijden ▾ · Statistieken · ⋮` on desktop — the
+Wedstrijden dropdown groups Programma, Kalender and Poules, and the ⋮ "Meer"
+dropdown holds Reglement and Changelog — and a hamburger drawer on mobile with
+the same destinations as a flat list. `/klassement` redirects to `/` so every
+label has a matching URL. All game
 lists are ordered by kickoff (planning). Score explanations on the participant
 and match pages appear on hovering the points badge (desktop) / tap (mobile);
 the badge is colour-coded (red = 0, green = exact, amber = other points).
