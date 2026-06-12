@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
+import LiveScores from '@/components/LiveScores.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
@@ -16,6 +17,7 @@ const thirdsHaveResults = thirds.some((t) => t.played > 0);
   <PageHeader title="Poulestand">
     <InfoToggle text="Top 2 per poule plaatst zich rechtstreeks. Tik op een land voor het programma." />
   </PageHeader>
+  <LiveScores />
 
   <div class="grid gap-6 md:grid-cols-2">
     {groupTables.map((g) => (
@@ -45,7 +47,7 @@ const thirdsHaveResults = thirds.some((t) => t.played > 0);
             <th class="px-2 py-2 text-left font-medium">Land</th>
             <th class="py-2 text-center font-medium">Groep</th>
             <th class="py-2 text-center font-medium" title="Doelsaldo">+/-</th>
-            <th class="px-2 py-2 text-right font-medium">Ptn</th>
+            <th class="px-2 py-2 text-center font-medium">Ptn</th>
           </tr>
         </thead>
         <tbody>
@@ -60,7 +62,7 @@ const thirdsHaveResults = thirds.some((t) => t.played > 0);
               </td>
               <td class="py-2.5 text-center tabular-nums">{t.group}</td>
               <td class="py-2.5 text-center tabular-nums">{t.goalDiff > 0 ? `+${t.goalDiff}` : t.goalDiff}</td>
-              <td class="px-2 py-2.5 text-right font-bold tabular-nums">{t.points}</td>
+              <td class="px-2 py-2.5 text-center font-bold tabular-nums">{t.points}</td>
             </tr>
           ))}
         </tbody>

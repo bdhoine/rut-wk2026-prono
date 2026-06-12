@@ -16,7 +16,7 @@ const color = points === 0
     ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
     : 'bg-amber-200 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300';
 ---
-<span class="group relative inline-flex">
+<span class="group/badge relative inline-flex">
   <button
     type="button"
     aria-label={`${points} punten — toon uitleg`}
@@ -24,7 +24,7 @@ const color = points === 0
   >{points}</button>
   <span
     role="tooltip"
-    class="points-tip pointer-events-none absolute right-0 top-full z-30 mt-1.5 hidden w-56 rounded-md border bg-popover p-2 text-left text-xs font-normal text-popover-foreground shadow-md group-hover:block"
+    class="points-tip pointer-events-none absolute right-0 top-full z-30 mt-1.5 hidden w-56 rounded-md border bg-popover p-2 text-left text-xs font-normal text-popover-foreground shadow-md group-hover/badge:block"
   >{explanation}</span>
 </span>
 

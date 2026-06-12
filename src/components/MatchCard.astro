@@ -41,7 +41,7 @@ const Tag = href ? 'a' : 'div';
   )}
   <div class:list={['flex items-center justify-center', compact ? 'gap-2 text-sm' : 'gap-3']}>
     {compact && (
-      <span class="match-meta flex min-w-11 shrink-0 items-center gap-1 text-xs font-semibold tabular-nums text-muted-foreground">{formatTime(match.kickoff)}</span>
+      <span class="match-meta match-meta-inline flex min-w-11 shrink-0 items-center gap-1 text-xs font-semibold tabular-nums text-muted-foreground">{formatTime(match.kickoff)}</span>
     )}
     <div class="flex min-w-0 flex-1 items-center justify-end gap-2">
       <span class="hidden truncate text-right font-medium sm:block">{home.label}</span>

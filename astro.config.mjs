@@ -9,4 +9,7 @@ export default defineConfig({
   site: 'https://rut-wk2026-prono.netlify.app',
   adapter: netlify(),
   integrations: [react()],
+  // Klassement is the home page; /klassement keeps the menu label and URL in
+  // sync for anyone typing or sharing the link.
+  redirects: { '/klassement': '/' },
 });

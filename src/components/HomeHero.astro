@@ -1,17 +1,12 @@
 ---
-// Homepage hero: tournament state (speeldag, leader) + next-match strip on an
+// Homepage hero: tournament state (speeldag) + next-match strip on an
 // ink "prestige" panel. All data is computed at build time; a tiny inline
 // script hides next-match entries that have already kicked off, so a stale
 // prerender between result-update builds never shows a past match.
 import Flag from './Flag.astro';
-import { ranking, upcomingMatches, matches, sideLabel } from '@/lib/data';
+import { upcomingMatches, matches, sideLabel } from '@/lib/data';
 import { formatKickoff } from '@/lib/format';
 import { ROUND_LABELS } from '@/lib/types';
-
-const rows = ranking();
-const leader = rows[0];
-const runnerUp = rows[1];
-const lead = leader && runnerUp ? leader.total - runnerUp.total : 0;
 
 const groupMatches = matches.filter((m) => m.round === 'group');
 const finishedCount = matches.filter((m) => m.status === 'finished').length;
@@ -38,12 +33,6 @@ const next = nextUp.slice(0, 3).map((m) => ({
     <div class="p-5">
       <p class="font-display text-xs font-bold uppercase tracking-[0.2em] text-gold">{phaseLabel} · {finishedCount}/{matches.length} gespeeld</p>
       <h1 class="mt-1 font-display text-2xl font-extrabold tracking-tight">Klassement</h1>
-      {leader && (
-        <p class="mt-2 text-sm text-ink-foreground/75">
-          <a href={`/deelnemer/${leader.participantId}`} class="font-semibold text-ink-foreground underline-offset-2 hover:text-gold hover:underline">{leader.name}</a>
-          {' '}leidt met {leader.total} punten{lead > 0 ? ` — ${lead} ${lead === 1 ? 'punt' : 'punten'} voorsprong` : ' (gedeelde leiding)'}.
-        </p>
-      )}
     </div>
     {next.length > 0 && (
       <div class="border-t border-white/10 px-5 py-4 sm:w-72 sm:border-l sm:border-t-0" data-next-matches>

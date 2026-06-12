@@ -6,9 +6,11 @@
 //  - mode="overlay" (default): overlay the live score onto MatchCards already on
 //    the page, matched by team iso pair (used on /programma and /kalender).
 //  - mode="list": render in-progress matches as their own cards (used on the
-//    home/klassement page, which has no match cards). In this mode `recent`
-//    (matches finished within the last ~8h) are shown automatically without the
-//    toggle, since that needs no API call — the toggle only adds live matches.
+//    home/klassement page, which has no match cards). In this mode the most
+//    recently finished matches show automatically without the toggle (no API
+//    call needed) — the toggle only adds live matches, which always render on
+//    top. The section holds at most 4 cards: every live match, then the newest
+//    finished ones to fill up, with the last 2 finished always included.
 import { teams, matches, predictions, settings, getTeam } from '@/lib/data';
 
 interface Props {
@@ -17,12 +19,15 @@ interface Props {
 const { mode = 'overlay' } = Astro.props;
 const teamMap = Object.fromEntries(teams.map((t) => [t.id, { name: t.name, iso: t.iso }]));
 
-// Recently-finished matches the client may keep on the home page (it filters to
-// the last ~8h by kickoff). Only meaningful in list mode.
+// Most recently finished matches for the home page (newest first; a few spare
+// beyond the 4-card cap in case some are dropped as currently-live duplicates).
+// Only meaningful in list mode.
 const recent =
   mode === 'list'
     ? matches
         .filter((m) => m.status === 'finished' && m.result && m.homeTeamId && m.awayTeamId)
+        .sort((a, b) => b.kickoff.localeCompare(a.kickoff))
+        .slice(0, 8)
         .map((m) => ({
           id: m.id,
           homeTeamId: m.homeTeamId,
@@ -128,7 +133,8 @@ const scoringPayload =
       window.dispatchEvent(new CustomEvent('rut:live-ranking', { detail: { deltas } }));
     }
 
-    const RECENT_WINDOW_MS = 10.5 * 60 * 60 * 1000; // ~8h after a match ends (kickoff + ~2.5h play)
+    const MAX_CARDS = 4; // live + recent combined
+    const MIN_RECENT = 2; // the last two finished matches always show
     const POLL_MS = 60 * 1000; // auto-refresh cadence while live is on (matches the function's 60s cache)
 
     let enabled = false;
@@ -178,11 +184,14 @@ const scoringPayload =
     function renderRecent() {
       if (!recentCards) return;
       recentCards.innerHTML = '';
-      const now = Date.now();
-      for (const m of recentData) {
-        const age = now - new Date(m.kickoff).getTime();
-        if (age < 0 || age > RECENT_WINDOW_MS) continue;
-        if (liveKeys.has(key(m.homeTeamId, m.awayTeamId))) continue; // shown as live instead
+      // Fill the section up to MAX_CARDS after the live cards, but never show
+      // fewer than the last MIN_RECENT finished matches. recentData is newest
+      // first; matches currently shown as live are skipped.
+      const slots = Math.max(MIN_RECENT, MAX_CARDS - liveKeys.size);
+      const items = recentData
+        .filter((m: any) => !liveKeys.has(key(m.homeTeamId, m.awayTeamId)))
+        .slice(0, slots);
+      for (const m of items) {
         recentCards.appendChild(
           card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
             `<span>${fmtDateTime(m.kickoff)}</span>`, finalPill(m.goalsHome, m.goalsAway),
@@ -210,7 +219,29 @@ const scoringPayload =
           c.querySelector('.live-badge')?.remove();
         }
         touched.clear();
+        document.querySelectorAll('.live-standing').forEach((el) => el.remove());
       }
+    }
+
+    // Pulsing red dot + current score next to a team in a standings table
+    // (poules page rows carry data-standing-team). Returns true if any row hit.
+    function decorateStandings(m: any) {
+      let any = false;
+      const sides: [string, number, number][] = [
+        [m.homeTeamId, m.goalsHome, m.goalsAway],
+        [m.awayTeamId, m.goalsAway, m.goalsHome],
+      ];
+      for (const [id, gf, ga] of sides) {
+        for (const el of document.querySelectorAll(`[data-standing-team="${id}"]`)) {
+          if (el.querySelector('.live-standing')) continue;
+          el.insertAdjacentHTML(
+            'beforeend',
+            `<span class="live-standing inline-flex shrink-0 items-center gap-1 text-xs font-semibold tabular-nums text-red-600 dark:text-red-400" title="live"><span class="size-1.5 animate-pulse rounded-full bg-red-600"></span>${gf}–${ga}</span>`,
+          );
+          any = true;
+        }
+      }
+      return any;
     }
 
     function findCard(homeId: string, awayId: string) {
@@ -241,18 +272,26 @@ const scoringPayload =
         return shown;
       }
       for (const m of list) {
+        if (decorateStandings(m)) shown++;
         const hit = findCard(m.homeTeamId, m.awayTeamId);
         if (!hit) continue;
         const { card: c, swapped } = hit;
         const gh = swapped ? m.goalsAway : m.goalsHome;
         const ga = swapped ? m.goalsHome : m.goalsAway;
         const score = c.querySelector('.match-score');
+        const compact = !!c.querySelector('.match-meta-inline');
         if (score) {
           if (c.dataset.origScore == null) c.dataset.origScore = score.innerHTML;
-          score.innerHTML = livePill(gh, ga);
+          // Compact cards (kalender/programma) keep the kickoff time at the
+          // left; the live badge stacks above the score pill instead.
+          score.innerHTML = compact
+            ? `<span class="flex flex-col items-center gap-1">${liveBadge(m)}${livePill(gh, ga)}</span>`
+            : livePill(gh, ga);
         }
-        const meta = c.querySelector('.match-meta');
-        if (meta && !meta.querySelector('.live-badge')) meta.insertAdjacentHTML('afterbegin', liveBadge(m));
+        if (!compact) {
+          const meta = c.querySelector('.match-meta');
+          if (meta && !meta.querySelector('.live-badge')) meta.insertAdjacentHTML('afterbegin', liveBadge(m));
+        }
         touched.add(c);
         shown++;
       }

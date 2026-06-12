@@ -124,7 +124,7 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
           <TableHead className="w-8 px-0.5 text-center">#</TableHead>
           <TableHead className="px-1.5">Naam</TableHead>
           <TableHead className="w-14 px-1 text-right">Vorm</TableHead>
-          <TableHead className="w-12 px-1.5 text-right" title="Punten">Ptn</TableHead>
+          <TableHead className="w-12 px-1.5 text-center" title="Punten">Ptn</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -154,8 +154,8 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
                 </div>
               </TableCell>
               <TableCell className="px-1 text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
-              <TableCell className="px-1.5 text-right font-bold tabular-nums">
-                <div className="flex items-center justify-end gap-1">
+              <TableCell className="px-1.5 text-center font-bold tabular-nums">
+                <div className="flex items-center justify-center gap-1">
                   {row.delta > 0 && (
                     <span className="rounded bg-red-100 px-1 py-0.5 text-[10px] font-semibold tabular-nums text-red-700" title="voorlopige live-punten">+{row.delta}</span>
                   )}

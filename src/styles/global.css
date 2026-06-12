@@ -8,9 +8,9 @@
      Goud is het primaire accent; "ink" is het bijna-zwart van het merkframe. */
   --background: oklch(0.966 0.006 85);
   --foreground: oklch(0.22 0.014 65);
-  --card: oklch(0.995 0.004 85);
+  --card: oklch(0.986 0.009 88);
   --card-foreground: oklch(0.22 0.014 65);
-  --popover: oklch(0.995 0.004 85);
+  --popover: oklch(0.986 0.009 88);
   --popover-foreground: oklch(0.22 0.014 65);
   --primary: oklch(0.555 0.118 74); /* deep gold — readable links/accents on light */
   --primary-foreground: oklch(0.99 0.01 90);
@@ -111,6 +111,23 @@
     oklch(0.6 0.2 25) 48px 64px
   );
 }
+
+/* Faint WK 2026 multicolor wash behind every page — soft corner glows in the
+   four celebration-stripe colors (gold/green/blue/red). Fixed so it doesn't
+   scroll; alphas stay low to keep content readable. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 0% 0%, color-mix(in oklab, var(--gold) 11%, transparent), transparent 70%),
+    radial-gradient(38rem 28rem at 100% 10%, color-mix(in oklab, oklch(0.6 0.15 250) 9%, transparent), transparent 70%),
+    radial-gradient(40rem 30rem at 6% 100%, color-mix(in oklab, oklch(0.62 0.17 145) 9%, transparent), transparent 70%),
+    radial-gradient(36rem 26rem at 100% 100%, color-mix(in oklab, oklch(0.6 0.2 25) 8%, transparent), transparent 70%);
+}
+.dark body::before { opacity: 0.55; }
 
 /* Dark "prestige" panel for hero/header cards (home, deelnemer, wedstrijd, 404).
    Gold top edge over an ink gradient; pair with .qc-decor for the emblem corner. */

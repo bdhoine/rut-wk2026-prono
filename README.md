@@ -19,7 +19,7 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 | Route | Page |
 |-------|------|
-| `/` | Klassement (ranking) — hero panel with current speeldag, leader and next match, then the ranking. Favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details. A **Live scores** toggle shows in-progress + recently-finished matches and a provisional live ranking |
+| `/` | Klassement (ranking) — hero panel with current speeldag and next match, then the ranking. Favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details. A "Nu live & recent gespeeld" strip shows at most 4 cards: every live match on top (via the **Live scores** toggle) filled up with the most recently finished matches (the last 2 always shown), plus a provisional live ranking |
 | `/deelnemer/[id]` | Participant detail: position, total, bonus picks, predictions per speeldag in collapsible sections (played/current open, future collapsed) + score breakdown |
 | `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + all predictions sorted by points |
 | `/programma` | Upcoming matches, grouped per calendar day |
@@ -30,17 +30,21 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/reglement` | Competition rules, deadlines and prizes |
 | any other URL | Branded 404 page ("Buitenspel!") |
 
-Navigation is a horizontal bar on desktop and a hamburger menu on mobile. All
-game lists are ordered by kickoff (planning). Score explanations on the
-participant and match pages appear on hover (desktop) / tap (mobile); the points
-badge is colour-coded (red = 0, green = scored, amber = exact).
+Navigation is `Klassement · Wedstrijden ▾ · Statistieken` on desktop — the
+Wedstrijden dropdown groups Programma, Kalender and Poules — and a hamburger
+drawer on mobile mirroring the same grouping. Reglement links from the footer,
+and `/klassement` redirects to `/` so every label has a matching URL. All game
+lists are ordered by kickoff (planning). Score explanations on the participant
+and match pages appear on hovering the points badge (desktop) / tap (mobile);
+the badge is colour-coded (red = 0, green = exact, amber = other points).
 
 ## Design
 
 The UI follows the **FIFA World Cup 26 brand language**: a black ("ink") + gold
 core palette — matching the official trophy emblem — with the multicolor
 host-city accents reduced to a 4 px diagonal `brand-stripe` under the header and
-above the footer. Display type is **Archivo** (bold geometric, echoing the FWC26
+above the footer, plus a faint fixed multicolor corner wash behind every page
+(`body::before` in `global.css`). Display type is **Archivo** (bold geometric, echoing the FWC26
 typeface), body type **Noto Sans** (FIFA's official secondary font). Light, dark
 and auto themes (OKLch tokens in [`src/styles/global.css`](./src/styles/global.css)).
 
@@ -68,11 +72,13 @@ temporarily unavailable.)
   aggregates `scorers.json`, and resolves the bonus `outcomes.json` once the
   final is played. It commits any changes, which triggers a Netlify rebuild. Run
   locally with `npm run results:update`.
-- **Live scores (client-side).** A "Live scores" toggle on the home, Programma
-  and Kalender pages fetches the in-progress scores and then auto-refreshes
-  every minute while on. On the home page the
-  live (and recently-finished, ≤ 8 h) matches show as cards and the **klassement
-  recomputes provisional points live**. Requests go through a Netlify Function
+- **Live scores (client-side).** A "Live scores" toggle on the home, Programma,
+  Kalender and Poules pages fetches the in-progress scores and then auto-refreshes
+  every minute while on. On the home page live matches show as cards above the
+  recently-finished ones (max 4 total) and the **klassement recomputes
+  provisional points live**; on Programma/Kalender the live score overlays the
+  match card (badge above the score pill); on Poules the playing countries get a
+  pulsing red dot with their live score. Requests go through a Netlify Function
   ([`netlify/functions/live.mjs`](./netlify/functions/live.mjs), at
   `/.netlify/functions/live`) that caches 60 seconds (CDN + memory) and serves
   the last good payload on error. The shared client/resolver lives in

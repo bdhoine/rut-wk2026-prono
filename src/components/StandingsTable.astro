@@ -32,7 +32,7 @@ const hasResults = rows.some((r) => r.played > 0);
         <th class="py-2 text-center font-medium" title="Gelijk">G</th>
         <th class="py-2 text-center font-medium" title="Verlies">V</th>
         <th class="py-2 text-center font-medium" title="Doelsaldo">+/-</th>
-        <th class="px-2 py-2 text-right font-medium" title="Punten">Ptn</th>
+        <th class="px-2 py-2 text-center font-medium" title="Punten">Ptn</th>
       </tr>
     </thead>
     <tbody>
@@ -42,7 +42,7 @@ const hasResults = rows.some((r) => r.played > 0);
           <td class="px-2 py-2.5">
             {/* Short name: this table renders in narrow contexts (390px mobile,
                 half-width grid column on desktop). Full name lives on the land page. */}
-            <a href={`/land/${r.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
+            <a href={`/land/${r.team.id}`} data-standing-team={r.team.id} class="flex items-center gap-2 font-medium hover:underline">
               <Flag iso={r.team.iso} name={r.team.name} class="shrink-0 text-base" />
               <span class="truncate">{r.team.shortName ?? r.team.name}</span>
             </a>
@@ -52,7 +52,7 @@ const hasResults = rows.some((r) => r.played > 0);
           <td class="py-2.5 text-center tabular-nums">{r.drawn}</td>
           <td class="py-2.5 text-center tabular-nums">{r.lost}</td>
           <td class="py-2.5 text-center tabular-nums">{r.goalDiff > 0 ? `+${r.goalDiff}` : r.goalDiff}</td>
-          <td class="px-2 py-2.5 text-right font-bold tabular-nums">{r.points}</td>
+          <td class="px-2 py-2.5 text-center font-bold tabular-nums">{r.points}</td>
         </tr>
       ))}
     </tbody>
