@@ -7,6 +7,7 @@ export interface Team {
   id: string; // short slug, e.g. 'mex'
   iso: string; // ISO 3166-1 alpha-2 (lowercase) for flags, e.g. 'mx'
   name: string; // Dutch name
+  shortName?: string; // compact Dutch name for narrow viewports, e.g. 'VS'
   group: string; // 'A'..'L'
 }
 

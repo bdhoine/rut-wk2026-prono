@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import { matches, getMatch, sideLabel, predictionsForMatch, ranking } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
 import { outcomeOf } from '@/lib/scoring';
@@ -55,9 +56,9 @@ const outcomeGroups = [
 <Layout title={`${home.label} – ${away.label}`}>
   <a href="/kalender" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Kalender</a>
 
-  <header class="mb-6 overflow-hidden rounded-2xl border border-t-4 border-t-gold bg-card p-5 shadow-sm">
-    <div class="mb-4 flex items-center justify-between gap-2 text-xs text-muted-foreground">
-      <span class="inline-flex items-center rounded-full bg-secondary px-2.5 py-1 font-semibold uppercase tracking-wide text-secondary-foreground">{ROUND_LABELS[match.round]}{match.matchday ? ` · Speeldag ${match.matchday}` : ''}</span>
+  <header class="hero-panel qc-decor mb-6 p-5 shadow-sm">
+    <div class="mb-4 flex items-center justify-between gap-2 text-xs text-ink-foreground/70">
+      <span class="inline-flex items-center rounded-full bg-white/10 px-2.5 py-1 font-semibold uppercase tracking-wide text-ink-foreground">{ROUND_LABELS[match.round]}{match.matchday ? ` · Speeldag ${match.matchday}` : ''}</span>
       <span>{formatKickoff(match.kickoff)}</span>
     </div>
     <div class="flex items-center justify-between gap-4">
@@ -68,14 +69,14 @@ const outcomeGroups = [
       <div class="shrink-0">
         {finished
           ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="lg" tone="scoreboard" />
-          : <span class="text-xl font-bold text-muted-foreground">vs</span>}
+          : <span class="text-xl font-bold text-ink-foreground/60">vs</span>}
       </div>
       <a href={awayHref} class:list={['flex flex-1 flex-col items-center gap-2 text-center', awayHref && 'group']}>
         <Flag iso={away.team?.iso} name={away.label} class="text-4xl transition-transform group-hover:scale-105" />
         <span class:list={['text-sm font-medium', awayHref && 'group-hover:underline']}>{away.label}</span>
       </a>
     </div>
-    <p class="mt-4 text-center text-xs text-muted-foreground">{match.venue}</p>
+    <p class="mt-4 text-center text-xs text-ink-foreground/70">{match.venue}</p>
   </header>
 
   {finished && (
@@ -90,7 +91,7 @@ const outcomeGroups = [
   )}
 
   <section>
-    <h2 class="mb-3 text-lg font-semibold">Pronostieken</h2>
+    <SectionHeading title="Pronostieken" />
 
     <div class="space-y-5">
       {outcomeGroups.map((g) => (
@@ -140,7 +141,7 @@ const outcomeGroups = [
     const favs = new Set(JSON.parse(localStorage.getItem('rut-wk2026-favorieten') || '[]'));
     if (favs.size) {
       document.querySelectorAll('table[data-bucket] tbody').forEach((tbody) => {
-        const favRows = [...tbody.querySelectorAll('tr[data-pid]')].filter((r) => favs.has(r.dataset.pid));
+        const favRows = [...tbody.querySelectorAll<HTMLElement>('tr[data-pid]')].filter((r) => favs.has(r.dataset.pid));
         favRows.reverse().forEach((r) => {
           r.classList.add('fav-row');
           const cell = r.querySelector('td');

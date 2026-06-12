@@ -4,11 +4,17 @@ import Flag from '@/components/Flag.astro';
 import MatchStatRow from '@/components/MatchStatRow.astro';
 import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines } from '@/lib/data';
 
 const scorers = topScorers();
 const scored = mostGoalsScored();
 const conceded = mostGoalsConceded();
+// Hide all-zero rows of teams that haven't played yet behind "Toon alle"
+// (early in the tournament they're just alphabetical noise).
+const anyPlayed = scored.some((t) => t.played > 0);
+const goalRowHidden = (t: { played: number }, i: number) => i >= 10 || (anyPlayed && t.played === 0);
 const topPoints = topMatchesByPoints(10);
 const topWrong = topMatchesByWrong(10);
 const chosenWinners = topChosenWinners(5);
@@ -17,13 +23,12 @@ const popular = popularScorelines(8);
 const popularMax = popular[0]?.count ?? 1;
 ---
 <Layout title="Statistieken">
-  <div class="mb-6 flex flex-wrap items-center gap-2">
-    <h1 class="text-2xl font-bold tracking-tight">Statistieken</h1>
+  <PageHeader title="Statistieken">
     <InfoToggle text="Doelpunten in de verlengingen tellen mee. Strafschoppenreeksen niet." />
-  </div>
+  </PageHeader>
 
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Topschutters</h2>
+    <SectionHeading title="Topschutters" />
     <div class="overflow-x-auto rounded-xl border bg-card">
       <table class="w-full text-sm">
         <thead>
@@ -37,9 +42,9 @@ const popularMax = popular[0]?.count ?? 1;
         <tbody>
           {scorers.map((s, i) => (
             <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
-              <td class="px-2 py-2 tabular-nums text-muted-foreground">{i + 1}</td>
-              <td class="px-2 py-2 font-medium">{s.player}</td>
-              <td class="px-2 py-2">
+              <td class="px-2 py-2.5 tabular-nums text-muted-foreground">{i + 1}</td>
+              <td class="px-2 py-2.5 font-medium">{s.player}</td>
+              <td class="px-2 py-2.5">
                 {s.team ? (
                   <a href={`/land/${s.team.id}`} class="flex items-center gap-2 hover:underline">
                     <Flag iso={s.team.iso} name={s.team.name} class="text-base" />
@@ -47,7 +52,7 @@ const popularMax = popular[0]?.count ?? 1;
                   </a>
                 ) : '—'}
               </td>
-              <td class="px-2 py-2 text-right font-bold tabular-nums">{s.goals}</td>
+              <td class="px-2 py-2.5 text-right font-bold tabular-nums">{s.goals}</td>
             </tr>
           ))}
         </tbody>
@@ -55,7 +60,7 @@ const popularMax = popular[0]?.count ?? 1;
     </div>
     {scorers.length > 10 && (
       <div class="mt-3 flex justify-center">
-        <button type="button" data-show-more data-label={`Toon alle ${scorers.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground">
+        <button type="button" data-show-more data-label={`Toon alle ${scorers.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <span data-more-label>Toon alle {scorers.length}</span>
           <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
         </button>
@@ -65,7 +70,7 @@ const popularMax = popular[0]?.count ?? 1;
 
   <div class="grid gap-8 md:grid-cols-2">
     <section>
-      <h2 class="mb-2 text-lg font-semibold">Meeste doelpunten</h2>
+      <SectionHeading title="Meeste doelpunten" />
       <div class="overflow-x-auto rounded-xl border bg-card">
         <table class="w-full text-sm">
           <thead>
@@ -76,14 +81,14 @@ const popularMax = popular[0]?.count ?? 1;
           </thead>
           <tbody>
             {scored.map((t, i) => (
-              <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
-                <td class="px-2 py-2">
+              <tr class:list={['border-b last:border-0', goalRowHidden(t, i) && 'more-row hidden']}>
+                <td class="px-2 py-2.5">
                   <a href={`/land/${t.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
                     <Flag iso={t.team.iso} name={t.team.name} class="text-base" />
                     <span>{t.team.name}</span>
                   </a>
                 </td>
-                <td class="px-2 py-2 text-right font-bold tabular-nums">{t.scored}</td>
+                <td class="px-2 py-2.5 text-right font-bold tabular-nums">{t.scored}</td>
               </tr>
             ))}
           </tbody>
@@ -91,7 +96,7 @@ const popularMax = popular[0]?.count ?? 1;
       </div>
       {scored.length > 10 && (
         <div class="mt-3 flex justify-center">
-          <button type="button" data-show-more data-label={`Toon alle ${scored.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground">
+          <button type="button" data-show-more data-label={`Toon alle ${scored.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <span data-more-label>Toon alle {scored.length}</span>
             <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
           </button>
@@ -100,7 +105,7 @@ const popularMax = popular[0]?.count ?? 1;
     </section>
 
     <section>
-      <h2 class="mb-2 text-lg font-semibold">Meeste tegendoelpunten</h2>
+      <SectionHeading title="Meeste tegendoelpunten" />
       <div class="overflow-x-auto rounded-xl border bg-card">
         <table class="w-full text-sm">
           <thead>
@@ -111,14 +116,14 @@ const popularMax = popular[0]?.count ?? 1;
           </thead>
           <tbody>
             {conceded.map((t, i) => (
-              <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
-                <td class="px-2 py-2">
+              <tr class:list={['border-b last:border-0', goalRowHidden(t, i) && 'more-row hidden']}>
+                <td class="px-2 py-2.5">
                   <a href={`/land/${t.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
                     <Flag iso={t.team.iso} name={t.team.name} class="text-base" />
                     <span>{t.team.name}</span>
                   </a>
                 </td>
-                <td class="px-2 py-2 text-right font-bold tabular-nums">{t.conceded}</td>
+                <td class="px-2 py-2.5 text-right font-bold tabular-nums">{t.conceded}</td>
               </tr>
             ))}
           </tbody>
@@ -126,7 +131,7 @@ const popularMax = popular[0]?.count ?? 1;
       </div>
       {conceded.length > 10 && (
         <div class="mt-3 flex justify-center">
-          <button type="button" data-show-more data-label={`Toon alle ${conceded.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground">
+          <button type="button" data-show-more data-label={`Toon alle ${conceded.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <span data-more-label>Toon alle {conceded.length}</span>
             <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
           </button>
@@ -136,10 +141,9 @@ const popularMax = popular[0]?.count ?? 1;
   </div>
 
   <section class="mt-8">
-    <div class="mb-2 flex flex-wrap items-center gap-2">
-      <h2 class="text-lg font-semibold">Top 10 — meeste punten</h2>
+    <SectionHeading title="Top 10 — meeste punten">
       <InfoToggle text="Gemiddeld aantal punten dat deelnemers per wedstrijd scoorden." />
-    </div>
+    </SectionHeading>
     <div class="space-y-2">
       {topPoints.map((s, i) => (
         <MatchStatRow match={s.match} rank={i + 1} metric={s.avg.toFixed(1)} metricClass="bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300" />
@@ -148,10 +152,9 @@ const popularMax = popular[0]?.count ?? 1;
   </section>
 
   <section class="mt-8">
-    <div class="mb-2 flex flex-wrap items-center gap-2">
-      <h2 class="text-lg font-semibold">Top 10 — meeste foute prono's</h2>
+    <SectionHeading title="Top 10 — meeste foute prono's">
       <InfoToggle text="Aantal deelnemers met 0 punten voor de wedstrijd." />
-    </div>
+    </SectionHeading>
     <div class="space-y-2">
       {topWrong.map((s, i) => (
         <MatchStatRow match={s.match} rank={i + 1} metric={String(s.wrong)} metricClass="bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300" />
@@ -161,10 +164,9 @@ const popularMax = popular[0]?.count ?? 1;
 
   {popular.length > 0 && (
     <section class="mt-8">
-      <div class="mb-2 flex flex-wrap items-center gap-2">
-        <h2 class="text-lg font-semibold">Populairste uitslagen</h2>
+      <SectionHeading title="Populairste uitslagen">
         <InfoToggle text="De scores die deelnemers het vaakst tipten, over alle wedstrijden samen." />
-      </div>
+      </SectionHeading>
       <div class="rounded-xl border bg-card p-4">
         <div class="space-y-2.5">
           {popular.map((s) => (
@@ -183,7 +185,7 @@ const popularMax = popular[0]?.count ?? 1;
 
   <div class="mt-8 grid gap-8 md:grid-cols-2">
     <section>
-      <h2 class="mb-2 text-lg font-semibold">Meest getipte eindwinnaar</h2>
+      <SectionHeading title="Meest getipte eindwinnaar" />
       <div class="overflow-hidden rounded-xl border bg-card">
         <table class="w-full text-sm">
           <tbody>
@@ -205,7 +207,7 @@ const popularMax = popular[0]?.count ?? 1;
     </section>
 
     <section>
-      <h2 class="mb-2 text-lg font-semibold">Meest getipte topschutter</h2>
+      <SectionHeading title="Meest getipte topschutter" />
       <div class="overflow-hidden rounded-xl border bg-card">
         <table class="w-full text-sm">
           <tbody>

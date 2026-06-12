@@ -2,18 +2,37 @@
 import Layout from '@/layouts/Layout.astro';
 import MatchCard from '@/components/MatchCard.astro';
 import LiveScores from '@/components/LiveScores.astro';
+import PageHeader from '@/components/PageHeader.astro';
 import { upcomingMatches } from '@/lib/data';
+import { formatDay } from '@/lib/format';
+import type { Match } from '@/lib/types';
 
 const matches = upcomingMatches();
+
+// Group by calendar day (Belgian time) so cards don't repeat the date.
+const days: [string, Match[]][] = [];
+for (const m of matches) {
+  const day = formatDay(m.kickoff);
+  const last = days[days.length - 1];
+  if (last && last[0] === day) last[1].push(m);
+  else days.push([day, [m]]);
+}
 ---
 <Layout title="Programma">
-  <h1 class="mb-4 text-2xl font-bold tracking-tight">Programma</h1>
+  <PageHeader title="Programma" />
   <LiveScores />
   {matches.length === 0 ? (
     <p class="text-muted-foreground">Geen komende wedstrijden.</p>
   ) : (
-    <div class="space-y-3">
-      {matches.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
+    <div class="space-y-4">
+      {days.map(([day, items]) => (
+        <div>
+          <h2 class="sticky top-16 z-10 -mx-1 mb-1.5 bg-background/95 px-1 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">{day}</h2>
+          <div class="space-y-1.5">
+            {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
+          </div>
+        </div>
+      ))}
     </div>
   )}
 </Layout>

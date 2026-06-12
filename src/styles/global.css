@@ -112,6 +112,51 @@
   );
 }
 
+/* Dark "prestige" panel for hero/header cards (home, deelnemer, wedstrijd, 404).
+   Gold top edge over an ink gradient; pair with .qc-decor for the emblem corner. */
+.hero-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(var(--radius) + 6px);
+  border: 1px solid oklch(1 0 0 / 10%);
+  border-top: 4px solid var(--gold);
+  background: linear-gradient(135deg, var(--ink), oklch(0.30 0.03 80));
+  color: var(--ink-foreground);
+}
+
+/* Quarter-circle ghost in the corner — the WK 2026 "26"-emblem geometry
+   (squares + quarter circles). Pure CSS, sits behind content. */
+.qc-decor::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 7.5rem;
+  height: 7.5rem;
+  border-top-left-radius: 100%;
+  background: color-mix(in oklab, var(--gold) 14%, transparent);
+  pointer-events: none;
+}
+
+/* Diagonally-cut gold bar for section headings — echoes the FIFA wordmark. */
+.bar-cut {
+  display: inline-block;
+  width: 0.3125rem;
+  height: 1rem;
+  transform: skewX(-12deg);
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+/* Subtle entrance for hero content. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+}
+.animate-rise { animation: rise 0.4s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise { animation: none; }
+}
+
 /* Favourited participants highlighted on match-detail buckets (toggled via JS). */
 .fav-row {
   background-color: color-mix(in srgb, #f59e0b 12%, transparent);
@@ -125,6 +170,9 @@
 @layer base {
   * {
     border-color: var(--border);
+  }
+  a, button, summary {
+    outline-color: var(--ring);
   }
   html {
     -webkit-text-size-adjust: 100%;

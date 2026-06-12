@@ -3,31 +3,33 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import { groups, standingsForGroup, bestThirdPlaced } from '@/lib/data';
 
 const groupTables = groups.map((g) => ({ id: g.id, rows: standingsForGroup(g.id) }));
 const thirds = bestThirdPlaced();
+// Same gating as StandingsTable: no qualification verdict before any results.
+const thirdsHaveResults = thirds.some((t) => t.played > 0);
 ---
 <Layout title="Poules">
-  <div class="mb-5 flex flex-wrap items-center gap-2">
-    <h1 class="text-2xl font-bold tracking-tight">Poulestand</h1>
+  <PageHeader title="Poulestand">
     <InfoToggle text="Top 2 per poule plaatst zich rechtstreeks. Tik op een land voor het programma." />
-  </div>
+  </PageHeader>
 
-  <div class="space-y-6">
+  <div class="grid gap-6 md:grid-cols-2">
     {groupTables.map((g) => (
       <section>
-        <h2 class="mb-2 text-lg font-semibold">Groep {g.id}</h2>
+        <SectionHeading title={`Groep ${g.id}`} />
         <StandingsTable rows={g.rows} highlightTop={2} />
       </section>
     ))}
   </div>
 
   <section class="mt-8">
-    <div class="mb-2 flex flex-wrap items-center gap-2">
-      <h2 class="text-lg font-semibold">Beste nummers 3</h2>
+    <SectionHeading title="Beste nummers 3">
       <InfoToggle text="De 8 beste derdes plaatsen zich voor de 1/16de finales (groen)." />
-    </div>
+    </SectionHeading>
     <div class="overflow-hidden rounded-xl border bg-card">
       <table class="w-full table-fixed text-sm">
         <colgroup>
@@ -48,17 +50,17 @@ const thirds = bestThirdPlaced();
         </thead>
         <tbody>
           {thirds.map((t, i) => (
-            <tr class:list={['border-b last:border-0', t.qualifies && 'bg-emerald-50 dark:bg-emerald-950/40']}>
-              <td class="px-2 py-2 text-center tabular-nums text-muted-foreground">{i + 1}</td>
-              <td class="px-2 py-2">
+            <tr class:list={['border-b last:border-0', thirdsHaveResults && t.qualifies && 'bg-emerald-50/70 dark:bg-emerald-950/30']}>
+              <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">{i + 1}</td>
+              <td class="px-2 py-2.5">
                 <a href={`/land/${t.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
                   <Flag iso={t.team.iso} name={t.team.name} class="shrink-0 text-base" />
                   <span class="truncate">{t.team.name}</span>
                 </a>
               </td>
-              <td class="py-2 text-center tabular-nums">{t.group}</td>
-              <td class="py-2 text-center tabular-nums">{t.goalDiff > 0 ? `+${t.goalDiff}` : t.goalDiff}</td>
-              <td class="px-2 py-2 text-right font-bold tabular-nums">{t.points}</td>
+              <td class="py-2.5 text-center tabular-nums">{t.group}</td>
+              <td class="py-2.5 text-center tabular-nums">{t.goalDiff > 0 ? `+${t.goalDiff}` : t.goalDiff}</td>
+              <td class="px-2 py-2.5 text-right font-bold tabular-nums">{t.points}</td>
             </tr>
           ))}
         </tbody>

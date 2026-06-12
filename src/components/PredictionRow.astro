@@ -1,0 +1,42 @@
+---
+// One prediction row on the participant page: teams + predicted score, the
+// real result underneath, and the points badge on the right.
+import Flag from './Flag.astro';
+import ScoreBoxes from './ScoreBoxes.astro';
+import PointsBadge from './PointsBadge.astro';
+import { sideLabel } from '@/lib/data';
+import { explainScore } from '@/lib/format';
+import type { MatchScore } from '@/lib/scoring';
+import type { Match, Prediction } from '@/lib/types';
+
+interface Props {
+  match: Match;
+  prediction?: Prediction;
+  score: MatchScore | null;
+}
+const { match, prediction, score } = Astro.props;
+const home = sideLabel(match, 'home');
+const away = sideLabel(match, 'away');
+---
+<div class="relative flex items-center gap-2 rounded-xl border bg-card px-3 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:gap-3 sm:px-4">
+  <a href={`/wedstrijd/${match.id}`} class="absolute inset-0 rounded-xl" aria-label={`${home.label} tegen ${away.label}`}></a>
+  <div class="min-w-0 flex-1">
+    <div class="flex items-center justify-center gap-2 sm:gap-2.5">
+      <span class="hidden min-w-0 flex-1 truncate text-right text-sm font-medium sm:block">{home.label}</span>
+      <span class="min-w-0 flex-1 truncate text-right text-sm font-medium sm:hidden">{home.short}</span>
+      <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
+      <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" />
+      <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
+      <span class="hidden min-w-0 flex-1 truncate text-sm font-medium sm:block">{away.label}</span>
+      <span class="min-w-0 flex-1 truncate text-sm font-medium sm:hidden">{away.short}</span>
+    </div>
+    <div class="mt-1.5 flex h-6 items-center justify-center">
+      <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" muted placeholder />
+    </div>
+  </div>
+  <div class="relative z-10 shrink-0">
+    {score
+      ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} />
+      : <span class="inline-flex min-w-9 items-center justify-center rounded-md border border-dashed border-muted-foreground/25 px-2 py-1.5 text-sm text-muted-foreground/40">·</span>}
+  </div>
+</div>

@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import MatchCard from '@/components/MatchCard.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import { teams, getTeam, matchesForTeam, standingsForGroup } from '@/lib/data';
 
 export function getStaticPaths() {
@@ -19,7 +20,7 @@ const standings = standingsForGroup(team.group);
 <Layout title={`${team.name} — Rut Prono WK 2026`}>
   <a href="/poules" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Poules</a>
 
-  <header class="mb-6 flex items-center gap-3 rounded-xl border bg-card p-4">
+  <header class="mb-6 flex items-center gap-3 rounded-xl border border-t-4 border-t-gold bg-card p-4 shadow-sm">
     <Flag iso={team.iso} name={team.name} class="text-4xl" />
     <div>
       <h1 class="text-2xl font-bold tracking-tight">{team.name}</h1>
@@ -28,7 +29,7 @@ const standings = standingsForGroup(team.group);
   </header>
 
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Programma</h2>
+    <SectionHeading title="Programma" />
     {fixtures.length === 0 ? (
       <p class="text-muted-foreground">Nog geen wedstrijden.</p>
     ) : (
@@ -39,7 +40,7 @@ const standings = standingsForGroup(team.group);
   </section>
 
   <section>
-    <h2 class="mb-2 text-lg font-semibold">Stand groep {team.group}</h2>
+    <SectionHeading title={`Stand groep ${team.group}`} />
     <StandingsTable rows={standings} highlightTop={2} />
   </section>
 </Layout>

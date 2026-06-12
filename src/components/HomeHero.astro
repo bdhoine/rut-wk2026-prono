@@ -1,0 +1,88 @@
+---
+// Homepage hero: tournament state (speeldag, leader) + next-match strip on an
+// ink "prestige" panel. All data is computed at build time; a tiny inline
+// script hides next-match entries that have already kicked off, so a stale
+// prerender between result-update builds never shows a past match.
+import Flag from './Flag.astro';
+import { ranking, upcomingMatches, matches, sideLabel } from '@/lib/data';
+import { formatKickoff } from '@/lib/format';
+import { ROUND_LABELS } from '@/lib/types';
+
+const rows = ranking();
+const leader = rows[0];
+const runnerUp = rows[1];
+const lead = leader && runnerUp ? leader.total - runnerUp.total : 0;
+
+const groupMatches = matches.filter((m) => m.round === 'group');
+const finishedCount = matches.filter((m) => m.status === 'finished').length;
+const openMatchday = ([1, 2, 3] as const).find((md) =>
+  groupMatches.some((m) => m.matchday === md && m.status !== 'finished'),
+);
+const nextUp = upcomingMatches();
+const phaseLabel = openMatchday
+  ? `Speeldag ${openMatchday}`
+  : nextUp[0]
+    ? ROUND_LABELS[nextUp[0].round]
+    : 'Toernooi afgelopen';
+
+// Render a few upcoming matches; the client script shows only the first one
+// that hasn't started yet (kickoff + 2.5h grace, mirroring LiveScores).
+const next = nextUp.slice(0, 3).map((m) => ({
+  match: m,
+  home: sideLabel(m, 'home'),
+  away: sideLabel(m, 'away'),
+}));
+---
+<section class="hero-panel qc-decor animate-rise mb-6">
+  <div class="grid sm:grid-cols-[1fr_auto]">
+    <div class="p-5">
+      <p class="font-display text-xs font-bold uppercase tracking-[0.2em] text-gold">{phaseLabel} · {finishedCount}/{matches.length} gespeeld</p>
+      <h1 class="mt-1 font-display text-2xl font-extrabold tracking-tight">Klassement</h1>
+      {leader && (
+        <p class="mt-2 text-sm text-ink-foreground/75">
+          <a href={`/deelnemer/${leader.participantId}`} class="font-semibold text-ink-foreground underline-offset-2 hover:text-gold hover:underline">{leader.name}</a>
+          {' '}leidt met {leader.total} punten{lead > 0 ? ` — ${lead} ${lead === 1 ? 'punt' : 'punten'} voorsprong` : ' (gedeelde leiding)'}.
+        </p>
+      )}
+    </div>
+    {next.length > 0 && (
+      <div class="border-t border-white/10 px-5 py-4 sm:w-72 sm:border-l sm:border-t-0" data-next-matches>
+        <p class="text-[11px] font-semibold uppercase tracking-wide text-ink-foreground/60">Volgende wedstrijd</p>
+        {next.map(({ match, home, away }, i) => (
+          <a
+            href={`/wedstrijd/${match.id}`}
+            data-kickoff={match.kickoff}
+            class:list={['mt-2 block hover:text-gold', i > 0 && 'hidden']}
+          >
+            <span class="flex items-center gap-2 text-sm font-medium">
+              <Flag iso={home.team?.iso} name={home.label} class="shrink-0" />
+              <span class="truncate">{home.short}</span>
+              <span class="shrink-0 text-xs font-bold text-gold">vs</span>
+              <span class="truncate">{away.short}</span>
+              <Flag iso={away.team?.iso} name={away.label} class="shrink-0" />
+            </span>
+            <span class="mt-1 block text-xs tabular-nums text-ink-foreground/60">{formatKickoff(match.kickoff)}</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<script>
+  // Show the first upcoming match that hasn't ended yet (~2.5h after kickoff).
+  const wrap = document.querySelector('[data-next-matches]');
+  if (wrap) {
+    const GRACE_MS = 2.5 * 60 * 60 * 1000;
+    const entries = [...wrap.querySelectorAll<HTMLElement>('[data-kickoff]')];
+    const now = Date.now();
+    let shown = false;
+    for (const el of entries) {
+      const past = new Date(el.dataset.kickoff!).getTime() + GRACE_MS < now;
+      const show = !past && !shown;
+      el.classList.toggle('hidden', !show);
+      if (show) shown = true;
+    }
+    if (!shown) (wrap as HTMLElement).classList.add('hidden');
+  }
+</script>

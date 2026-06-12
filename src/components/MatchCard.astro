@@ -2,17 +2,22 @@
 // Compact, single-line match card: centered date/time on the first line,
 // then home flag+name [score] name+flag away on the second line.
 // Shows boxed score when finished, otherwise "vs" (no 0-0).
+// `compact` collapses the date line into a small leading time stamp — used in
+// day-grouped lists (kalender/programma) where the date is a group heading.
+// The .match-meta/.match-score classes and data-* attributes are the contract
+// LiveScores.astro overlay mode injects into; keep them in both variants.
 import Flag from './Flag.astro';
 import ScoreBoxes from './ScoreBoxes.astro';
 import { sideLabel } from '@/lib/data';
-import { formatKickoff } from '@/lib/format';
+import { formatKickoff, formatTime } from '@/lib/format';
 import type { Match } from '@/lib/types';
 
 interface Props {
   match: Match;
   href?: string;
+  compact?: boolean;
 }
-const { match, href } = Astro.props;
+const { match, href, compact = false } = Astro.props;
 const home = sideLabel(match, 'home');
 const away = sideLabel(match, 'away');
 const finished = match.status === 'finished' && match.result;
@@ -24,26 +29,34 @@ const Tag = href ? 'a' : 'div';
   data-home-team={home.team?.id}
   data-away-team={away.team?.id}
   class:list={[
-    'block rounded-xl border bg-card px-4 py-3 shadow-sm',
-    href && 'transition-all hover:border-primary/40 hover:shadow-md',
+    'block rounded-xl border bg-card shadow-sm',
+    compact ? 'px-3 py-2.5' : 'px-4 py-3',
+    href && 'transition-all hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
   ]}
 >
-  <div class="match-meta mb-2 flex items-center justify-center gap-2 text-center text-xs font-medium text-muted-foreground">
-    <span>{formatKickoff(match.kickoff)}</span>
-  </div>
-  <div class="flex items-center justify-center gap-3">
+  {!compact && (
+    <div class="match-meta mb-2 flex items-center justify-center gap-2 text-center text-xs font-medium text-muted-foreground">
+      <span>{formatKickoff(match.kickoff)}</span>
+    </div>
+  )}
+  <div class:list={['flex items-center justify-center', compact ? 'gap-2 text-sm' : 'gap-3']}>
+    {compact && (
+      <span class="match-meta flex min-w-11 shrink-0 items-center gap-1 text-xs font-semibold tabular-nums text-muted-foreground">{formatTime(match.kickoff)}</span>
+    )}
     <div class="flex min-w-0 flex-1 items-center justify-end gap-2">
-      <span class="truncate text-right font-medium">{home.label}</span>
+      <span class="hidden truncate text-right font-medium sm:block">{home.label}</span>
+      <span class="truncate text-right font-medium sm:hidden">{home.short}</span>
       <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-lg" />
     </div>
     <div class="match-score shrink-0">
       {finished
-        ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="md" tone="scoreboard" />
+        ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size={compact ? 'sm' : 'md'} tone="scoreboard" />
         : <span class="px-1 text-sm font-semibold text-muted-foreground">vs</span>}
     </div>
     <div class="flex min-w-0 flex-1 items-center gap-2">
       <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-lg" />
-      <span class="truncate font-medium">{away.label}</span>
+      <span class="hidden truncate font-medium sm:block">{away.label}</span>
+      <span class="truncate font-medium sm:hidden">{away.short}</span>
     </div>
   </div>
 </Tag>

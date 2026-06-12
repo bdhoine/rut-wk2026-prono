@@ -1,6 +1,8 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import { settings } from '@/lib/data';
 import { ROUND_LABELS, ROUND_ORDER, ROUND_DEADLINES, type RoundId } from '@/lib/types';
 import { formatKickoff } from '@/lib/format';
@@ -23,14 +25,13 @@ const submissions: { round: RoundId; what: string }[] = [
 ];
 ---
 <Layout title="Reglement">
-  <div class="mb-6 flex flex-wrap items-center gap-2">
-    <h1 class="text-2xl font-bold tracking-tight">Reglement</h1>
+  <PageHeader title="Reglement">
     <InfoToggle text="De spelregels van de Rut Prono en wanneer je wat moet indienen." />
-  </div>
+  </PageHeader>
 
   <!-- Puntenverdeling -->
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Puntenverdeling per wedstrijd</h2>
+    <SectionHeading title="Puntenverdeling per wedstrijd" />
     <div class="space-y-2 rounded-xl border bg-card p-4 text-sm leading-relaxed">
       <p>Het is de bedoeling de uitslag zo correct mogelijk te voorspellen. Enkel de winnaar aanduiden is niet genoeg. Per wedstrijd zijn er maximaal <strong>9 punten</strong> te verdienen:</p>
       <ul class="ml-1 space-y-1.5">
@@ -44,7 +45,7 @@ const submissions: { round: RoundId; what: string }[] = [
 
   <!-- Multipliers -->
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Punten per ronde</h2>
+    <SectionHeading title="Punten per ronde" />
     <p class="mb-2 text-sm text-muted-foreground">Hoe verder in het tornooi, hoe zwaarder de punten tellen.</p>
     <div class="overflow-hidden rounded-xl border bg-card">
       <table class="w-full text-sm">
@@ -70,7 +71,7 @@ const submissions: { round: RoundId; what: string }[] = [
 
   <!-- Bonus -->
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Bonusvoorspellingen</h2>
+    <SectionHeading title="Bonusvoorspellingen" />
     <div class="rounded-xl border bg-card p-4 text-sm leading-relaxed">
       <p class="mb-2">Op het eerste pronostiekblad voorspel je ook 4 zaken over het hele tornooi. Elk juist = <strong>{settings.bonusPoints} punten</strong>:</p>
       <ul class="ml-4 list-disc space-y-1">
@@ -85,7 +86,7 @@ const submissions: { round: RoundId; what: string }[] = [
 
   <!-- Deadlines -->
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Wanneer wat indienen?</h2>
+    <SectionHeading title="Wanneer wat indienen?" />
     <p class="mb-2 text-sm text-muted-foreground">Telkens ten laatste 1 uur vóór de eerste wedstrijd van de ronde (Belgische tijd).</p>
     <div class="overflow-hidden rounded-xl border bg-card">
       <table class="w-full text-sm">
@@ -109,7 +110,7 @@ const submissions: { round: RoundId; what: string }[] = [
 
   <!-- Prijzengeld -->
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Prijzengeld</h2>
+    <SectionHeading title="Prijzengeld" />
     <p class="mb-2 text-sm text-muted-foreground">De eerste vijf in het eindklassement winnen een prijs.</p>
     <div class="overflow-hidden rounded-xl border bg-card">
       <table class="w-full text-sm">
@@ -133,7 +134,7 @@ const submissions: { round: RoundId; what: string }[] = [
 
   <!-- Deelname & indienen -->
   <section>
-    <h2 class="mb-2 text-lg font-semibold">Deelname & indienen</h2>
+    <SectionHeading title="Deelname & indienen" />
     <div class="space-y-2 rounded-xl border bg-card p-4 text-sm leading-relaxed">
       <p><strong>Inzet:</strong> €10, te betalen aan den toog in café De Rut. Inschrijven kan enkel in het café. Je deelname is pas geldig na afgifte van de poulebladen én betaling.</p>
       <p><strong>Poulefase:</strong> alle pronostieken van de poulewedstrijden breng je <strong>op papier</strong> binnen in De Rut, vóór de start van het WK.</p>

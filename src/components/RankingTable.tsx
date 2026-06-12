@@ -118,11 +118,13 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
     <Table className="table-fixed">
       <TableHeader>
         <TableRow>
-          <TableHead className="w-8 px-1" />
-          <TableHead className="w-8 px-1 text-center">#</TableHead>
-          <TableHead className="px-2">Naam</TableHead>
-          <TableHead className="w-[4.5rem] px-1.5 text-right">Vorm</TableHead>
-          <TableHead className="w-14 px-2 text-right">Punten</TableHead>
+          {/* Star col: size-7 button + padding must fit the declared width,
+              or table-fixed overflows and shows a scrollbar strip on mobile. */}
+          <TableHead className="w-8 px-0.5" />
+          <TableHead className="w-8 px-0.5 text-center">#</TableHead>
+          <TableHead className="px-1.5">Naam</TableHead>
+          <TableHead className="w-14 px-1 text-right">Vorm</TableHead>
+          <TableHead className="w-12 px-1.5 text-right" title="Punten">Ptn</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -131,28 +133,28 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
           const inMoney = showPrizeCut && PRIZES[row.position] != null;
           return (
             <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)} className={inMoney ? "bg-gold/10" : undefined}>
-              <TableCell className="px-1">
+              <TableCell className="px-0.5">
                 <button
                   type="button"
                   aria-label={fav ? `${row.name} uit favorieten` : `${row.name} als favoriet`}
                   aria-pressed={fav}
                   onClick={(e) => { e.stopPropagation(); toggle(row.participantId); }}
-                  className="grid size-7 place-items-center rounded-md hover:bg-muted"
+                  className="mx-auto grid size-7 place-items-center rounded-md hover:bg-muted"
                 >
                   <Star filled={fav} className="size-[18px]" />
                 </button>
               </TableCell>
-              <TableCell className="px-1 text-center">{positionBadge(row.position)}</TableCell>
-              <TableCell className="px-2 font-medium">
-                <div className="flex min-w-0 items-center gap-2">
+              <TableCell className="px-0.5 text-center">{positionBadge(row.position)}</TableCell>
+              <TableCell className="px-1.5 font-medium">
+                <div className="flex min-w-0 items-center gap-1.5">
                   {row.winnerIso && (
                     <span className={`fi fi-${row.winnerIso} shrink-0 rounded-[2px] text-base shadow-sm`} title={row.winnerName ?? undefined} role="img" aria-label={row.winnerName ?? undefined} />
                   )}
                   <span className="truncate">{row.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="px-1.5 text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
-              <TableCell className="px-2 text-right font-bold tabular-nums">
+              <TableCell className="px-1 text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
+              <TableCell className="px-1.5 text-right font-bold tabular-nums">
                 <div className="flex items-center justify-end gap-1">
                   {row.delta > 0 && (
                     <span className="rounded bg-red-100 px-1 py-0.5 text-[10px] font-semibold tabular-nums text-red-700" title="voorlopige live-punten">+{row.delta}</span>

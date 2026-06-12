@@ -9,13 +9,15 @@
     "id": "za",
     "iso": "za",
     "name": "Zuid-Afrika",
-    "group": "A"
+    "group": "A",
+    "shortName": "Z-Afrika"
   },
   {
     "id": "kr",
     "iso": "kr",
     "name": "Zuid-Korea",
-    "group": "A"
+    "group": "A",
+    "shortName": "Z-Korea"
   },
   {
     "id": "cz",
@@ -33,7 +35,8 @@
     "id": "ba",
     "iso": "ba",
     "name": "Bosnië-Herzegovina",
-    "group": "B"
+    "group": "B",
+    "shortName": "Bosnië-H."
   },
   {
     "id": "qa",
@@ -75,7 +78,8 @@
     "id": "us",
     "iso": "us",
     "name": "Verenigde Staten",
-    "group": "D"
+    "group": "D",
+    "shortName": "VS"
   },
   {
     "id": "py",
@@ -165,7 +169,8 @@
     "id": "nz",
     "iso": "nz",
     "name": "Nieuw-Zeeland",
-    "group": "G"
+    "group": "G",
+    "shortName": "N.-Zeeland"
   },
   {
     "id": "es",
@@ -183,7 +188,8 @@
     "id": "sa",
     "iso": "sa",
     "name": "Saoedi-Arabië",
-    "group": "H"
+    "group": "H",
+    "shortName": "S.-Arabië"
   },
   {
     "id": "uy",

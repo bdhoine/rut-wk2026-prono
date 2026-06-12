@@ -1,16 +1,15 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
-import ScoreBoxes from '@/components/ScoreBoxes.astro';
-import PointsBadge from '@/components/PointsBadge.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
+import PredictionRow from '@/components/PredictionRow.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import {
-  participants, getParticipant, getTeam, sideLabel, positionOf, predictionsForParticipant, outcomes, settings,
+  participants, getParticipant, getTeam, positionOf, predictionsForParticipant, outcomes, settings,
   eliminatedTeamIds, currentBonusLeaders,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
 import { ROUND_LABELS, ROUND_ORDER, type BonusPicks } from '@/lib/types';
-import { explainScore } from '@/lib/format';
 
 export function getStaticPaths() {
   return participants.map((p) => ({ params: { id: p.id } }));
@@ -37,6 +36,24 @@ const byRound = ROUND_ORDER
     items: rows.filter((r) => r.match.round === round).sort((a, b) => a.match.kickoff.localeCompare(b.match.kickoff)),
   }))
   .filter((g) => g.items.length > 0);
+
+// Group stage split per speeldag as collapsible sections (72 matches is too
+// long as one flat list). A speeldag starts open when it has results or is
+// the next one up; fully-future speeldagen start collapsed.
+const groupItems = byRound.find((g) => g.round === 'group')?.items ?? [];
+const koRounds = byRound.filter((g) => g.round !== 'group');
+const matchdays = ([1, 2, 3] as const)
+  .map((md) => {
+    const items = groupItems.filter((r) => r.match.matchday === md);
+    return {
+      md,
+      items,
+      finished: items.filter((r) => r.score).length,
+      points: items.reduce((s, r) => s + (r.score?.points ?? 0), 0),
+    };
+  })
+  .filter((g) => g.items.length > 0);
+const currentMd = matchdays.find((g) => g.finished < g.items.length)?.md;
 
 const pick = (key: keyof BonusPicks) => participant.bonus[key];
 
@@ -77,7 +94,7 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
 <Layout title={`${participant.name} — Rut Prono WK 2026`}>
   <a href="/" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Klassement</a>
 
-  <header class="mb-6 overflow-hidden rounded-2xl border border-white/10 border-t-4 border-t-gold bg-gradient-to-br from-ink to-[oklch(0.30_0.03_80)] text-ink-foreground shadow-sm">
+  <header class="hero-panel qc-decor mb-6 shadow-sm">
     <div class="flex items-center justify-between gap-4 p-5">
       <div class="flex min-w-0 items-center gap-3">
         <div class:list={['grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold tabular-nums', medal]}>{rank?.position ?? '—'}</div>
@@ -107,7 +124,7 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
   </header>
 
   <section class="mb-8">
-    <h2 class="mb-2 text-lg font-semibold">Bonusvoorspellingen</h2>
+    <SectionHeading title="Bonusvoorspellingen" />
     <div class="grid grid-cols-2 gap-2">
       {bonus.items.map((item) => {
         const value = pick(item.key);
@@ -147,41 +164,30 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
   </section>
 
   <section>
-    <div class="mb-3 flex flex-wrap items-center gap-2">
-      <h2 class="text-lg font-semibold">Pronostieken</h2>
+    <SectionHeading title="Pronostieken">
       <InfoToggle text="De grote score is de voorspelling, daaronder staat de uitslag van de wedstrijd." />
-    </div>
-    <div class="space-y-6">
-      {byRound.map((g) => (
-        <div>
+    </SectionHeading>
+    <div class="space-y-3">
+      {matchdays.map((g) => (
+        <details open={g.finished > 0 || g.md === currentMd} class="group rounded-xl border bg-card shadow-sm">
+          <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+            <span class="bar-cut" aria-hidden="true"></span>
+            Speeldag {g.md}
+            <span class="text-sm font-normal text-muted-foreground">{g.finished}/{g.items.length} gespeeld</span>
+            {g.finished > 0 && <span class="ml-auto rounded-md bg-gold/15 px-2 py-0.5 text-sm font-bold tabular-nums text-primary">{g.points} ptn</span>}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class:list={['size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180', g.finished === 0 && 'ml-auto']}><path d="m6 9 6 6 6-6" /></svg>
+          </summary>
+          <div class="space-y-2 border-t px-3 py-3">
+            {g.items.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
+          </div>
+        </details>
+      ))}
+
+      {koRounds.map((g) => (
+        <div class="pt-3">
           <h3 class="mb-2 text-sm font-semibold text-muted-foreground">{ROUND_LABELS[g.round]}</h3>
           <div class="space-y-2">
-            {g.items.map(({ match, prediction, score }) => {
-              const home = sideLabel(match, 'home');
-              const away = sideLabel(match, 'away');
-              return (
-                <div class="relative flex items-center gap-3 rounded-xl border bg-card px-4 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
-                  <a href={`/wedstrijd/${match.id}`} class="absolute inset-0 rounded-xl" aria-label={`${home.label} tegen ${away.label}`}></a>
-                  <div class="min-w-0 flex-1">
-                    <div class="flex items-center justify-center gap-2.5">
-                      <span class="min-w-0 flex-1 truncate text-right text-sm font-medium">{home.label}</span>
-                      <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
-                      <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" />
-                      <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
-                      <span class="min-w-0 flex-1 truncate text-sm font-medium">{away.label}</span>
-                    </div>
-                    <div class="mt-1.5 flex h-6 items-center justify-center">
-                      <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" muted placeholder />
-                    </div>
-                  </div>
-                  <div class="relative z-10 shrink-0">
-                    {score
-                      ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} />
-                      : <span class="inline-flex min-w-9 items-center justify-center rounded-md border border-dashed border-muted-foreground/25 px-2 py-1.5 text-sm text-muted-foreground/40">·</span>}
-                  </div>
-                </div>
-              );
-            })}
+            {g.items.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
           </div>
         </div>
       ))}

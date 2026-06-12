@@ -3,38 +3,59 @@ import Layout from '@/layouts/Layout.astro';
 import MatchCard from '@/components/MatchCard.astro';
 import DeadlineBadge from '@/components/DeadlineBadge.astro';
 import LiveScores from '@/components/LiveScores.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
 import { matches } from '@/lib/data';
+import { formatDay } from '@/lib/format';
 import { ROUND_LABELS, type RoundId } from '@/lib/types';
+import type { Match } from '@/lib/types';
 
 const byKickoff = (a: { kickoff: string }, b: { kickoff: string }) => a.kickoff.localeCompare(b.kickoff);
+
+// Group a sorted match list by calendar day (Belgian time) for day subheadings.
+const byDay = (items: Match[]): [string, Match[]][] => {
+  const map = new Map<string, Match[]>();
+  for (const m of items) {
+    const day = formatDay(m.kickoff);
+    if (!map.has(day)) map.set(day, []);
+    map.get(day)!.push(m);
+  }
+  return [...map.entries()];
+};
 
 // Group stage split per matchday (speeldag).
 const matchdays = [1, 2, 3].map((md) => ({
   md,
-  items: matches.filter((m) => m.round === 'group' && m.matchday === md).sort(byKickoff),
+  days: byDay(matches.filter((m) => m.round === 'group' && m.matchday === md).sort(byKickoff)),
 }));
 
 // Knockout rounds, each its own section.
 const KO_ROUNDS: RoundId[] = ['r32', 'r16', 'qf', 'sf', 'third', 'final'];
 const koRounds = KO_ROUNDS
-  .map((round) => ({ round, items: matches.filter((m) => m.round === round).sort(byKickoff) }))
-  .filter((g) => g.items.length > 0);
+  .map((round) => ({ round, days: byDay(matches.filter((m) => m.round === round).sort(byKickoff)) }))
+  .filter((g) => g.days.length > 0);
 ---
 <Layout title="Kalender">
-  <h1 class="mb-5 text-2xl font-bold tracking-tight">Kalender</h1>
+  <PageHeader title="Kalender" />
   <LiveScores />
 
   <section class="mb-8">
-    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-lg font-semibold">{ROUND_LABELS.group}</h2>
+    <SectionHeading title={ROUND_LABELS.group}>
       <DeadlineBadge round="group" />
-    </div>
+    </SectionHeading>
     <div class="space-y-5">
       {matchdays.map((d) => (
         <div>
           <h3 class="mb-2 text-sm font-semibold text-muted-foreground">Speeldag {d.md}</h3>
-          <div class="space-y-2">
-            {d.items.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
+          <div class="space-y-4">
+            {d.days.map(([day, items]) => (
+              <div>
+                <h4 class="sticky top-16 z-10 -mx-1 mb-1.5 bg-background/95 px-1 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">{day}</h4>
+                <div class="space-y-1.5">
+                  {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       ))}
@@ -43,12 +64,18 @@ const koRounds = KO_ROUNDS
 
   {koRounds.map((g) => (
     <section class="mb-8">
-      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 class="text-lg font-semibold">{ROUND_LABELS[g.round]}</h2>
+      <SectionHeading title={ROUND_LABELS[g.round]}>
         <DeadlineBadge round={g.round} />
-      </div>
-      <div class="space-y-2">
-        {g.items.map((m) => <MatchCard match={m} href={`/wedstrijd/${m.id}`} />)}
+      </SectionHeading>
+      <div class="space-y-4">
+        {g.days.map(([day, items]) => (
+          <div>
+            <h4 class="sticky top-16 z-10 -mx-1 mb-1.5 bg-background/95 px-1 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">{day}</h4>
+            <div class="space-y-1.5">
+              {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   ))}

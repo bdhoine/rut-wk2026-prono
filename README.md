@@ -19,19 +19,39 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 | Route | Page |
 |-------|------|
-| `/` | Klassement (ranking) — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details. A **Live scores** toggle shows in-progress + recently-finished matches and a provisional live ranking |
-| `/deelnemer/[id]` | Participant detail: position, total, bonus picks, all predictions (sorted by kickoff) + score breakdown |
+| `/` | Klassement (ranking) — hero panel with current speeldag, leader and next match, then the ranking. Favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details. A **Live scores** toggle shows in-progress + recently-finished matches and a provisional live ranking |
+| `/deelnemer/[id]` | Participant detail: position, total, bonus picks, predictions per speeldag in collapsible sections (played/current open, future collapsed) + score breakdown |
 | `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + all predictions sorted by points |
-| `/komende` | Upcoming matches (planning order) |
-| `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with prono submission deadlines |
-| `/poules` | Group standings + best third-placed ranking |
+| `/programma` | Upcoming matches, grouped per calendar day |
+| `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with sticky day subheadings and prono submission deadlines |
+| `/poules` | Group standings (two-column grid on desktop) + best third-placed ranking; qualification highlight only once a group has results |
 | `/land/[id]` | Country detail: full schedule + group standings |
-| `/stats` | Top scorers, most goals scored/conceded, top-10 matches by points and by wrong predictions |
+| `/statistieken` | Top scorers, most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, popular scorelines, most-picked winner/top scorer |
+| `/reglement` | Competition rules, deadlines and prizes |
+| any other URL | Branded 404 page ("Buitenspel!") |
 
 Navigation is a horizontal bar on desktop and a hamburger menu on mobile. All
 game lists are ordered by kickoff (planning). Score explanations on the
 participant and match pages appear on hover (desktop) / tap (mobile); the points
 badge is colour-coded (red = 0, green = scored, amber = exact).
+
+## Design
+
+The UI follows the **FIFA World Cup 26 brand language**: a black ("ink") + gold
+core palette — matching the official trophy emblem — with the multicolor
+host-city accents reduced to a 4 px diagonal `brand-stripe` under the header and
+above the footer. Display type is **Archivo** (bold geometric, echoing the FWC26
+typeface), body type **Noto Sans** (FIFA's official secondary font). Light, dark
+and auto themes (OKLch tokens in [`src/styles/global.css`](./src/styles/global.css)).
+
+Reusable brand utilities (all in `global.css`):
+- `.hero-panel` — ink-gradient panel with a gold top edge (home hero, participant/match headers, 404)
+- `.qc-decor` — quarter-circle corner ghost, the "26"-emblem square + quarter-circle geometry
+- `.bar-cut` — diagonally-cut gold bar used by `SectionHeading.astro`, echoing the FIFA wordmark
+- `.animate-rise` — subtle hero entrance, disabled under `prefers-reduced-motion`
+
+Long team names have an optional `shortName` in `teams.json`, used on narrow
+viewports and in compact contexts (match cards, standings tables).
 
 ## Live scores & automatic results
 
@@ -93,7 +113,7 @@ through the bracket). Edit the JSON in `src/data/` directly for real data.
 
 | File | Contents |
 |------|----------|
-| `teams.json` | Teams: `id`, `iso` (lowercase ISO 3166-1 alpha-2 for flags), Dutch `name`, `group` |
+| `teams.json` | Teams: `id`, `iso` (lowercase ISO 3166-1 alpha-2 for flags), Dutch `name`, optional `shortName` (compact display), `group` |
 | `groups.json` | Groups A–L → team ids |
 | `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result`, plus `apiId` / `winnerTeamId` filled by the results updater |
 | `participants.json` | Participants: `id`, `name`, `bonus` picks. **No phone numbers** (kept off the repo by design) |

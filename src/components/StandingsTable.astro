@@ -7,18 +7,21 @@ interface Props {
   highlightTop?: number; // rows with rank <= this are highlighted as qualifying
 }
 const { rows, highlightTop = 2 } = Astro.props;
+// Only mark qualifying spots once the group has actual results — an all-zero
+// table with green rows reads as a (meaningless) verdict.
+const hasResults = rows.some((r) => r.played > 0);
 ---
 <div class="overflow-hidden rounded-xl border bg-card">
   <table class="w-full table-fixed text-sm">
     <colgroup>
-      <col class="w-7 md:w-8" />
+      <col class="w-7" />
       <col />
-      <col class="w-6 md:w-9" />
-      <col class="w-6 md:w-9" />
-      <col class="w-6 md:w-9" />
-      <col class="w-6 md:w-9" />
-      <col class="w-9 md:w-12" />
-      <col class="w-9 md:w-12" />
+      <col class="w-6" />
+      <col class="w-6" />
+      <col class="w-6" />
+      <col class="w-6" />
+      <col class="w-9" />
+      <col class="w-9" />
     </colgroup>
     <thead>
       <tr class="border-b text-muted-foreground">
@@ -34,20 +37,22 @@ const { rows, highlightTop = 2 } = Astro.props;
     </thead>
     <tbody>
       {rows.map((r) => (
-        <tr class:list={['border-b last:border-0', r.rank <= highlightTop && 'bg-emerald-50 dark:bg-emerald-950/40']}>
-          <td class="px-2 py-2 text-center tabular-nums text-muted-foreground">{r.rank}</td>
-          <td class="px-2 py-2">
+        <tr class:list={['border-b last:border-0', hasResults && r.rank <= highlightTop && 'bg-emerald-50/70 dark:bg-emerald-950/30']}>
+          <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">{r.rank}</td>
+          <td class="px-2 py-2.5">
+            {/* Short name: this table renders in narrow contexts (390px mobile,
+                half-width grid column on desktop). Full name lives on the land page. */}
             <a href={`/land/${r.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
               <Flag iso={r.team.iso} name={r.team.name} class="shrink-0 text-base" />
-              <span class="truncate">{r.team.name}</span>
+              <span class="truncate">{r.team.shortName ?? r.team.name}</span>
             </a>
           </td>
-          <td class="py-2 text-center tabular-nums">{r.played}</td>
-          <td class="py-2 text-center tabular-nums">{r.won}</td>
-          <td class="py-2 text-center tabular-nums">{r.drawn}</td>
-          <td class="py-2 text-center tabular-nums">{r.lost}</td>
-          <td class="py-2 text-center tabular-nums">{r.goalDiff > 0 ? `+${r.goalDiff}` : r.goalDiff}</td>
-          <td class="px-2 py-2 text-right font-bold tabular-nums">{r.points}</td>
+          <td class="py-2.5 text-center tabular-nums">{r.played}</td>
+          <td class="py-2.5 text-center tabular-nums">{r.won}</td>
+          <td class="py-2.5 text-center tabular-nums">{r.drawn}</td>
+          <td class="py-2.5 text-center tabular-nums">{r.lost}</td>
+          <td class="py-2.5 text-center tabular-nums">{r.goalDiff > 0 ? `+${r.goalDiff}` : r.goalDiff}</td>
+          <td class="px-2 py-2.5 text-right font-bold tabular-nums">{r.points}</td>
         </tr>
       ))}
     </tbody>

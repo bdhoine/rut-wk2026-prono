@@ -29,13 +29,16 @@ export const getTeam = (id: string | null | undefined): Team | undefined => (id 
 export const getMatch = (id: string): Match | undefined => matchById.get(id);
 export const getParticipant = (id: string): Participant | undefined => participantById.get(id);
 
-/** Display label for a match side, falling back to its placeholder. */
-export function sideLabel(match: Match, side: 'home' | 'away'): { team?: Team; label: string } {
+/** Display label for a match side, falling back to its placeholder.
+ *  `short` is the compact name for narrow viewports. */
+export function sideLabel(match: Match, side: 'home' | 'away'): { team?: Team; label: string; short: string } {
   const teamId = side === 'home' ? match.homeTeamId : match.awayTeamId;
   const team = getTeam(teamId);
-  if (team) return { team, label: team.name };
+  if (team) return { team, label: team.name, short: team.shortName ?? team.name };
   const placeholder = side === 'home' ? match.homePlaceholder : match.awayPlaceholder;
-  return { label: placeholder ?? 'TBD' };
+  const label = placeholder ?? 'TBD';
+  const short = label.replace(/^Winnaar /, 'W. ').replace(/^Verliezer /, 'V. ').replace(/^Beste 3e /, '3e ');
+  return { label, short };
 }
 
 /** Full ranking table (rules.md §4). */
@@ -221,24 +224,27 @@ export interface TeamGoalStat {
   team: Team;
   scored: number;
   conceded: number;
+  played: number;
 }
 
 /** Goals scored/conceded per team from finished matches (penalties excluded, since results are 120-min scores). */
 export function teamGoalStats(): TeamGoalStat[] {
   const acc = new Map<string, TeamGoalStat>();
-  for (const t of teams) acc.set(t.id, { team: t, scored: 0, conceded: 0 });
+  for (const t of teams) acc.set(t.id, { team: t, scored: 0, conceded: 0, played: 0 });
   for (const m of matches) {
     if (m.status !== 'finished' || !m.result || !m.homeTeamId || !m.awayTeamId) continue;
     const h = acc.get(m.homeTeamId);
     const a = acc.get(m.awayTeamId);
-    if (h) { h.scored += m.result.home; h.conceded += m.result.away; }
-    if (a) { a.scored += m.result.away; a.conceded += m.result.home; }
+    if (h) { h.scored += m.result.home; h.conceded += m.result.away; h.played++; }
+    if (a) { a.scored += m.result.away; a.conceded += m.result.home; a.played++; }
   }
   return [...acc.values()];
 }
 
-export const mostGoalsScored = () => [...teamGoalStats()].sort((a, b) => b.scored - a.scored || a.team.name.localeCompare(b.team.name, 'nl'));
-export const mostGoalsConceded = () => [...teamGoalStats()].sort((a, b) => b.conceded - a.conceded || a.team.name.localeCompare(b.team.name, 'nl'));
+// Teams that already played rank above unplayed ones at equal goals, so the
+// stats tables aren't dominated by alphabetical all-zero rows early on.
+export const mostGoalsScored = () => [...teamGoalStats()].sort((a, b) => b.scored - a.scored || b.played - a.played || a.team.name.localeCompare(b.team.name, 'nl'));
+export const mostGoalsConceded = () => [...teamGoalStats()].sort((a, b) => b.conceded - a.conceded || b.played - a.played || a.team.name.localeCompare(b.team.name, 'nl'));
 
 // Per-finished-match aggregate of all participants' scores.
 export interface MatchPointStat {

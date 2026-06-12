@@ -8,8 +8,13 @@ const dayFmt = new Intl.DateTimeFormat('nl-BE', {
   weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Brussels',
 });
 
+const timeFmt = new Intl.DateTimeFormat('nl-BE', {
+  hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels',
+});
+
 export const formatKickoff = (iso: string) => dateFmt.format(new Date(iso));
 export const formatDay = (iso: string) => dayFmt.format(new Date(iso));
+export const formatTime = (iso: string) => timeFmt.format(new Date(iso));
 
 /** Human-readable Dutch explanation of how a match score was determined (rules.md §2/§3). */
 export function explainScore(s: MatchScore): string {
