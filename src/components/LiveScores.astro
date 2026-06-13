@@ -60,6 +60,11 @@ const scoringPayload =
         preds: predsByMatch,
       }
     : null;
+
+// Kickoff times of not-yet-finished matches, so the client can auto-enable live
+// while a match is in progress and auto-disable once it's over (window-based,
+// no API call needed for the decision). Each kickoff carries its venue offset.
+const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) => m.kickoff);
 ---
 <div data-live-root data-live-mode={mode}>
   <div class="mb-4 flex flex-wrap items-center gap-2">
@@ -84,6 +89,7 @@ const scoringPayload =
   )}
 
   <script type="application/json" id="live-teams" set:html={JSON.stringify(teamMap)}></script>
+  <script type="application/json" id="live-windows" set:html={JSON.stringify(kickoffWindows)}></script>
   {mode === 'list' && <script type="application/json" id="live-recent" set:html={JSON.stringify(recent)}></script>}
   {mode === 'list' && <script type="application/json" id="live-scoring" set:html={JSON.stringify(scoringPayload)}></script>}
 </div>
@@ -103,6 +109,9 @@ const scoringPayload =
     const teamMap = JSON.parse(document.getElementById('live-teams')?.textContent || '{}');
     const recentData = JSON.parse(document.getElementById('live-recent')?.textContent || '[]');
     const scoring = JSON.parse(document.getElementById('live-scoring')?.textContent || 'null');
+    const kickoffWindows: number[] = (JSON.parse(document.getElementById('live-windows')?.textContent || '[]') as string[])
+      .map((iso) => new Date(iso).getTime())
+      .filter((t) => Number.isFinite(t));
     const scoringByPair = new Map<string, any>();
     if (scoring) for (const m of scoring.matches) { scoringByPair.set(`${m.h}|${m.a}`, m); scoringByPair.set(`${m.a}|${m.h}`, m); }
 
@@ -360,9 +369,25 @@ const scoringPayload =
     // Recently-finished matches show automatically (no API needed).
     if (mode === 'list') renderRecent();
 
-    // Restore the toggle from a previous page (persisted in localStorage).
-    let wasOn = false;
-    try { wasOn = localStorage.getItem(LIVE_KEY) === '1'; } catch { /* ignore */ }
-    if (wasOn) setEnabled(true);
+    // Auto-enable while a match is in progress and auto-disable once it's over,
+    // based on kickoff windows (kickoff − 5 min … kickoff + 2.5 h). We only act
+    // on a busy↔idle transition, so a manual toggle in between is respected
+    // until the next match starts or ends.
+    const PRE_MS = 5 * 60 * 1000;
+    const PLAY_MS = 2.5 * 60 * 60 * 1000;
+    const AUTO_MS = 30 * 1000; // how often to re-check the windows
+    const matchBusyNow = () => {
+      const now = Date.now();
+      return kickoffWindows.some((k) => now >= k - PRE_MS && now <= k + PLAY_MS);
+    };
+    let lastBusy: boolean | null = null;
+    const autoEvaluate = () => {
+      const busy = matchBusyNow();
+      if (busy === lastBusy) return;
+      lastBusy = busy;
+      setEnabled(busy, false); // auto state isn't persisted; manual clicks still are
+    };
+    autoEvaluate(); // set the initial state from the current time
+    setInterval(autoEvaluate, AUTO_MS);
   }
 </script>
