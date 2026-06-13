@@ -219,8 +219,13 @@
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": "us",
     "awayTeamId": "py",
-    "status": "scheduled",
-    "apiId": 4
+    "status": "finished",
+    "apiId": 4,
+    "result": {
+      "home": 4,
+      "away": 1
+    },
+    "winnerTeamId": "us"
   },
   {
     "id": "gD-md1-2",
