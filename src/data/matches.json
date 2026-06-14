@@ -379,8 +379,12 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "nl",
     "awayTeamId": "jp",
-    "status": "scheduled",
-    "apiId": 11
+    "status": "finished",
+    "apiId": 11,
+    "result": {
+      "home": 2,
+      "away": 2
+    }
   },
   {
     "id": "gF-md1-2",
