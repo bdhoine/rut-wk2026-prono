@@ -172,8 +172,13 @@
     "venue": "Gillette Stadium, Boston",
     "homeTeamId": "ht",
     "awayTeamId": "gbsct",
-    "status": "scheduled",
-    "apiId": 5
+    "status": "finished",
+    "apiId": 5,
+    "result": {
+      "home": 0,
+      "away": 1
+    },
+    "winnerTeamId": "gbsct"
   },
   {
     "id": "gC-md2-1",
@@ -243,8 +248,13 @@
     "venue": "BC Place, Vancouver",
     "homeTeamId": "au",
     "awayTeamId": "tr",
-    "status": "scheduled",
-    "apiId": 6
+    "status": "finished",
+    "apiId": 6,
+    "result": {
+      "home": 2,
+      "away": 0
+    },
+    "winnerTeamId": "au"
   },
   {
     "id": "gD-md2-1",
