@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PRIZES } from "@/lib/prizes";
 
 export interface RankingTableRow {
   position: number;
@@ -15,9 +16,7 @@ export interface RankingTableRow {
 
 const FAV_KEY = "rut-wk2026-favorieten";
 
-// Prize money per final position (euro). Shown on the klassement with a divider
-// after the last paid spot. The official ranking in the WhatsApp group counts.
-const PRIZES: Record<number, number> = { 1: 320, 2: 200, 3: 120, 4: 90, 5: 60 };
+const normalize = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
 const FORM_COLOR: Record<string, string> = {
   exact: "bg-emerald-500",
@@ -65,9 +64,20 @@ function positionBadge(position: number) {
 
 type DisplayRow = RankingTableRow & { delta: number };
 
-export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
+export default function RankingTable({
+  rows,
+  limit,
+  moreHref,
+  searchable = false,
+}: {
+  rows: RankingTableRow[];
+  limit?: number;
+  moreHref?: string;
+  searchable?: boolean;
+}) {
   const [favs, setFavs] = React.useState<string[]>([]);
   const [deltas, setDeltas] = React.useState<Record<string, number>>({});
+  const [query, setQuery] = React.useState("");
 
   React.useEffect(() => {
     try {
@@ -113,6 +123,15 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
   const go = (id: string) => { window.location.href = `/deelnemer/${id}`; };
 
   const favRows = displayRows.filter((r) => favSet.has(r.participantId));
+
+  const q = normalize(query.trim());
+  const searching = searchable && q.length > 0;
+  const mainRows = searching
+    ? displayRows.filter((r) => normalize(r.name).includes(q))
+    : limit != null
+      ? displayRows.slice(0, limit)
+      : displayRows;
+  const mainHeading = limit != null ? "Top 10" : favRows.length > 0 ? "Volledig klassement" : null;
 
   const renderTable = (data: DisplayRow[], showPrizeCut = false) => (
     <Table className="table-fixed">
@@ -181,13 +200,51 @@ export default function RankingTable({ rows }: { rows: RankingTableRow[] }) {
         </section>
       )}
       <section>
-        {favRows.length > 0 && <h2 className="mb-2 text-lg font-semibold">Volledig klassement</h2>}
+        {mainHeading && <h2 className="mb-2 text-lg font-semibold">{mainHeading}</h2>}
         {hasLive && (
           <p className="mb-2 flex items-center gap-1.5 text-xs text-red-700">
             <span className="size-2 animate-pulse rounded-full bg-red-600" /> Voorlopige stand — inclusief live-wedstrijden
           </p>
         )}
-        <div className="rounded-xl border bg-card p-1">{renderTable(displayRows, true)}</div>
+        {searchable && (
+          <div className="relative mb-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Zoek op naam…"
+              aria-label="Zoek op naam"
+              className="w-full rounded-lg border bg-card py-2 pl-8 pr-8 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Zoekopdracht wissen"
+                className="absolute right-1.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-md text-muted-foreground hover:bg-muted"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" className="size-4"><path d="M6 6l12 12M18 6 6 18" /></svg>
+              </button>
+            )}
+          </div>
+        )}
+        {searching && mainRows.length === 0 ? (
+          <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">Geen deelnemer gevonden voor “{query.trim()}”.</p>
+        ) : (
+          <div className="rounded-xl border bg-card p-1">{renderTable(mainRows, true)}</div>
+        )}
+        {limit != null && moreHref && !searching && (
+          <a
+            href={moreHref}
+            className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
+          >
+            Volledig klassement
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="size-4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        )}
       </section>
     </div>
   );

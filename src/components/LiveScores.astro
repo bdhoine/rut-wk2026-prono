@@ -15,15 +15,18 @@ import { teams, matches, predictions, settings, getTeam } from '@/lib/data';
 
 interface Props {
   mode?: 'overlay' | 'list';
+  // List mode only: also show the most recently finished matches. When false,
+  // only live matches appear (used on /klassement, which is live-only).
+  showRecent?: boolean;
 }
-const { mode = 'overlay' } = Astro.props;
+const { mode = 'overlay', showRecent = true } = Astro.props;
 const teamMap = Object.fromEntries(teams.map((t) => [t.id, { name: t.name, iso: t.iso }]));
 
 // Most recently finished matches for the home page (newest first; a few spare
 // beyond the 4-card cap in case some are dropped as currently-live duplicates).
-// Only meaningful in list mode.
+// Only meaningful in list mode with recent enabled.
 const recent =
-  mode === 'list'
+  mode === 'list' && showRecent
     ? matches
         .filter((m) => m.status === 'finished' && m.result && m.homeTeamId && m.awayTeamId)
         .sort((a, b) => b.kickoff.localeCompare(a.kickoff))
@@ -82,7 +85,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
 
   {mode === 'list' && (
     <div id="live-list" class="mb-6 hidden space-y-3">
-      <h2 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground"><span class="bar-cut" aria-hidden="true"></span>Nu live &amp; recent gespeeld</h2>
+      <h2 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground"><span class="bar-cut" aria-hidden="true"></span>{showRecent ? 'Nu live & recent gespeeld' : 'Nu live'}</h2>
       <div id="live-list-cards" class="space-y-3"></div>
       <div id="recent-list-cards" class="space-y-3"></div>
     </div>

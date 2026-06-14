@@ -1,11 +1,10 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import HomeHero from '@/components/HomeHero.astro';
 import RankingTable from '@/components/RankingTable.tsx';
 import LiveScores from '@/components/LiveScores.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
+import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import MovementSection from '@/components/MovementSection.astro';
 import { ranking, getParticipant, getTeam, participantForm } from '@/lib/data';
 
 const rows = ranking().map((r) => {
@@ -23,15 +22,11 @@ const rows = ranking().map((r) => {
   };
 });
 ---
-<Layout title="Rut Prono WK 2026">
-  <HomeHero />
-  <LiveScores mode="list" />
+<Layout title="Klassement — Rut Prono WK 2026">
+  <PageHeader title="Klassement" eyebrow="Volledige stand" />
+  <LiveScores mode="list" showRecent={false} />
   <SectionHeading title="Stand">
-    <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. De goud-getinte rijen zijn de prijsplaatsen (top 5)." />
+    <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. De goud-getinte rijen zijn de prijsplaatsen (top 5). Zoek hieronder op naam." />
   </SectionHeading>
-  <RankingTable client:load rows={rows} limit={10} moreHref="/klassement" />
-
-  <div class="mt-8">
-    <MovementSection />
-  </div>
+  <RankingTable client:load rows={rows} searchable />
 </Layout>

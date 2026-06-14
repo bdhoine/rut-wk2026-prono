@@ -6,9 +6,10 @@ import PredictionRow from '@/components/PredictionRow.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import {
   participants, getParticipant, getTeam, positionOf, predictionsForParticipant, outcomes, settings,
-  eliminatedTeamIds, currentBonusLeaders,
+  eliminatedTeamIds, currentBonusLeaders, ranking, matches,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
+import { prizeFor } from '@/lib/prizes';
 import { ROUND_LABELS, ROUND_ORDER, type BonusPicks } from '@/lib/types';
 
 export function getStaticPaths() {
@@ -90,9 +91,57 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
   : rank?.position === 2 ? 'bg-gradient-to-b from-zinc-100 to-zinc-300 text-zinc-700 ring-2 ring-zinc-400/50'
   : rank?.position === 3 ? 'bg-gradient-to-b from-[#e3b27e] to-[#a96a32] text-white ring-2 ring-[#8a531f]/50'
   : 'bg-white/15 text-white ring-2 ring-white/20';
+
+// Easter eggs (only once the tournament is under way, so a season-start tie
+// where everyone shares position 1 doesn't trigger them for everyone):
+//  - top-5 (prize spots) -> 8-bit money rain with the amount they'd win
+//  - dead last           -> an 8-bit dog pops up from the bottom, laughing
+const finishedCount = matches.filter((m) => m.status === 'finished').length;
+const maxPos = ranking().reduce((m, r) => Math.max(m, r.position), 0);
+const pos = rank?.position;
+const prize = pos ? prizeFor(pos) : 0;
+const showMoney = finishedCount > 0 && pos != null && prize > 0;
+const showDog = finishedCount > 0 && pos != null && pos === maxPos && maxPos > 5;
+
+// 8-bit laughing dog (Duck Hunt style), painted from a pixel map (1 char = 1px).
+const DOG_PX = 6;
+const DOG_COLORS: Record<string, string> = {
+  D: '#5a3a20', // dark-brown ears
+  L: '#cea062', // tan head
+  W: '#f4e9d6', // white snout / teeth
+  K: '#1a1410', // outline / eyes / mouth
+  P: '#e2728e', // tongue
+  G: '#782834', // inner mouth
+};
+const DOG_ART = [
+  '......DDD......DDD........',
+  '.....DDDDD....DDDDD.......',
+  '....DDDDDDD..DDDDDDD......',
+  '....DDDDDDDDDDDDDDDD......',
+  '...DDDDLLLLLLLLLLDDDD.....',
+  '...DDDLLLLLLLLLLLLDDD.....',
+  '...DDLLLLLLLLLLLLLLDD.....',
+  '...DDLLKLKLLLLKLKLLDD.....',
+  '...DDLLLKLLLLLLKLLLDD.....',
+  '....DLLLLLLLLLLLLLLD......',
+  '....DLLLWWWWWWWWLLLD......',
+  '.....LLWWWWWWWWWWLL.......',
+  '.....LWWWKKKKKKWWWL.......',
+  '.....LWWKGGGGGGKWWL.......',
+  '.....LWKGGWWWWGGKWL.......',
+  '.....LLKGPPPPPPGKLL.......',
+  '......LKGGGGGGGGKL........',
+  '......LLKKKKKKKKLL........',
+  '.....LLLL....LLLL.........',
+];
+const dogRects = DOG_ART.flatMap((row, y) =>
+  [...row].map((ch, x) => (DOG_COLORS[ch] ? { x: x * DOG_PX, y: y * DOG_PX, fill: DOG_COLORS[ch] } : null))
+).filter((r): r is { x: number; y: number; fill: string } => r !== null);
+const dogW = Math.max(...DOG_ART.map((r) => r.length)) * DOG_PX;
+const dogH = DOG_ART.length * DOG_PX;
 ---
 <Layout title={`${participant.name} — Rut Prono WK 2026`}>
-  <a href="/" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Klassement</a>
+  <a href="/klassement" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Klassement</a>
 
   <header class="hero-panel qc-decor mb-6 shadow-sm">
     <div class="flex items-center justify-between gap-4 p-5">
@@ -201,4 +250,119 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
       })}
     </div>
   </section>
+
+  {showMoney && (
+    <div id="money-egg" class="pointer-events-none fixed inset-0 z-[60] overflow-hidden" aria-hidden="true">
+      <div class="absolute inset-0 grid place-items-center">
+        <span class="pixel-amount select-none">€{prize}</span>
+      </div>
+    </div>
+  )}
+
+  {showDog && (
+    <div id="dog-egg" class="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center" aria-hidden="true">
+      <div class="dog-pop flex flex-col items-center">
+        <div class="dog-laughs mb-1 select-none"><span class="laugh-bubble">HA&nbsp;HA&nbsp;HA!</span></div>
+        <svg class="dog-laughs block h-auto w-[160px]" viewBox={`0 0 ${dogW} ${dogH}`} shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+          {dogRects.map((r) => (
+            <rect x={r.x} y={r.y} width={DOG_PX} height={DOG_PX} fill={r.fill} />
+          ))}
+        </svg>
+      </div>
+    </div>
+  )}
+
+  <style is:global>
+    /* 8-bit easter-egg styling for the participant page. */
+    .coin { image-rendering: pixelated; }
+
+    /* Top-5: the won amount, centred, big. The whole overlay fades after 3s. */
+    .pixel-amount {
+      font-family: ui-monospace, "Courier New", monospace;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      font-size: clamp(3.5rem, 18vw, 8rem);
+      color: #ffd64a;
+      text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.55), 0 0 1px #b9831a;
+      image-rendering: pixelated;
+      animation: amount-pop 0.45s steps(5, end) both;
+    }
+    @keyframes amount-pop {
+      0% { transform: scale(0.4); opacity: 0; }
+      70% { transform: scale(1.15); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes coin-fall {
+      0% { transform: translateY(-14vh) rotate(0deg); opacity: 0; }
+      12% { opacity: 1; }
+      100% { transform: translateY(114vh) rotate(360deg); opacity: 1; }
+    }
+    @keyframes egg-fade { 0%, 72% { opacity: 1; } 100% { opacity: 0; } }
+    #money-egg { animation: egg-fade 3s ease-out forwards; }
+
+    /* Last place: a readable speech bubble + the dog popping up to laugh, then
+       both drop back down and stay gone. */
+    .laugh-bubble {
+      display: inline-block;
+      font-family: ui-monospace, "Courier New", monospace;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      color: #111;
+      background: #fff;
+      border: 3px solid #111;
+      border-radius: 9px;
+      padding: 3px 9px;
+      white-space: nowrap;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+    }
+    @keyframes dog-cycle {
+      0% { transform: translateY(110%); }
+      18% { transform: translateY(0); }
+      82% { transform: translateY(0); }
+      100% { transform: translateY(110%); }
+    }
+    @keyframes dog-laugh {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-9%); }
+    }
+    .dog-pop { animation: dog-cycle 4.5s ease-in-out forwards; }
+    .dog-laughs { animation: dog-laugh 0.26s steps(2, end) infinite; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pixel-amount, #money-egg { animation: none; }
+      .dog-pop { animation: none; transform: translateY(0); }
+      .dog-laughs { animation: none; }
+    }
+  </style>
+
+  <script is:inline>
+    // 8-bit easter eggs. Both vanish after their animation (≈3s money, ≈4.5s dog)
+    // and even under reduced motion (we just remove them, no movement).
+    (() => {
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const money = document.getElementById('money-egg');
+      if (money) {
+        if (!reduce) {
+          const COIN = '<svg class="coin" viewBox="0 0 12 11" width="100%" height="100%" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="12" height="11" rx="1" fill="#1b7a3a"/><rect x="1" y="1" width="10" height="9" fill="#2eb35a"/><g fill="#ffd64a"><rect x="5" y="0" width="2" height="11"/><rect x="3" y="2" width="6" height="1"/><rect x="3" y="5" width="6" height="1"/><rect x="3" y="8" width="6" height="1"/><rect x="3" y="2" width="1" height="3"/><rect x="8" y="6" width="1" height="3"/></g></svg>';
+          for (let i = 0; i < 26; i++) {
+            const c = document.createElement('span');
+            const size = 16 + Math.round(Math.random() * 18);
+            c.style.position = 'absolute';
+            c.style.top = '0';
+            c.style.left = Math.round(Math.random() * 100) + 'vw';
+            c.style.width = size + 'px';
+            c.style.height = size + 'px';
+            // One pass within the 3s window, slight stagger.
+            c.style.animation = 'coin-fall ' + (1.8 + Math.random() * 1).toFixed(2) + 's linear ' + (Math.random() * 0.8).toFixed(2) + 's both';
+            c.innerHTML = COIN;
+            money.appendChild(c);
+          }
+        }
+        setTimeout(() => money.remove(), 3200);
+      }
+      const dog = document.getElementById('dog-egg');
+      if (dog) setTimeout(() => dog.remove(), 4700);
+    })();
+  </script>
 </Layout>

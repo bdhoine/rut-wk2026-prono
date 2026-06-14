@@ -12,9 +12,19 @@ const timeFmt = new Intl.DateTimeFormat('nl-BE', {
   hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels',
 });
 
+// Sortable calendar-day key (YYYY-MM-DD) in Belgian time.
+const dayKeyFmt = new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Europe/Brussels',
+});
+
 export const formatKickoff = (iso: string) => dateFmt.format(new Date(iso));
 export const formatDay = (iso: string) => dayFmt.format(new Date(iso));
 export const formatTime = (iso: string) => timeFmt.format(new Date(iso));
+
+/** Sortable Belgian-time calendar day, e.g. '2026-06-14', for grouping by day. */
+export const dayKey = (iso: string) => dayKeyFmt.format(new Date(iso));
+/** Human-readable Dutch label for a 'YYYY-MM-DD' day key (noon avoids TZ rollover). */
+export const formatDayKey = (key: string) => dayFmt.format(new Date(`${key}T12:00:00+02:00`));
 
 /** Human-readable Dutch explanation of how a match score was determined (rules.md §2/§3). */
 export function explainScore(s: MatchScore): string {

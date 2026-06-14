@@ -11,6 +11,7 @@ import scorersRaw from '@/data/scorers.json';
 
 import type { BonusOutcomes, Group, Match, Participant, Prediction, Scorer, Settings, Team } from './types';
 import { rankParticipants, scoreMatch, type MatchScore, type RankRow } from './scoring';
+import { dayKey } from './format';
 
 export const teams = teamsRaw as Team[];
 export const groups = groupsRaw as Group[];
@@ -48,6 +49,98 @@ export function ranking(): RankRow[] {
 
 export function positionOf(participantId: string): RankRow | undefined {
   return ranking().find((r) => r.participantId === participantId);
+}
+
+// ---- Ranking timeline & day-to-day movements ----------------------------
+
+export interface DaySnapshot {
+  day: string; // YYYY-MM-DD (Belgian time)
+  posById: Map<string, number>;
+  byId: Map<string, RankRow>;
+}
+
+/** The standings as they stood at the end of each calendar day that had at
+ *  least one finished match. Each snapshot ranks only the matches finished up
+ *  to and including that day (bonus outcomes only resolve at the final, i.e.
+ *  the last day, so they don't affect earlier snapshots). */
+export function rankingTimeline(): DaySnapshot[] {
+  const finished = matches.filter((m) => m.status === 'finished' && m.result);
+  const days = [...new Set(finished.map((m) => dayKey(m.kickoff)))].sort();
+  return days.map((day) => {
+    const upTo = finished.filter((m) => dayKey(m.kickoff) <= day);
+    const rank = rankParticipants(participants, predictions, upTo, outcomes, settings);
+    return {
+      day,
+      posById: new Map(rank.map((r) => [r.participantId, r.position])),
+      byId: new Map(rank.map((r) => [r.participantId, r])),
+    };
+  });
+}
+
+export interface MovementRow {
+  participantId: string;
+  name: string;
+  prev: number;
+  cur: number;
+  delta: number; // positions gained (positive = moved up)
+}
+
+export interface DayMovements {
+  day: string; // the (newer) calendar day being reported
+  prevDay: string; // the day it's compared against
+  risers: MovementRow[];
+  fallers: MovementRow[];
+  winners: MovementRow[]; // entered the top 5
+  losers: MovementRow[]; // dropped out of the top 5
+}
+
+const TOP_N = 5;
+
+/** Keep the strongest movers: at least `min` rows, including everyone tied with
+ *  the row at the cut-off (rows must be pre-sorted by movement, strongest first). */
+function topMovers(rows: MovementRow[], magnitude: (r: MovementRow) => number, min = 3): MovementRow[] {
+  if (rows.length <= min) return rows;
+  const cutoff = magnitude(rows[min - 1]);
+  return rows.filter((r) => magnitude(r) >= cutoff);
+}
+
+/** Day-by-day movement tables (risers/fallers + top-5 in/out), comparing each
+ *  calendar day to the previous one. Newest day first. */
+export function dayMovements(): DayMovements[] {
+  const timeline = rankingTimeline();
+  const out: DayMovements[] = [];
+  for (let i = 1; i < timeline.length; i++) {
+    const prev = timeline[i - 1];
+    const cur = timeline[i];
+    const moves: MovementRow[] = [];
+    for (const [id, curPos] of cur.posById) {
+      const prevPos = prev.posById.get(id);
+      if (prevPos === undefined) continue;
+      moves.push({ participantId: id, name: cur.byId.get(id)!.name, prev: prevPos, cur: curPos, delta: prevPos - curPos });
+    }
+    const risers = topMovers(
+      moves.filter((m) => m.delta > 0).sort((a, b) => b.delta - a.delta || a.cur - b.cur),
+      (m) => m.delta,
+    );
+    const fallers = topMovers(
+      moves.filter((m) => m.delta < 0).sort((a, b) => a.delta - b.delta || a.cur - b.cur),
+      (m) => -m.delta,
+    );
+    const winners = moves
+      .filter((m) => m.cur <= TOP_N && m.prev > TOP_N)
+      .sort((a, b) => a.cur - b.cur);
+    const losers = moves
+      .filter((m) => m.prev <= TOP_N && m.cur > TOP_N)
+      .sort((a, b) => a.cur - b.cur);
+    out.push({ day: cur.day, prevDay: prev.day, risers, fallers, winners, losers });
+  }
+  return out.reverse();
+}
+
+/** The most recent day-to-day movement (today vs. the previous day), or null
+ *  when fewer than two calendar days have been played. */
+export function latestMovements(): DayMovements | null {
+  return dayMovements()[0] ?? null;
 }
 
 export type FormResult = 'exact' | 'partial' | 'wrong';

@@ -27,9 +27,9 @@ const formatDate = (d: string) => dateFmt.format(new Date(`${d}T12:00:00`));
   <div class="space-y-4">
     {blocks.map((block) => (
       <section class="rounded-xl border bg-card p-4 shadow-sm sm:p-5">
-        <div class="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          {block.title && <h2 class="font-display text-base font-bold tracking-tight">{block.title}</h2>}
-          <time datetime={block.date} class="text-xs font-medium uppercase tracking-wide text-muted-foreground">{formatDate(block.date)}</time>
+        <div class="mb-3">
+          <time datetime={block.date} class="block text-xs font-medium uppercase tracking-wide text-muted-foreground">{formatDate(block.date)}</time>
+          {block.title && <h2 class="mt-0.5 font-display text-base font-bold tracking-tight">{block.title}</h2>}
         </div>
         <ul class="space-y-1.5">
           {block.items.map((item) => (

@@ -8,10 +8,11 @@ interface Props {
 const { title = 'Rut Prono WK 2026' } = Astro.props;
 const path = Astro.url.pathname;
 
-// Top-level: Klassement · Wedstrijden ▾ · Statistieken · ⋮ (Meer). The
+// Top-level: Home · Klassement · Wedstrijden ▾ · Statistieken · ⋮ (Meer). The
 // match-related pages live under the Wedstrijden dropdown; Reglement and
 // Changelog live under the "Meer" three-dots dropdown.
-const klassement = { href: '/', label: 'Klassement', active: path === '/' || path.startsWith('/deelnemer') };
+const home = { href: '/', label: 'Home', active: path === '/' };
+const klassement = { href: '/klassement', label: 'Klassement', active: path.startsWith('/klassement') || path.startsWith('/deelnemer') };
 const wedstrijden = [
   { href: '/programma', label: 'Programma', active: path.startsWith('/programma') },
   { href: '/kalender', label: 'Kalender', active: path.startsWith('/kalender') || path.startsWith('/wedstrijd') },
@@ -63,6 +64,7 @@ const topLinkCls = (active: boolean) => [
 
         <div class="flex items-center gap-1">
           <nav class="hidden items-center gap-1 md:flex">
+            <a href={home.href} class:list={topLinkCls(home.active)}>{home.label}</a>
             <a href={klassement.href} class:list={topLinkCls(klassement.active)}>{klassement.label}</a>
             <div class="relative">
               <button
@@ -139,6 +141,13 @@ const topLinkCls = (active: boolean) => [
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-6"><path d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
         </div>
+        <a
+          href={home.href}
+          class:list={[
+            'flex min-h-12 items-center rounded-lg px-4 text-base font-medium transition-colors',
+            home.active ? 'bg-gold text-gold-foreground' : 'text-foreground hover:bg-muted active:bg-muted',
+          ]}
+        >{home.label}</a>
         <a
           href={klassement.href}
           class:list={[

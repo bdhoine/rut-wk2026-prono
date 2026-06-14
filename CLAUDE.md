@@ -32,4 +32,11 @@ before committing.
 - Dutch UI copy throughout. Keep team `shortName`s for narrow viewports.
 - All data lives in `src/data/*.json` and is the single source of truth; the
   scoring/ranking engine computes everything at build time.
+- `/` is the landing page (hero, favourites, **top 10** + button, and the
+  `MovementSection` stijgers/dalers block); `/klassement` is the full ranking
+  with a client-side name search. Both reuse `RankingTable.tsx`
+  (`limit`/`moreHref` for the top-10 preview, `searchable` for the full page).
+- Stijgers & dalers is built at build time from `rankingTimeline()` /
+  `dayMovements()` in `src/lib/data.ts` (one ranking snapshot per calendar day).
+  Prize money lives in `src/lib/prizes.ts` (`PRIZES` / `prizeFor`).
 - Run `npm run check` before committing; keep `README.md` and this file current.

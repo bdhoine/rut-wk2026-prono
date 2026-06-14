@@ -45,13 +45,18 @@ const phaseLabel = openMatchday
     ? ROUND_LABELS[nextUp[0].round]
     : 'Toernooi afgelopen';
 
-// Render a few upcoming matches; the client script shows only the first one
-// that hasn't started yet (kickoff + 2.5h grace, mirroring LiveScores).
-const next = nextUp.slice(0, 3).map((m) => ({
-  match: m,
-  home: sideLabel(m, 'home'),
-  away: sideLabel(m, 'away'),
-}));
+// Group upcoming matches by exact kickoff so a time slot with two matches
+// (same hour) shows both. The client script reveals the first slot that hasn't
+// started yet (kickoff + 2.5h grace, mirroring LiveScores).
+type SlotItem = { match: typeof nextUp[number]; home: ReturnType<typeof sideLabel>; away: ReturnType<typeof sideLabel> };
+const slots: { kickoff: string; items: SlotItem[] }[] = [];
+for (const m of nextUp) {
+  const entry: SlotItem = { match: m, home: sideLabel(m, 'home'), away: sideLabel(m, 'away') };
+  const last = slots[slots.length - 1];
+  if (last && last.kickoff === m.kickoff) last.items.push(entry);
+  else slots.push({ kickoff: m.kickoff, items: [entry] });
+}
+const nextSlots = slots.slice(0, 3);
 ---
 <section class="hero-panel qc-decor animate-rise mb-6">
   <div class="grid sm:grid-cols-[1fr_auto]">
@@ -62,24 +67,24 @@ const next = nextUp.slice(0, 3).map((m) => ({
         Resultaten bijgewerkt: <time datetime={updatedAt.toISOString()}>{formatKickoff(updatedAt.toISOString())}</time>
       </p>
     </div>
-    {next.length > 0 && (
+    {nextSlots.length > 0 && (
       <div class="border-t border-white/10 px-5 py-4 sm:w-72 sm:border-l sm:border-t-0" data-next-matches>
-        <p class="text-[11px] font-semibold uppercase tracking-wide text-ink-foreground/60">Volgende wedstrijd</p>
-        {next.map(({ match, home, away }, i) => (
-          <a
-            href={`/wedstrijd/${match.id}`}
-            data-kickoff={match.kickoff}
-            class:list={['mt-2 block hover:text-gold', i > 0 && 'hidden']}
-          >
-            <span class="flex items-center gap-2 text-sm font-medium">
-              <span class="truncate">{home.short}</span>
-              <Flag iso={home.team?.iso} name={home.label} class="shrink-0" />
-              <span class="shrink-0 text-xs font-bold text-gold">vs</span>
-              <Flag iso={away.team?.iso} name={away.label} class="shrink-0" />
-              <span class="truncate">{away.short}</span>
-            </span>
-            <span class="mt-1 block text-xs tabular-nums text-ink-foreground/60">{formatKickoff(match.kickoff)}</span>
-          </a>
+        <p class="text-[11px] font-semibold uppercase tracking-wide text-ink-foreground/60">Volgende wedstrijd{nextSlots[0].items.length > 1 ? 'en' : ''}</p>
+        {nextSlots.map((slot, i) => (
+          <div data-kickoff={slot.kickoff} class:list={['mt-2', i > 0 && 'hidden']}>
+            <div class="space-y-1.5">
+              {slot.items.map(({ match, home, away }) => (
+                <a href={`/wedstrijd/${match.id}`} class="flex items-center gap-2 text-sm font-medium hover:text-gold">
+                  <span class="truncate">{home.short}</span>
+                  <Flag iso={home.team?.iso} name={home.label} class="shrink-0" />
+                  <span class="shrink-0 text-xs font-bold text-gold">vs</span>
+                  <Flag iso={away.team?.iso} name={away.label} class="shrink-0" />
+                  <span class="truncate">{away.short}</span>
+                </a>
+              ))}
+            </div>
+            <span class="mt-1 block text-xs tabular-nums text-ink-foreground/60">{formatKickoff(slot.kickoff)}</span>
+          </div>
         ))}
       </div>
     )}
@@ -93,13 +98,19 @@ const next = nextUp.slice(0, 3).map((m) => ({
     const GRACE_MS = 2.5 * 60 * 60 * 1000;
     const entries = [...wrap.querySelectorAll<HTMLElement>('[data-kickoff]')];
     const now = Date.now();
-    let shown = false;
+    let shown: HTMLElement | null = null;
     for (const el of entries) {
       const past = new Date(el.dataset.kickoff!).getTime() + GRACE_MS < now;
       const show = !past && !shown;
       el.classList.toggle('hidden', !show);
-      if (show) shown = true;
+      if (show) shown = el;
     }
     if (!shown) (wrap as HTMLElement).classList.add('hidden');
+    else {
+      // Keep the heading singular/plural in sync with the revealed time slot.
+      const heading = wrap.querySelector('p');
+      const count = shown.querySelectorAll('a').length;
+      if (heading) heading.textContent = count > 1 ? 'Volgende wedstrijden' : 'Volgende wedstrijd';
+    }
   }
 </script>

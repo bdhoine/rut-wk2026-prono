@@ -19,8 +19,9 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 | Route | Page |
 |-------|------|
-| `/` | Klassement (ranking) — hero panel with current speeldag and next match, then the ranking. Favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details. A "Nu live & recent gespeeld" strip shows at most 4 cards: every live match on top (via the **Live scores** toggle) filled up with the most recently finished matches (the last 2 always shown), plus a provisional live ranking |
-| `/deelnemer/[id]` | Participant detail: position, total, bonus picks, predictions per speeldag in collapsible sections (played/current open, future collapsed) + score breakdown |
+| `/` | Home (landing) — hero panel with current speeldag and next match(es), the "Nu live & recent gespeeld" strip, your favourites, the **top 10** of the ranking with a button to the full ranking, and two movement cards for the latest calendar day (today vs. yesterday): **Stijgers & dalers** (strongest risers/fallers) and **Top 5 — winnaars & verliezers** (who entered/left the prize spots, with the number of positions moved). The next-match card shows both fixtures when two kick off at the same time |
+| `/klassement` | Full ranking — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details, plus a client-side **search box** to filter by name. Live-only (shows in-progress matches if any) and recomputes a provisional ranking from live scores |
+| `/deelnemer/[id]` | Participant detail: position, total, bonus picks, predictions per speeldag in collapsible sections (played/current open, future collapsed) + score breakdown. Easter eggs once the tournament is under way: an 8-bit money rain with the prize amount for top-5 spots, and an 8-bit dog popping up to laugh at the last-placed player |
 | `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + all predictions sorted by points |
 | `/programma` | Upcoming matches, grouped per calendar day |
 | `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with sticky day subheadings and prono submission deadlines |
@@ -31,11 +32,11 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/changelog` | Per-update changelog (blocks newest-first), driven by `src/data/changelog.json` — see `CLAUDE.md` for the per-session upkeep rule |
 | any other URL | Branded 404 page ("Buitenspel!") |
 
-Navigation is `Klassement · Wedstrijden ▾ · Statistieken · ⋮` on desktop — the
-Wedstrijden dropdown groups Programma, Kalender and Poules, and the ⋮ "Meer"
+Navigation is `Home · Klassement · Wedstrijden ▾ · Statistieken · ⋮` on desktop —
+the Wedstrijden dropdown groups Programma, Kalender and Poules, and the ⋮ "Meer"
 dropdown holds Reglement and Changelog — and a hamburger drawer on mobile with
-the same destinations as a flat list. `/klassement` redirects to `/` so every
-label has a matching URL. All game
+the same destinations as a flat list. Home (`/`) is the landing page; Klassement
+(`/klassement`) is the full ranking. All game
 lists are ordered by kickoff (planning). Score explanations on the participant
 and match pages appear on hovering the points badge (desktop) / tap (mobile);
 the badge is colour-coded (red = 0, green = exact, amber = other points).
