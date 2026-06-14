@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
+import LiveScores from '@/components/LiveScores.astro';
 import PredictionRow from '@/components/PredictionRow.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import {
@@ -9,7 +10,7 @@ import {
   eliminatedTeamIds, currentBonusLeaders, ranking, matches,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
-import { prizeFor } from '@/lib/prizes';
+import { PRIZES } from '@/lib/prizes';
 import { ROUND_LABELS, ROUND_ORDER, type BonusPicks } from '@/lib/types';
 
 export function getStaticPaths() {
@@ -96,12 +97,18 @@ const medal = rank?.position === 1 ? 'bg-gradient-to-b from-[#f6d873] to-[#dca21
 // where everyone shares position 1 doesn't trigger them for everyone):
 //  - top-5 (prize spots) -> 8-bit money rain with the amount they'd win
 //  - dead last           -> an 8-bit dog pops up from the bottom, laughing
+// The trigger uses the LIVE position when live mode is on: the client recomputes
+// this participant's provisional position from all participants' static totals +
+// the live deltas dispatched by LiveScores.
 const finishedCount = matches.filter((m) => m.status === 'finished').length;
-const maxPos = ranking().reduce((m, r) => Math.max(m, r.position), 0);
-const pos = rank?.position;
-const prize = pos ? prizeFor(pos) : 0;
-const showMoney = finishedCount > 0 && pos != null && prize > 0;
-const showDog = finishedCount > 0 && pos != null && pos === maxPos && maxPos > 5;
+const liveEggData = {
+  pid: participant.id,
+  totals: ranking().map((r) => [r.participantId, r.total] as [string, number]),
+  staticTotal: rank?.total ?? 0,
+  staticMp: rank?.matchPoints ?? 0,
+  finished: finishedCount,
+  prizes: PRIZES,
+};
 
 // 8-bit laughing dog (Duck Hunt style), painted from a pixel map (1 char = 1px).
 const DOG_PX = 6;
@@ -146,19 +153,19 @@ const dogH = DOG_ART.length * DOG_PX;
   <header class="hero-panel qc-decor mb-6 shadow-sm">
     <div class="flex items-center justify-between gap-4 p-5">
       <div class="flex min-w-0 items-center gap-3">
-        <div class:list={['grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold tabular-nums', medal]}>{rank?.position ?? '—'}</div>
+        <div id="hdr-pos" class:list={['grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold tabular-nums', medal]}>{rank?.position ?? '—'}</div>
         <div class="min-w-0">
           <h1 class="truncate text-2xl font-extrabold leading-tight">{participant.name}</h1>
         </div>
       </div>
       <div class="shrink-0 text-right">
-        <div class="font-display text-4xl font-extrabold leading-none tabular-nums text-gold">{rank?.total ?? 0}</div>
+        <div id="hdr-total" class="font-display text-4xl font-extrabold leading-none tabular-nums text-gold">{rank?.total ?? 0}</div>
         <div class="mt-1 text-xs text-ink-foreground/70">punten</div>
       </div>
     </div>
     <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-white/10 px-5 py-2.5 text-xs text-ink-foreground/80">
       <div class="flex items-center gap-3">
-        <span><strong class="font-semibold tabular-nums">{rank?.matchPoints ?? 0}</strong> uit wedstrijden</span>
+        <span><strong id="hdr-mp" class="font-semibold tabular-nums">{rank?.matchPoints ?? 0}</strong> uit wedstrijden</span>
         <span class="text-primary-foreground/40">•</span>
         <span><strong class="font-semibold tabular-nums">{rank?.bonusPoints ?? 0}</strong> bonus</span>
       </div>
@@ -171,6 +178,8 @@ const dogH = DOG_ART.length * DOG_PX;
       )}
     </div>
   </header>
+
+  <LiveScores mode="list" showRecent={false} />
 
   <section class="mb-8">
     <SectionHeading title="Bonusvoorspellingen" />
@@ -251,26 +260,16 @@ const dogH = DOG_ART.length * DOG_PX;
     </div>
   </section>
 
-  {showMoney && (
-    <div id="money-egg" class="pointer-events-none fixed inset-0 z-[60] overflow-hidden" aria-hidden="true">
-      <div class="absolute inset-0 grid place-items-center">
-        <span class="pixel-amount select-none">€{prize}</span>
-      </div>
-    </div>
-  )}
-
-  {showDog && (
-    <div id="dog-egg" class="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center" aria-hidden="true">
-      <div class="dog-pop flex flex-col items-center">
-        <div class="dog-laughs mb-1 select-none"><span class="laugh-bubble">HA&nbsp;HA&nbsp;HA!</span></div>
-        <svg class="dog-laughs block h-auto w-[160px]" viewBox={`0 0 ${dogW} ${dogH}`} shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
-          {dogRects.map((r) => (
-            <rect x={r.x} y={r.y} width={DOG_PX} height={DOG_PX} fill={r.fill} />
-          ))}
-        </svg>
-      </div>
-    </div>
-  )}
+  {/* Easter-egg data + a dog sprite template; the script below decides which (if
+      any) to show from the live-aware position and animates it once. */}
+  <script type="application/json" id="live-egg-data" set:html={JSON.stringify(liveEggData)} />
+  <template id="dog-template">
+    <svg class="dog-laughs block h-auto w-[160px]" viewBox={`0 0 ${dogW} ${dogH}`} shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+      {dogRects.map((r) => (
+        <rect x={r.x} y={r.y} width={DOG_PX} height={DOG_PX} fill={r.fill} />
+      ))}
+    </svg>
+  </template>
 
   <style is:global>
     /* 8-bit easter-egg styling for the participant page. */
@@ -337,14 +336,59 @@ const dogH = DOG_ART.length * DOG_PX;
   </style>
 
   <script is:inline>
-    // 8-bit easter eggs. Both vanish after their animation (≈3s money, ≈4.5s dog)
-    // and even under reduced motion (we just remove them, no movement).
+    // Live-aware 8-bit easter eggs. The trigger position uses the live
+    // provisional standing when live mode is on (LiveScores dispatches deltas);
+    // otherwise the static standing. Both eggs fire once and then vanish (≈3s
+    // money, ≈4.5s dog), even under reduced motion (we just remove them).
     (() => {
+      const dataEl = document.getElementById('live-egg-data');
+      if (!dataEl) return;
+      const D = JSON.parse(dataEl.textContent || '{}');
+      if (!D.finished) return; // tournament not under way -> no eggs
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const money = document.getElementById('money-egg');
-      if (money) {
+      const PID = D.pid;
+      const totals = D.totals || [];
+      const prizes = D.prizes || {};
+
+      const MEDAL_BASE = 'grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold tabular-nums';
+      const MEDALS = {
+        1: 'bg-gradient-to-b from-[#f6d873] to-[#dca21f] text-[#5a3d08] ring-2 ring-[#caa12e]/60',
+        2: 'bg-gradient-to-b from-zinc-100 to-zinc-300 text-zinc-700 ring-2 ring-zinc-400/50',
+        3: 'bg-gradient-to-b from-[#e3b27e] to-[#a96a32] text-white ring-2 ring-[#8a531f]/50',
+      };
+      const MEDAL_DEFAULT = 'bg-white/15 text-white ring-2 ring-white/20';
+
+      // Recompute this participant's provisional position from the live deltas.
+      function compute(deltas) {
+        const rows = totals.map((t) => ({ id: t[0], total: t[1] + (deltas[t[0]] || 0) }));
+        rows.sort((a, b) => b.total - a.total);
+        const posById = {};
+        let pos = 0, last = null;
+        rows.forEach((r, i) => { if (last === null || r.total !== last) { pos = i + 1; last = r.total; } posById[r.id] = pos; });
+        const maxPos = rows.length ? posById[rows[rows.length - 1].id] : 0;
+        const mine = rows.find((r) => r.id === PID);
+        return { pos: posById[PID], maxPos, total: mine ? mine.total : D.staticTotal };
+      }
+
+      const posEl = document.getElementById('hdr-pos');
+      const totalEl = document.getElementById('hdr-total');
+      const mpEl = document.getElementById('hdr-mp');
+      function updateHeader(deltas) {
+        const r = compute(deltas);
+        if (posEl && r.pos != null) { posEl.textContent = String(r.pos); posEl.className = MEDAL_BASE + ' ' + (MEDALS[r.pos] || MEDAL_DEFAULT); }
+        if (totalEl) totalEl.textContent = String(r.total);
+        if (mpEl) mpEl.textContent = String(D.staticMp + (deltas[PID] || 0));
+      }
+
+      const COIN = '<svg class="coin" viewBox="0 0 12 11" width="100%" height="100%" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="12" height="11" rx="1" fill="#1b7a3a"/><rect x="1" y="1" width="10" height="9" fill="#2eb35a"/><g fill="#ffd64a"><rect x="5" y="0" width="2" height="11"/><rect x="3" y="2" width="6" height="1"/><rect x="3" y="5" width="6" height="1"/><rect x="3" y="8" width="6" height="1"/><rect x="3" y="2" width="1" height="3"/><rect x="8" y="6" width="1" height="3"/></g></svg>';
+      function showMoney(prize) {
+        const host = document.createElement('div');
+        host.id = 'money-egg';
+        host.className = 'pointer-events-none fixed inset-0 z-[60] overflow-hidden';
+        host.setAttribute('aria-hidden', 'true');
+        host.innerHTML = '<div class="absolute inset-0 grid place-items-center"><span class="pixel-amount select-none">€' + prize + '</span></div>';
+        document.body.appendChild(host);
         if (!reduce) {
-          const COIN = '<svg class="coin" viewBox="0 0 12 11" width="100%" height="100%" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="12" height="11" rx="1" fill="#1b7a3a"/><rect x="1" y="1" width="10" height="9" fill="#2eb35a"/><g fill="#ffd64a"><rect x="5" y="0" width="2" height="11"/><rect x="3" y="2" width="6" height="1"/><rect x="3" y="5" width="6" height="1"/><rect x="3" y="8" width="6" height="1"/><rect x="3" y="2" width="1" height="3"/><rect x="8" y="6" width="1" height="3"/></g></svg>';
           for (let i = 0; i < 26; i++) {
             const c = document.createElement('span');
             const size = 16 + Math.round(Math.random() * 18);
@@ -353,16 +397,44 @@ const dogH = DOG_ART.length * DOG_PX;
             c.style.left = Math.round(Math.random() * 100) + 'vw';
             c.style.width = size + 'px';
             c.style.height = size + 'px';
-            // One pass within the 3s window, slight stagger.
             c.style.animation = 'coin-fall ' + (1.8 + Math.random() * 1).toFixed(2) + 's linear ' + (Math.random() * 0.8).toFixed(2) + 's both';
             c.innerHTML = COIN;
-            money.appendChild(c);
+            host.appendChild(c);
           }
         }
-        setTimeout(() => money.remove(), 3200);
+        setTimeout(() => host.remove(), 3200);
       }
-      const dog = document.getElementById('dog-egg');
-      if (dog) setTimeout(() => dog.remove(), 4700);
+      function showDog() {
+        const tpl = document.getElementById('dog-template');
+        if (!tpl) return;
+        const host = document.createElement('div');
+        host.id = 'dog-egg';
+        host.className = 'pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center';
+        host.setAttribute('aria-hidden', 'true');
+        const inner = document.createElement('div');
+        inner.className = 'dog-pop flex flex-col items-center';
+        inner.innerHTML = '<div class="dog-laughs mb-1 select-none"><span class="laugh-bubble">HA HA HA!</span></div>';
+        inner.appendChild(tpl.content.cloneNode(true));
+        host.appendChild(inner);
+        document.body.appendChild(host);
+        setTimeout(() => host.remove(), 4700);
+      }
+
+      // Fire once, using the live position if a live result is already in.
+      let fired = false;
+      function fireEgg() {
+        if (fired) return;
+        fired = true;
+        const r = compute(window.__rutLiveDeltas || {});
+        if (r.pos == null) return;
+        const prize = prizes[r.pos] || 0;
+        if (prize > 0) showMoney(prize);
+        else if (r.pos === r.maxPos && r.maxPos > 5) showDog();
+      }
+
+      window.addEventListener('rut:live-ranking', (e) => updateHeader((e.detail && e.detail.deltas) || {}));
+      window.addEventListener('rut:live-ranking', fireEgg, { once: true });
+      setTimeout(fireEgg, 2500); // fallback if LiveScores never dispatches
     })();
   </script>
 </Layout>
