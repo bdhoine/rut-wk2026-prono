@@ -25,6 +25,11 @@
     "goals": 1
   },
   {
+    "player": "C. Summerville",
+    "teamId": "nl",
+    "goals": 1
+  },
+  {
     "player": "D. Bobadilla 7(OG)",
     "teamId": "us",
     "goals": 1
@@ -90,6 +95,11 @@
     "goals": 1
   },
   {
+    "player": "K. Nakamura",
+    "teamId": "jp",
+    "goals": 1
+  },
+  {
     "player": "L. Comenencia",
     "teamId": "cw",
     "goals": 1
@@ -127,6 +137,11 @@
   {
     "player": "V. Júnior",
     "teamId": "br",
+    "goals": 1
+  },
+  {
+    "player": "Virgil van Dijk",
+    "teamId": "nl",
     "goals": 1
   }
 ]
