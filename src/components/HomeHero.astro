@@ -72,11 +72,11 @@ const next = nextUp.slice(0, 3).map((m) => ({
             class:list={['mt-2 block hover:text-gold', i > 0 && 'hidden']}
           >
             <span class="flex items-center gap-2 text-sm font-medium">
-              <Flag iso={home.team?.iso} name={home.label} class="shrink-0" />
               <span class="truncate">{home.short}</span>
+              <Flag iso={home.team?.iso} name={home.label} class="shrink-0" />
               <span class="shrink-0 text-xs font-bold text-gold">vs</span>
-              <span class="truncate">{away.short}</span>
               <Flag iso={away.team?.iso} name={away.label} class="shrink-0" />
+              <span class="truncate">{away.short}</span>
             </span>
             <span class="mt-1 block text-xs tabular-nums text-ink-foreground/60">{formatKickoff(match.kickoff)}</span>
           </a>

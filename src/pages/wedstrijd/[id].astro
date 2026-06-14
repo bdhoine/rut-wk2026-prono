@@ -3,8 +3,9 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
+import LiveScores from '@/components/LiveScores.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { matches, getMatch, sideLabel, predictionsForMatch, ranking } from '@/lib/data';
+import { matches, getMatch, sideLabel, predictionsForMatch, ranking, settings } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
 import { outcomeOf } from '@/lib/scoring';
 import { explainScore, formatKickoff } from '@/lib/format';
@@ -52,12 +53,30 @@ const outcomeGroups = [
   { key: 'draw', title: 'Gelijkspel', iso: null, rows: bucket((h, a) => h === a) },
   { key: 'away', title: `${away.label} wint`, iso: away.team?.iso ?? null, rows: bucket((h, a) => h < a) },
 ];
+
+// While the match is live (not yet finished), the client computes provisional
+// points per person from the live score. Embed what it needs: our home/away
+// team ids (to orient the live goals), this round's multiplier, and each
+// participant's prediction. Only matches with known teams can go live.
+const hasTeams = !!(match.homeTeamId && match.awayTeamId);
+const liveCalc = hasTeams && !finished
+  ? {
+      h: match.homeTeamId,
+      a: match.awayTeamId,
+      mult: settings.multipliers[match.round] ?? 1,
+      preds: Object.fromEntries(
+        rows.filter((r) => r.prediction && !r.prediction.late).map((r) => [r.participant.id, [r.prediction!.home, r.prediction!.away]]),
+      ),
+    }
+  : null;
 ---
 <Layout title={`${home.label} – ${away.label}`}>
   <a href="/kalender" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Kalender</a>
 
-  <header class="hero-panel qc-decor mb-6 p-5 shadow-sm">
-    <div class="mb-4 flex items-center justify-between gap-2 text-xs text-ink-foreground/70">
+  <LiveScores />
+
+  <header class="hero-panel qc-decor mb-6 p-5 shadow-sm" data-match-card data-live-stack data-home-team={home.team?.id} data-away-team={away.team?.id}>
+    <div class="match-meta mb-4 flex items-center justify-between gap-2 text-xs text-ink-foreground/70">
       <span class="inline-flex items-center rounded-full bg-white/10 px-2.5 py-1 font-semibold uppercase tracking-wide text-ink-foreground">{ROUND_LABELS[match.round]}{match.matchday ? ` · Speeldag ${match.matchday}` : ''}</span>
       <span>{formatKickoff(match.kickoff)}</span>
     </div>
@@ -66,10 +85,15 @@ const outcomeGroups = [
         <Flag iso={home.team?.iso} name={home.label} class="text-4xl transition-transform group-hover:scale-105" />
         <span class:list={['text-sm font-medium', homeHref && 'group-hover:underline']}>{home.label}</span>
       </a>
-      <div class="shrink-0">
-        {finished
-          ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="lg" tone="scoreboard" />
-          : <span class="text-xl font-bold text-ink-foreground/60">vs</span>}
+      <div class="flex shrink-0 flex-col items-center gap-2">
+        <div class="match-score">
+          {finished
+            ? <ScoreBoxes home={match.result!.home} away={match.result!.away} size="lg" tone="scoreboard" />
+            : <span class="text-xl font-bold text-ink-foreground/60">vs</span>}
+        </div>
+        {/* Invisible name-line so the score lines up with the flags (not the
+            flag+name block) via the row's items-center. */}
+        <span class="text-sm font-medium opacity-0" aria-hidden="true">&nbsp;</span>
       </div>
       <a href={awayHref} class:list={['flex flex-1 flex-col items-center gap-2 text-center', awayHref && 'group']}>
         <Flag iso={away.team?.iso} name={away.label} class="text-4xl transition-transform group-hover:scale-105" />
@@ -112,7 +136,7 @@ const outcomeGroups = [
                 <colgroup>
                   <col />
                   <col class="w-24" />
-                  {finished && <col class="w-16" />}
+                  <col class="w-16" />
                 </colgroup>
                 <tbody>
                   {g.rows.map(({ participant, prediction, score }) => (
@@ -120,9 +144,22 @@ const outcomeGroups = [
                       <td class="px-3 py-2.5">
                         <a href={`/deelnemer/${participant.id}`} class="font-medium hover:underline">{participant.name}</a>
                       </td>
-                      <td class="px-2 py-2.5"><div class="flex justify-center"><ScoreBoxes home={prediction?.home} away={prediction?.away} size="sm" /></div></td>
-                      {finished && (
-                        <td class="px-3 py-2.5"><div class="flex justify-end">{score ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} /> : <span class="text-muted-foreground">0</span>}</div></td>
+                      {finished ? (
+                        <Fragment>
+                          <td class="px-2 py-2.5"><div class="flex justify-center"><ScoreBoxes home={prediction?.home} away={prediction?.away} size="sm" /></div></td>
+                          <td class="px-3 py-2.5"><div class="flex justify-end">{score ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} /> : <span class="text-muted-foreground">0</span>}</div></td>
+                        </Fragment>
+                      ) : (
+                        // Unfinished: while live, the provisional points badge sits on
+                        // the right (like finished matches) with the score to its left.
+                        // With nothing to calculate the badge is hidden (empty:hidden),
+                        // so the predicted score stays right-aligned.
+                        <td class="px-3 py-2.5" colspan="2">
+                          <div class="flex items-center justify-end gap-2">
+                            <ScoreBoxes home={prediction?.home} away={prediction?.away} size="sm" />
+                            <span data-live-pts data-pid={participant.id} class="empty:hidden"></span>
+                          </div>
+                        </td>
                       )}
                     </tr>
                   ))}
@@ -134,6 +171,49 @@ const outcomeGroups = [
       ))}
     </div>
   </section>
+
+  {liveCalc && <script type="application/json" id="match-live-calc" set:html={JSON.stringify(liveCalc)}></script>}
+
+  <script>
+    // Provisional points per person while this match is live. Listens for the
+    // live-matches broadcast from LiveScores and, if this match is among them,
+    // fills each row's points cell with a colour-coded provisional badge.
+    const calcEl = document.getElementById('match-live-calc');
+    if (calcEl) {
+      const calc = JSON.parse(calcEl.textContent || 'null') as {
+        h: string; a: string; mult: number; preds: Record<string, [number, number]>;
+      } | null;
+      if (calc) {
+        const basePts = (ph: number, pa: number, rh: number, ra: number) => {
+          if (ph === rh && pa === ra) return 9;
+          if (Math.sign(ph - pa) !== Math.sign(rh - ra)) return 0;
+          return Math.max(3, 7 - (Math.abs(ph - rh) + Math.abs(pa - ra)));
+        };
+        const badgeClass = (pts: number, exact: boolean) =>
+          pts === 0 ? 'bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300'
+            : exact ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+            : 'bg-amber-200 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300';
+        const render = (list: any[]) => {
+          const m = (list || []).find(
+            (x) => (x.homeTeamId === calc.h && x.awayTeamId === calc.a) || (x.homeTeamId === calc.a && x.awayTeamId === calc.h),
+          );
+          for (const el of document.querySelectorAll<HTMLElement>('[data-live-pts]')) {
+            const pred = calc.preds[el.dataset.pid || ''];
+            if (!m || !pred) { el.innerHTML = ''; continue; }
+            const swapped = m.homeTeamId !== calc.h;
+            const rh = swapped ? m.goalsAway : m.goalsHome;
+            const ra = swapped ? m.goalsHome : m.goalsAway;
+            const [ph, pa] = pred;
+            const pts = basePts(ph, pa, rh, ra) * (calc.mult || 1);
+            const exact = ph === rh && pa === ra;
+            el.innerHTML = `<span class="inline-flex min-w-9 items-center justify-center rounded-md px-2 py-1.5 text-sm font-bold tabular-nums ${badgeClass(pts, exact)}" title="voorlopige punten">${pts}</span>`;
+          }
+        };
+        window.addEventListener('rut:live-matches', (e) => render((e as CustomEvent).detail?.matches || []));
+        if ((window as any).__rutLiveMatches) render((window as any).__rutLiveMatches);
+      }
+    }
+  </script>
 
   <script>
     // Lift favourited participants to the top of each outcome bucket (favourites

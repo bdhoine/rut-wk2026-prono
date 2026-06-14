@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-06-14",
+    "title": "Live op wedstrijdpagina + nettere stand",
+    "items": [
+      "De wedstrijdpagina toont nu de live tussenstand zolang de match bezig is.",
+      "Tijdens een live match zie je op de wedstrijdpagina ook de voorlopige punten per deelnemer.",
+      "In de stand staan de live-bonuspunten (+x) in een aparte kolom, zodat de totalen netjes onder elkaar uitlijnen.",
+      "Volgende wedstrijd op de homepagina: vlaggen in het midden en links uitgelijnd."
+    ]
+  },
+  {
     "date": "2026-06-13",
     "title": "Automatische live scores",
     "items": [

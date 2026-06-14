@@ -142,6 +142,13 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       window.dispatchEvent(new CustomEvent('rut:live-ranking', { detail: { deltas } }));
     }
 
+    // Broadcast the raw live matches so other pages (e.g. the match-detail page)
+    // can react — the match page uses it to show provisional points per person.
+    const dispatchLiveMatches = (list: any[]) => {
+      (window as any).__rutLiveMatches = list;
+      window.dispatchEvent(new CustomEvent('rut:live-matches', { detail: { matches: list } }));
+    };
+
     const MAX_CARDS = 4; // live + recent combined
     const MIN_RECENT = 2; // the last two finished matches always show
     const POLL_MS = 60 * 1000; // auto-refresh cadence while live is on (matches the function's 60s cache)
@@ -226,6 +233,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
           const score = c.querySelector('.match-score');
           if (score && c.dataset.origScore != null) score.innerHTML = c.dataset.origScore;
           c.querySelector('.live-badge')?.remove();
+          c.classList.remove('live-pad');
         }
         touched.clear();
         document.querySelectorAll('.live-standing').forEach((el) => el.remove());
@@ -288,16 +296,28 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
         const gh = swapped ? m.goalsAway : m.goalsHome;
         const ga = swapped ? m.goalsHome : m.goalsAway;
         const score = c.querySelector('.match-score');
+        // Where does the live badge go?
+        //  - compact cards (kalender/programma): stacked above the pill in normal
+        //    flow so the card grows to contain it (rows use items-end, so the
+        //    pill lines up with the team names/flags).
+        //  - match-detail hero (data-live-stack): badge absolutely positioned
+        //    above the pill — the roomy hero contains it and the pill stays on
+        //    the flag line.
+        //  - otherwise: badge inserted into the card's meta line.
         const compact = !!c.querySelector('.match-meta-inline');
+        const heroStack = !compact && c.hasAttribute('data-live-stack');
+        const stack = compact || heroStack;
         if (score) {
           if (c.dataset.origScore == null) c.dataset.origScore = score.innerHTML;
-          // Compact cards (kalender/programma) keep the kickoff time at the
-          // left; the live badge stacks above the score pill instead.
-          score.innerHTML = compact
-            ? `<span class="flex flex-col items-center gap-1">${liveBadge(m)}${livePill(gh, ga)}</span>`
+          // Badge absolutely positioned above the pill (no added height), so the
+          // pill stays on the team-name/flag line. Compact cards get a little
+          // extra top padding (.live-pad) so the badge stays inside the card.
+          score.innerHTML = stack
+            ? `<span class="relative inline-flex items-center justify-center">${livePill(gh, ga)}<span class="absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap">${liveBadge(m)}</span></span>`
             : livePill(gh, ga);
         }
-        if (!compact) {
+        if (compact) c.classList.add('live-pad');
+        if (!stack) {
           const meta = c.querySelector('.match-meta');
           if (meta && !meta.querySelector('.live-badge')) meta.insertAdjacentHTML('afterbegin', liveBadge(m));
         }
@@ -324,6 +344,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
         }
         const shown = applyMatches(data.matches || []);
         dispatchRanking(data.matches || []);
+        dispatchLiveMatches(data.matches || []);
         const stamp = data.updatedAt ? fmtTime(data.updatedAt) : '';
         status.textContent = shown > 0
           ? `${shown} live • bijgewerkt ${stamp}`
@@ -349,6 +370,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       } else {
         clearLive();
         dispatchRanking([]); // revert klassement to static totals
+        dispatchLiveMatches([]);
         status.textContent = '';
       }
     }
