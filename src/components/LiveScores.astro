@@ -233,7 +233,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
           const score = c.querySelector('.match-score');
           if (score && c.dataset.origScore != null) score.innerHTML = c.dataset.origScore;
           c.querySelector('.live-badge')?.remove();
-          c.classList.remove('live-pad');
+          c.classList.remove('live-pad', 'live-hero');
         }
         touched.clear();
         document.querySelectorAll('.live-standing').forEach((el) => el.remove());
@@ -317,6 +317,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
             : livePill(gh, ga);
         }
         if (compact) c.classList.add('live-pad');
+        if (heroStack) c.classList.add('live-hero');
         if (!stack) {
           const meta = c.querySelector('.match-meta');
           if (meta && !meta.querySelector('.live-badge')) meta.insertAdjacentHTML('afterbegin', liveBadge(m));

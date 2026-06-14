@@ -181,6 +181,13 @@ body::before {
   padding-top: 1.6rem;
 }
 
+/* Match-detail hero when live: extra gap below the meta line so the live badge
+   (absolutely placed above the score) clears the round label, especially on
+   narrow screens. */
+[data-match-card].live-hero .match-meta {
+  margin-bottom: 2.25rem;
+}
+
 /* Favourited participants highlighted on match-detail buckets (toggled via JS). */
 .fav-row {
   background-color: color-mix(in srgb, #f59e0b 12%, transparent);
