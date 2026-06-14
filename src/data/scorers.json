@@ -30,6 +30,11 @@
     "goals": 1
   },
   {
+    "player": "Felix Nmecha",
+    "teamId": "de",
+    "goals": 1
+  },
+  {
     "player": "G. Reyna",
     "teamId": "us",
     "goals": 1
@@ -65,6 +70,16 @@
     "goals": 1
   },
   {
+    "player": "K. Havertz 45+5(p)",
+    "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "L. Comenencia",
+    "teamId": "cw",
+    "goals": 1
+  },
+  {
     "player": "L. Krejčí",
     "teamId": "cz",
     "goals": 1
@@ -72,6 +87,11 @@
   {
     "player": "Maurício",
     "teamId": "py",
+    "goals": 1
+  },
+  {
+    "player": "N. Schlotterbeck",
+    "teamId": "de",
     "goals": 1
   },
   {
