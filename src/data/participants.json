@@ -1,17 +1,137 @@
 [
   {
-    "id": "barry",
-    "name": "Barry",
+    "id": "de-zilveren-generatie-sekke",
+    "name": "De zilveren generatie (Sekke)",
     "bonus": {
-      "topScorer": "Kylian Mbappé",
+      "topScorer": "Mikel Oyarzabal",
       "winnerTeamId": "es",
+      "mostConcededTeamId": "tn",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "gerrit",
+    "name": "Gerrit",
+    "bonus": {
+      "topScorer": "Lamine Yamal",
+      "winnerTeamId": "fr",
       "mostConcededTeamId": "cw",
       "mostScoredTeamId": "es"
     }
   },
   {
-    "id": "defijne",
-    "name": "De Fijne",
+    "id": "laere",
+    "name": "Laere",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cv",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "warre",
+    "name": "Warre",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "robbe-meerschaut",
+    "name": "Robbe Meerschaut",
+    "bonus": {
+      "topScorer": "Ousmane Dembélé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "kobe-marquebreucq",
+    "name": "Kobe Marquebreucq",
+    "bonus": {
+      "topScorer": "Lamine Yamal",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cv",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "de-breucqskes",
+    "name": "De Breucqskes",
+    "bonus": {
+      "topScorer": "Michael Olise",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cv",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "felix-janssens",
+    "name": "Felix Janssens",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cv",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "sarah-vranken",
+    "name": "Sarah Vranken",
+    "bonus": {
+      "topScorer": "Mikel Oyarzabal",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "aston",
+    "name": "Aston",
+    "bonus": {
+      "topScorer": "Ousmane Dembélé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "gette",
+    "name": "Gette",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "pilo",
+    "name": "Pilo",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "luiz-cruz",
+    "name": "Luiz-Cruz",
+    "bonus": {
+      "topScorer": "Ousmane Dembélé",
+      "winnerTeamId": "pt",
+      "mostConcededTeamId": "fr",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "fons",
+    "name": "Fons",
     "bonus": {
       "topScorer": "Kylian Mbappé",
       "winnerTeamId": "fr",
@@ -20,12 +140,302 @@
     }
   },
   {
-    "id": "maxim",
-    "name": "Maxim Breugelmans",
+    "id": "sam-vercammen",
+    "name": "Sam Vercammen",
+    "bonus": {
+      "topScorer": "Lionel Messi",
+      "winnerTeamId": "ar",
+      "mostConcededTeamId": "at",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "pivagru",
+    "name": "Pivagru",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "pa",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "big-dan",
+    "name": "Big Dan",
+    "bonus": {
+      "topScorer": "Ferran Torres",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "lander",
+    "name": "Lander",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "pt"
+    }
+  },
+  {
+    "id": "glenn",
+    "name": "Glenn",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "bere",
+    "name": "Bère",
+    "bonus": {
+      "topScorer": "Ousmane Dembélé",
+      "winnerTeamId": "br",
+      "mostConcededTeamId": "uz",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "sil",
+    "name": "Sil",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "gbeng"
+    }
+  },
+  {
+    "id": "leen-s",
+    "name": "Leen S",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "ar",
+      "mostConcededTeamId": "pa",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "guido-s-vk-weerde",
+    "name": "Guido's VK Weerde",
     "bonus": {
       "topScorer": "Erling Haaland",
+      "winnerTeamId": "gbeng",
+      "mostConcededTeamId": "sa",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "gerre",
+    "name": "Gerre",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "mekke",
+    "name": "Mekke",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "iq",
+      "mostScoredTeamId": "gbeng"
+    }
+  },
+  {
+    "id": "vodje",
+    "name": "Vodje",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "defijne",
+    "name": "De Fijne (Said)",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "buurvrouw-28",
+    "name": "Buurvrouw 28",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "nl",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "cindy-en-willy",
+    "name": "Cindy & Willy",
+    "bonus": {
+      "topScorer": "Lamine Yamal",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "fr",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "jonas-vg",
+    "name": "Jonas VG",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "ar",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "jan-vg",
+    "name": "Jan VG",
+    "bonus": {
+      "topScorer": "Romelu Lukaku",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "jo",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "slavia-wimoes",
+    "name": "Slavia Wimoes",
+    "bonus": {
+      "topScorer": "Mikel Oyarzabal",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "us",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "smee",
+    "name": "Smee",
+    "bonus": {
+      "topScorer": "Lamine Yamal",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "raymond-rombout",
+    "name": "Raymond Rombout",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "ar",
+      "mostConcededTeamId": "gbsct",
+      "mostScoredTeamId": "gbeng"
+    }
+  },
+  {
+    "id": "nick",
+    "name": "Nick",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "iq",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "becky-mcnamamara",
+    "name": "Becky McNamamara",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
       "winnerTeamId": "es",
       "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "pezze",
+    "name": "Pezze",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "ben-van-de-vliet",
+    "name": "Ben Van de Vliet",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "pt",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "dr7",
+    "name": "DR7",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "gbeng",
+      "mostConcededTeamId": "cv",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "jason-mostinckx",
+    "name": "Jason Mostinckx",
+    "bonus": {
+      "topScorer": "Erling Haaland",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "kylie-mostinckx",
+    "name": "Kylie Mostinckx",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "david-mostinckx",
+    "name": "David Mostinckx",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "de",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "lakke",
+    "name": "Lakke",
+    "bonus": {
+      "topScorer": "Bukayo Saka",
+      "winnerTeamId": "gbeng",
+      "mostConcededTeamId": "hr",
+      "mostScoredTeamId": "gbeng"
+    }
+  },
+  {
+    "id": "spier",
+    "name": "Spier",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cv",
       "mostScoredTeamId": "es"
     }
   },
@@ -47,6 +457,336 @@
       "winnerTeamId": "gbeng",
       "mostConcededTeamId": "pa",
       "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "melle",
+    "name": "Melle",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "katrien-silverans",
+    "name": "Katrien Silverans",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "br",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "mil-en-josse-bauters",
+    "name": "Mil & Josse Bauters",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "kjell-vanhaecht",
+    "name": "Kjell Vanhaecht",
+    "bonus": {
+      "topScorer": "Raphinha",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "erik-vercammen",
+    "name": "Erik Vercammen",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "br"
+    }
+  },
+  {
+    "id": "vollen-tip",
+    "name": "Vollen Tip",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "2p",
+    "name": "2P",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "milan-van-hof",
+    "name": "Milan Van Hof",
+    "bonus": {
+      "topScorer": "Vinícius Júnior",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "jo",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "koen-van-hof",
+    "name": "Koen Van Hof",
+    "bonus": {
+      "topScorer": "Lamine Yamal",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "iq",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "seppe-van-hof",
+    "name": "Seppe Van Hof",
+    "bonus": {
+      "topScorer": "Vinícius Júnior",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "sabine-desmet",
+    "name": "Sabine Desmet",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "ar",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "fc-bertrix",
+    "name": "FC Bertrix",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "wikke-v",
+    "name": "Wikke V",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "iq",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "barry",
+    "name": "Barry",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "valdano",
+    "name": "Valdano",
+    "bonus": {
+      "topScorer": "Ferran Torres",
+      "winnerTeamId": "de",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "jokke",
+    "name": "Jokke",
+    "bonus": {
+      "topScorer": "Cristiano Ronaldo",
+      "winnerTeamId": "be",
+      "mostConcededTeamId": "ir",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "ferre-bus",
+    "name": "Ferre Bus",
+    "bonus": {
+      "topScorer": "Michael Olise",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "sander-en-cecile",
+    "name": "Sander & Cecile",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "gbeng"
+    }
+  },
+  {
+    "id": "eva-van-de-jokke",
+    "name": "Eva van de Jokke",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "maya-de-smet",
+    "name": "Maya De Smet",
+    "bonus": {
+      "topScorer": "Kevin De Bruyne",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "nolan-de-smet",
+    "name": "Nolan De Smet",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cv",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "noye-titans",
+    "name": "Noye Titans",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "cv",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "maxim",
+    "name": "Maxim Breugelmans",
+    "bonus": {
+      "topScorer": "Erling Haaland",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "gunne",
+    "name": "Gunne",
+    "bonus": {
+      "topScorer": "Mikel Oyarzabal",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "fc-zeug",
+    "name": "FC Zeug",
+    "bonus": {
+      "topScorer": "Julián Álvarez",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "iq",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "tom-nys",
+    "name": "Tom Nys",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "fr"
+    }
+  },
+  {
+    "id": "mr-t",
+    "name": "MR T.",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "cw",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "dj-de-bondt",
+    "name": "DJ De Bondt",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "uz",
+      "mostScoredTeamId": "de"
+    }
+  },
+  {
+    "id": "d",
+    "name": "D",
+    "bonus": {
+      "topScorer": "Harry Kane",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "ht",
+      "mostScoredTeamId": "gbeng"
+    }
+  },
+  {
+    "id": "north-london-forever",
+    "name": "North London Forever",
+    "bonus": {
+      "topScorer": "Michael Olise",
+      "winnerTeamId": "fr",
+      "mostConcededTeamId": "iq",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "dorien",
+    "name": "Dorien",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "qa",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "maxime-chimpie",
+    "name": "Maxime Chimpie",
+    "bonus": {
+      "topScorer": "Julián Álvarez",
+      "winnerTeamId": "es",
+      "mostConcededTeamId": "iq",
+      "mostScoredTeamId": "es"
+    }
+  },
+  {
+    "id": "jose",
+    "name": "Jose",
+    "bonus": {
+      "topScorer": "Kylian Mbappé",
+      "winnerTeamId": "be",
+      "mostConcededTeamId": "tn",
+      "mostScoredTeamId": "fr"
     }
   }
 ]

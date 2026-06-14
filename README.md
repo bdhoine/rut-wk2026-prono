@@ -147,7 +147,7 @@ results* above) does this automatically. To update by hand instead:
 3. Update `scorers.json` and `outcomes.json` as the tournament progresses.
 4. Commit & push — Netlify rebuilds and the ranking updates automatically.
 
-> The repo data uses the **real WK 2026 draw and fixture schedule** (groups, dates, venues, kickoff times). Kickoffs are stored with each venue's UTC offset and shown in Belgium time. Matchday 1 & 2 results are **simulated** realistic scorelines (the tournament hasn't been played); matchday 3 and the knockout bracket are still to come. Contestants are **40 fictional entries** plus one real personal entry ("Barry"); predictions for the dummy contestants are simulated with varying skill.
+> The repo data uses the **real WK 2026 draw and fixture schedule** (groups, dates, venues, kickoff times). Kickoffs are stored with each venue's UTC offset and shown in Belgium time. The **79 real contestants** and their predictions (full group stage + tournament bonus picks) come from the official Café De Rut prono sheet. Real results are entered as matches are played; matchday 3 and the knockout bracket are still to come.
 
 ## Deployment
 
