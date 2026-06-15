@@ -1,0 +1,132 @@
+---
+// Live recompute of the group standings + best-thirds on /poules. Renders no
+// visible markup of its own — it carries the data the client needs and a script
+// that, on each `rut:live-matches` broadcast (from LiveScores), recomputes the
+// group tables and best-thirds INCLUDING in-progress matches, re-renders their
+// <tbody> (targeted via data-live-group / data-live-thirds) and adds a per-team
+// win/draw/loss live badge. Reverts to the server-rendered tables when nothing
+// group-stage is live.
+import { teams, groups, matches } from '@/lib/data';
+
+const teamMap = Object.fromEntries(teams.map((t) => [t.id, { name: t.name, shortName: t.shortName ?? t.name, iso: t.iso }]));
+const groupPayload = groups.map((g) => ({ id: g.id, teamIds: g.teamIds }));
+const groupMatches = matches.filter((m) => m.round === 'group' && m.homeTeamId && m.awayTeamId);
+const finishedResults = groupMatches
+  .filter((m) => m.status === 'finished' && m.result)
+  .map((m) => ({ h: m.homeTeamId, a: m.awayTeamId, gh: m.result!.home, ga: m.result!.away }));
+const groupPairs = groupMatches.map((m) => `${m.homeTeamId}|${m.awayTeamId}`);
+---
+<div data-live-poules hidden>
+  <script type="application/json" id="lp-teams" set:html={JSON.stringify(teamMap)}></script>
+  <script type="application/json" id="lp-groups" set:html={JSON.stringify(groupPayload)}></script>
+  <script type="application/json" id="lp-finished" set:html={JSON.stringify(finishedResults)}></script>
+  <script type="application/json" id="lp-pairs" set:html={JSON.stringify(groupPairs)}></script>
+</div>
+
+<script>
+  const lpRoot = document.querySelector('[data-live-poules]');
+  if (lpRoot) {
+    const teams = JSON.parse(document.getElementById('lp-teams')?.textContent || '{}') as Record<string, { name: string; shortName: string; iso: string }>;
+    const groups = JSON.parse(document.getElementById('lp-groups')?.textContent || '[]') as { id: string; teamIds: string[] }[];
+    const finished = JSON.parse(document.getElementById('lp-finished')?.textContent || '[]') as { h: string; a: string; gh: number; ga: number }[];
+    const groupPairs = new Set(JSON.parse(document.getElementById('lp-pairs')?.textContent || '[]') as string[]);
+
+    const originals = new Map<Element, string>();
+    const stash = () => document.querySelectorAll('[data-live-group],[data-live-thirds]').forEach((tb) => { if (!originals.has(tb)) originals.set(tb, tb.innerHTML); });
+    const revert = () => originals.forEach((html, tb) => { tb.innerHTML = html; });
+
+    const pair = (h: string, a: string) => `${h}|${a}`;
+    const nm = (id: string) => teams[id]?.name || id;
+    const flag = (id: string) => `<span class="fi fi-${teams[id]?.iso || id} shrink-0 rounded-[2px] text-base" role="img" aria-label="${nm(id)}"></span>`;
+    const liveBadge = (gf: number, ga: number) => {
+      const cls = gf > ga ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400'
+        : gf < ga ? 'bg-red-500/15 text-red-700 dark:text-red-400'
+        : 'bg-amber-500/15 text-amber-700 dark:text-amber-500';
+      return `<span class="ml-1 inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${cls}" title="live"><span class="size-1.5 animate-pulse rounded-full bg-current"></span>${gf}–${ga}</span>`;
+    };
+    const hi = 'bg-emerald-50/70 dark:bg-emerald-950/30';
+
+    type Row = { id: string; played: number; won: number; drawn: number; lost: number; gf: number; ga: number; points: number; goalDiff: number; rank: number; live: { gf: number; ga: number } | null };
+    const sortRows = (rows: Omit<Row, 'rank'>[]) =>
+      rows.sort((x, y) => y.points - x.points || y.goalDiff - x.goalDiff || y.gf - x.gf || nm(x.id).localeCompare(nm(y.id), 'nl'));
+
+    function computeGroup(g: { id: string; teamIds: string[] }, liveGroup: any[]): Row[] {
+      const base: Record<string, Omit<Row, 'rank' | 'goalDiff'>> = {};
+      for (const id of g.teamIds) base[id] = { id, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0, live: null };
+      const apply = (h: string, a: string, gh: number, ga: number, live: boolean) => {
+        const H = base[h]; const A = base[a];
+        if (!H || !A) return;
+        H.played++; A.played++; H.gf += gh; H.ga += ga; A.gf += ga; A.ga += gh;
+        if (gh > ga) { H.won++; H.points += 3; A.lost++; }
+        else if (gh < ga) { A.won++; A.points += 3; H.lost++; }
+        else { H.drawn++; A.drawn++; H.points++; A.points++; }
+        if (live) { H.live = { gf: gh, ga }; A.live = { gf: ga, ga: gh }; }
+      };
+      for (const r of finished) apply(r.h, r.a, r.gh, r.ga, false);
+      for (const m of liveGroup) if (base[m.homeTeamId] && base[m.awayTeamId]) apply(m.homeTeamId, m.awayTeamId, m.goalsHome, m.goalsAway, true);
+      const rows = Object.values(base).map((r) => ({ ...r, goalDiff: r.gf - r.ga }));
+      return sortRows(rows).map((r, i) => ({ ...r, rank: i + 1 }));
+    }
+
+    const gd = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+
+    function renderGroups(standings: Record<string, Row[]>) {
+      for (const g of groups) {
+        const tb = document.querySelector(`[data-live-group="${g.id}"]`);
+        if (!tb) continue;
+        tb.innerHTML = standings[g.id].map((r) => `
+          <tr class="border-b last:border-0 ${r.rank <= 2 ? hi : ''}">
+            <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">${r.rank}</td>
+            <td class="px-2 py-2.5">
+              <div class="flex items-center gap-2">
+                <a href="/land/${r.id}" data-standing-team="${r.id}" class="flex min-w-0 items-center gap-2 font-medium hover:underline">${flag(r.id)}<span class="truncate">${teams[r.id]?.shortName || nm(r.id)}</span></a>
+                ${r.live ? liveBadge(r.live.gf, r.live.ga) : ''}
+              </div>
+            </td>
+            <td class="py-2.5 text-center tabular-nums">${r.played}</td>
+            <td class="py-2.5 text-center tabular-nums">${r.won}</td>
+            <td class="py-2.5 text-center tabular-nums">${r.drawn}</td>
+            <td class="py-2.5 text-center tabular-nums">${r.lost}</td>
+            <td class="py-2.5 text-center tabular-nums">${gd(r.goalDiff)}</td>
+            <td class="px-2 py-2.5 text-center font-bold tabular-nums">${r.points}</td>
+          </tr>`).join('');
+      }
+    }
+
+    function renderThirds(standings: Record<string, Row[]>) {
+      const tb = document.querySelector('[data-live-thirds]');
+      if (!tb) return;
+      const thirds = groups
+        .map((g) => { const s = standings[g.id]; const t = s[2]; return t ? { ...t, group: g.id } : null; })
+        .filter(Boolean) as (Row & { group: string })[];
+      sortRows(thirds as any);
+      tb.innerHTML = thirds.map((t, i) => `
+        <tr class="border-b last:border-0 ${i < 8 ? hi : ''}">
+          <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">${i + 1}</td>
+          <td class="px-2 py-2.5">
+            <div class="flex items-center gap-2">
+              <a href="/land/${t.id}" data-standing-team="${t.id}" class="flex min-w-0 items-center gap-2 font-medium hover:underline">${flag(t.id)}<span class="truncate">${nm(t.id)}</span></a>
+              ${t.live ? liveBadge(t.live.gf, t.live.ga) : ''}
+            </div>
+          </td>
+          <td class="py-2.5 text-center tabular-nums">${t.group}</td>
+          <td class="py-2.5 text-center tabular-nums">${gd(t.goalDiff)}</td>
+          <td class="px-2 py-2.5 text-center font-bold tabular-nums">${t.points}</td>
+        </tr>`).join('');
+    }
+
+    function render(list: any[]) {
+      const liveGroup = (list || []).filter((m) => m.homeTeamId && m.awayTeamId
+        && (groupPairs.has(pair(m.homeTeamId, m.awayTeamId)) || groupPairs.has(pair(m.awayTeamId, m.homeTeamId))));
+      if (liveGroup.length === 0) { revert(); return; }
+      stash();
+      const standings: Record<string, Row[]> = {};
+      for (const g of groups) standings[g.id] = computeGroup(g, liveGroup);
+      renderGroups(standings);
+      renderThirds(standings);
+    }
+
+    window.addEventListener('rut:live-matches', (e) => render((e as CustomEvent).detail?.matches || []));
+    if ((window as any).__rutLiveMatches) render((window as any).__rutLiveMatches);
+  }
+</script>

@@ -5,8 +5,9 @@ import type { StandingRow } from '@/lib/data';
 interface Props {
   rows: StandingRow[];
   highlightTop?: number; // rows with rank <= this are highlighted as qualifying
+  groupId?: string; // when set, tags the <tbody> for live recompute (LivePoules)
 }
-const { rows, highlightTop = 2 } = Astro.props;
+const { rows, highlightTop = 2, groupId } = Astro.props;
 // Only mark qualifying spots once the group has actual results — an all-zero
 // table with green rows reads as a (meaningless) verdict.
 const hasResults = rows.some((r) => r.played > 0);
@@ -35,7 +36,7 @@ const hasResults = rows.some((r) => r.played > 0);
         <th class="px-2 py-2 text-center font-medium" title="Punten">Ptn</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody data-live-group={groupId}>
       {rows.map((r) => (
         <tr class:list={['border-b last:border-0', hasResults && r.rank <= highlightTop && 'bg-emerald-50/70 dark:bg-emerald-950/30']}>
           <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">{r.rank}</td>

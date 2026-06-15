@@ -3,6 +3,7 @@
 // each a list of participants with a delta pill and an old→new position change.
 // Used by MovementSection for both "Stijgers & dalers" and "Top 5".
 import type { MovementRow } from '@/lib/data';
+import Flag from './Flag.astro';
 
 type Tone = 'up' | 'down';
 export interface MovementCol {
@@ -53,6 +54,7 @@ const { periode, cols } = Astro.props;
                     )}
                     {Math.abs(r.delta)}
                   </span>
+                  {r.winnerIso && <Flag iso={r.winnerIso} name={r.winnerName ?? undefined} class="shrink-0 text-sm" />}
                   <span class="min-w-0 flex-1 truncate text-sm font-medium">{r.name}</span>
                   <span class="flex shrink-0 items-center gap-1 text-xs tabular-nums" aria-label={`Van plaats ${r.prev} naar ${r.cur}`}>
                     <span class="text-muted-foreground/70">{r.prev}</span>

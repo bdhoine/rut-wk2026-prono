@@ -259,13 +259,15 @@ const liveCalc = hasTeams && !finished
         const favRows = [...tbody.querySelectorAll<HTMLElement>('tr[data-pid]')].filter((r) => favs.has(r.dataset.pid));
         favRows.reverse().forEach((r) => {
           r.classList.add('fav-row');
-          const cell = r.querySelector('td');
-          if (cell && !cell.querySelector('.fav-star')) {
+          // Insert the star inside the name cell's flex row (not the <td>), so it
+          // sits inline with the chip/flag/name instead of on its own line.
+          const flexRow = r.querySelector('td > div');
+          if (flexRow && !flexRow.querySelector('.fav-star')) {
             const star = document.createElement('span');
             star.className = 'fav-star';
             star.textContent = '★';
             star.setAttribute('aria-hidden', 'true');
-            cell.prepend(star);
+            flexRow.prepend(star);
           }
           tbody.prepend(r);
         });

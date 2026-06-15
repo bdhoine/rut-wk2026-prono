@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-06-16",
+    "title": "Live poulestand, vlaggen overal en topschutter-goals",
+    "items": [
+      "Live wedstrijden werken nu mee in de poules: de poulestand én de stand van de beste nummers 3 worden live herberekend, met per land een groene (winst), oranje (gelijk) of rode (verlies) badge zolang de match bezig is.",
+      "Op de homepagina zie je bij live wedstrijden nu ook welke wedstrijden er straks op het programma staan.",
+      "Overal waar deelnemers in een tabel staan (o.a. stijgers & dalers en de landpagina's) zie je nu hun vlag van de getipte eindwinnaar.",
+      "Bij 'Meest getipte topschutter' staat nu ook hoeveel doelpunten de speler al maakte op het WK.",
+      "Opgelost: op een wedstrijdpagina liep de opmaak op mobiel mis wanneer je favorieten had."
+    ]
+  },
+  {
+    "date": "2026-06-16",
     "title": "Topschutterprofielen, landpagina's en groene prijsplaatsen",
     "items": [
       "Op een landpagina zie je nu wie dat land tipte als eindwinnaar, en voor de meeste doelpunten en de meeste tegendoelpunten — telkens gerangschikt op plaats in het klassement, met hun totaal en uitklapbaar via 'Toon alle'.",

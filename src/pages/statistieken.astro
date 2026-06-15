@@ -236,7 +236,8 @@ const popularMax = popular[0]?.count ?? 1;
             <tr class="border-b text-muted-foreground">
               <th class="w-6 px-2 py-2 text-center font-medium">#</th>
               <th class="px-2 py-2 text-left font-medium">Speler</th>
-              <th class="px-2 py-2 text-center font-medium">Aantal</th>
+              <th class="w-14 px-2 py-2 text-center font-medium" title="Doelpunten op het WK">Goals</th>
+              <th class="w-16 px-2 py-2 text-center font-medium" title="Aantal deelnemers dat hem tipte">Getipt</th>
             </tr>
           </thead>
           <tbody>
@@ -251,6 +252,7 @@ const popularMax = popular[0]?.count ?? 1;
                       : <span class="truncate">{s.player}</span>}
                   </div>
                 </td>
+                <td class="px-2 py-2.5 text-center tabular-nums">{s.goals}</td>
                 <td class="px-2 py-2.5 text-center font-bold tabular-nums">{s.count}</td>
               </tr>
             ))}

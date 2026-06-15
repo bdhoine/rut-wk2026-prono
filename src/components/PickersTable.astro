@@ -13,7 +13,7 @@ interface Props {
   initial?: number;
   empty?: string;
 }
-const { rows, showFlag = false, initial = 10, empty = 'Niemand.' } = Astro.props;
+const { rows, showFlag = true, initial = 10, empty = 'Niemand.' } = Astro.props;
 const total = rows.length;
 ---
 {total === 0 ? (

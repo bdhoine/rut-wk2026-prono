@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import LiveScores from '@/components/LiveScores.astro';
+import LivePoules from '@/components/LivePoules.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
@@ -18,12 +19,13 @@ const thirdsHaveResults = thirds.some((t) => t.played > 0);
     <InfoToggle text="Top 2 per poule plaatst zich rechtstreeks. Tik op een land voor het programma." />
   </PageHeader>
   <LiveScores />
+  <LivePoules />
 
   <div class="grid gap-6 md:grid-cols-2">
     {groupTables.map((g) => (
       <section>
         <SectionHeading title={`Groep ${g.id}`} />
-        <StandingsTable rows={g.rows} highlightTop={2} />
+        <StandingsTable rows={g.rows} highlightTop={2} groupId={g.id} />
       </section>
     ))}
   </div>
@@ -50,7 +52,7 @@ const thirdsHaveResults = thirds.some((t) => t.played > 0);
             <th class="px-2 py-2 text-center font-medium">Ptn</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-live-thirds>
           {thirds.map((t, i) => (
             <tr class:list={['border-b last:border-0', thirdsHaveResults && t.qualifies && 'bg-emerald-50/70 dark:bg-emerald-950/30']}>
               <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">{i + 1}</td>

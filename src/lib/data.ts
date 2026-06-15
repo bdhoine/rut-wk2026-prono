@@ -83,6 +83,8 @@ export interface MovementRow {
   prev: number;
   cur: number;
   delta: number; // positions gained (positive = moved up)
+  winnerIso: string | null; // the participant's eindwinnaar pick (for the flag)
+  winnerName: string | null;
 }
 
 export interface DayMovements {
@@ -116,7 +118,16 @@ export function dayMovements(): DayMovements[] {
     for (const [id, curPos] of cur.posById) {
       const prevPos = prev.posById.get(id);
       if (prevPos === undefined) continue;
-      moves.push({ participantId: id, name: cur.byId.get(id)!.name, prev: prevPos, cur: curPos, delta: prevPos - curPos });
+      const winner = getTeam(getParticipant(id)?.bonus.winnerTeamId);
+      moves.push({
+        participantId: id,
+        name: cur.byId.get(id)!.name,
+        prev: prevPos,
+        cur: curPos,
+        delta: prevPos - curPos,
+        winnerIso: winner?.iso ?? null,
+        winnerName: winner?.name ?? null,
+      });
     }
     const risers = topMovers(
       moves.filter((m) => m.delta > 0).sort((a, b) => b.delta - a.delta || a.cur - b.cur),
@@ -408,15 +419,19 @@ export function scorerInfo(player: string): { team?: Team; goals: number } {
   return { team: getTeam(rows[0].teamId), goals: rows.reduce((sum, s) => sum + s.goals, 0) };
 }
 
-/** Most-picked top scorer across all participants. */
-export function topChosenTopScorers(limit = 5): { player: string; team?: Team; count: number }[] {
+/** Most-picked top scorer across all participants, with the player's resolved
+ *  team and tournament goals. */
+export function topChosenTopScorers(limit = 5): { player: string; team?: Team; goals: number; count: number }[] {
   const counts = new Map<string, number>();
   for (const p of participants) {
     const s = p.bonus.topScorer;
     if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
   }
   return [...counts.entries()]
-    .map(([player, count]) => ({ player, team: scorerInfo(player).team, count }))
+    .map(([player, count]) => {
+      const info = scorerInfo(player);
+      return { player, team: info.team, goals: info.goals, count };
+    })
     .sort((a, b) => b.count - a.count || a.player.localeCompare(b.player, 'nl'))
     .slice(0, limit);
 }
