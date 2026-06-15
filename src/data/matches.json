@@ -324,8 +324,13 @@
     "venue": "Lincoln Financial Field, Philadelphia",
     "homeTeamId": "ci",
     "awayTeamId": "ec",
-    "status": "scheduled",
-    "apiId": 9
+    "status": "finished",
+    "apiId": 9,
+    "result": {
+      "home": 1,
+      "away": 0
+    },
+    "winnerTeamId": "ci"
   },
   {
     "id": "gE-md2-1",
@@ -394,8 +399,13 @@
     "venue": "Estadio BBVA, Monterrey",
     "homeTeamId": "se",
     "awayTeamId": "tn",
-    "status": "scheduled",
-    "apiId": 12
+    "status": "finished",
+    "apiId": 12,
+    "result": {
+      "home": 5,
+      "away": 1
+    },
+    "winnerTeamId": "se"
   },
   {
     "id": "gF-md2-1",

@@ -5,6 +5,21 @@
     "goals": 2
   },
   {
+    "player": "Y.Ayari",
+    "teamId": "se",
+    "goals": 2
+  },
+  {
+    "player": "A. Diallo",
+    "teamId": "ci",
+    "goals": 1
+  },
+  {
+    "player": "A. Isak",
+    "teamId": "se",
+    "goals": 1
+  },
+  {
     "player": "B. Khoukhi",
     "teamId": "qa",
     "goals": 1
@@ -115,6 +130,11 @@
     "goals": 1
   },
   {
+    "player": "M. Svanberg",
+    "teamId": "se",
+    "goals": 1
+  },
+  {
     "player": "Maurício",
     "teamId": "py",
     "goals": 1
@@ -135,8 +155,18 @@
     "goals": 1
   },
   {
+    "player": "O. Rekik",
+    "teamId": "tn",
+    "goals": 1
+  },
+  {
     "player": "R. Jiménez",
     "teamId": "mx",
+    "goals": 1
+  },
+  {
+    "player": "V. Gyökeres",
+    "teamId": "se",
     "goals": 1
   },
   {
