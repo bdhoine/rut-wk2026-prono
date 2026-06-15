@@ -152,7 +152,7 @@ export default function RankingTable({
           const fav = favSet.has(row.participantId);
           const inMoney = showPrizeCut && PRIZES[row.position] != null;
           return (
-            <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)} className={inMoney ? "bg-gold/10" : undefined}>
+            <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)} className={inMoney ? "bg-emerald-500/10 hover:bg-emerald-500/15" : undefined}>
               <TableCell className="px-0.5">
                 <button
                   type="button"
