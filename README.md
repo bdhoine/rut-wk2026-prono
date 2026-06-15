@@ -22,12 +22,12 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/` | Home (landing) — hero panel with current speeldag and next match(es), the "Nu live & recent gespeeld" strip, your favourites, the **top 10** of the ranking with a button to the full ranking, and two movement cards for the latest calendar day (today vs. yesterday): **Stijgers & dalers** (strongest risers/fallers) and **Top 5 — winnaars & verliezers** (who entered/left the prize spots, with the number of positions moved). The next-match card shows both fixtures when two kick off at the same time |
 | `/klassement` | Full ranking — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details, plus a client-side **search box** to filter by name. Live-only (shows in-progress matches if any) and recomputes a provisional ranking from live scores |
 | `/deelnemer/[id]` | Participant detail: position, total, bonus picks, predictions per speeldag in collapsible sections (played/current open, future collapsed) + score breakdown. A **Live scores** toggle recomputes the header position/total and the easter-egg trigger from the live provisional standing. Easter eggs once the tournament is under way: an 8-bit money rain with the prize amount for top-5 spots, and an 8-bit dog popping up to laugh at the last-placed player |
-| `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + all predictions sorted by points |
+| `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + predictions grouped by predicted outcome (1/X/2). Each row shows the participant's klassement position and eindwinnaar flag and is fully clickable to the profile; finished matches sort each group by points scored, then by klassement position |
 | `/programma` | Upcoming matches, grouped per calendar day |
 | `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with sticky day subheadings and prono submission deadlines |
 | `/poules` | Group standings (two-column grid on desktop) + best third-placed ranking; qualification highlight only once a group has results |
 | `/land/[id]` | Country detail: full schedule + group standings |
-| `/statistieken` | Top scorers, most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, popular scorelines, most-picked winner/top scorer |
+| `/statistieken` | Top scorers, most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, popular scorelines, most-picked winner/top scorer (top 5 with a "Toon alle" expander) |
 | `/reglement` | Competition rules, deadlines and prizes |
 | `/changelog` | Per-update changelog (blocks newest-first), driven by `src/data/changelog.json` — see `CLAUDE.md` for the per-session upkeep rule |
 | any other URL | Branded 404 page ("Buitenspel!") |

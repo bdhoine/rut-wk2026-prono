@@ -5,7 +5,8 @@ import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
 import LiveScores from '@/components/LiveScores.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { matches, getMatch, sideLabel, predictionsForMatch, ranking, settings } from '@/lib/data';
+import InfoToggle from '@/components/InfoToggle.astro';
+import { matches, getMatch, sideLabel, predictionsForMatch, ranking, settings, getTeam, type MatchPredictionRow } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
 import { outcomeOf } from '@/lib/scoring';
 import { explainScore, formatKickoff } from '@/lib/format';
@@ -40,14 +41,24 @@ const stats = [
 ];
 
 // Split predictions by predicted outcome (1 / X / 2). For finished matches the
-// actual outcome is highlighted. Within each bucket, participants are ordered by
-// their global ranking (total score in the klassement).
+// actual outcome is highlighted. Within each bucket, finished matches are ordered
+// by points scored (desc), then by global ranking; unfinished matches purely by
+// global ranking (total score in the klassement).
 const actualOutcome = finished ? outcomeOf(match.result!.home, match.result!.away) : null;
 const globalPos = new Map(ranking().map((r) => [r.participantId, r.position]));
+const byRank = (a: MatchPredictionRow, b: MatchPredictionRow) =>
+  (globalPos.get(a.participant.id) ?? 1e9) - (globalPos.get(b.participant.id) ?? 1e9) ||
+  a.participant.name.localeCompare(b.participant.name, 'nl');
 const bucket = (test: (h: number, a: number) => boolean) =>
   rows
     .filter((r) => r.prediction && test(r.prediction.home, r.prediction.away))
-    .sort((a, b) => (globalPos.get(a.participant.id) ?? 1e9) - (globalPos.get(b.participant.id) ?? 1e9) || a.participant.name.localeCompare(b.participant.name, 'nl'));
+    .sort((a, b) => {
+      if (finished) {
+        const diff = (b.score?.points ?? 0) - (a.score?.points ?? 0);
+        if (diff !== 0) return diff;
+      }
+      return byRank(a, b);
+    });
 const outcomeGroups = [
   { key: 'home', title: `${home.label} wint`, iso: home.team?.iso ?? null, rows: bucket((h, a) => h > a) },
   { key: 'draw', title: 'Gelijkspel', iso: null, rows: bucket((h, a) => h === a) },
@@ -115,7 +126,9 @@ const liveCalc = hasTeams && !finished
   )}
 
   <section>
-    <SectionHeading title="Pronostieken" />
+    <SectionHeading title="Pronostieken">
+      <InfoToggle text="Per voorspelde uitslag, gesorteerd op behaalde punten. Het cijfer is de plaats in het klassement, de vlag de getipte eindwinnaar. Tik op een rij voor het profiel." />
+    </SectionHeading>
 
     <div class="space-y-5">
       {outcomeGroups.map((g) => (
@@ -123,7 +136,7 @@ const liveCalc = hasTeams && !finished
           <div class="mb-2 flex flex-wrap items-center gap-2">
             {g.iso && <Flag iso={g.iso} class="text-base" />}
             <h3 class="font-semibold">{g.title}</h3>
-            <span class="text-sm text-muted-foreground">({g.rows.length})</span>
+            <span class="inline-flex min-w-[1.5rem] items-center justify-center rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums text-muted-foreground" title="Aantal deelnemers">{g.rows.length}</span>
             {g.key === actualOutcome && (
               <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">juiste uitslag</span>
             )}
@@ -139,10 +152,19 @@ const liveCalc = hasTeams && !finished
                   <col class="w-16" />
                 </colgroup>
                 <tbody>
-                  {g.rows.map(({ participant, prediction, score }) => (
-                    <tr class="border-b last:border-0" data-pid={participant.id}>
+                  {g.rows.map(({ participant, prediction, score }) => {
+                    const champ = getTeam(participant.bonus.winnerTeamId);
+                    const pos = globalPos.get(participant.id);
+                    return (
+                    <tr class="cursor-pointer border-b transition-colors last:border-0 hover:bg-muted/50" data-pid={participant.id} data-href={`/deelnemer/${participant.id}`}>
                       <td class="px-3 py-2.5">
-                        <a href={`/deelnemer/${participant.id}`} class="font-medium hover:underline">{participant.name}</a>
+                        <div class="flex min-w-0 items-center gap-2">
+                          {pos != null && (
+                            <span class="inline-flex h-5 min-w-[1.4rem] shrink-0 items-center justify-center rounded bg-muted px-1 text-[11px] font-semibold tabular-nums text-muted-foreground" title="Plaats in het klassement">{pos}</span>
+                          )}
+                          {champ && <Flag iso={champ.iso} name={champ.name} class="shrink-0 text-base" />}
+                          <a href={`/deelnemer/${participant.id}`} class="truncate font-medium hover:text-foreground">{participant.name}</a>
+                        </div>
                       </td>
                       {finished ? (
                         <Fragment>
@@ -162,7 +184,8 @@ const liveCalc = hasTeams && !finished
                         </td>
                       )}
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -213,6 +236,18 @@ const liveCalc = hasTeams && !finished
         if ((window as any).__rutLiveMatches) render((window as any).__rutLiveMatches);
       }
     }
+  </script>
+
+  <script>
+    // Make the whole prediction row clickable (like the klassement table). Clicks
+    // on the name anchor itself are left to the anchor so right-click / open-in-
+    // new-tab keep working.
+    document.querySelectorAll<HTMLElement>('tr[data-href]').forEach((tr) => {
+      tr.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a')) return;
+        window.location.href = tr.dataset.href!;
+      });
+    });
   </script>
 
   <script>

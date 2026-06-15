@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-06-15",
+    "title": "Mooiere wedstrijddetails, stijgers & dalers en statistieken",
+    "items": [
+      "'Stijgers & dalers' en 'Top 5' kregen een frisser, consistenter uiterlijk met duidelijke pijl-iconen en een beter leesbare plaatswijziging (oude → nieuwe plaats).",
+      "Op een wedstrijdpagina tonen de pronostieken nu de plaats in het klassement en een vlagje van de getipte eindwinnaar, net als in de stand; de volledige rij is klikbaar naar het profiel.",
+      "Bij gespeelde wedstrijden staan de pronostieken nu gesorteerd op behaalde punten en daarna op plaats in het klassement.",
+      "Het aantal deelnemers per voorspelde uitslag staat nu in een nette badge.",
+      "Bij 'Meest getipte eindwinnaar' en 'Meest getipte topschutter' kun je met 'Toon alle' de volledige lijst openklappen."
+    ]
+  },
+  {
+    "date": "2026-06-15",
     "title": "Vernieuwde homepagina, apart klassement en stijgers & dalers",
     "items": [
       "De homepagina is nu een echte startpagina: hero, je favorieten en de top 10 van de stand met een knop naar het volledige klassement.",

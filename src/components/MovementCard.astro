@@ -1,0 +1,70 @@
+---
+// One "stijgers/dalers"-style card: a period label + two columns (up / down),
+// each a list of participants with a delta pill and an old→new position change.
+// Used by MovementSection for both "Stijgers & dalers" and "Top 5".
+import type { MovementRow } from '@/lib/data';
+
+type Tone = 'up' | 'down';
+export interface MovementCol {
+  title: string;
+  rows: MovementRow[];
+  tone: Tone;
+  empty: string;
+}
+interface Props {
+  periode: string;
+  cols: MovementCol[];
+}
+const { periode, cols } = Astro.props;
+---
+<div class="rounded-xl border bg-card p-3 shadow-sm sm:p-4">
+  <p class="mb-3 text-xs font-medium text-muted-foreground">{periode}</p>
+  <div class="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+    {cols.map((col) => (
+      <div>
+        <div class:list={[
+          'mb-1.5 flex items-center gap-1.5 px-2 text-xs font-semibold',
+          col.tone === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400',
+        ]}>
+          {col.tone === 'up' ? (
+            <svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true"><path fill="currentColor" d="M12 5l7 11H5z" /></svg>
+          ) : (
+            <svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true"><path fill="currentColor" d="M12 19L5 8h14z" /></svg>
+          )}
+          <span>{col.title}</span>
+        </div>
+        {col.rows.length === 0 ? (
+          <p class="px-2 py-1.5 text-sm text-muted-foreground">{col.empty}</p>
+        ) : (
+          <ul class="space-y-0.5">
+            {col.rows.map((r) => (
+              <li>
+                <a href={`/deelnemer/${r.participantId}`} class="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-muted">
+                  <span class:list={[
+                    'inline-flex shrink-0 items-center justify-center gap-0.5 rounded-md px-1.5 py-0.5 text-xs font-bold tabular-nums',
+                    col.tone === 'up'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400'
+                      : 'bg-red-500/15 text-red-700 dark:text-red-400',
+                  ]}>
+                    {col.tone === 'up' ? (
+                      <svg viewBox="0 0 24 24" class="size-3" aria-hidden="true"><path fill="currentColor" d="M12 5l7 11H5z" /></svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" class="size-3" aria-hidden="true"><path fill="currentColor" d="M12 19L5 8h14z" /></svg>
+                    )}
+                    {Math.abs(r.delta)}
+                  </span>
+                  <span class="min-w-0 flex-1 truncate text-sm font-medium">{r.name}</span>
+                  <span class="flex shrink-0 items-center gap-1 text-xs tabular-nums" aria-label={`Van plaats ${r.prev} naar ${r.cur}`}>
+                    <span class="text-muted-foreground/70">{r.prev}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-3 text-muted-foreground/50" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    <span class="font-semibold text-foreground">{r.cur}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))}
+  </div>
+</div>
