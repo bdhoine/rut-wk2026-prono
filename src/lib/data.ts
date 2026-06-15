@@ -11,7 +11,7 @@ import scorersRaw from '@/data/scorers.json';
 
 import type { BonusOutcomes, Group, Match, Participant, Prediction, Scorer, Settings, Team } from './types';
 import { rankParticipants, scoreMatch, type MatchScore, type RankRow } from './scoring';
-import { dayKey } from './format';
+import { dayKey, slugify } from './format';
 
 export const teams = teamsRaw as Team[];
 export const groups = groupsRaw as Group[];
@@ -387,6 +387,27 @@ export function topChosenWinners(limit = 5): { team: Team; count: number }[] {
     .slice(0, limit);
 }
 
+// Free-text topschutter picks use full names ("Kylian Mbappé") while scorers.json
+// stores abbreviated names ("K. Mbappé") and sometimes one row per goal with
+// annotations ("K. Havertz 45+5(p)"). Match best-effort on normalized surname +
+// first initial, summing goals across all matching rows.
+const cleanName = (s: string) =>
+  s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/\([^)]*\)/g, ' ').replace(/[0-9+]/g, ' ').replace(/[^a-z.\s]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+const nameTokens = (s: string) => cleanName(s).split(' ').filter(Boolean);
+const surnameOf = (s: string) => { const t = nameTokens(s); return t.length ? t[t.length - 1].replace(/\.$/, '') : ''; };
+const firstInitialOf = (s: string) => { const t = nameTokens(s); return t.length && t[0] ? t[0][0] : ''; };
+
+/** Resolve a free-text top-scorer pick to its team and total tournament goals. */
+export function scorerInfo(player: string): { team?: Team; goals: number } {
+  const sn = surnameOf(player);
+  const fi = firstInitialOf(player);
+  const rows = scorers.filter((s) => s.player === player || (sn && surnameOf(s.player) === sn && firstInitialOf(s.player) === fi));
+  if (!rows.length) return { goals: 0 };
+  return { team: getTeam(rows[0].teamId), goals: rows.reduce((sum, s) => sum + s.goals, 0) };
+}
+
 /** Most-picked top scorer across all participants. */
 export function topChosenTopScorers(limit = 5): { player: string; team?: Team; count: number }[] {
   const counts = new Map<string, number>();
@@ -394,14 +415,78 @@ export function topChosenTopScorers(limit = 5): { player: string; team?: Team; c
     const s = p.bonus.topScorer;
     if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
   }
-  const teamOf = (player: string) => {
-    const sc = scorers.find((s) => s.player === player);
-    return sc ? getTeam(sc.teamId) : undefined;
-  };
   return [...counts.entries()]
-    .map(([player, count]) => ({ player, team: teamOf(player), count }))
+    .map(([player, count]) => ({ player, team: scorerInfo(player).team, count }))
     .sort((a, b) => b.count - a.count || a.player.localeCompare(b.player, 'nl'))
     .slice(0, limit);
+}
+
+// ---- Bonus-pick "who picked this" views ---------------------------------
+
+/** A participant who made a particular bonus pick, joined to their ranking. */
+export interface PickerRow {
+  participantId: string;
+  name: string;
+  position: number;
+  total: number;
+  winnerIso: string | null; // the participant's own eindwinnaar pick (for the flag column)
+  winnerName: string | null;
+}
+
+/** Participants matching a bonus predicate, joined to their current ranking and
+ *  sorted by klassement position (then name). */
+function pickers(matchesPick: (p: Participant) => boolean): PickerRow[] {
+  const rank = new Map(ranking().map((r) => [r.participantId, r]));
+  return participants
+    .filter(matchesPick)
+    .map((p) => {
+      const r = rank.get(p.id);
+      const winner = getTeam(p.bonus.winnerTeamId);
+      return {
+        participantId: p.id,
+        name: p.name,
+        position: r?.position ?? 999,
+        total: r?.total ?? 0,
+        winnerIso: winner?.iso ?? null,
+        winnerName: winner?.name ?? null,
+      };
+    })
+    .sort((a, b) => a.position - b.position || a.name.localeCompare(b.name, 'nl'));
+}
+
+/** Participants who picked `teamId` as eindwinnaar. */
+export const winnerPickers = (teamId: string) => pickers((p) => p.bonus.winnerTeamId === teamId);
+/** Participants who picked `teamId` for 'meeste doelpunten'. */
+export const mostScoredPickers = (teamId: string) => pickers((p) => p.bonus.mostScoredTeamId === teamId);
+/** Participants who picked `teamId` for 'meeste tegendoelpunten'. */
+export const mostConcededPickers = (teamId: string) => pickers((p) => p.bonus.mostConcededTeamId === teamId);
+/** Participants who picked `player` as topschutter. */
+export const topScorerPickers = (player: string) => pickers((p) => p.bonus.topScorer === player);
+
+/** Every top scorer picked by at least one participant, with team, tournament
+ *  goals and a URL slug. Sorted by how often they were picked. */
+export function pickedTopScorers(): { player: string; slug: string; team?: Team; goals: number; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const p of participants) {
+    const s = p.bonus.topScorer;
+    if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([player, count]) => {
+      const info = scorerInfo(player);
+      return { player, slug: slugify(player), team: info.team, goals: info.goals, count };
+    })
+    .sort((a, b) => b.count - a.count || a.player.localeCompare(b.player, 'nl'));
+}
+
+/** Resolve a picked-top-scorer slug back to its entry (for the profile route). */
+export function pickedTopScorerBySlug(slug: string) {
+  return pickedTopScorers().find((s) => s.slug === slug);
+}
+
+/** Slugs of the top scorers picked by at least one participant (for linking). */
+export function pickedTopScorerSlugs(): Map<string, string> {
+  return new Map(pickedTopScorers().map((s) => [s.player, s.slug]));
 }
 
 /** Most-predicted scorelines across all participants' predictions. */

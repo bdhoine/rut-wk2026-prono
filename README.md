@@ -26,8 +26,9 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/programma` | Upcoming matches, grouped per calendar day |
 | `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with sticky day subheadings and prono submission deadlines |
 | `/poules` | Group standings (two-column grid on desktop) + best third-placed ranking; qualification highlight only once a group has results |
-| `/land/[id]` | Country detail: full schedule + group standings |
-| `/statistieken` | Top scorers, most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, popular scorelines, most-picked winner/top scorer (top 5 with a "Toon alle" expander) |
+| `/land/[id]` | Country detail: full schedule + group standings + three "who picked this country" tables (eindwinnaar, meeste doelpunten, meeste tegendoelpunten), each ranked by klassement position and showing first 10 with a "Toon alle" expander |
+| `/topschutter/[slug]` | Top-scorer profile (only generated for scorers picked by ≥1 participant): country flag, tournament goal total, and the participants who picked them (with eindwinnaar flag + position). Picks are matched to `scorers.json` best-effort on surname + first initial |
+| `/statistieken` | Top scorers, most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, popular scorelines, most-picked winner/top scorer (top 5 with a "Toon alle" expander). Picked top-scorer names link to their `/topschutter/[slug]` profile |
 | `/reglement` | Competition rules, deadlines and prizes |
 | `/changelog` | Per-update changelog (blocks newest-first), driven by `src/data/changelog.json` — see `CLAUDE.md` for the per-session upkeep rule |
 | any other URL | Branded 404 page ("Buitenspel!") |

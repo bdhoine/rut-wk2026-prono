@@ -1,0 +1,82 @@
+---
+// A table of participants who made a particular bonus pick, sorted by their
+// klassement position, with their total points. The whole row links to the
+// participant profile (like the ranking). Shows the first `initial` rows with a
+// "Toon alle" expander for the rest. Optionally shows each participant's own
+// eindwinnaar flag.
+import Flag from './Flag.astro';
+import type { PickerRow } from '@/lib/data';
+
+interface Props {
+  rows: PickerRow[];
+  showFlag?: boolean;
+  initial?: number;
+  empty?: string;
+}
+const { rows, showFlag = false, initial = 10, empty = 'Niemand.' } = Astro.props;
+const total = rows.length;
+---
+{total === 0 ? (
+  <p class="rounded-xl border border-dashed px-3 py-3 text-sm text-muted-foreground">{empty}</p>
+) : (
+  <div data-pickers>
+    <div class="overflow-hidden rounded-xl border bg-card">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b text-muted-foreground">
+            <th class="w-10 px-2 py-2 text-center font-medium">#</th>
+            <th class="px-2 py-2 text-left font-medium">Deelnemer</th>
+            <th class="w-14 px-2 py-2 text-center font-medium" title="Totaal punten">Ptn</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr class:list={['cursor-pointer border-b transition-colors last:border-0 hover:bg-muted/50', i >= initial && 'more-row hidden']} data-href={`/deelnemer/${r.participantId}`}>
+              <td class="w-10 px-2 py-2.5 text-center tabular-nums text-muted-foreground">{r.position}</td>
+              <td class="px-2 py-2.5">
+                <div class="flex min-w-0 items-center gap-2">
+                  {showFlag && <Flag iso={r.winnerIso} name={r.winnerName ?? undefined} class="shrink-0 text-base" />}
+                  <a href={`/deelnemer/${r.participantId}`} class="truncate font-medium hover:text-foreground">{r.name}</a>
+                </div>
+              </td>
+              <td class="px-2 py-2.5 text-center font-bold tabular-nums">{r.total}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {total > initial && (
+      <div class="mt-3 flex justify-center">
+        <button type="button" data-show-more data-label={`Toon alle ${total}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <span data-more-label>Toon alle {total}</span>
+          <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    )}
+  </div>
+)}
+
+<script>
+  // Whole-row navigation to the participant profile (anchor clicks pass through
+  // so right-click / open-in-new-tab keep working).
+  document.querySelectorAll<HTMLElement>('[data-pickers] tr[data-href]').forEach((tr) => {
+    tr.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) return;
+      window.location.href = tr.dataset.href!;
+    });
+  });
+  // "Toon alle" / "Toon minder", scoped to each pickers block.
+  document.querySelectorAll('[data-pickers] [data-show-more]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const wrap = btn.closest('[data-pickers]');
+      const rows = wrap?.querySelectorAll('.more-row');
+      if (!rows?.length) return;
+      const show = rows[0].classList.contains('hidden');
+      rows.forEach((r) => r.classList.toggle('hidden', !show));
+      btn.setAttribute('aria-expanded', String(show));
+      const label = btn.querySelector('[data-more-label]');
+      if (label) label.textContent = show ? 'Toon minder' : (btn.getAttribute('data-label') || 'Toon meer');
+      btn.querySelector('[data-chevron]')?.classList.toggle('rotate-180', show);
+    });
+  });
+</script>

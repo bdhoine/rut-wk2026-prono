@@ -6,9 +6,11 @@ import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines } from '@/lib/data';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs } from '@/lib/data';
 
 const scorers = topScorers();
+// Slug per picked top scorer -> link those names to their profile page.
+const pickedSlugs = pickedTopScorerSlugs();
 const scored = mostGoalsScored();
 const conceded = mostGoalsConceded();
 // Hide all-zero rows of teams that haven't played yet behind "Toon alle"
@@ -44,7 +46,11 @@ const popularMax = popular[0]?.count ?? 1;
           {scorers.map((s, i) => (
             <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
               <td class="px-2 py-2.5 tabular-nums text-muted-foreground">{i + 1}</td>
-              <td class="px-2 py-2.5 font-medium">{s.player}</td>
+              <td class="px-2 py-2.5 font-medium">
+                {pickedSlugs.has(s.player)
+                  ? <a href={`/topschutter/${pickedSlugs.get(s.player)}`} class="hover:underline">{s.player}</a>
+                  : s.player}
+              </td>
               <td class="px-2 py-2.5">
                 {s.team ? (
                   <a href={`/land/${s.team.id}`} class="flex items-center gap-2 hover:underline">
@@ -240,7 +246,9 @@ const popularMax = popular[0]?.count ?? 1;
                 <td class="px-2 py-2.5">
                   <div class="flex items-center gap-2 font-medium">
                     {s.team && <Flag iso={s.team.iso} name={s.team.name} class="shrink-0 text-base" />}
-                    <span class="truncate">{s.player}</span>
+                    {pickedSlugs.has(s.player)
+                      ? <a href={`/topschutter/${pickedSlugs.get(s.player)}`} class="truncate hover:underline">{s.player}</a>
+                      : <span class="truncate">{s.player}</span>}
                   </div>
                 </td>
                 <td class="px-2 py-2.5 text-center font-bold tabular-nums">{s.count}</td>

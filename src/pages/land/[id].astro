@@ -4,7 +4,9 @@ import Flag from '@/components/Flag.astro';
 import MatchCard from '@/components/MatchCard.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { teams, getTeam, matchesForTeam, standingsForGroup } from '@/lib/data';
+import InfoToggle from '@/components/InfoToggle.astro';
+import PickersTable from '@/components/PickersTable.astro';
+import { teams, getTeam, matchesForTeam, standingsForGroup, winnerPickers, mostScoredPickers, mostConcededPickers } from '@/lib/data';
 
 export function getStaticPaths() {
   return teams.map((t) => ({ params: { id: t.id } }));
@@ -16,6 +18,11 @@ if (!team) return Astro.redirect('/404');
 
 const fixtures = matchesForTeam(team.id);
 const standings = standingsForGroup(team.group);
+
+// Who picked this country for which bonus, ranked by klassement position.
+const pickedAsWinner = winnerPickers(team.id);
+const pickedMostScored = mostScoredPickers(team.id);
+const pickedMostConceded = mostConcededPickers(team.id);
 ---
 <Layout title={`${team.name} — Rut Prono WK 2026`}>
   <a href="/poules" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Poules</a>
@@ -39,8 +46,29 @@ const standings = standingsForGroup(team.group);
     )}
   </section>
 
-  <section>
+  <section class="mb-8">
     <SectionHeading title={`Stand groep ${team.group}`} />
     <StandingsTable rows={standings} highlightTop={2} />
+  </section>
+
+  <section class="mb-8">
+    <SectionHeading title="Getipt als eindwinnaar">
+      <InfoToggle text="Deelnemers die dit land als WK-winnaar tipten, op volgorde van hun plaats in het klassement." />
+    </SectionHeading>
+    <PickersTable rows={pickedAsWinner} empty={`Niemand tipte ${team.name} als eindwinnaar.`} />
+  </section>
+
+  <section class="mb-8">
+    <SectionHeading title="Getipt voor meeste doelpunten">
+      <InfoToggle text="Deelnemers die dit land tipten als ploeg met de meeste doelpunten, op volgorde van hun plaats in het klassement." />
+    </SectionHeading>
+    <PickersTable rows={pickedMostScored} empty={`Niemand tipte ${team.name} voor de meeste doelpunten.`} />
+  </section>
+
+  <section>
+    <SectionHeading title="Getipt voor meeste tegendoelpunten">
+      <InfoToggle text="Deelnemers die dit land tipten als ploeg met de meeste tegendoelpunten, op volgorde van hun plaats in het klassement." />
+    </SectionHeading>
+    <PickersTable rows={pickedMostConceded} empty={`Niemand tipte ${team.name} voor de meeste tegendoelpunten.`} />
   </section>
 </Layout>

@@ -26,6 +26,10 @@ export const dayKey = (iso: string) => dayKeyFmt.format(new Date(iso));
 /** Human-readable Dutch label for a 'YYYY-MM-DD' day key (noon avoids TZ rollover). */
 export const formatDayKey = (key: string) => dayFmt.format(new Date(`${key}T12:00:00+02:00`));
 
+/** URL-safe slug from free text (diacritics stripped), e.g. for player-name routes. */
+export const slugify = (s: string) =>
+  s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
 /** Human-readable Dutch explanation of how a match score was determined (rules.md §2/§3). */
 export function explainScore(s: MatchScore): string {
   let base: string;

@@ -1,0 +1,43 @@
+---
+// Profile page for a top scorer that at least one participant picked as their
+// topschutter bonus. Shows the player's country flag, name, team and tournament
+// goals, followed by the participants who picked them (with eindwinnaar flag and
+// klassement position). Only picked scorers get a page (getStaticPaths).
+import Layout from '@/layouts/Layout.astro';
+import Flag from '@/components/Flag.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
+import PickersTable from '@/components/PickersTable.astro';
+import { pickedTopScorers, pickedTopScorerBySlug, topScorerPickers } from '@/lib/data';
+
+export function getStaticPaths() {
+  return pickedTopScorers().map((s) => ({ params: { slug: s.slug }, props: { player: s.player } }));
+}
+
+const { player } = Astro.props as { player: string };
+const entry = pickedTopScorerBySlug(Astro.params.slug!);
+if (!entry) return Astro.redirect('/404');
+
+const pickers = topScorerPickers(player);
+const goalLabel = entry.goals === 1 ? '1 doelpunt' : `${entry.goals} doelpunten`;
+---
+<Layout title={`${player} — Rut Prono WK 2026`}>
+  <a href="/statistieken" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Statistieken</a>
+
+  <header class="mb-6 flex items-center gap-3 rounded-xl border border-t-4 border-t-gold bg-card p-4 shadow-sm">
+    <Flag iso={entry.team?.iso} name={entry.team?.name} class="text-4xl" />
+    <div class="min-w-0">
+      <h1 class="truncate text-2xl font-bold tracking-tight">{player}</h1>
+      <div class="text-sm text-muted-foreground">
+        {entry.team?.name ?? 'Onbekend land'} · {goalLabel} op het WK
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <SectionHeading title="Getipt door">
+      <InfoToggle text="Deelnemers die deze speler als topschutter tipten, op volgorde van hun plaats in het klassement. De vlag toont hun getipte eindwinnaar." />
+    </SectionHeading>
+    <PickersTable rows={pickers} showFlag empty={`Niemand tipte ${player} als topschutter.`} />
+  </section>
+</Layout>
