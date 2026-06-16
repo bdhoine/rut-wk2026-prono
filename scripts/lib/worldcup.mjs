@@ -125,10 +125,12 @@ export function parseScorers(raw) {
   if (!inner) return [];
   return inner
     .split(',')
+    .map((tok) => tok.replace(/[“”"']/g, '').trim())
+    .filter((tok) => tok && !/\(\s*og\s*\)/i.test(tok)) // drop own goals (not the player's tally)
     .map((tok) =>
       tok
-        .replace(/[“”"']/g, '')
-        .replace(/\s*\d+(\+\d+)?\s*['’]?\s*$/, '') // drop trailing minute (9', 90+2')
+        .replace(/\s*\d.*$/, '') // drop the minute + everything after (9, 90+2, "(p)")
+        .replace(/\s*\([^)]*\)\s*$/, '') // drop a trailing annotation with no minute
         .trim(),
     )
     .filter(Boolean);

@@ -20,7 +20,27 @@ export const participants = participantsRaw as Participant[];
 export const predictions = predictionsRaw as Prediction[];
 export const outcomes = outcomesRaw as BonusOutcomes;
 export const settings = settingsRaw as Settings;
-export const scorers = scorersRaw as Scorer[];
+
+// The WK API only exposes scorers as free-text per-match strings ("Breel Embolo
+// 17' (p)", "D. Bobadilla 7(OG)"), so scorers.json can carry trailing minute /
+// penalty annotations, own goals, and the same player split across rows. Clean
+// the name (everything from the first digit, plus trailing parentheticals),
+// drop own goals (they don't count for a player), and merge by clean name.
+const cleanScorerName = (s: string) => s.replace(/\s*\d.*$/, '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+const isOwnGoal = (s: string) => /\(\s*og\s*\)/i.test(s);
+function normalizeScorers(raw: Scorer[]): Scorer[] {
+  const byName = new Map<string, Scorer>();
+  for (const s of raw) {
+    if (isOwnGoal(s.player)) continue;
+    const player = cleanScorerName(s.player) || s.player;
+    const cur = byName.get(player) ?? { player, teamId: s.teamId, goals: 0 };
+    cur.goals += s.goals;
+    if (!cur.teamId) cur.teamId = s.teamId;
+    byName.set(player, cur);
+  }
+  return [...byName.values()].sort((a, b) => b.goals - a.goals || a.player.localeCompare(b.player, 'nl'));
+}
+export const scorers = normalizeScorers(scorersRaw as Scorer[]);
 
 const teamById = new Map(teams.map((t) => [t.id, t]));
 const matchById = new Map(matches.map((m) => [m.id, m]));
@@ -502,6 +522,27 @@ export function pickedTopScorerBySlug(slug: string) {
 /** Slugs of the top scorers picked by at least one participant (for linking). */
 export function pickedTopScorerSlugs(): Map<string, string> {
   return new Map(pickedTopScorers().map((s) => [s.player, s.slug]));
+}
+
+/** Participants ranked by the number of correct 1X2 (winner/draw) predictions on
+ *  finished matches. Late/missing predictions don't count. */
+export function topCorrectOutcomes(): { participantId: string; name: string; correct: number; played: number; winnerIso: string | null; winnerName: string | null }[] {
+  const finishedMatches = matches.filter((m) => m.status === 'finished' && m.result);
+  return participants
+    .map((p) => {
+      const byMatch = new Map(predictions.filter((x) => x.participantId === p.id).map((x) => [x.matchId, x]));
+      let correct = 0;
+      let played = 0;
+      for (const m of finishedMatches) {
+        const pred = byMatch.get(m.id);
+        if (!pred || pred.late) continue;
+        played++;
+        if (scoreMatch(pred, m, settings)?.outcomeCorrect) correct++;
+      }
+      const winner = getTeam(p.bonus.winnerTeamId);
+      return { participantId: p.id, name: p.name, correct, played, winnerIso: winner?.iso ?? null, winnerName: winner?.name ?? null };
+    })
+    .sort((a, b) => b.correct - a.correct || b.played - a.played || a.name.localeCompare(b.name, 'nl'));
 }
 
 /** Most-predicted scorelines across all participants' predictions. */

@@ -6,7 +6,7 @@ import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs } from '@/lib/data';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes } from '@/lib/data';
 
 const scorers = topScorers();
 // Slug per picked top scorer -> link those names to their profile page.
@@ -19,6 +19,9 @@ const anyPlayed = scored.some((t) => t.played > 0);
 const goalRowHidden = (t: { played: number }, i: number) => i >= 10 || (anyPlayed && t.played === 0);
 const topPoints = topMatchesByPoints(10);
 const topWrong = topMatchesByWrong(10);
+// Participants by number of correct 1X2 predictions (top 5 + "Toon alle").
+const correctOutcomes = topCorrectOutcomes();
+const anyOutcomePlayed = correctOutcomes.some((r) => r.played > 0);
 // Show the top 5 by default; the rest is revealed with a "Toon alle" button.
 const chosenWinners = topChosenWinners(Infinity);
 const chosenScorers = topChosenTopScorers(Infinity);
@@ -168,6 +171,49 @@ const popularMax = popular[0]?.count ?? 1;
       ))}
     </div>
   </section>
+
+  {anyOutcomePlayed && (
+    <section class="mt-8">
+      <SectionHeading title="Meeste juiste 1X2">
+        <InfoToggle text="Deelnemers met de meeste juiste 1X2-voorspellingen (juiste winnaar of gelijkspel) over alle gespeelde wedstrijden." />
+      </SectionHeading>
+      <div class="overflow-hidden rounded-xl border bg-card">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b text-muted-foreground">
+              <th class="w-6 px-2 py-2 text-center font-medium">#</th>
+              <th class="px-2 py-2 text-left font-medium">Deelnemer</th>
+              <th class="w-20 px-2 py-2 text-center font-medium" title="Juiste 1X2 / gespeeld">Juist</th>
+            </tr>
+          </thead>
+          <tbody>
+            {correctOutcomes.map((r, i) => (
+              <tr class:list={['border-b last:border-0', i >= 5 && 'more-row hidden']}>
+                <td class="w-6 px-2 py-2.5 text-center tabular-nums text-muted-foreground">{i + 1}</td>
+                <td class="px-2 py-2.5">
+                  <a href={`/deelnemer/${r.participantId}`} class="flex items-center gap-2 font-medium hover:underline">
+                    {r.winnerIso && <Flag iso={r.winnerIso} name={r.winnerName ?? undefined} class="shrink-0 text-base" />}
+                    <span class="truncate">{r.name}</span>
+                  </a>
+                </td>
+                <td class="px-2 py-2.5 text-center tabular-nums">
+                  <span class="font-bold">{r.correct}</span><span class="text-muted-foreground"> / {r.played}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {correctOutcomes.length > 5 && (
+        <div class="mt-3 flex justify-center">
+          <button type="button" data-show-more data-label={`Toon alle ${correctOutcomes.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <span data-more-label>Toon alle {correctOutcomes.length}</span>
+            <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+        </div>
+      )}
+    </section>
+  )}
 
   {popular.length > 0 && (
     <section class="mt-8">
