@@ -28,14 +28,19 @@ export const settings = settingsRaw as Settings;
 // drop own goals (they don't count for a player), and merge by clean name.
 const cleanScorerName = (s: string) => s.replace(/\s*\d.*$/, '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 const isOwnGoal = (s: string) => /\(\s*og\s*\)/i.test(s);
+// The API lists some own goals under the team that benefited (and without an
+// "(OG)" marker we can't detect it), so the player ends up on the wrong country.
+// Correct the nationality by name here so the flag is right.
+const SCORER_TEAM_OVERRIDE: Record<string, string> = { 'Mohamed Hany': 'eg' };
 function normalizeScorers(raw: Scorer[]): Scorer[] {
   const byName = new Map<string, Scorer>();
   for (const s of raw) {
     if (isOwnGoal(s.player)) continue;
     const player = cleanScorerName(s.player) || s.player;
-    const cur = byName.get(player) ?? { player, teamId: s.teamId, goals: 0 };
+    const teamId = SCORER_TEAM_OVERRIDE[player] ?? s.teamId;
+    const cur = byName.get(player) ?? { player, teamId, goals: 0 };
     cur.goals += s.goals;
-    if (!cur.teamId) cur.teamId = s.teamId;
+    if (teamId) cur.teamId = teamId;
     byName.set(player, cur);
   }
   return [...byName.values()].sort((a, b) => b.goals - a.goals || a.player.localeCompare(b.player, 'nl'));
@@ -342,6 +347,11 @@ export function topScorers(): (Scorer & { team?: Team })[] {
   return [...scorers]
     .sort((a, b) => b.goals - a.goals || a.player.localeCompare(b.player, 'nl'))
     .map((s) => ({ ...s, team: getTeam(s.teamId) }));
+}
+
+/** Goal scorers for one team (determined from match data), most goals first. */
+export function goalscorersForTeam(teamId: string): Scorer[] {
+  return scorers.filter((s) => s.teamId === teamId);
 }
 
 export interface TeamGoalStat {

@@ -10,6 +10,11 @@
     "goals": 2
   },
   {
+    "player": "K. Havertz",
+    "teamId": "de",
+    "goals": 2
+  },
+  {
     "player": "Y.Ayari",
     "teamId": "se",
     "goals": 2
@@ -35,7 +40,7 @@
     "goals": 1
   },
   {
-    "player": "Breel Embolo 17 (p)",
+    "player": "Breel Embolo",
     "teamId": "ch",
     "goals": 1
   },
@@ -52,11 +57,6 @@
   {
     "player": "C. Summerville",
     "teamId": "nl",
-    "goals": 1
-  },
-  {
-    "player": "D. Bobadilla 7(OG)",
-    "teamId": "us",
     "goals": 1
   },
   {
@@ -112,16 +112,6 @@
   {
     "player": "Jovo Lukić",
     "teamId": "ba",
-    "goals": 1
-  },
-  {
-    "player": "K. Havertz",
-    "teamId": "de",
-    "goals": 1
-  },
-  {
-    "player": "K. Havertz 45+5(p)",
-    "teamId": "de",
     "goals": 1
   },
   {
@@ -197,6 +187,16 @@
   {
     "player": "Ramin Rzaiian",
     "teamId": "ir",
+    "goals": 1
+  },
+  {
+    "player": "V. Gyökeres",
+    "teamId": "se",
+    "goals": 1
+  },
+  {
+    "player": "V. Júnior",
+    "teamId": "br",
     "goals": 1
   }
 ]

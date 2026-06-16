@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-06-16",
+    "title": "Doelpuntenmakers per land en correcte topschutters",
+    "items": [
+      "De topschutterslijst is bijgewerkt met de wedstrijden: o.a. de goal van Vinícius Júnior (Brazilië) staat er nu bij.",
+      "Een owngoal krijgt nu de vlag van het juiste land (Mohamed Hany bij Egypte).",
+      "Op een landpagina staat nu een tabel 'Doelpuntenmakers' met de vlag, naam en het aantal doelpunten."
+    ]
+  },
+  {
+    "date": "2026-06-16",
     "title": "Correcte topschutters en een nieuwe 1X2-statistiek",
     "items": [
       "Topschutters kloppen nu: dubbele vermeldingen van dezelfde speler worden samengeteld, minuut- en strafschopnotities verdwijnen uit de naam, en owngoals tellen niet langer mee als doelpunt van een speler.",

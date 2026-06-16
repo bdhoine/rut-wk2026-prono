@@ -6,7 +6,7 @@ import StandingsTable from '@/components/StandingsTable.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PickersTable from '@/components/PickersTable.astro';
-import { teams, getTeam, matchesForTeam, standingsForGroup, winnerPickers, mostScoredPickers, mostConcededPickers } from '@/lib/data';
+import { teams, getTeam, matchesForTeam, standingsForGroup, winnerPickers, mostScoredPickers, mostConcededPickers, goalscorersForTeam } from '@/lib/data';
 
 export function getStaticPaths() {
   return teams.map((t) => ({ params: { id: t.id } }));
@@ -18,6 +18,8 @@ if (!team) return Astro.redirect('/404');
 
 const fixtures = matchesForTeam(team.id);
 const standings = standingsForGroup(team.group);
+
+const teamScorers = goalscorersForTeam(team.id);
 
 // Who picked this country for which bonus, ranked by klassement position.
 const pickedAsWinner = winnerPickers(team.id);
@@ -49,6 +51,37 @@ const pickedMostConceded = mostConcededPickers(team.id);
   <section class="mb-8">
     <SectionHeading title={`Stand groep ${team.group}`} />
     <StandingsTable rows={standings} highlightTop={2} />
+  </section>
+
+  <section class="mb-8">
+    <SectionHeading title="Doelpuntenmakers" />
+    {teamScorers.length === 0 ? (
+      <p class="rounded-xl border border-dashed px-3 py-3 text-sm text-muted-foreground">Nog geen doelpunten.</p>
+    ) : (
+      <div class="overflow-hidden rounded-xl border bg-card">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b text-muted-foreground">
+              <th class="px-2 py-2 text-left font-medium">Speler</th>
+              <th class="w-16 px-2 py-2 text-center font-medium" title="Doelpunten">Goals</th>
+            </tr>
+          </thead>
+          <tbody>
+            {teamScorers.map((s) => (
+              <tr class="border-b last:border-0">
+                <td class="px-2 py-2.5">
+                  <div class="flex min-w-0 items-center gap-2 font-medium">
+                    <Flag iso={team.iso} name={team.name} class="shrink-0 text-base" />
+                    <span class="truncate">{s.player}</span>
+                  </div>
+                </td>
+                <td class="px-2 py-2.5 text-center font-bold tabular-nums">{s.goals}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
   </section>
 
   <section class="mb-8">
