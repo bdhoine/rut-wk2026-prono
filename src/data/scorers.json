@@ -1,5 +1,10 @@
 [
   {
+    "player": "Ali Jast",
+    "teamId": "nz",
+    "goals": 2
+  },
+  {
     "player": "F. Balogun",
     "teamId": "us",
     "goals": 2
@@ -57,6 +62,11 @@
   {
     "player": "D. Undav",
     "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Emam Ashour",
+    "teamId": "eg",
     "goals": 1
   },
   {
@@ -150,6 +160,16 @@
     "goals": 1
   },
   {
+    "player": "Mohamed Hany",
+    "teamId": "be",
+    "goals": 1
+  },
+  {
+    "player": "Mohamed Mhbi",
+    "teamId": "ir",
+    "goals": 1
+  },
+  {
     "player": "N. Brown",
     "teamId": "de",
     "goals": 1
@@ -175,28 +195,8 @@
     "goals": 1
   },
   {
-    "player": "V. Gyökeres",
-    "teamId": "se",
-    "goals": 1
-  },
-  {
-    "player": "V. Júnior",
-    "teamId": "br",
-    "goals": 1
-  },
-  {
-    "player": "Virgil van Dijk",
-    "teamId": "nl",
-    "goals": 1
-  },
-  {
-    "player": "امام آشور",
-    "teamId": "eg",
-    "goals": 1
-  },
-  {
-    "player": "محمد هانی",
-    "teamId": "be",
+    "player": "Ramin Rzaiian",
+    "teamId": "ir",
     "goals": 1
   }
 ]
