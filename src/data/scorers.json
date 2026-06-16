@@ -15,7 +15,7 @@
     "goals": 2
   },
   {
-    "player": "Kilian Ambaph",
+    "player": "K. Mbappé",
     "teamId": "fr",
     "goals": 2
   },
@@ -40,13 +40,13 @@
     "goals": 1
   },
   {
-    "player": "B. Khoukhi",
-    "teamId": "qa",
+    "player": "B. Barcola",
+    "teamId": "fr",
     "goals": 1
   },
   {
-    "player": "Brdli Barkvla",
-    "teamId": "fr",
+    "player": "B. Khoukhi",
+    "teamId": "qa",
     "goals": 1
   },
   {
@@ -95,6 +95,11 @@
     "goals": 1
   },
   {
+    "player": "I. Mbaye",
+    "teamId": "sn",
+    "goals": 1
+  },
+  {
     "player": "I. Saibari",
     "teamId": "ma",
     "goals": 1
@@ -102,11 +107,6 @@
   {
     "player": "I.B. Hwang",
     "teamId": "kr",
-    "goals": 1
-  },
-  {
-    "player": "Ibrahim Am Baih",
-    "teamId": "sn",
     "goals": 1
   },
   {
