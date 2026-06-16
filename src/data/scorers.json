@@ -1,6 +1,6 @@
 [
   {
-    "player": "Ali Jast",
+    "player": "Elijah Just",
     "teamId": "nz",
     "goals": 2
   },
@@ -12,6 +12,11 @@
   {
     "player": "K. Havertz",
     "teamId": "de",
+    "goals": 2
+  },
+  {
+    "player": "Kilian Ambaph",
+    "teamId": "fr",
     "goals": 2
   },
   {
@@ -30,13 +35,18 @@
     "goals": 1
   },
   {
-    "player": "Abdallh Alamri",
+    "player": "Abdulelah Al-Amri",
     "teamId": "sa",
     "goals": 1
   },
   {
     "player": "B. Khoukhi",
     "teamId": "qa",
+    "goals": 1
+  },
+  {
+    "player": "Brdli Barkvla",
+    "teamId": "fr",
     "goals": 1
   },
   {
@@ -95,6 +105,11 @@
     "goals": 1
   },
   {
+    "player": "Ibrahim Am Baih",
+    "teamId": "sn",
+    "goals": 1
+  },
+  {
     "player": "J. McGinn",
     "teamId": "gbsct",
     "goals": 1
@@ -140,13 +155,13 @@
     "goals": 1
   },
   {
-    "player": "Maksimilianv Araivkhv",
-    "teamId": "uy",
+    "player": "Maurício",
+    "teamId": "py",
     "goals": 1
   },
   {
-    "player": "Maurício",
-    "teamId": "py",
+    "player": "Maximiliano Araújo",
+    "teamId": "uy",
     "goals": 1
   },
   {
@@ -155,7 +170,7 @@
     "goals": 1
   },
   {
-    "player": "Mohamed Mhbi",
+    "player": "Mohammad Mohebi",
     "teamId": "ir",
     "goals": 1
   },
@@ -182,21 +197,6 @@
   {
     "player": "R. Jiménez",
     "teamId": "mx",
-    "goals": 1
-  },
-  {
-    "player": "Ramin Rzaiian",
-    "teamId": "ir",
-    "goals": 1
-  },
-  {
-    "player": "V. Gyökeres",
-    "teamId": "se",
-    "goals": 1
-  },
-  {
-    "player": "V. Júnior",
-    "teamId": "br",
     "goals": 1
   }
 ]
