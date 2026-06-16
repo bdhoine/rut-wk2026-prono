@@ -116,9 +116,15 @@ Client-side analytics run through **PostHog**, injected once in the shared layou
 [`src/components/posthog.astro`](./src/components/posthog.astro). It reads two
 public env vars — `PUBLIC_POSTHOG_PROJECT_TOKEN` and `PUBLIC_POSTHOG_HOST`
 (see [`.env.example`](./.env.example)); when unset, `init` is a harmless no-op.
-Besides automatic pageviews it captures a handful of business events (profile/match/
+Besides pageviews it captures a handful of business events (profile/match/
 team/top-scorer views, favourites, name search, full-ranking click-through, statistics
 visits). On Netlify, set the two vars in the site's environment.
+
+Each pageview carries page-level metadata for dashboard breakdowns: a `page_name`
+(the human page title, registered as a super property so every event on the page
+inherits it), plus page-specific props — `username` on participant pages and
+`duel` (`"Land - Land"`) on match pages. Pages feed these to PostHog via the
+`analytics` prop on `Layout` (which forwards them to `posthog.astro`).
 
 ## Data
 

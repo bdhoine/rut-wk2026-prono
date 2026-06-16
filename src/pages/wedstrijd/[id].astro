@@ -81,7 +81,7 @@ const liveCalc = hasTeams && !finished
     }
   : null;
 ---
-<Layout title={`${home.label} – ${away.label}`}>
+<Layout title={`${home.label} – ${away.label}`} analytics={{ duel: `${home.label} - ${away.label}` }}>
   <a href="/kalender" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Kalender</a>
 
   <LiveScores />

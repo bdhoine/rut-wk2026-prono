@@ -43,4 +43,9 @@ before committing.
   `src/components/posthog.astro` (reads `PUBLIC_POSTHOG_PROJECT_TOKEN` /
   `PUBLIC_POSTHOG_HOST`; a no-op when unset). A few pages and `RankingTable.tsx`
   fire named `posthog.capture(...)` events — keep those calls null-safe (`?.`).
+  `posthog.astro` disables the auto pageview, registers `page_name` (the title)
+  as a super property, and fires `$pageview` with per-page props. Pages pass
+  those props via `Layout`'s `analytics` prop (e.g. `{ username }` on
+  `deelnemer/[id]`, `{ duel }` on `wedstrijd/[id]`) — never register page-specific
+  values as super properties or they leak onto later pages.
 - Run `npm run check` before committing; keep `README.md` and this file current.

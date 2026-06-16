@@ -5,9 +5,19 @@ import PostHog from '@/components/posthog.astro';
 
 interface Props {
   title?: string;
+  // Extra page-specific properties for analytics (e.g. { username } on a
+  // participant page, { duel } on a match page). Attached to the PostHog
+  // $pageview event.
+  analytics?: Record<string, string | number | null>;
 }
-const { title = 'Rut Prono WK 2026' } = Astro.props;
+const { title = 'Rut Prono WK 2026', analytics = {} } = Astro.props;
 const path = Astro.url.pathname;
+
+// Human-readable page name for analytics: drop the brand suffix; the bare brand
+// (home page) becomes "Home".
+const pageName = title === 'Rut Prono WK 2026'
+  ? 'Home'
+  : title.replace(/\s*[—–-]\s*Rut Prono WK 2026$/, '');
 
 // Top-level: Home · Klassement · Wedstrijden ▾ · Statistieken · ⋮ (Meer). The
 // match-related pages live under the Wedstrijden dropdown; Reglement and
@@ -45,7 +55,7 @@ const topLinkCls = (active: boolean) => [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
-    <PostHog />
+    <PostHog pageName={pageName} pageProps={analytics} />
     <script is:inline>
       // Apply the theme before paint. Stored mode: 'light' | 'dark' | else 'auto'
       // (follows the OS).
