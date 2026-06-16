@@ -192,11 +192,11 @@ const popularMax = popular[0]?.count ?? 1;
                 <td class="w-6 px-2 py-2.5 text-center tabular-nums text-muted-foreground">{i + 1}</td>
                 <td class="px-2 py-2.5">
                   <div class="flex min-w-0 items-center gap-2">
+                    {r.winnerIso && <Flag iso={r.winnerIso} name={r.winnerName ?? undefined} class="shrink-0 text-base" />}
+                    <a href={`/deelnemer/${r.participantId}`} class="min-w-0 truncate font-medium hover:underline">{r.name}</a>
                     {r.position != null && (
                       <span class="inline-flex h-5 min-w-[1.4rem] shrink-0 items-center justify-center rounded bg-muted px-1 text-[11px] font-semibold tabular-nums text-muted-foreground" title="Plaats in het klassement">{r.position}</span>
                     )}
-                    {r.winnerIso && <Flag iso={r.winnerIso} name={r.winnerName ?? undefined} class="shrink-0 text-base" />}
-                    <a href={`/deelnemer/${r.participantId}`} class="truncate font-medium hover:underline">{r.name}</a>
                   </div>
                 </td>
                 <td class="px-2 py-2.5 text-center tabular-nums">
