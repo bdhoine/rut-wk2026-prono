@@ -13,6 +13,7 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 - **Tailwind CSS v4** (via `@tailwindcss/postcss`) + **shadcn/ui** components
 - **[flag-icons](https://github.com/lipis/flag-icons)** for country flags
 - **Netlify** for hosting (`@astrojs/netlify` adapter)
+- **[PostHog](https://posthog.com)** for client-side product analytics (loaded via [`src/components/posthog.astro`](./src/components/posthog.astro))
 - Data is **static JSON** in the repo; the app computes all scores & rankings at build time
 
 ## Pages
@@ -103,10 +104,21 @@ temporarily unavailable.)
 
 ```bash
 npm install
+cp .env.example .env   # then fill in the PostHog keys (analytics is a no-op if left blank)
 npm run dev      # dev server at http://localhost:4321
 npm run build    # production build to dist/
 npm run preview  # preview the build
 ```
+
+### Analytics
+
+Client-side analytics run through **PostHog**, injected once in the shared layout via
+[`src/components/posthog.astro`](./src/components/posthog.astro). It reads two
+public env vars — `PUBLIC_POSTHOG_PROJECT_TOKEN` and `PUBLIC_POSTHOG_HOST`
+(see [`.env.example`](./.env.example)); when unset, `init` is a harmless no-op.
+Besides automatic pageviews it captures a handful of business events (profile/match/
+team/top-scorer views, favourites, name search, full-ranking click-through, statistics
+visits). On Netlify, set the two vars in the site's environment.
 
 ## Data
 

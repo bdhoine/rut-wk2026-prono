@@ -1,6 +1,7 @@
 ---
 import '@/styles/global.css';
 import 'flag-icons/css/flag-icons.min.css';
+import PostHog from '@/components/posthog.astro';
 
 interface Props {
   title?: string;
@@ -44,6 +45,7 @@ const topLinkCls = (active: boolean) => [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
+    <PostHog />
     <script is:inline>
       // Apply the theme before paint. Stored mode: 'light' | 'dark' | else 'auto'
       // (follows the OS).

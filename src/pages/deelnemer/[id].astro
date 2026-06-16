@@ -437,4 +437,13 @@ const dogH = DOG_ART.length * DOG_PX;
       setTimeout(fireEgg, 2500); // fallback if LiveScores never dispatches
     })();
   </script>
+
+  <script is:inline define:vars={{ participantId: participant.id, participantName: participant.name, participantPosition: rank?.position ?? null, participantTotal: rank?.total ?? 0 }}>
+    window.posthog?.capture('participant_profile_viewed', {
+      participant_id: participantId,
+      participant_name: participantName,
+      participant_position: participantPosition,
+      participant_total: participantTotal,
+    });
+  </script>
 </Layout>

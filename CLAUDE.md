@@ -39,4 +39,8 @@ before committing.
 - Stijgers & dalers is built at build time from `rankingTimeline()` /
   `dayMovements()` in `src/lib/data.ts` (one ranking snapshot per calendar day).
   Prize money lives in `src/lib/prizes.ts` (`PRIZES` / `prizeFor`).
+- Client-side analytics use **PostHog**, loaded once in `Layout.astro` via
+  `src/components/posthog.astro` (reads `PUBLIC_POSTHOG_PROJECT_TOKEN` /
+  `PUBLIC_POSTHOG_HOST`; a no-op when unset). A few pages and `RankingTable.tsx`
+  fire named `posthog.capture(...)` events — keep those calls null-safe (`?.`).
 - Run `npm run check` before committing; keep `README.md` and this file current.

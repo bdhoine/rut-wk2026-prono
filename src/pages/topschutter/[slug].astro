@@ -40,4 +40,12 @@ const goalLabel = entry.goals === 1 ? '1 doelpunt' : `${entry.goals} doelpunten`
     </SectionHeading>
     <PickersTable rows={pickers} showFlag empty={`Niemand tipte ${player} als topschutter.`} />
   </section>
+
+  <script is:inline define:vars={{ playerName: player, playerGoals: entry.goals, pickerCount: pickers.length }}>
+    window.posthog?.capture('top_scorer_profile_viewed', {
+      player_name: playerName,
+      player_goals: playerGoals,
+      picker_count: pickerCount,
+    });
+  </script>
 </Layout>

@@ -78,6 +78,7 @@ export default function RankingTable({
   const [favs, setFavs] = React.useState<string[]>([]);
   const [deltas, setDeltas] = React.useState<Record<string, number>>({});
   const [query, setQuery] = React.useState("");
+  const searchTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(() => {
     try {
@@ -115,8 +116,16 @@ export default function RankingTable({
 
   const toggle = (id: string) =>
     setFavs((prev) => {
-      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      const adding = !prev.includes(id);
+      const next = adding ? [...prev, id] : prev.filter((x) => x !== id);
       try { localStorage.setItem(FAV_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+      const row = rows.find((r) => r.participantId === id);
+      const ph = (window as unknown as { posthog?: { capture: (e: string, p?: Record<string, unknown>) => void } }).posthog;
+      ph?.capture(adding ? "favorite_added" : "favorite_removed", {
+        participant_id: id,
+        participant_name: row?.name,
+        participant_position: row?.position,
+      });
       return next;
     });
 
@@ -214,7 +223,17 @@ export default function RankingTable({
             <input
               type="search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setQuery(val);
+                if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+                if (val.trim()) {
+                  searchTimerRef.current = setTimeout(() => {
+                    const ph = (window as unknown as { posthog?: { capture: (e: string, p?: Record<string, unknown>) => void } }).posthog;
+                    ph?.capture("participant_searched", { query: val.trim() });
+                  }, 600);
+                }
+              }}
               placeholder="Zoek op naam…"
               aria-label="Zoek op naam"
               className="w-full rounded-lg border bg-card py-2 pl-8 pr-8 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
@@ -239,6 +258,10 @@ export default function RankingTable({
         {limit != null && moreHref && !searching && (
           <a
             href={moreHref}
+            onClick={() => {
+              const ph = (window as unknown as { posthog?: { capture: (e: string) => void } }).posthog;
+              ph?.capture("full_ranking_viewed");
+            }}
             className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
           >
             Volledig klassement

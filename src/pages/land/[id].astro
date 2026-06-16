@@ -104,4 +104,12 @@ const pickedMostConceded = mostConcededPickers(team.id);
     </SectionHeading>
     <PickersTable rows={pickedMostConceded} empty={`Niemand tipte ${team.name} voor de meeste tegendoelpunten.`} />
   </section>
+
+  <script is:inline define:vars={{ teamId: team.id, teamName: team.name, teamGroup: team.group }}>
+    window.posthog?.capture('team_profile_viewed', {
+      team_id: teamId,
+      team_name: teamName,
+      team_group: teamGroup,
+    });
+  </script>
 </Layout>
