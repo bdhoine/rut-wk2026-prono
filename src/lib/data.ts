@@ -430,13 +430,29 @@ const nameTokens = (s: string) => cleanName(s).split(' ').filter(Boolean);
 const surnameOf = (s: string) => { const t = nameTokens(s); return t.length ? t[t.length - 1].replace(/\.$/, '') : ''; };
 const firstInitialOf = (s: string) => { const t = nameTokens(s); return t.length && t[0] ? t[0][0] : ''; };
 
-/** Resolve a free-text top-scorer pick to its team and total tournament goals. */
+// Country per picked top scorer, looked up once and kept static. The scorers
+// data only knows a player's team once they've scored, so this gives the flag
+// for picks who haven't scored yet. Goals stay dynamic (from scorers.json).
+const PLAYER_TEAM: Record<string, string> = {
+  'Mikel Oyarzabal': 'es', 'Lamine Yamal': 'es', 'Ferran Torres': 'es',
+  'Harry Kane': 'gbeng', 'Bukayo Saka': 'gbeng',
+  'Kylian Mbappé': 'fr', 'Ousmane Dembélé': 'fr', 'Michael Olise': 'fr',
+  'Lionel Messi': 'ar', 'Julián Álvarez': 'ar',
+  'Erling Haaland': 'no',
+  'Romelu Lukaku': 'be', 'Kevin De Bruyne': 'be',
+  'Raphinha': 'br', 'Vinícius Júnior': 'br',
+  'Cristiano Ronaldo': 'pt',
+};
+
+/** Resolve a free-text top-scorer pick to its team and total tournament goals.
+ *  Team comes from the scored-goals data when available, else the static map. */
 export function scorerInfo(player: string): { team?: Team; goals: number } {
   const sn = surnameOf(player);
   const fi = firstInitialOf(player);
   const rows = scorers.filter((s) => s.player === player || (sn && surnameOf(s.player) === sn && firstInitialOf(s.player) === fi));
-  if (!rows.length) return { goals: 0 };
-  return { team: getTeam(rows[0].teamId), goals: rows.reduce((sum, s) => sum + s.goals, 0) };
+  const goals = rows.reduce((sum, s) => sum + s.goals, 0);
+  const team = (rows.length ? getTeam(rows[0].teamId) : undefined) ?? getTeam(PLAYER_TEAM[player]);
+  return { team, goals };
 }
 
 /** Most-picked top scorer across all participants, with the player's resolved
@@ -526,8 +542,9 @@ export function pickedTopScorerSlugs(): Map<string, string> {
 
 /** Participants ranked by the number of correct 1X2 (winner/draw) predictions on
  *  finished matches. Late/missing predictions don't count. */
-export function topCorrectOutcomes(): { participantId: string; name: string; correct: number; played: number; winnerIso: string | null; winnerName: string | null }[] {
+export function topCorrectOutcomes(): { participantId: string; name: string; correct: number; played: number; position: number | null; winnerIso: string | null; winnerName: string | null }[] {
   const finishedMatches = matches.filter((m) => m.status === 'finished' && m.result);
+  const rank = new Map(ranking().map((r) => [r.participantId, r.position]));
   return participants
     .map((p) => {
       const byMatch = new Map(predictions.filter((x) => x.participantId === p.id).map((x) => [x.matchId, x]));
@@ -540,7 +557,7 @@ export function topCorrectOutcomes(): { participantId: string; name: string; cor
         if (scoreMatch(pred, m, settings)?.outcomeCorrect) correct++;
       }
       const winner = getTeam(p.bonus.winnerTeamId);
-      return { participantId: p.id, name: p.name, correct, played, winnerIso: winner?.iso ?? null, winnerName: winner?.name ?? null };
+      return { participantId: p.id, name: p.name, correct, played, position: rank.get(p.id) ?? null, winnerIso: winner?.iso ?? null, winnerName: winner?.name ?? null };
     })
     .sort((a, b) => b.correct - a.correct || b.played - a.played || a.name.localeCompare(b.name, 'nl'));
 }
