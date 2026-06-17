@@ -829,8 +829,13 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "gbeng",
     "awayTeamId": "hr",
-    "status": "scheduled",
-    "apiId": 760437
+    "status": "finished",
+    "apiId": 760437,
+    "result": {
+      "home": 4,
+      "away": 2
+    },
+    "winnerTeamId": "gbeng"
   },
   {
     "id": "gL-md1-2",

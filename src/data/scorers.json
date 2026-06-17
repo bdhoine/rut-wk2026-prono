@@ -20,6 +20,11 @@
     "goals": 2
   },
   {
+    "player": "Harry Kane",
+    "teamId": "gbeng",
+    "goals": 2
+  },
+  {
     "player": "Kai Havertz",
     "teamId": "de",
     "goals": 2
@@ -145,6 +150,11 @@
     "goals": 1
   },
   {
+    "player": "Jude Bellingham",
+    "teamId": "gbeng",
+    "goals": 1
+  },
+  {
     "player": "Julián Quiñones",
     "teamId": "mx",
     "goals": 1
@@ -170,33 +180,23 @@
     "goals": 1
   },
   {
+    "player": "Marcus Rashford",
+    "teamId": "gbeng",
+    "goals": 1
+  },
+  {
     "player": "Marko Arnautovic",
     "teamId": "at",
     "goals": 1
   },
   {
+    "player": "Martin Baturina",
+    "teamId": "hr",
+    "goals": 1
+  },
+  {
     "player": "Mattias Svanberg",
     "teamId": "se",
-    "goals": 1
-  },
-  {
-    "player": "Maurício",
-    "teamId": "py",
-    "goals": 1
-  },
-  {
-    "player": "Maxi Araújo",
-    "teamId": "uy",
-    "goals": 1
-  },
-  {
-    "player": "Mohammad Mohebbi",
-    "teamId": "ir",
-    "goals": 1
-  },
-  {
-    "player": "Nathaniel Brown",
-    "teamId": "de",
     "goals": 1
   }
 ]
