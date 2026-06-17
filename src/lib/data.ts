@@ -552,7 +552,11 @@ export function pickedTopScorerSlugs(): Map<string, string> {
 
 /** Participants ranked by the number of correct 1X2 (winner/draw) predictions on
  *  finished matches. Late/missing predictions don't count. */
-export function topCorrectOutcomes(): { participantId: string; name: string; correct: number; played: number; position: number | null; winnerIso: string | null; winnerName: string | null }[] {
+type PredictionStatRow = { participantId: string; name: string; correct: number; played: number; position: number | null; winnerIso: string | null; winnerName: string | null };
+
+/** Rank participants by how many of their (non-late) predictions on played
+ *  matches satisfy `pick` — most first, then by current klassement position. */
+function topPredictionStat(pick: (s: ReturnType<typeof scoreMatch>) => boolean): PredictionStatRow[] {
   const finishedMatches = matches.filter((m) => m.status === 'finished' && m.result);
   const rank = new Map(ranking().map((r) => [r.participantId, r.position]));
   return participants
@@ -564,12 +568,23 @@ export function topCorrectOutcomes(): { participantId: string; name: string; cor
         const pred = byMatch.get(m.id);
         if (!pred || pred.late) continue;
         played++;
-        if (scoreMatch(pred, m, settings)?.outcomeCorrect) correct++;
+        if (pick(scoreMatch(pred, m, settings))) correct++;
       }
       const winner = getTeam(p.bonus.winnerTeamId);
       return { participantId: p.id, name: p.name, correct, played, position: rank.get(p.id) ?? null, winnerIso: winner?.iso ?? null, winnerName: winner?.name ?? null };
     })
-    .sort((a, b) => b.correct - a.correct || b.played - a.played || a.name.localeCompare(b.name, 'nl'));
+    // Most correct first, then by current klassement position (best first).
+    .sort((a, b) => b.correct - a.correct || (a.position ?? Infinity) - (b.position ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
+}
+
+/** Participants by number of correct 1X2 predictions (right winner/draw). */
+export function topCorrectOutcomes(): PredictionStatRow[] {
+  return topPredictionStat((s) => !!s?.outcomeCorrect);
+}
+
+/** Participants by number of fully-correct (exact-score) predictions. */
+export function topExactScores(): PredictionStatRow[] {
+  return topPredictionStat((s) => !!s?.exact);
 }
 
 /** Most-predicted scorelines across all participants' predictions. */
