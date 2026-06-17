@@ -130,6 +130,11 @@
     "goals": 1
   },
   {
+    "player": "João Neves",
+    "teamId": "pt",
+    "goals": 1
+  },
+  {
     "player": "John McGinn",
     "teamId": "gbsct",
     "goals": 1
@@ -192,11 +197,6 @@
   {
     "player": "Nathaniel Brown",
     "teamId": "de",
-    "goals": 1
-  },
-  {
-    "player": "Nestory Irankunda",
-    "teamId": "au",
     "goals": 1
   }
 ]
