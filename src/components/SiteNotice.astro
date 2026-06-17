@@ -1,0 +1,49 @@
+---
+// Site-wide dismissable notice, shown at the top of every page (via Layout).
+// Current message: live scores / results are stalled because the upstream data
+// provider is unreliable; we're switching to a new provider.
+//
+// Dismissal is remembered in a long-lived cookie keyed by NOTICE_ID — bump
+// NOTICE_ID when the message changes so it re-appears for people who closed the
+// old one. (A functional cookie for a user-requested action, so consent-free.)
+// When the issue is resolved, remove <SiteNotice /> from Layout.astro.
+const NOTICE_ID = 'data-provider-2026-06';
+---
+<div
+  id="site-notice"
+  data-notice-id={NOTICE_ID}
+  role="status"
+  class="mb-5 flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-950/40 dark:text-amber-100"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 size-5 shrink-0" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+  <p class="min-w-0 flex-1">
+    <strong class="font-semibold">De scores en het klassement lopen even achter.</strong>
+    Door een probleem bij de leverancier van de wedstrijdgegevens worden de uitslagen momenteel niet automatisch bijgewerkt. We werken aan een oplossing en schakelen binnenkort over naar een nieuwe gegevensbron. Bedankt voor je geduld!
+  </p>
+  <button
+    id="site-notice-close"
+    type="button"
+    aria-label="Melding sluiten"
+    class="-mr-1 -mt-0.5 grid size-7 shrink-0 place-items-center rounded-md text-amber-900/70 transition-colors hover:bg-amber-100 hover:text-amber-900 dark:text-amber-100/70 dark:hover:bg-amber-900/50 dark:hover:text-amber-100"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-4" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+  </button>
+</div>
+
+<script is:inline>
+  (() => {
+    const el = document.getElementById('site-notice');
+    if (!el) return;
+    const id = el.dataset.noticeId;
+    const COOKIE = 'rut_notice_dismissed';
+    const read = () =>
+      document.cookie.split('; ').find((c) => c.startsWith(COOKIE + '='))?.slice(COOKIE.length + 1);
+    if (read() === id) { el.remove(); return; } // already dismissed → never show again
+    document.getElementById('site-notice-close')?.addEventListener('click', () => {
+      // ~1 year, so it stays dismissed across visits.
+      document.cookie = COOKIE + '=' + id + '; max-age=31536000; path=/; SameSite=Lax';
+      el.remove();
+      window.posthog?.capture('site_notice_dismissed', { notice_id: id });
+    });
+  })();
+</script>

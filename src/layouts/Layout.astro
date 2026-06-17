@@ -2,6 +2,7 @@
 import '@/styles/global.css';
 import 'flag-icons/css/flag-icons.min.css';
 import PostHog from '@/components/posthog.astro';
+import SiteNotice from '@/components/SiteNotice.astro';
 
 interface Props {
   title?: string;
@@ -198,6 +199,7 @@ const topLinkCls = (active: boolean) => [
     </div>
 
     <main class="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
+      <SiteNotice />
       <slot />
     </main>
 
