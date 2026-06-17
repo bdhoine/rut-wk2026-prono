@@ -145,6 +145,11 @@
     "goals": 1
   },
   {
+    "player": "J. Neves",
+    "teamId": "pt",
+    "goals": 1
+  },
+  {
     "player": "J. Quiñones",
     "teamId": "mx",
     "goals": 1
@@ -192,11 +197,6 @@
   {
     "player": "Maximiliano Araújo",
     "teamId": "uy",
-    "goals": 1
-  },
-  {
-    "player": "Mohamed Hany",
-    "teamId": "be",
     "goals": 1
   }
 ]
