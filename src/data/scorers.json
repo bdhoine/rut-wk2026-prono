@@ -1,17 +1,22 @@
 [
   {
-    "player": "Aimn Hsin",
-    "teamId": "iq",
-    "goals": 2
+    "player": "Lionel Messi",
+    "teamId": "ar",
+    "goals": 3
   },
   {
-    "player": "Arling Halnd",
-    "teamId": "no",
+    "player": "Aymen Hussein",
+    "teamId": "iq",
     "goals": 2
   },
   {
     "player": "Elijah Just",
     "teamId": "nz",
+    "goals": 2
+  },
+  {
+    "player": "Erling Haaland",
+    "teamId": "no",
     "goals": 2
   },
   {
@@ -47,6 +52,11 @@
   {
     "player": "Abdulelah Al-Amri",
     "teamId": "sa",
+    "goals": 1
+  },
+  {
+    "player": "Ali Avlvan",
+    "teamId": "jo",
     "goals": 1
   },
   {
@@ -120,6 +130,11 @@
     "goals": 1
   },
   {
+    "player": "Izn Alarb",
+    "teamId": "at",
+    "goals": 1
+  },
+  {
     "player": "J. McGinn",
     "teamId": "gbsct",
     "goals": 1
@@ -160,13 +175,8 @@
     "goals": 1
   },
   {
-    "player": "Liv Avstigard",
+    "player": "Leo Østigård",
     "teamId": "no",
-    "goals": 1
-  },
-  {
-    "player": "Livnl Msi",
-    "teamId": "ar",
     "goals": 1
   },
   {
@@ -187,16 +197,6 @@
   {
     "player": "Mohamed Hany",
     "teamId": "be",
-    "goals": 1
-  },
-  {
-    "player": "Mohammad Mohebi",
-    "teamId": "ir",
-    "goals": 1
-  },
-  {
-    "player": "N. Brown",
-    "teamId": "de",
     "goals": 1
   }
 ]

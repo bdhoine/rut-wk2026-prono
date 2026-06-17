@@ -683,8 +683,13 @@
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": "ar",
     "awayTeamId": "dz",
-    "status": "scheduled",
-    "apiId": 19
+    "status": "finished",
+    "apiId": 19,
+    "result": {
+      "home": 3,
+      "away": 0
+    },
+    "winnerTeamId": "ar"
   },
   {
     "id": "gJ-md1-2",
