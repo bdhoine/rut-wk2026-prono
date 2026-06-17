@@ -50,9 +50,10 @@ before committing.
   values as super properties or they leak onto later pages.
 - On-demand result refresh: `netlify/functions/trigger-update.mjs` can
   `workflow_dispatch` the results workflow so the committed klassement/results
-  refresh sooner than the ~15-min cron. `LiveScores.astro` calls it (debounced
-  per tab) only while a match is in its window; the function self-guards
-  (skips if a run is active or <5 min old, plus a Netlify Blob debounce). Needs
+  refresh sooner than the ~15-min cron. `LiveScores.astro` calls it once only
+  when a live match just **ended** (dropped from the polled live set) — not
+  continuously during the match window; the function self-guards (skips if a run
+  is active or <5 min old, plus a Netlify Blob debounce). Needs
   env `GH_DISPATCH_TOKEN` (`actions:write`); no-op without it. See `README.md`.
 - Run `npm run check` before committing; keep `README.md` and this file current.
 

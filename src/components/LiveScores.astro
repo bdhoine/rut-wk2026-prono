@@ -161,6 +161,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
     let timer: ReturnType<typeof setInterval> | null = null;
     const touched = new Set<HTMLElement>();
     let liveKeys = new Set<string>();
+    let prevLiveKeys = new Set<string>(); // live matches seen on the previous poll, to detect a match ending
 
     const fmtTime = (iso: string) => {
       try {
@@ -173,6 +174,20 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       } catch { return ''; }
     };
     const key = (h: string, a: string) => `${h}|${a}`;
+
+    // Nudge the results workflow to refresh the committed klassement sooner —
+    // called only when a live match just ended (see load()). The function
+    // applies the real guards (skips when a run is active or <5 min old); this
+    // short debounce only coalesces the same transition across reloads/tabs.
+    const TRIGGER_KEY = 'rut-wk2026-update-trigger';
+    const triggerUpdate = async () => {
+      try {
+        const last = Number(sessionStorage.getItem(TRIGGER_KEY) || 0);
+        if (Date.now() - last < 90 * 1000) return;
+        sessionStorage.setItem(TRIGGER_KEY, String(Date.now()));
+      } catch { /* ignore */ }
+      try { await fetch('/.netlify/functions/trigger-update', { method: 'POST' }); } catch { /* ignore */ }
+    };
     const minLabel = (m: any) => (m.status === 'HT' ? 'rust' : m.elapsed != null ? `${m.elapsed}'` : 'live');
     const teamName = (id: string, fallback: string) => teamMap[id]?.name || fallback || id;
     const flag = (id: string, name: string) => `<span class="fi fi-${teamMap[id]?.iso || id} shrink-0 rounded-[2px] text-lg" role="img" aria-label="${name}"></span>`;
@@ -353,6 +368,12 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
         const shown = applyMatches(data.matches || []);
         dispatchRanking(data.matches || []);
         dispatchLiveMatches(data.matches || []);
+        // Nudge a results update only when a live match has just ended (it
+        // dropped out of the live set since the last poll) — its final score is
+        // now committable. We don't trigger continuously during the window.
+        const nowKeys = new Set<string>((data.matches || []).map((m: any) => key(m.homeTeamId, m.awayTeamId)));
+        if ([...prevLiveKeys].some((k) => !nowKeys.has(k))) triggerUpdate();
+        prevLiveKeys = nowKeys;
         const stamp = data.updatedAt ? fmtTime(data.updatedAt) : '';
         status.textContent = shown > 0
           ? `${shown} live • bijgewerkt ${stamp}`
@@ -379,6 +400,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
         clearLive();
         dispatchRanking([]); // revert klassement to static totals
         dispatchLiveMatches([]);
+        prevLiveKeys = new Set(); // forget the live set so re-enabling can't fake a "match ended"
         status.textContent = '';
       }
     }
@@ -420,23 +442,5 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
     autoEvaluate(); // set the initial state from the current time
     setInterval(autoEvaluate, AUTO_MS);
 
-    // While a match is recently/currently in its window, nudge the results
-    // workflow to run sooner — the committed klassement/results otherwise wait
-    // for the next scheduled run (~15 min). The function self-guards (skips when
-    // a run is already active or recent); we debounce per tab so we call it at
-    // most once per TRIGGER_MS regardless of polling.
-    const TRIGGER_KEY = 'rut-wk2026-update-trigger';
-    const TRIGGER_MS = 5 * 60 * 1000;
-    const maybeTriggerUpdate = async () => {
-      if (!matchBusyNow()) return;
-      try {
-        const last = Number(sessionStorage.getItem(TRIGGER_KEY) || 0);
-        if (Date.now() - last < TRIGGER_MS) return;
-        sessionStorage.setItem(TRIGGER_KEY, String(Date.now()));
-      } catch { /* ignore */ }
-      try { await fetch('/.netlify/functions/trigger-update', { method: 'POST' }); } catch { /* ignore */ }
-    };
-    maybeTriggerUpdate();
-    setInterval(maybeTriggerUpdate, TRIGGER_MS);
   }
 </script>

@@ -79,10 +79,10 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
   final is played. It commits any changes, which triggers a Netlify rebuild. Run
   locally with `npm run results:update`.
 - **On-demand result refresh.** The results workflow runs on a ~15-min cron, so
-  the committed klassement/results can lag a few minutes behind a match. While a
-  match is recently/currently in its window, the client (in
-  [`LiveScores.astro`](./src/components/LiveScores.astro), debounced per tab)
-  calls [`netlify/functions/trigger-update.mjs`](./netlify/functions/trigger-update.mjs)
+  the committed klassement/results can lag a few minutes behind a match. When a
+  live match **ends** (it drops out of the live set the client polls), the client
+  (in [`LiveScores.astro`](./src/components/LiveScores.astro)) fires a single
+  call to [`netlify/functions/trigger-update.mjs`](./netlify/functions/trigger-update.mjs)
   (`/.netlify/functions/trigger-update`), which `workflow_dispatch`es the results
   workflow so it runs sooner. The function guards against pile-ups: it skips when
   a run is already queued/in_progress or when the last run is younger than 5 min,
