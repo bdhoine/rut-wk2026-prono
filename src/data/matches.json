@@ -699,8 +699,13 @@
     "venue": "Levi's Stadium, San Francisco",
     "homeTeamId": "at",
     "awayTeamId": "jo",
-    "status": "scheduled",
-    "apiId": 20
+    "status": "finished",
+    "apiId": 20,
+    "result": {
+      "home": 3,
+      "away": 1
+    },
+    "winnerTeamId": "at"
   },
   {
     "id": "gJ-md2-1",
