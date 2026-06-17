@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import LiveScores from '@/components/LiveScores.astro';
-import PredictionRow from '@/components/PredictionRow.astro';
+import PredictionDayList from '@/components/PredictionDayList.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import {
   participants, getParticipant, getTeam, positionOf, predictionsForParticipant, outcomes, settings,
@@ -232,9 +232,7 @@ const dogH = DOG_ART.length * DOG_PX;
             {g.finished > 0 && <span class="ml-auto rounded-md bg-gold/15 px-2 py-0.5 text-sm font-bold tabular-nums text-primary">{g.points} ptn</span>}
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class:list={['size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180', g.finished === 0 && 'ml-auto']}><path d="m6 9 6 6 6-6" /></svg>
           </summary>
-          <div class="space-y-2 border-t px-3 py-3">
-            {g.items.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
-          </div>
+          <PredictionDayList items={g.items} />
         </details>
       ))}
 
@@ -249,9 +247,7 @@ const dogH = DOG_ART.length * DOG_PX;
               {finished > 0 && <span class="ml-auto rounded-md bg-gold/15 px-2 py-0.5 text-sm font-bold tabular-nums text-primary">{points} ptn</span>}
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class:list={['size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180', finished === 0 && 'ml-auto']}><path d="m6 9 6 6 6-6" /></svg>
             </summary>
-            <div class="space-y-2 border-t px-3 py-3">
-              {g.items.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
-            </div>
+            <PredictionDayList items={g.items} />
           </details>
         );
       })}

@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-06-18",
+    "title": "Favorieten-tutorial en exacte-uitslagen-statistiek",
+    "items": [
+      "Nieuwe bezoekers krijgen een korte uitleg hoe ze deelnemers als favoriet kunnen volgen (met een knipperende ster); je kan die uitleg ook overslaan.",
+      "Nieuwe statistiek 'Meeste exacte uitslagen' (volledig juiste score), naast 'Meeste juiste 1X2' — beide gesorteerd op aantal en daarna op plaats in het klassement.",
+      "Op een deelnemerspagina staan binnen een speeldag de nog te spelen wedstrijden nu bovenaan, met een scheiding en daaronder de al gespeelde."
+    ]
+  },
+  {
     "date": "2026-06-17",
     "title": "Duidelijker klassement en snellere resultaten",
     "items": [
