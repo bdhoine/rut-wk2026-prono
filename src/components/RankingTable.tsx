@@ -15,6 +15,10 @@ export interface RankingTableRow {
 }
 
 const FAV_KEY = "rut-wk2026-favorieten";
+const TUT_KEY = "rut-wk2026-fav-tutorial"; // "1" once the favourites tutorial is seen/skipped
+
+const capture = (event: string, props?: Record<string, unknown>) =>
+  (window as unknown as { posthog?: { capture: (e: string, p?: Record<string, unknown>) => void } }).posthog?.capture(event, props);
 
 const normalize = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
@@ -80,12 +84,65 @@ export default function RankingTable({
   const [query, setQuery] = React.useState("");
   const searchTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Favourites onboarding tutorial.
+  const [tut, setTut] = React.useState<null | "intro" | "spotlight">(null);
+  const [bubble, setBubble] = React.useState<{ top: number; left: number } | null>(null);
+  const firstStarRef = React.useRef<HTMLButtonElement | null>(null);
+
   React.useEffect(() => {
     try {
       const stored = localStorage.getItem(FAV_KEY);
       if (stored) setFavs(JSON.parse(stored));
     } catch { /* ignore */ }
   }, []);
+
+  const dismissTutorial = React.useCallback((reason: string) => {
+    try { localStorage.setItem(TUT_KEY, "1"); } catch { /* ignore */ }
+    setTut(null);
+    capture("favorite_tutorial_dismissed", { reason });
+  }, []);
+
+  // First-run tutorial: show only for visitors with no favourites who haven't
+  // seen/skipped it yet (same flag across home + klassement).
+  React.useEffect(() => {
+    try {
+      const hasFav = JSON.parse(localStorage.getItem(FAV_KEY) || "[]").length > 0;
+      if (hasFav || localStorage.getItem(TUT_KEY)) return;
+    } catch { return; }
+    const t = setTimeout(() => { setTut("intro"); capture("favorite_tutorial_shown"); }, 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Completed the moment they add their first favourite.
+  React.useEffect(() => {
+    if (tut && favs.length > 0) dismissTutorial("added");
+  }, [favs, tut, dismissTutorial]);
+
+  // Escape closes the intro.
+  React.useEffect(() => {
+    if (tut !== "intro") return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") dismissTutorial("escape"); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [tut, dismissTutorial]);
+
+  // Position the spotlight bubble next to the first star (keep it in sync on
+  // scroll/resize while the spotlight is active).
+  React.useEffect(() => {
+    if (tut !== "spotlight") { setBubble(null); return; }
+    const place = () => {
+      const el = firstStarRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const left = Math.min(Math.max(12, r.left - 8), window.innerWidth - 252);
+      setBubble({ top: r.bottom + 10, left });
+    };
+    firstStarRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    const t = setTimeout(place, 350);
+    window.addEventListener("scroll", place, { passive: true });
+    window.addEventListener("resize", place);
+    return () => { clearTimeout(t); window.removeEventListener("scroll", place); window.removeEventListener("resize", place); };
+  }, [tut]);
 
   // Live provisional points from in-progress matches (dispatched by LiveScores).
   React.useEffect(() => {
@@ -142,7 +199,7 @@ export default function RankingTable({
       : displayRows;
   const mainHeading = limit != null ? "Top 10" : favRows.length > 0 ? "Volledig klassement" : null;
 
-  const renderTable = (data: DisplayRow[], showPrizeCut = false) => (
+  const renderTable = (data: DisplayRow[], showPrizeCut = false, spotlight = false) => (
     <Table className="table-fixed">
       <TableHeader>
         <TableRow>
@@ -157,18 +214,20 @@ export default function RankingTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((row) => {
+        {data.map((row, i) => {
           const fav = favSet.has(row.participantId);
           const inMoney = showPrizeCut && PRIZES[row.position] != null;
+          const spot = spotlight && i === 0;
           return (
             <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)} className={inMoney ? "bg-emerald-500/10 hover:bg-emerald-500/15" : undefined}>
               <TableCell className="px-0.5">
                 <button
                   type="button"
+                  ref={spot ? firstStarRef : undefined}
                   aria-label={fav ? `${row.name} uit favorieten` : `${row.name} als favoriet`}
                   aria-pressed={fav}
                   onClick={(e) => { e.stopPropagation(); toggle(row.participantId); }}
-                  className="mx-auto grid size-7 place-items-center rounded-md hover:bg-muted"
+                  className={`mx-auto grid size-7 place-items-center rounded-md hover:bg-muted${spot && tut === "spotlight" ? " animate-pulse ring-2 ring-amber-400 ring-offset-1" : ""}`}
                 >
                   <Star filled={fav} className="size-[18px]" />
                 </button>
@@ -255,7 +314,7 @@ export default function RankingTable({
         {searching && mainRows.length === 0 ? (
           <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">Geen deelnemer gevonden voor “{query.trim()}”.</p>
         ) : (
-          <div className="rounded-xl border bg-card p-1">{renderTable(mainRows, true)}</div>
+          <div className="rounded-xl border bg-card p-1">{renderTable(mainRows, true, true)}</div>
         )}
         {limit != null && moreHref && !searching && (
           <a
@@ -271,6 +330,39 @@ export default function RankingTable({
           </a>
         )}
       </section>
+
+      {tut === "intro" && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="fav-tut-title"
+          onClick={() => dismissTutorial("backdrop")}
+        >
+          <div className="w-full max-w-sm rounded-2xl border bg-card p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-2 flex items-center gap-2">
+              <Star filled className="size-6" />
+              <h2 id="fav-tut-title" className="text-lg font-bold">Volg je favorieten</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Tik op de <span className="font-medium text-foreground">ster</span> naast een deelnemer om die te volgen. Je favorieten verschijnen dan in een apart <span className="font-medium text-foreground">Favorieten</span>-blok bovenaan — zowel op de homepagina als op het klassement — zodat je ze snel terugvindt.
+            </p>
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <button type="button" onClick={() => dismissTutorial("skip")} className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted">Overslaan</button>
+              <button type="button" onClick={() => setTut("spotlight")} className="rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-gold-foreground transition-[filter] hover:brightness-95">Toon me hoe</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tut === "spotlight" && bubble && (
+        <div className="fixed z-50 w-60 rounded-xl border bg-card p-3 shadow-xl" style={{ top: bubble.top, left: bubble.left }} role="dialog" aria-label="Tutorial">
+          <p className="text-sm">Tik hier op de <span className="font-medium">ster</span> <Star filled className="inline size-4 align-text-bottom" /> om deze deelnemer te volgen.</p>
+          <div className="mt-2 flex justify-end">
+            <button type="button" onClick={() => dismissTutorial("skip")} className="rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted">Overslaan</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
