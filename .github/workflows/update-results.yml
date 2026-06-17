@@ -1,6 +1,6 @@
 name: Update results
 
-# Pulls WK 2026 results + top scorers from the free worldcup26.ir API and commits
+# Pulls WK 2026 results + top scorers from ESPN's public soccer API and commits
 # any changes, which triggers a Netlify rebuild. No API key/secret is required.
 #
 # Runs ~every 15 min. GitHub's scheduled events are best-effort and are most

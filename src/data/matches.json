@@ -8,7 +8,7 @@
     "homeTeamId": "mx",
     "awayTeamId": "za",
     "status": "finished",
-    "apiId": 1,
+    "apiId": 760415,
     "result": {
       "home": 2,
       "away": 0
@@ -24,7 +24,7 @@
     "homeTeamId": "kr",
     "awayTeamId": "cz",
     "status": "finished",
-    "apiId": 2,
+    "apiId": 760414,
     "result": {
       "home": 2,
       "away": 1
@@ -40,7 +40,7 @@
     "homeTeamId": "cz",
     "awayTeamId": "za",
     "status": "scheduled",
-    "apiId": 28
+    "apiId": 760438
   },
   {
     "id": "gA-md2-2",
@@ -51,7 +51,7 @@
     "homeTeamId": "mx",
     "awayTeamId": "kr",
     "status": "scheduled",
-    "apiId": 25
+    "apiId": 760441
   },
   {
     "id": "gA-md3-1",
@@ -62,7 +62,7 @@
     "homeTeamId": "cz",
     "awayTeamId": "mx",
     "status": "scheduled",
-    "apiId": 52
+    "apiId": 760467
   },
   {
     "id": "gA-md3-2",
@@ -73,7 +73,7 @@
     "homeTeamId": "za",
     "awayTeamId": "kr",
     "status": "scheduled",
-    "apiId": 51
+    "apiId": 760466
   },
   {
     "id": "gB-md1-1",
@@ -84,7 +84,7 @@
     "homeTeamId": "ca",
     "awayTeamId": "ba",
     "status": "finished",
-    "apiId": 3,
+    "apiId": 760416,
     "result": {
       "home": 1,
       "away": 1
@@ -99,7 +99,7 @@
     "homeTeamId": "qa",
     "awayTeamId": "ch",
     "status": "finished",
-    "apiId": 8,
+    "apiId": 760420,
     "result": {
       "home": 1,
       "away": 1
@@ -114,7 +114,7 @@
     "homeTeamId": "ch",
     "awayTeamId": "ba",
     "status": "scheduled",
-    "apiId": 26
+    "apiId": 760439
   },
   {
     "id": "gB-md2-2",
@@ -125,7 +125,7 @@
     "homeTeamId": "ca",
     "awayTeamId": "qa",
     "status": "scheduled",
-    "apiId": 27
+    "apiId": 760440
   },
   {
     "id": "gB-md3-1",
@@ -136,7 +136,7 @@
     "homeTeamId": "ch",
     "awayTeamId": "ca",
     "status": "scheduled",
-    "apiId": 54
+    "apiId": 760463
   },
   {
     "id": "gB-md3-2",
@@ -147,7 +147,7 @@
     "homeTeamId": "ba",
     "awayTeamId": "qa",
     "status": "scheduled",
-    "apiId": 53
+    "apiId": 760462
   },
   {
     "id": "gC-md1-1",
@@ -158,7 +158,7 @@
     "homeTeamId": "br",
     "awayTeamId": "ma",
     "status": "finished",
-    "apiId": 7,
+    "apiId": 760419,
     "result": {
       "home": 1,
       "away": 1
@@ -173,7 +173,7 @@
     "homeTeamId": "ht",
     "awayTeamId": "gbsct",
     "status": "finished",
-    "apiId": 5,
+    "apiId": 760418,
     "result": {
       "home": 0,
       "away": 1
@@ -189,7 +189,7 @@
     "homeTeamId": "gbsct",
     "awayTeamId": "ma",
     "status": "scheduled",
-    "apiId": 30
+    "apiId": 760445
   },
   {
     "id": "gC-md2-2",
@@ -200,7 +200,7 @@
     "homeTeamId": "br",
     "awayTeamId": "ht",
     "status": "scheduled",
-    "apiId": 29
+    "apiId": 760444
   },
   {
     "id": "gC-md3-1",
@@ -211,7 +211,7 @@
     "homeTeamId": "gbsct",
     "awayTeamId": "br",
     "status": "scheduled",
-    "apiId": 49
+    "apiId": 760465
   },
   {
     "id": "gC-md3-2",
@@ -222,7 +222,7 @@
     "homeTeamId": "ma",
     "awayTeamId": "ht",
     "status": "scheduled",
-    "apiId": 50
+    "apiId": 760464
   },
   {
     "id": "gD-md1-1",
@@ -233,7 +233,7 @@
     "homeTeamId": "us",
     "awayTeamId": "py",
     "status": "finished",
-    "apiId": 4,
+    "apiId": 760417,
     "result": {
       "home": 4,
       "away": 1
@@ -249,7 +249,7 @@
     "homeTeamId": "au",
     "awayTeamId": "tr",
     "status": "finished",
-    "apiId": 6,
+    "apiId": 760421,
     "result": {
       "home": 2,
       "away": 0
@@ -265,7 +265,7 @@
     "homeTeamId": "us",
     "awayTeamId": "au",
     "status": "scheduled",
-    "apiId": 31
+    "apiId": 760442
   },
   {
     "id": "gD-md2-2",
@@ -276,7 +276,7 @@
     "homeTeamId": "tr",
     "awayTeamId": "py",
     "status": "scheduled",
-    "apiId": 32
+    "apiId": 760443
   },
   {
     "id": "gD-md3-1",
@@ -287,7 +287,7 @@
     "homeTeamId": "tr",
     "awayTeamId": "us",
     "status": "scheduled",
-    "apiId": 58
+    "apiId": 760470
   },
   {
     "id": "gD-md3-2",
@@ -298,7 +298,7 @@
     "homeTeamId": "py",
     "awayTeamId": "au",
     "status": "scheduled",
-    "apiId": 57
+    "apiId": 760469
   },
   {
     "id": "gE-md1-1",
@@ -309,7 +309,7 @@
     "homeTeamId": "de",
     "awayTeamId": "cw",
     "status": "finished",
-    "apiId": 10,
+    "apiId": 760422,
     "result": {
       "home": 7,
       "away": 1
@@ -325,7 +325,7 @@
     "homeTeamId": "ci",
     "awayTeamId": "ec",
     "status": "finished",
-    "apiId": 9,
+    "apiId": 760423,
     "result": {
       "home": 1,
       "away": 0
@@ -341,7 +341,7 @@
     "homeTeamId": "de",
     "awayTeamId": "ci",
     "status": "scheduled",
-    "apiId": 33
+    "apiId": 760448
   },
   {
     "id": "gE-md2-2",
@@ -352,7 +352,7 @@
     "homeTeamId": "ec",
     "awayTeamId": "cw",
     "status": "scheduled",
-    "apiId": 34
+    "apiId": 760446
   },
   {
     "id": "gE-md3-1",
@@ -363,7 +363,7 @@
     "homeTeamId": "cw",
     "awayTeamId": "ci",
     "status": "scheduled",
-    "apiId": 55
+    "apiId": 760473
   },
   {
     "id": "gE-md3-2",
@@ -374,7 +374,7 @@
     "homeTeamId": "ec",
     "awayTeamId": "de",
     "status": "scheduled",
-    "apiId": 56
+    "apiId": 760468
   },
   {
     "id": "gF-md1-1",
@@ -385,7 +385,7 @@
     "homeTeamId": "nl",
     "awayTeamId": "jp",
     "status": "finished",
-    "apiId": 11,
+    "apiId": 760425,
     "result": {
       "home": 2,
       "away": 2
@@ -400,7 +400,7 @@
     "homeTeamId": "se",
     "awayTeamId": "tn",
     "status": "finished",
-    "apiId": 12,
+    "apiId": 760424,
     "result": {
       "home": 5,
       "away": 1
@@ -416,7 +416,7 @@
     "homeTeamId": "nl",
     "awayTeamId": "se",
     "status": "scheduled",
-    "apiId": 35
+    "apiId": 760447
   },
   {
     "id": "gF-md2-2",
@@ -427,7 +427,7 @@
     "homeTeamId": "tn",
     "awayTeamId": "jp",
     "status": "scheduled",
-    "apiId": 36
+    "apiId": 760449
   },
   {
     "id": "gF-md3-1",
@@ -438,7 +438,7 @@
     "homeTeamId": "jp",
     "awayTeamId": "se",
     "status": "scheduled",
-    "apiId": 59
+    "apiId": 760471
   },
   {
     "id": "gF-md3-2",
@@ -449,7 +449,7 @@
     "homeTeamId": "tn",
     "awayTeamId": "nl",
     "status": "scheduled",
-    "apiId": 60
+    "apiId": 760472
   },
   {
     "id": "gG-md1-1",
@@ -460,7 +460,7 @@
     "homeTeamId": "be",
     "awayTeamId": "eg",
     "status": "finished",
-    "apiId": 15,
+    "apiId": 760426,
     "result": {
       "home": 1,
       "away": 1
@@ -475,7 +475,7 @@
     "homeTeamId": "ir",
     "awayTeamId": "nz",
     "status": "finished",
-    "apiId": 13,
+    "apiId": 760427,
     "result": {
       "home": 2,
       "away": 2
@@ -490,7 +490,7 @@
     "homeTeamId": "be",
     "awayTeamId": "ir",
     "status": "scheduled",
-    "apiId": 37
+    "apiId": 760451
   },
   {
     "id": "gG-md2-2",
@@ -501,7 +501,7 @@
     "homeTeamId": "nz",
     "awayTeamId": "eg",
     "status": "scheduled",
-    "apiId": 38
+    "apiId": 760452
   },
   {
     "id": "gG-md3-1",
@@ -512,7 +512,7 @@
     "homeTeamId": "eg",
     "awayTeamId": "ir",
     "status": "scheduled",
-    "apiId": 63
+    "apiId": 760476
   },
   {
     "id": "gG-md3-2",
@@ -523,7 +523,7 @@
     "homeTeamId": "nz",
     "awayTeamId": "be",
     "status": "scheduled",
-    "apiId": 64
+    "apiId": 760477
   },
   {
     "id": "gH-md1-1",
@@ -534,7 +534,7 @@
     "homeTeamId": "es",
     "awayTeamId": "cv",
     "status": "finished",
-    "apiId": 14,
+    "apiId": 760428,
     "result": {
       "home": 0,
       "away": 0
@@ -549,7 +549,7 @@
     "homeTeamId": "sa",
     "awayTeamId": "uy",
     "status": "finished",
-    "apiId": 16,
+    "apiId": 760429,
     "result": {
       "home": 1,
       "away": 1
@@ -564,7 +564,7 @@
     "homeTeamId": "es",
     "awayTeamId": "sa",
     "status": "scheduled",
-    "apiId": 39
+    "apiId": 760453
   },
   {
     "id": "gH-md2-2",
@@ -575,7 +575,7 @@
     "homeTeamId": "uy",
     "awayTeamId": "cv",
     "status": "scheduled",
-    "apiId": 40
+    "apiId": 760450
   },
   {
     "id": "gH-md3-1",
@@ -586,7 +586,7 @@
     "homeTeamId": "cv",
     "awayTeamId": "sa",
     "status": "scheduled",
-    "apiId": 65
+    "apiId": 760478
   },
   {
     "id": "gH-md3-2",
@@ -597,7 +597,7 @@
     "homeTeamId": "uy",
     "awayTeamId": "es",
     "status": "scheduled",
-    "apiId": 66
+    "apiId": 760479
   },
   {
     "id": "gI-md1-1",
@@ -608,7 +608,7 @@
     "homeTeamId": "fr",
     "awayTeamId": "sn",
     "status": "finished",
-    "apiId": 17,
+    "apiId": 760432,
     "result": {
       "home": 3,
       "away": 1
@@ -624,7 +624,7 @@
     "homeTeamId": "iq",
     "awayTeamId": "no",
     "status": "finished",
-    "apiId": 18,
+    "apiId": 760430,
     "result": {
       "home": 1,
       "away": 4
@@ -640,7 +640,7 @@
     "homeTeamId": "fr",
     "awayTeamId": "iq",
     "status": "scheduled",
-    "apiId": 41
+    "apiId": 760457
   },
   {
     "id": "gI-md2-2",
@@ -651,7 +651,7 @@
     "homeTeamId": "no",
     "awayTeamId": "sn",
     "status": "scheduled",
-    "apiId": 42
+    "apiId": 760454
   },
   {
     "id": "gI-md3-1",
@@ -662,7 +662,7 @@
     "homeTeamId": "no",
     "awayTeamId": "fr",
     "status": "scheduled",
-    "apiId": 62
+    "apiId": 760475
   },
   {
     "id": "gI-md3-2",
@@ -673,7 +673,7 @@
     "homeTeamId": "sn",
     "awayTeamId": "iq",
     "status": "scheduled",
-    "apiId": 61
+    "apiId": 760474
   },
   {
     "id": "gJ-md1-1",
@@ -684,7 +684,7 @@
     "homeTeamId": "ar",
     "awayTeamId": "dz",
     "status": "finished",
-    "apiId": 19,
+    "apiId": 760433,
     "result": {
       "home": 3,
       "away": 0
@@ -700,7 +700,7 @@
     "homeTeamId": "at",
     "awayTeamId": "jo",
     "status": "finished",
-    "apiId": 20,
+    "apiId": 760431,
     "result": {
       "home": 3,
       "away": 1
@@ -716,7 +716,7 @@
     "homeTeamId": "ar",
     "awayTeamId": "at",
     "status": "scheduled",
-    "apiId": 43
+    "apiId": 760456
   },
   {
     "id": "gJ-md2-2",
@@ -727,7 +727,7 @@
     "homeTeamId": "jo",
     "awayTeamId": "dz",
     "status": "scheduled",
-    "apiId": 44
+    "apiId": 760455
   },
   {
     "id": "gJ-md3-1",
@@ -738,7 +738,7 @@
     "homeTeamId": "dz",
     "awayTeamId": "at",
     "status": "scheduled",
-    "apiId": 69
+    "apiId": 760484
   },
   {
     "id": "gJ-md3-2",
@@ -749,7 +749,7 @@
     "homeTeamId": "jo",
     "awayTeamId": "ar",
     "status": "scheduled",
-    "apiId": 70
+    "apiId": 760483
   },
   {
     "id": "gK-md1-1",
@@ -760,7 +760,7 @@
     "homeTeamId": "pt",
     "awayTeamId": "cd",
     "status": "scheduled",
-    "apiId": 21
+    "apiId": 760435
   },
   {
     "id": "gK-md1-2",
@@ -771,7 +771,7 @@
     "homeTeamId": "uz",
     "awayTeamId": "co",
     "status": "scheduled",
-    "apiId": 23
+    "apiId": 760436
   },
   {
     "id": "gK-md2-1",
@@ -782,7 +782,7 @@
     "homeTeamId": "pt",
     "awayTeamId": "uz",
     "status": "scheduled",
-    "apiId": 45
+    "apiId": 760461
   },
   {
     "id": "gK-md2-2",
@@ -793,7 +793,7 @@
     "homeTeamId": "co",
     "awayTeamId": "cd",
     "status": "scheduled",
-    "apiId": 47
+    "apiId": 760459
   },
   {
     "id": "gK-md3-1",
@@ -804,7 +804,7 @@
     "homeTeamId": "co",
     "awayTeamId": "pt",
     "status": "scheduled",
-    "apiId": 71
+    "apiId": 760481
   },
   {
     "id": "gK-md3-2",
@@ -815,7 +815,7 @@
     "homeTeamId": "cd",
     "awayTeamId": "uz",
     "status": "scheduled",
-    "apiId": 72
+    "apiId": 760482
   },
   {
     "id": "gL-md1-1",
@@ -826,7 +826,7 @@
     "homeTeamId": "gbeng",
     "awayTeamId": "hr",
     "status": "scheduled",
-    "apiId": 22
+    "apiId": 760437
   },
   {
     "id": "gL-md1-2",
@@ -837,7 +837,7 @@
     "homeTeamId": "gh",
     "awayTeamId": "pa",
     "status": "scheduled",
-    "apiId": 24
+    "apiId": 760434
   },
   {
     "id": "gL-md2-1",
@@ -848,7 +848,7 @@
     "homeTeamId": "gbeng",
     "awayTeamId": "gh",
     "status": "scheduled",
-    "apiId": 48
+    "apiId": 760458
   },
   {
     "id": "gL-md2-2",
@@ -859,7 +859,7 @@
     "homeTeamId": "pa",
     "awayTeamId": "hr",
     "status": "scheduled",
-    "apiId": 46
+    "apiId": 760460
   },
   {
     "id": "gL-md3-1",
@@ -870,7 +870,7 @@
     "homeTeamId": "pa",
     "awayTeamId": "gbeng",
     "status": "scheduled",
-    "apiId": 67
+    "apiId": 760485
   },
   {
     "id": "gL-md3-2",
@@ -881,7 +881,7 @@
     "homeTeamId": "hr",
     "awayTeamId": "gh",
     "status": "scheduled",
-    "apiId": 68
+    "apiId": 760480
   },
   {
     "id": "r32-1",
@@ -892,7 +892,8 @@
     "awayTeamId": null,
     "homePlaceholder": "2e Groep A",
     "awayPlaceholder": "2e Groep B",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760486
   },
   {
     "id": "r32-2",
@@ -903,7 +904,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep E",
     "awayPlaceholder": "Beste 3e (A/B/C/D/F)",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760489
   },
   {
     "id": "r32-3",
@@ -914,7 +916,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep F",
     "awayPlaceholder": "2e Groep C",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760488
   },
   {
     "id": "r32-4",
@@ -925,7 +928,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep C",
     "awayPlaceholder": "2e Groep F",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760487
   },
   {
     "id": "r32-5",
@@ -936,7 +940,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep I",
     "awayPlaceholder": "Beste 3e (C/D/F/G/H)",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760492
   },
   {
     "id": "r32-6",
@@ -947,7 +952,8 @@
     "awayTeamId": null,
     "homePlaceholder": "2e Groep E",
     "awayPlaceholder": "2e Groep I",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760490
   },
   {
     "id": "r32-7",
@@ -958,7 +964,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep A",
     "awayPlaceholder": "Beste 3e (C/E/F/H/I)",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760491
   },
   {
     "id": "r32-8",
@@ -969,7 +976,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep L",
     "awayPlaceholder": "Beste 3e (E/H/I/J/K)",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760495
   },
   {
     "id": "r32-9",
@@ -980,7 +988,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep D",
     "awayPlaceholder": "Beste 3e (B/E/F/I/J)",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760494
   },
   {
     "id": "r32-10",
@@ -991,7 +1000,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep G",
     "awayPlaceholder": "Beste 3e (A/E/H/I/J)",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760493
   },
   {
     "id": "r32-11",
@@ -1002,7 +1012,8 @@
     "awayTeamId": null,
     "homePlaceholder": "2e Groep K",
     "awayPlaceholder": "2e Groep L",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760496
   },
   {
     "id": "r32-12",
@@ -1013,7 +1024,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep H",
     "awayPlaceholder": "2e Groep J",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760497
   },
   {
     "id": "r32-13",
@@ -1024,7 +1036,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep B",
     "awayPlaceholder": "Beste 3e (E/F/G/I/J)",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760498
   },
   {
     "id": "r32-14",
@@ -1035,7 +1048,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep J",
     "awayPlaceholder": "2e Groep H",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760500
   },
   {
     "id": "r32-15",
@@ -1047,7 +1061,7 @@
     "homePlaceholder": "Winnaar Groep K",
     "awayPlaceholder": "Beste 3e (D/E/I/J/L)",
     "status": "scheduled",
-    "apiId": 86
+    "apiId": 760501
   },
   {
     "id": "r32-16",
@@ -1058,7 +1072,8 @@
     "awayTeamId": null,
     "homePlaceholder": "2e Groep D",
     "awayPlaceholder": "2e Groep G",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760499
   },
   {
     "id": "r16-1",
@@ -1069,7 +1084,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-2",
     "awayPlaceholder": "Winnaar R32-5",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760503
   },
   {
     "id": "r16-2",
@@ -1080,7 +1096,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-1",
     "awayPlaceholder": "Winnaar R32-3",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760502
   },
   {
     "id": "r16-3",
@@ -1092,7 +1109,7 @@
     "homePlaceholder": "Winnaar R32-4",
     "awayPlaceholder": "Winnaar R32-6",
     "status": "scheduled",
-    "apiId": 92
+    "apiId": 760504
   },
   {
     "id": "r16-4",
@@ -1103,7 +1120,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-7",
     "awayPlaceholder": "Winnaar R32-8",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760505
   },
   {
     "id": "r16-5",
@@ -1114,7 +1132,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-11",
     "awayPlaceholder": "Winnaar R32-12",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760506
   },
   {
     "id": "r16-6",
@@ -1125,7 +1144,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-9",
     "awayPlaceholder": "Winnaar R32-10",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760507
   },
   {
     "id": "r16-7",
@@ -1136,7 +1156,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-14",
     "awayPlaceholder": "Winnaar R32-16",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760509
   },
   {
     "id": "r16-8",
@@ -1147,7 +1168,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-13",
     "awayPlaceholder": "Winnaar R32-15",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760508
   },
   {
     "id": "qf-1",
@@ -1158,7 +1180,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar 1/8 1",
     "awayPlaceholder": "Winnaar 1/8 2",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760510
   },
   {
     "id": "qf-2",
@@ -1169,7 +1192,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar 1/8 5",
     "awayPlaceholder": "Winnaar 1/8 6",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760511
   },
   {
     "id": "qf-3",
@@ -1180,7 +1204,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar 1/8 3",
     "awayPlaceholder": "Winnaar 1/8 4",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760512
   },
   {
     "id": "qf-4",
@@ -1191,7 +1216,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar 1/8 7",
     "awayPlaceholder": "Winnaar 1/8 8",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760513
   },
   {
     "id": "sf-1",
@@ -1202,7 +1228,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar KF 1",
     "awayPlaceholder": "Winnaar KF 2",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760514
   },
   {
     "id": "sf-2",
@@ -1213,7 +1240,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar KF 3",
     "awayPlaceholder": "Winnaar KF 4",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760515
   },
   {
     "id": "third-1",
@@ -1224,7 +1252,8 @@
     "awayTeamId": null,
     "homePlaceholder": "Verliezer HF 1",
     "awayPlaceholder": "Verliezer HF 2",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760516
   },
   {
     "id": "final-1",
@@ -1235,6 +1264,7 @@
     "awayTeamId": null,
     "homePlaceholder": "Winnaar HF 1",
     "awayPlaceholder": "Winnaar HF 2",
-    "status": "scheduled"
+    "status": "scheduled",
+    "apiId": 760517
   }
 ]

@@ -64,16 +64,17 @@ viewports and in compact contexts (match cards, standings tables).
 
 ## Live scores & automatic results
 
-Two integrations keep the app current during the tournament, both backed by the
-free, open [worldcup26.ir](https://worldcup26.ir) WK 2026 API. **No API key is
-required.** (It's a community service, so the code degrades gracefully when it's
-temporarily unavailable.)
+Two integrations keep the app current during the tournament, both backed by
+ESPN's public soccer API (FIFA World Cup, league slug `fifa.world`). **No API key
+is required.** (The code degrades gracefully when it's temporarily unavailable.)
 
 - **Final results (build-time data).** A GitHub Actions workflow
   ([`.github/workflows/update-results.yml`](./.github/workflows/update-results.yml))
   runs [`scripts/update-results.mjs`](./scripts/update-results.mjs) on a cron. It
-  links each fixture to our match (by team pair or kickoff wall-clock + round),
-  writes finished-match scores, fills knockout teams as brackets resolve,
+  links each fixture to our match (by stored ESPN event id, resolved team pair,
+  or — for unresolved knockouts — the bracket-label token, e.g. "2e Groep A" ↔
+  "Group A 2nd Place"), writes finished-match scores, fills knockout teams as
+  brackets resolve,
   aggregates `scorers.json`, and resolves the bonus `outcomes.json` once the
   final is played. It commits any changes, which triggers a Netlify rebuild. Run
   locally with `npm run results:update`.
@@ -96,16 +97,12 @@ temporarily unavailable.)
   match card (badge above the score pill); on Poules the playing countries get a
   pulsing red dot with their live score. The client polls
   [`netlify/functions/live.mjs`](./netlify/functions/live.mjs) (at
-  `/.netlify/functions/live`), which returns in ~80 ms by reading the latest
-  payload from a **Netlify Blob** rather than calling the upstream itself — the
-  worldcup26 API is slow (10-16 s, exceeding the synchronous-function limit), so
-  a scheduled function
-  ([`netlify/functions/live-refresh.mjs`](./netlify/functions/live-refresh.mjs))
-  polls it in the background every 2 minutes and writes the blob. To stay within
-  the free tier that refresher only hits the upstream while a match is actually
-  in progress (gated on `matches.json` kickoff windows); between matches it's a
-  no-op. The shared resolver/mapper lives in
-  [`scripts/lib/worldcup.mjs`](./scripts/lib/worldcup.mjs).
+  `/.netlify/functions/live`), which fetches ESPN's scoreboard directly (it
+  responds in well under a second) and caches the result for ~60 s via a
+  module-scope cache plus CDN cache-control headers, so ESPN is hit at most
+  about once a minute regardless of traffic. The shared ESPN client/mapper lives
+  in [`scripts/lib/espn.mjs`](./scripts/lib/espn.mjs) and is reused by the
+  results updater.
 
 > Knockout scores from this source are the score as reported (no separate
 > after-120-min / penalty handling); double-check knockout results against

@@ -1,14 +1,14 @@
-// Update the static result data from the free WK 2026 API (worldcup26.ir).
+// Update the static result data from ESPN's public soccer API (no key needed).
 // Intended to run in CI (GitHub Actions, see .github/workflows/update-results.yml),
 // which commits any changes so Netlify rebuilds. Run locally with:
 //
-//   npm run results:update      (no API key needed)
+//   npm run results:update
 //
 // What it does:
-//  - fetches all 104 matches, links each to our match (by stored apiId, team
-//    pair, or kickoff wall-clock + round), fills knockout teams as brackets
-//    resolve, and writes finished scores;
-//  - aggregates goal scorers into scorers.json;
+//  - fetches all 104 matches, links each to our match (by stored apiId = ESPN
+//    event id, resolved team pair, or knockout bracket-token pair), fills
+//    knockout teams as brackets resolve, and writes finished scores;
+//  - aggregates goal scorers (from finished events) into scorers.json;
 //  - once the final is played, resolves the bonus outcomes (winner, top scorer,
 //    most goals scored / conceded) into outcomes.json.
 //
@@ -17,14 +17,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import {
-  getGames,
-  resolveTeamId,
-  gameStatus,
-  parseScorers,
-  wallclockFromLocal,
-  wallclockFromKickoff,
-} from './lib/worldcup.mjs';
+import { getEvents, linkMatches, eventSides, eventStatus, scorersFromEvent } from './lib/espn.mjs';
 
 const DATA = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data');
 const read = (name) => JSON.parse(readFileSync(join(DATA, name), 'utf8'));
@@ -35,78 +28,53 @@ const writeIfChanged = (name, data) => {
   return true;
 };
 const log = (...a) => console.log('[update-results]', ...a);
-const ids = (g) => ({ home: resolveTeamId(g.home_team_name_en), away: resolveTeamId(g.away_team_name_en) });
 
 async function main() {
   const matches = read('matches.json');
-  // The free API is occasionally flaky (transient 500s) — retry a few times.
-  const games = await getGames({ retries: 5, timeoutMs: 15000 });
-  log(`fetched ${games.length} matches from worldcup26.ir`);
+  // ESPN is fast and reliable, but retry a few times for transient blips.
+  const events = await getEvents({ retries: 5, timeoutMs: 15000 });
+  log(`fetched ${events.length} matches from ESPN`);
 
-  const gById = new Map(games.map((g) => [String(g.id), g]));
-  const used = new Set();
-  let linked = 0;
-  let scored = 0;
+  const { link, unlinked } = linkMatches(matches, events);
+  if (unlinked.length) log(`WARNING: ${unlinked.length} matches did not link: ${unlinked.join(', ')}`);
+
   let teamsFilled = 0;
+  let scored = 0;
 
   for (const m of matches) {
-    let g = m.apiId != null ? gById.get(String(m.apiId)) : null;
+    const e = link.get(m.id);
+    if (!e) continue;
+    m.apiId = Number(e.id);
 
-    // Link by team pair (group + resolved knockout).
-    if (!g && m.homeTeamId && m.awayTeamId) {
-      g = games.find((x) => {
-        if (used.has(x.id)) return false;
-        const { home, away } = ids(x);
-        return (
-          (home === m.homeTeamId && away === m.awayTeamId) ||
-          (home === m.awayTeamId && away === m.homeTeamId)
-        );
-      });
-    }
-    // Otherwise by kickoff wall-clock + round (knockout before teams are known).
-    if (!g) {
-      const wc = wallclockFromKickoff(m.kickoff);
-      const cands = games.filter(
-        (x) => !used.has(x.id) && x.type === m.round && wallclockFromLocal(x.local_date) === wc,
-      );
-      if (cands.length === 1) g = cands[0];
-    }
-    if (!g) continue;
+    const s = eventSides(e);
+    if (!m.homeTeamId && s.homeId) { m.homeTeamId = s.homeId; teamsFilled++; }
+    if (!m.awayTeamId && s.awayId) { m.awayTeamId = s.awayId; teamsFilled++; }
 
-    used.add(g.id);
-    if (m.apiId == null) { m.apiId = Number(g.id); linked++; }
-
-    const { home: hId, away: aId } = ids(g);
-    if (!m.homeTeamId && hId) { m.homeTeamId = hId; teamsFilled++; }
-    if (!m.awayTeamId && aId) { m.awayTeamId = aId; teamsFilled++; }
-
-    if (gameStatus(g) === 'finished') {
-      const home = parseInt(g.home_score, 10);
-      const away = parseInt(g.away_score, 10);
-      if (Number.isFinite(home) && Number.isFinite(away)) {
-        const changed = m.status !== 'finished' || m.result?.home !== home || m.result?.away !== away;
-        m.status = 'finished';
-        m.result = { home, away };
-        if (home > away) m.winnerTeamId = m.homeTeamId;
-        else if (away > home) m.winnerTeamId = m.awayTeamId;
-        if (changed) scored++;
-      }
+    if (eventStatus(e) === 'finished' && s.homeScore != null && s.awayScore != null && m.homeTeamId && m.awayTeamId) {
+      // Map ESPN's home/away scores to our match's orientation.
+      const flip = s.homeId === m.awayTeamId && s.awayId === m.homeTeamId;
+      const home = flip ? s.awayScore : s.homeScore;
+      const away = flip ? s.homeScore : s.awayScore;
+      const changed = m.status !== 'finished' || m.result?.home !== home || m.result?.away !== away;
+      m.status = 'finished';
+      m.result = { home, away };
+      if (home > away) m.winnerTeamId = m.homeTeamId;
+      else if (away > home) m.winnerTeamId = m.awayTeamId;
+      if (changed) scored++;
     }
   }
 
-  // --- Top scorers (aggregated from goal lists) --------------------------
+  // --- Top scorers (aggregated from finished events) ---------------------
   let scorers = read('scorers.json');
   try {
     const tally = new Map(); // player -> { goals, teamId }
-    for (const g of games) {
-      const { home: hId, away: aId } = ids(g);
-      for (const name of parseScorers(g.home_scorers)) {
-        const cur = tally.get(name) ?? { goals: 0, teamId: hId ?? '' };
-        cur.goals++; tally.set(name, cur);
-      }
-      for (const name of parseScorers(g.away_scorers)) {
-        const cur = tally.get(name) ?? { goals: 0, teamId: aId ?? '' };
-        cur.goals++; tally.set(name, cur);
+    for (const e of events) {
+      if (eventStatus(e) !== 'finished') continue; // avoid noisy mid-match commits
+      for (const { player, teamId } of scorersFromEvent(e)) {
+        const cur = tally.get(player) ?? { goals: 0, teamId: teamId ?? '' };
+        cur.goals++;
+        if (!cur.teamId && teamId) cur.teamId = teamId;
+        tally.set(player, cur);
       }
     }
     const next = [...tally.entries()]
@@ -145,7 +113,7 @@ async function main() {
   const wS = writeIfChanged('scorers.json', scorers);
   const wO = writeIfChanged('outcomes.json', outcomes);
   log(
-    `linked ${linked} new, filled ${teamsFilled} knockout teams, ${scored} new/changed results. ` +
+    `filled ${teamsFilled} knockout teams, ${scored} new/changed results. ` +
       `wrote: matches=${wM} scorers=${wS} outcomes=${wO}`,
   );
 }
