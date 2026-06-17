@@ -20,7 +20,7 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 | Route | Page |
 |-------|------|
-| `/` | Home (landing) — hero panel with current speeldag and next match(es), the "Nu live & recent gespeeld" strip (which adds an "Straks" block of upcoming fixtures while a match is live), your favourites, the **top 10** of the ranking with a button to the full ranking, and two movement cards for the latest calendar day (today vs. yesterday): **Stijgers & dalers** (strongest risers/fallers) and **Top 5 — winnaars & verliezers** (who entered/left the prize spots, with the number of positions moved). Movement rows show each participant's eindwinnaar flag. The next-match card shows both fixtures when two kick off at the same time |
+| `/` | Home (landing) — hero panel with current speeldag and next match(es), the "Nu live & recent gespeeld" strip (live matches + recently finished only — no scheduled fixtures), your favourites, the **top 10** of the ranking with a button to the full ranking, and two movement cards for the latest calendar day (today vs. yesterday): **Stijgers & dalers** (strongest risers/fallers) and **Top 5 — winnaars & verliezers** (who entered/left the prize spots, with the number of positions moved). Movement rows show each participant's eindwinnaar flag. The hero's next-match panel shows the first fixture that hasn't kicked off yet (a match in progress moves to the live strip and the hero advances), and shows both fixtures when two kick off at the same time |
 | `/klassement` | Full ranking — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, tap a participant for details, plus a client-side **search box** to filter by name. Live-only (shows in-progress matches if any) and recomputes a provisional ranking from live scores |
 | `/deelnemer/[id]` | Participant detail: position, total, bonus picks, predictions per speeldag in collapsible sections (played/current open, future collapsed) + score breakdown. A **Live scores** toggle recomputes the header position/total and the easter-egg trigger from the live provisional standing. Easter eggs once the tournament is under way: an 8-bit money rain with the prize amount for top-5 spots, and an 8-bit dog popping up to laugh at the last-placed player |
 | `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + predictions grouped by predicted outcome (1/X/2). Each row shows the participant's klassement position and eindwinnaar flag and is fully clickable to the profile; finished matches sort each group by points scored, then by klassement position |
@@ -77,6 +77,17 @@ temporarily unavailable.)
   aggregates `scorers.json`, and resolves the bonus `outcomes.json` once the
   final is played. It commits any changes, which triggers a Netlify rebuild. Run
   locally with `npm run results:update`.
+- **On-demand result refresh.** The results workflow runs on a ~15-min cron, so
+  the committed klassement/results can lag a few minutes behind a match. While a
+  match is recently/currently in its window, the client (in
+  [`LiveScores.astro`](./src/components/LiveScores.astro), debounced per tab)
+  calls [`netlify/functions/trigger-update.mjs`](./netlify/functions/trigger-update.mjs)
+  (`/.netlify/functions/trigger-update`), which `workflow_dispatch`es the results
+  workflow so it runs sooner. The function guards against pile-ups: it skips when
+  a run is already queued/in_progress or when the last run is younger than 5 min,
+  and self-debounces via a Netlify Blob (the workflow's `concurrency` group is a
+  second safety net). It needs a GitHub token with `actions:write` on the repo in
+  env **`GH_DISPATCH_TOKEN`**; without it the function is a harmless no-op.
 - **Live scores (client-side).** A "Live scores" toggle on the home, Programma,
   Kalender and Poules pages fetches the in-progress scores and then auto-refreshes
   every minute while on. On the home page live matches show as cards above the
@@ -173,3 +184,11 @@ results* above) does this automatically. To update by hand instead:
 
 Connect the repo to Netlify. Build settings are in [`netlify.toml`](./netlify.toml)
 (`npm run build` → `dist`). Pushing to the default branch triggers a rebuild.
+
+Environment variables to set on the Netlify site:
+
+- `PUBLIC_POSTHOG_PROJECT_TOKEN` / `PUBLIC_POSTHOG_HOST` — analytics (no-op when unset).
+- `GH_DISPATCH_TOKEN` — GitHub token with `actions:write` on this repo, used by
+  `trigger-update.mjs` to nudge the results workflow (set as a **secret**, scope
+  *functions*). No-op when unset. A fine-grained PAT scoped to this repo with
+  *Actions: Read and write* is enough.

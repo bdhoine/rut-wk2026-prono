@@ -50,7 +50,7 @@ const koRounds = KO_ROUNDS
           <div class="space-y-4">
             {d.days.map(([day, items]) => (
               <div>
-                <h4 class="sticky top-16 z-10 -mx-1 mb-1.5 bg-background/95 px-1 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">{day}</h4>
+                <h4 class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{day}</h4>
                 <div class="space-y-1.5">
                   {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
                 </div>

@@ -48,4 +48,33 @@ before committing.
   those props via `Layout`'s `analytics` prop (e.g. `{ username }` on
   `deelnemer/[id]`, `{ duel }` on `wedstrijd/[id]`) — never register page-specific
   values as super properties or they leak onto later pages.
+- On-demand result refresh: `netlify/functions/trigger-update.mjs` can
+  `workflow_dispatch` the results workflow so the committed klassement/results
+  refresh sooner than the ~15-min cron. `LiveScores.astro` calls it (debounced
+  per tab) only while a match is in its window; the function self-guards
+  (skips if a run is active or <5 min old, plus a Netlify Blob debounce). Needs
+  env `GH_DISPATCH_TOKEN` (`actions:write`); no-op without it. See `README.md`.
 - Run `npm run check` before committing; keep `README.md` and this file current.
+
+## Testing before committing
+
+Always validate user-facing changes hands-on before committing — a green
+`npm run check` is not enough:
+
+1. **Start from fresh, production-like data.** Sync the live result data so you
+   test what users actually see: `git fetch && git merge --ff-only origin/master`
+   (the results bot commits `src/data/*.json` continuously; a stale local
+   checkout shows wrong/empty states — e.g. already-played matches still
+   `scheduled`, or an empty "next match" hero).
+2. **Test the changed feature functionally and visually**, in a real browser
+   (use the agent-browser skill), on **both mobile and desktop** widths — the UI
+   is mobile-first with `sm:`/`md:` breakpoints, so check both. Confirm it does
+   what it should and looks right.
+3. **Check the console** — no errors on the pages you touched.
+4. **Check for visual issues** — layout, overflow/scroll, truncation, dark mode.
+5. **Smoke-test the core features** afterwards: `/` (home), `/klassement` (+name
+   search), `/kalender`, `/poules`, a `/deelnemer/[id]`, a `/wedstrijd/[id]` and
+   a `/land/[id]` page — a quick visual + console check on each.
+
+Only once all of the above is clean: run `npm run check`, update the changelog
+and docs, and commit.

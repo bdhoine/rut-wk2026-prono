@@ -43,24 +43,6 @@ const recent =
         }))
     : [];
 
-// Next not-yet-finished matches (list mode / home only). Shown under the live
-// cards while at least one match is live, so people see what's coming up next.
-const upcoming =
-  mode === 'list'
-    ? matches
-        .filter((m) => m.status !== 'finished' && m.homeTeamId && m.awayTeamId)
-        .sort((a, b) => a.kickoff.localeCompare(b.kickoff))
-        .slice(0, 4)
-        .map((m) => ({
-          id: m.id,
-          homeTeamId: m.homeTeamId,
-          awayTeamId: m.awayTeamId,
-          home: getTeam(m.homeTeamId)?.name ?? '',
-          away: getTeam(m.awayTeamId)?.name ?? '',
-          kickoff: m.kickoff,
-        }))
-    : [];
-
 // Data to recompute provisional ranking points client-side from live scores
 // (list mode / home only). Covers matches not yet finished — finished matches
 // already fold into the static ranking. Maps team iso pair -> predictions.
@@ -105,10 +87,6 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
     <div id="live-list" class="mb-6 hidden space-y-3">
       <h2 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground"><span class="bar-cut" aria-hidden="true"></span>{showRecent ? 'Nu live & recent gespeeld' : 'Nu live'}</h2>
       <div id="live-list-cards" class="space-y-3"></div>
-      <div id="upcoming-block" class="hidden space-y-3">
-        <h3 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Straks</h3>
-        <div id="upcoming-list-cards" class="space-y-3"></div>
-      </div>
       <div id="recent-list-cards" class="space-y-3"></div>
     </div>
   )}
@@ -116,7 +94,6 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
   <script type="application/json" id="live-teams" set:html={JSON.stringify(teamMap)}></script>
   <script type="application/json" id="live-windows" set:html={JSON.stringify(kickoffWindows)}></script>
   {mode === 'list' && <script type="application/json" id="live-recent" set:html={JSON.stringify(recent)}></script>}
-  {mode === 'list' && <script type="application/json" id="live-upcoming" set:html={JSON.stringify(upcoming)}></script>}
   {mode === 'list' && <script type="application/json" id="live-scoring" set:html={JSON.stringify(scoringPayload)}></script>}
 </div>
 
@@ -132,11 +109,8 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
     const listWrap = document.getElementById('live-list');
     const liveCards = document.getElementById('live-list-cards');
     const recentCards = document.getElementById('recent-list-cards');
-    const upcomingBlock = document.getElementById('upcoming-block');
-    const upcomingCards = document.getElementById('upcoming-list-cards');
     const teamMap = JSON.parse(document.getElementById('live-teams')?.textContent || '{}');
     const recentData = JSON.parse(document.getElementById('live-recent')?.textContent || '[]');
-    const upcomingData = JSON.parse(document.getElementById('live-upcoming')?.textContent || '[]');
     const scoring = JSON.parse(document.getElementById('live-scoring')?.textContent || 'null');
     const kickoffWindows: number[] = (JSON.parse(document.getElementById('live-windows')?.textContent || '[]') as string[])
       .map((iso) => new Date(iso).getTime())
@@ -208,8 +182,6 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       `<span class="inline-flex items-center rounded-md bg-ink px-2 py-0.5 text-base font-bold tabular-nums text-ink-foreground shadow-sm">${gh}<span class="px-1 text-gold">–</span>${ga}</span>`;
     const liveBadge = (m: any) =>
       `<span class="live-badge inline-flex items-center gap-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"><span class="size-1.5 animate-pulse rounded-full bg-white"></span>${minLabel(m)}</span>`;
-    const vsPill = () =>
-      `<span class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-sm font-bold text-muted-foreground">vs</span>`;
 
     function card(homeId: string, awayId: string, hName: string, aName: string, meta: string, scoreHtml: string, href?: string) {
       const el = document.createElement(href ? 'a' : 'div') as HTMLElement;
@@ -248,26 +220,9 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       updateListVisibility();
     }
 
-    function renderUpcoming() {
-      if (!upcomingCards || !upcomingBlock) return;
-      upcomingCards.innerHTML = '';
-      // Only while something is live; skip pairs currently live themselves.
-      const items = liveKeys.size > 0
-        ? upcomingData.filter((m: any) => !liveKeys.has(key(m.homeTeamId, m.awayTeamId))).slice(0, 3)
-        : [];
-      for (const m of items) {
-        upcomingCards.appendChild(
-          card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
-            `<span>${fmtDateTime(m.kickoff)}</span>`, vsPill(), m.id ? `/wedstrijd/${m.id}` : undefined),
-        );
-      }
-      upcomingBlock.classList.toggle('hidden', items.length === 0);
-      updateListVisibility();
-    }
-
     function updateListVisibility() {
       if (!listWrap) return;
-      const has = (liveCards?.childElementCount || 0) + (recentCards?.childElementCount || 0) + (upcomingCards?.childElementCount || 0) > 0;
+      const has = (liveCards?.childElementCount || 0) + (recentCards?.childElementCount || 0) > 0;
       listWrap.classList.toggle('hidden', !has);
     }
 
@@ -276,7 +231,6 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
         if (liveCards) liveCards.innerHTML = '';
         liveKeys = new Set();
         renderRecent();
-        renderUpcoming();
       } else {
         for (const c of touched) {
           const score = c.querySelector('.match-score');
@@ -339,7 +293,6 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
           }
         }
         renderRecent();
-        renderUpcoming();
         return shown;
       }
       for (const m of list) {
@@ -444,7 +397,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
     });
 
     // Recently-finished matches show automatically (no API needed).
-    if (mode === 'list') { renderRecent(); renderUpcoming(); }
+    if (mode === 'list') { renderRecent(); }
 
     // Auto-enable while a match is in progress and auto-disable once it's over,
     // based on kickoff windows (kickoff − 5 min … kickoff + 2.5 h). We only act
@@ -466,5 +419,24 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
     };
     autoEvaluate(); // set the initial state from the current time
     setInterval(autoEvaluate, AUTO_MS);
+
+    // While a match is recently/currently in its window, nudge the results
+    // workflow to run sooner — the committed klassement/results otherwise wait
+    // for the next scheduled run (~15 min). The function self-guards (skips when
+    // a run is already active or recent); we debounce per tab so we call it at
+    // most once per TRIGGER_MS regardless of polling.
+    const TRIGGER_KEY = 'rut-wk2026-update-trigger';
+    const TRIGGER_MS = 5 * 60 * 1000;
+    const maybeTriggerUpdate = async () => {
+      if (!matchBusyNow()) return;
+      try {
+        const last = Number(sessionStorage.getItem(TRIGGER_KEY) || 0);
+        if (Date.now() - last < TRIGGER_MS) return;
+        sessionStorage.setItem(TRIGGER_KEY, String(Date.now()));
+      } catch { /* ignore */ }
+      try { await fetch('/.netlify/functions/trigger-update', { method: 'POST' }); } catch { /* ignore */ }
+    };
+    maybeTriggerUpdate();
+    setInterval(maybeTriggerUpdate, TRIGGER_MS);
   }
 </script>

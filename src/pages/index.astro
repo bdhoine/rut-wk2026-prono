@@ -26,12 +26,27 @@ const rows = ranking().map((r) => {
 <Layout title="Rut Prono WK 2026">
   <HomeHero />
   <LiveScores mode="list" />
-  <SectionHeading title="Stand">
-    <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. De groen-getinte rijen zijn de prijsplaatsen (top 5)." />
+  <SectionHeading title="Klassement">
+    <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. De groen-getinte rijen zijn de prijsplaatsen (top 5). Klassement en resultaten updaten niet meteen na een match — dit kan even duren." />
   </SectionHeading>
   <RankingTable client:load rows={rows} limit={10} moreHref="/klassement" />
 
   <div class="mt-8">
     <MovementSection />
   </div>
+
+  <a
+    href="/statistieken"
+    id="stats-cta"
+    class="mt-8 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
+  >
+    Bekijk de statistieken
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+  </a>
+
+  <script>
+    document.getElementById('stats-cta')?.addEventListener('click', () => {
+      (window as unknown as { posthog?: { capture: (e: string) => void } }).posthog?.capture('statistics_cta_clicked');
+    });
+  </script>
 </Layout>

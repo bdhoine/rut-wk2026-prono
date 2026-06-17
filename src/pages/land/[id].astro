@@ -27,8 +27,6 @@ const pickedMostScored = mostScoredPickers(team.id);
 const pickedMostConceded = mostConcededPickers(team.id);
 ---
 <Layout title={`${team.name} — Rut Prono WK 2026`}>
-  <a href="/poules" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Poules</a>
-
   <header class="mb-6 flex items-center gap-3 rounded-xl border border-t-4 border-t-gold bg-card p-4 shadow-sm">
     <Flag iso={team.iso} name={team.name} class="text-4xl" />
     <div>
@@ -51,6 +49,10 @@ const pickedMostConceded = mostConcededPickers(team.id);
   <section class="mb-8">
     <SectionHeading title={`Stand groep ${team.group}`} />
     <StandingsTable rows={standings} highlightTop={2} />
+    <a href="/poules" class="mt-3 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted">
+      Toon alle poules
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+    </a>
   </section>
 
   <section class="mb-8">

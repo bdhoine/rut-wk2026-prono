@@ -209,7 +209,9 @@ export default function RankingTable({
         </section>
       )}
       <section>
-        {mainHeading && <h2 className="mb-2 text-lg font-semibold">{mainHeading}</h2>}
+        {mainHeading && (
+          <h2 className={limit != null ? "mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground" : "mb-2 text-lg font-semibold"}>{mainHeading}</h2>
+        )}
         {hasLive && (
           <p className="mb-2 flex items-center gap-1.5 text-xs text-red-700">
             <span className="size-2 animate-pulse rounded-full bg-red-600" /> Voorlopige stand — inclusief live-wedstrijden

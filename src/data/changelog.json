@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-06-17",
+    "title": "Duidelijker klassement en snellere resultaten",
+    "items": [
+      "Op de homepagina heet het stand-overzicht nu 'Klassement', zonder aparte 'Top 10'-kop.",
+      "Onderaan de homepagina staat nu een knop naar de statistieken.",
+      "Op een landpagina kan je via een knop meteen naar alle poules.",
+      "Terugknopjes bovenaan de detailpagina's zijn weg — gebruik gewoon het menu of de terugknop van je browser.",
+      "De datums op de kalender zijn nu rustiger weergegeven, zonder gekleurde balk.",
+      "Een info-tekstje legt uit dat het klassement en de resultaten niet meteen na een match updaten; tijdens en vlak na wedstrijden vragen we de resultaten nu automatisch sneller op.",
+      "De 'Nu live & recent gespeeld'-strook op de homepagina toont nu enkel live en recent gespeelde wedstrijden — geen geplande meer.",
+      "Zodra een wedstrijd bezig is, schuift de 'Volgende wedstrijd' in de hero automatisch door naar de eerstvolgende (of twee, als ze samen aftrappen)."
+    ]
+  },
+  {
     "date": "2026-06-16",
     "title": "Doelpuntenmakers per land en correcte topschutters",
     "items": [

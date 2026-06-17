@@ -62,7 +62,7 @@ const nextSlots = slots.slice(0, 3);
   <div class="grid sm:grid-cols-[1fr_auto]">
     <div class="p-5">
       <p class="font-display text-xs font-bold uppercase tracking-[0.2em] text-gold">{phaseLabel} · {finishedCount}/{matches.length} gespeeld</p>
-      <h1 class="mt-1 font-display text-2xl font-extrabold tracking-tight">Klassement</h1>
+      <h1 class="mt-1 font-display text-2xl font-extrabold tracking-tight">Rut Prono <span class="text-gold">WK 2026</span></h1>
       <p class="mt-1.5 text-xs text-ink-foreground/55">
         Resultaten bijgewerkt: <time datetime={updatedAt.toISOString()}>{formatKickoff(updatedAt.toISOString())}</time>
       </p>
@@ -92,25 +92,31 @@ const nextSlots = slots.slice(0, 3);
 </section>
 
 <script>
-  // Show the first upcoming match that hasn't ended yet (~2.5h after kickoff).
+  // Show the first fixture that hasn't kicked off yet: a match that is already
+  // in progress moves to the live section, so the hero advances to the next
+  // fixture (both matches of a shared kickoff slot show together). Re-evaluates
+  // periodically so it advances at kickoff without a reload.
   const wrap = document.querySelector('[data-next-matches]');
   if (wrap) {
-    const GRACE_MS = 2.5 * 60 * 60 * 1000;
     const entries = [...wrap.querySelectorAll<HTMLElement>('[data-kickoff]')];
-    const now = Date.now();
-    let shown: HTMLElement | null = null;
-    for (const el of entries) {
-      const past = new Date(el.dataset.kickoff!).getTime() + GRACE_MS < now;
-      const show = !past && !shown;
-      el.classList.toggle('hidden', !show);
-      if (show) shown = el;
-    }
-    if (!shown) (wrap as HTMLElement).classList.add('hidden');
-    else {
-      // Keep the heading singular/plural in sync with the revealed time slot.
-      const heading = wrap.querySelector('p');
-      const count = shown.querySelectorAll('a').length;
-      if (heading) heading.textContent = count > 1 ? 'Volgende wedstrijden' : 'Volgende wedstrijd';
-    }
+    const reveal = () => {
+      const now = Date.now();
+      let shown: HTMLElement | null = null;
+      for (const el of entries) {
+        const started = new Date(el.dataset.kickoff!).getTime() <= now;
+        const show = !started && !shown;
+        el.classList.toggle('hidden', !show);
+        if (show) shown = el;
+      }
+      (wrap as HTMLElement).classList.toggle('hidden', !shown);
+      if (shown) {
+        // Keep the heading singular/plural in sync with the revealed time slot.
+        const heading = wrap.querySelector('p');
+        const count = shown.querySelectorAll('a').length;
+        if (heading) heading.textContent = count > 1 ? 'Volgende wedstrijden' : 'Volgende wedstrijd';
+      }
+    };
+    reveal();
+    setInterval(reveal, 30 * 1000);
   }
 </script>

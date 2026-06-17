@@ -22,8 +22,6 @@ const pickers = topScorerPickers(player);
 const goalLabel = entry.goals === 1 ? '1 doelpunt' : `${entry.goals} doelpunten`;
 ---
 <Layout title={`${player} — Rut Prono WK 2026`}>
-  <a href="/statistieken" class="mb-4 inline-block text-sm text-muted-foreground hover:text-foreground">← Statistieken</a>
-
   <header class="mb-6 flex items-center gap-3 rounded-xl border border-t-4 border-t-gold bg-card p-4 shadow-sm">
     <Flag iso={entry.team?.iso} name={entry.team?.name} class="text-4xl" />
     <div class="min-w-0">
