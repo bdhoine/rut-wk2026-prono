@@ -32,13 +32,14 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/statistieken` | Top scorers (names cleaned + merged, own goals excluded), most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, **most correct 1X2 predictions per participant** (top 5 + "Toon alle"), popular scorelines, most-picked winner/top scorer (top 5 with a "Toon alle" expander; the top-scorer table shows the player's flag + WK goals). Picked top-scorer names link to their `/topschutter/[slug]` profile |
 | `/reglement` | Competition rules, deadlines and prizes |
 | `/changelog` | Per-update changelog (blocks newest-first), driven by `src/data/changelog.json` — see `CLAUDE.md` for the per-session upkeep rule |
+| `/steun` | "Trakteer op een koffie" — a client-side **EPC SEPA payment QR** (pick an amount → QR encodes IBAN + amount + mededeling, scannable by Belgian banking apps) + a copyable IBAN, and a tappable **"Trakteer via Bancontact"** button (a Bancontact groepspot link). All details live in `SUPPORT` in `src/lib/links.ts` |
 | any other URL | Branded 404 page ("Buitenspel!") |
 
 Navigation is `Home · Klassement · Wedstrijden ▾ · Statistieken · ⋮` on desktop —
 the Wedstrijden dropdown groups Programma, Kalender and Poules, and the ⋮ "Meer"
-dropdown holds Reglement, Changelog and a "Trakteer op een koffie" link (Buy Me a
-Coffee, also in the footer) — and a hamburger drawer on mobile with the same
-destinations as a flat list. Home (`/`) is the landing page; Klassement
+dropdown holds Reglement and Changelog — and a hamburger drawer on mobile with the
+same destinations as a flat list. A "Trakteer op een koffie" link sits in the footer
+and right-aligned on the live-scores bar (all widths); it points to `/steun`. Home (`/`) is the landing page; Klassement
 (`/klassement`) is the full ranking. All game
 lists are ordered by kickoff (planning). Score explanations on the participant
 and match pages appear on hovering the points badge (desktop) / tap (mobile);

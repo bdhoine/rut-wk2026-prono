@@ -1,0 +1,147 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import { SUPPORT } from '@/lib/links';
+
+// EPC SEPA payment QR: the page builds the QR client-side from the chosen
+// amount so people can scan it with a Belgian banking app (KBC, Belfius, ING,
+// Argenta, Bancontact) and confirm an instant transfer — no account or fee.
+const ibanCompact = SUPPORT.iban.replace(/\s+/g, '');
+const config = { iban: ibanCompact, name: SUPPORT.name, remittance: SUPPORT.remittance };
+---
+<Layout title="Trakteer op een koffie">
+  <PageHeader title="Trakteer op een koffie">
+    <InfoToggle text="Deze site is een hobbyproject. Vind je 'm leuk? Trakteer gerust op een koffie via een gewone overschrijving — scan de QR met je bankapp." />
+  </PageHeader>
+
+  <section class="mx-auto max-w-md">
+    <div class="rounded-xl border bg-card p-5 shadow-sm">
+      {SUPPORT.payLink && (
+        <a href={SUPPORT.payLink} target="_blank" rel="noopener"
+          class="mb-4 flex items-center justify-center gap-2 rounded-xl bg-ink px-4 py-3 text-base font-bold text-ink-foreground shadow-sm transition-colors hover:bg-ink/90">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 shrink-0 text-gold"><path d="M17 8h1a4 4 0 0 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" /><line x1="6" x2="6" y1="2" y2="4" /><line x1="10" x2="10" y1="2" y2="4" /><line x1="14" x2="14" y1="2" y2="4" /></svg>
+          Trakteer via Bancontact
+        </a>
+      )}
+      <p class="text-sm leading-relaxed text-muted-foreground">
+        {SUPPORT.payLink ? <>Liever zelf het bedrag kiezen? Scan de QR-code met je <strong class="text-foreground">bankapp</strong> (KBC, Belfius, ING, Argenta, Bancontact…).</>
+          : <>Kies een bedrag en scan de QR-code met je <strong class="text-foreground">bankapp</strong> (KBC, Belfius, ING, Argenta, Bancontact…). De overschrijving staat klaar — jij hoeft enkel te bevestigen.</>}
+      </p>
+
+      <!-- Amount picker -->
+      <div class="mt-4">
+        <div id="amount-buttons" class="grid grid-cols-3 gap-2">
+          {SUPPORT.amounts.map((a) => (
+            <button type="button" data-amount={a} class="amount-btn rounded-lg border px-3 py-2.5 text-base font-bold tabular-nums transition-colors hover:bg-muted">€{a}</button>
+          ))}
+        </div>
+        <label class="mt-2 flex items-center gap-2 rounded-lg border px-3 py-2 focus-within:ring-2 focus-within:ring-gold/60">
+          <span class="text-base font-bold text-muted-foreground">€</span>
+          <input id="amount-input" type="number" inputmode="decimal" min="1" max="999999" step="1" placeholder="Ander bedrag"
+            class="w-full bg-transparent text-base font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-muted-foreground" />
+        </label>
+      </div>
+
+      <!-- QR (always dark-on-white so any scanner reads it) -->
+      <div class="mt-5 flex flex-col items-center">
+        <div class="rounded-xl bg-white p-3 shadow-inner ring-1 ring-black/5">
+          <canvas id="epc-qr" width="240" height="240" class="block size-[240px]" aria-label="Betaal-QR-code"></canvas>
+        </div>
+        <p class="mt-2 text-sm text-muted-foreground">Bedrag in de QR: <strong id="amount-label" class="text-foreground tabular-nums">€5,00</strong></p>
+      </div>
+
+      <!-- Manual fallback details -->
+      <dl class="mt-5 space-y-2 border-t pt-4 text-sm">
+        <div class="flex items-center justify-between gap-3">
+          <dt class="text-muted-foreground">IBAN</dt>
+          <dd class="flex items-center gap-2 font-semibold tabular-nums">
+            <span>{SUPPORT.iban}</span>
+            <button id="copy-iban" type="button" aria-label="IBAN kopiëren" title="IBAN kopiëren" class="grid size-7 place-items-center rounded-md border text-muted-foreground transition-colors hover:bg-muted">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+            </button>
+          </dd>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <dt class="text-muted-foreground">Begunstigde</dt>
+          <dd class="font-semibold">{SUPPORT.name}</dd>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <dt class="text-muted-foreground">Mededeling</dt>
+          <dd class="font-semibold">{SUPPORT.remittance}</dd>
+        </div>
+      </dl>
+
+      <p class="mt-4 text-xs leading-relaxed text-muted-foreground">
+        Helemaal vrijblijvend — een gewone overschrijving, geen abonnement. Werkt de QR niet? Tik het IBAN gewoon over in je bankapp.
+      </p>
+    </div>
+  </section>
+
+  <script type="application/json" id="support-config" set:html={JSON.stringify(config)}></script>
+
+  <script>
+    import QRCode from 'qrcode';
+
+    const cfg = JSON.parse(document.getElementById('support-config')?.textContent || '{}');
+    const canvas = document.getElementById('epc-qr') as HTMLCanvasElement | null;
+    const input = document.getElementById('amount-input') as HTMLInputElement | null;
+    const label = document.getElementById('amount-label');
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('.amount-btn')];
+    const DEFAULT = 5;
+
+    const fmtEur = (n: number) =>
+      new Intl.NumberFormat('nl-BE', { style: 'currency', currency: 'EUR' }).format(n);
+
+    // EPC069-12 SEPA Credit Transfer payload (the "betaal-QR" standard).
+    function epcPayload(amount: number): string {
+      const amt = amount > 0 ? `EUR${amount.toFixed(2)}` : '';
+      return [
+        'BCD', '002', '1', 'SCT',
+        '',            // BIC (optional within the EEA)
+        cfg.name || '',
+        cfg.iban || '',
+        amt,
+        '',            // purpose
+        '',            // structured remittance
+        cfg.remittance || '',
+      ].join('\n');
+    }
+
+    function render(amount: number) {
+      if (label) label.textContent = amount > 0 ? fmtEur(amount) : '— vrij bedrag';
+      buttons.forEach((b) => {
+        const on = Number(b.dataset.amount) === amount;
+        b.classList.toggle('border-gold', on);
+        b.classList.toggle('bg-gold', on);
+        b.classList.toggle('text-gold-foreground', on);
+      });
+      if (canvas) {
+        QRCode.toCanvas(canvas, epcPayload(amount), { width: 240, margin: 1, color: { dark: '#000000', light: '#ffffff' } })
+          .catch(() => { /* ignore */ });
+      }
+      (window as any).posthog?.capture('support_amount_selected', { amount });
+    }
+
+    buttons.forEach((b) => b.addEventListener('click', () => {
+      if (input) input.value = '';
+      render(Number(b.dataset.amount));
+    }));
+    input?.addEventListener('input', () => {
+      const v = Math.max(0, Math.min(999999, Number(input.value) || 0));
+      render(v);
+    });
+
+    // Copy IBAN to the clipboard with a brief confirmation.
+    const copyBtn = document.getElementById('copy-iban');
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(cfg.iban || '');
+        copyBtn.classList.add('bg-emerald-100', 'text-emerald-700', 'border-emerald-300');
+        setTimeout(() => copyBtn.classList.remove('bg-emerald-100', 'text-emerald-700', 'border-emerald-300'), 1200);
+      } catch { /* clipboard unavailable */ }
+    });
+
+    render(DEFAULT);
+  </script>
+</Layout>
