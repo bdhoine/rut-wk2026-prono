@@ -37,9 +37,9 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 Navigation is `Home · Klassement · Wedstrijden ▾ · Statistieken · ⋮` on desktop —
 the Wedstrijden dropdown groups Programma, Kalender and Poules, and the ⋮ "Meer"
-dropdown holds Reglement and Changelog — and a hamburger drawer on mobile with the
-same destinations as a flat list. A "Trakteer op een pint" link sits in the footer
-and right-aligned on the live-scores bar (all widths); it points to `/steun`. Home (`/`) is the landing page; Klassement
+dropdown holds Reglement, Changelog and a "Trakteer op een pint" link — and a
+hamburger drawer on mobile with the same destinations as a flat list (the pint link
+included). The pint link also sits in the footer; all point to `/steun`. Home (`/`) is the landing page; Klassement
 (`/klassement`) is the full ranking. All game
 lists are ordered by kickoff (planning). Score explanations on the participant
 and match pages appear on hovering the points badge (desktop) / tap (mobile);

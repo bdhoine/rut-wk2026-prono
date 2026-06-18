@@ -5,9 +5,10 @@
     "items": [
       "Nieuwe bezoekers krijgen een korte uitleg hoe ze deelnemers als favoriet kunnen volgen (met een knipperende ster); je kan die uitleg ook overslaan.",
       "Nieuwe statistiek 'Meeste exacte uitslagen' (volledig juiste score), naast 'Meeste juiste 1X2' — beide gesorteerd op aantal en daarna op plaats in het klassement.",
-      "Op een deelnemerspagina staan binnen een speeldag de nog te spelen wedstrijden nu bovenaan, met een scheiding en daaronder de al gespeelde.",
+      "Op een deelnemerspagina staan de wedstrijden binnen een speeldag gewoon in chronologische volgorde (gespeeld en nog te spelen door elkaar).",
+      "Het prijzenbedrag in de geld-animatie klopt nu bij gedeelde plaatsen: het geld van die plaatsen wordt samengeteld en eerlijk verdeeld (bv. drie ex aequo vierden delen het prijzengeld van plaats 4 + 5 + 6).",
       "Op een deelnemerspagina is voortaan enkel de speeldag (of ronde) die nu bezig is opengeklapt; volledig gespeelde speeldagen staan dichtgeklapt. Er staat er altijd minstens één open.",
-      "Nieuwe 'Trakteer op een pint'-pagina voor wie de site graag eens trakteert: kies een bedrag en scan de betaal-QR met je bankapp (KBC, Belfius, ING, Argenta, Bancontact…), of tik op 'Trakteer via Bancontact'. Bereikbaar via de footer en naast de 'Live scores'-knop."
+      "Nieuwe 'Trakteer op een pint'-pagina voor wie de site graag eens trakteert: kies een bedrag en scan de betaal-QR met je bankapp (KBC, Belfius, ING, Argenta, Bancontact…), of tik op 'Trakteer via Bancontact'. Bereikbaar via het menu (het ⋮-menu op desktop, het menu op mobiel) en de footer."
     ]
   },
   {

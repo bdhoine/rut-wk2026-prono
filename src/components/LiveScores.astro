@@ -12,7 +12,6 @@
 //    top. The section holds at most 4 cards: every live match, then the newest
 //    finished ones to fill up, with the last 2 finished always included.
 import { teams, matches, predictions, settings, getTeam } from '@/lib/data';
-import { SUPPORT_HREF } from '@/lib/links';
 
 interface Props {
   mode?: 'overlay' | 'list';
@@ -71,23 +70,17 @@ const scoringPayload =
 const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) => m.kickoff);
 ---
 <div data-live-root data-live-mode={mode}>
-  <div class="mb-4">
-    <div class="flex items-center gap-2">
-      <button
-        id="live-toggle"
-        type="button"
-        aria-pressed="false"
-        class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
-      >
-        <span id="live-dot" class="size-2 rounded-full bg-muted-foreground/50"></span>
-        <span id="live-label">Live scores</span>
-      </button>
-      <a href={SUPPORT_HREF} class="ml-auto inline-flex items-center gap-1.5 pr-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 text-gold"><path d="M17 11h1a3 3 0 0 1 0 6h-1" /><path d="M9 12v6" /><path d="M13 12v6" /><path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5S9.44 2 11 2s2 1.5 3 1.5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z" /><path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8" /></svg>
-        Trakteer op een pint
-      </a>
-    </div>
-    <span id="live-status" class="mt-1.5 block pl-3 text-xs text-muted-foreground empty:hidden"></span>
+  <div class="mb-4 flex flex-wrap items-center gap-2">
+    <button
+      id="live-toggle"
+      type="button"
+      aria-pressed="false"
+      class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
+    >
+      <span id="live-dot" class="size-2 rounded-full bg-muted-foreground/50"></span>
+      <span id="live-label">Live scores</span>
+    </button>
+    <span id="live-status" class="text-xs text-muted-foreground"></span>
   </div>
 
   {mode === 'list' && (

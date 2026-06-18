@@ -116,7 +116,7 @@ const topLinkCls = (active: boolean) => [
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5"><circle cx="12" cy="5" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="12" cy="19" r="1.6" /></svg>
               </button>
-              <div data-dropdown-menu class="absolute right-0 top-full z-40 mt-1.5 hidden w-44 rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg">
+              <div data-dropdown-menu class="absolute right-0 top-full z-40 mt-1.5 hidden w-52 rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg">
                 {meer.map((item) => (
                   <a
                     href={item.href}
@@ -126,6 +126,11 @@ const topLinkCls = (active: boolean) => [
                     ]}
                   >{item.label}</a>
                 ))}
+                <div class="my-1 border-t border-border/60"></div>
+                <a href={SUPPORT_HREF} class="flex items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 text-gold"><path d="M17 11h1a3 3 0 0 1 0 6h-1" /><path d="M9 12v6" /><path d="M13 12v6" /><path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5S9.44 2 11 2s2 1.5 3 1.5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z" /><path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8" /></svg>
+                  Trakteer op een pint
+                </a>
               </div>
             </div>
           </nav>
@@ -195,6 +200,11 @@ const topLinkCls = (active: boolean) => [
             ]}
           >{item.label}</a>
         ))}
+        <div class="my-1.5 border-t border-border/60"></div>
+        <a href={SUPPORT_HREF} class="flex min-h-12 items-center gap-2.5 rounded-lg px-4 text-base font-medium text-foreground transition-colors hover:bg-muted active:bg-muted">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 shrink-0 text-gold"><path d="M17 11h1a3 3 0 0 1 0 6h-1" /><path d="M9 12v6" /><path d="M13 12v6" /><path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5S9.44 2 11 2s2 1.5 3 1.5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z" /><path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8" /></svg>
+          Trakteer op een pint
+        </a>
       </nav>
     </div>
 

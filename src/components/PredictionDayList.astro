@@ -1,7 +1,7 @@
 ---
 // Prediction rows for one speeldag / knockout round on a participant page.
-// Within the group, not-yet-played matches come first, then a labelled divider,
-// then the matches that have already been played (which carry a score).
+// All matches are shown in chronological order (by kickoff), played and
+// not-yet-played mixed together — no divider between them.
 import PredictionRow from './PredictionRow.astro';
 import { predictionsForParticipant } from '@/lib/data';
 
@@ -10,20 +10,8 @@ interface Props {
   items: Item[];
 }
 const { items } = Astro.props;
-// Split on whether the match itself has been played, not on whether this
-// participant happened to score points (a finished match without a prediction
-// still belongs with the played ones).
-const unplayed = items.filter((r) => r.match.status !== 'finished');
-const played = items.filter((r) => r.match.status === 'finished');
+const ordered = [...items].sort((a, b) => a.match.kickoff.localeCompare(b.match.kickoff));
 ---
 <div class="space-y-2 border-t px-3 py-3">
-  {unplayed.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
-  {unplayed.length > 0 && played.length > 0 && (
-    <div class="flex items-center gap-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/60">
-      <span class="h-px flex-1 bg-muted-foreground/20"></span>
-      Gespeeld
-      <span class="h-px flex-1 bg-muted-foreground/20"></span>
-    </div>
-  )}
-  {played.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
+  {ordered.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}
 </div>

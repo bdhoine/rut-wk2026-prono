@@ -372,8 +372,21 @@ const dogH = DOG_ART.length * DOG_PX;
         let pos = 0, last = null;
         rows.forEach((r, i) => { if (last === null || r.total !== last) { pos = i + 1; last = r.total; } posById[r.id] = pos; });
         const maxPos = rows.length ? posById[rows[rows.length - 1].id] : 0;
+        const myPos = posById[PID];
+        const tied = rows.filter((r) => posById[r.id] === myPos).length; // people sharing this position
         const mine = rows.find((r) => r.id === PID);
-        return { pos: posById[PID], maxPos, total: mine ? mine.total : D.staticTotal };
+        return { pos: myPos, tied, maxPos, total: mine ? mine.total : D.staticTotal };
+      }
+
+      // Prize per person, accounting for ties (mirrors prizeFor in lib/prizes.ts):
+      // `tied` people on `pos` occupy ranks pos..pos+tied-1; pool that money and
+      // split it. So 2 tied for 4th split 4th+5th = (90+60)/2 = 75 each, with no
+      // separate 5th place.
+      function sharedPrize(pos, tied) {
+        if (!tied || tied < 1) return 0;
+        let pool = 0;
+        for (let p = pos; p < pos + tied; p++) pool += prizes[p] || 0;
+        return pool / tied;
       }
 
       const posEl = document.getElementById('hdr-pos');
@@ -392,7 +405,8 @@ const dogH = DOG_ART.length * DOG_PX;
         host.id = 'money-egg';
         host.className = 'pointer-events-none fixed inset-0 z-[60] overflow-hidden';
         host.setAttribute('aria-hidden', 'true');
-        host.innerHTML = '<div class="absolute inset-0 grid place-items-center"><span class="pixel-amount select-none">€' + prize + '</span></div>';
+        const amount = Number.isInteger(prize) ? String(prize) : (Math.round(prize * 100) / 100).toFixed(2).replace('.', ',');
+        host.innerHTML = '<div class="absolute inset-0 grid place-items-center"><span class="pixel-amount select-none">€' + amount + '</span></div>';
         document.body.appendChild(host);
         if (!reduce) {
           for (let i = 0; i < 26; i++) {
@@ -433,7 +447,7 @@ const dogH = DOG_ART.length * DOG_PX;
         fired = true;
         const r = compute(window.__rutLiveDeltas || {});
         if (r.pos == null) return;
-        const prize = prizes[r.pos] || 0;
+        const prize = sharedPrize(r.pos, r.tied);
         if (prize > 0) showMoney(prize);
         else if (r.pos === r.maxPos && r.maxPos > 5) showDog();
       }
