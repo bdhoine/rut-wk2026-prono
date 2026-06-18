@@ -845,8 +845,13 @@
     "venue": "BMO Field, Toronto",
     "homeTeamId": "gh",
     "awayTeamId": "pa",
-    "status": "scheduled",
-    "apiId": 760434
+    "status": "finished",
+    "apiId": 760434,
+    "result": {
+      "home": 1,
+      "away": 0
+    },
+    "winnerTeamId": "gh"
   },
   {
     "id": "gL-md2-1",

@@ -75,6 +75,11 @@
     "goals": 1
   },
   {
+    "player": "Caleb Yirenkyi",
+    "teamId": "gh",
+    "goals": 1
+  },
+  {
     "player": "Connor Metcalfe",
     "teamId": "au",
     "goals": 1
@@ -192,11 +197,6 @@
   {
     "player": "Martin Baturina",
     "teamId": "hr",
-    "goals": 1
-  },
-  {
-    "player": "Mattias Svanberg",
-    "teamId": "se",
     "goals": 1
   }
 ]
