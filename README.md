@@ -36,8 +36,9 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 
 Navigation is `Home · Klassement · Wedstrijden ▾ · Statistieken · ⋮` on desktop —
 the Wedstrijden dropdown groups Programma, Kalender and Poules, and the ⋮ "Meer"
-dropdown holds Reglement and Changelog — and a hamburger drawer on mobile with
-the same destinations as a flat list. Home (`/`) is the landing page; Klassement
+dropdown holds Reglement, Changelog and a "Trakteer op een koffie" link (Buy Me a
+Coffee, also in the footer) — and a hamburger drawer on mobile with the same
+destinations as a flat list. Home (`/`) is the landing page; Klassement
 (`/klassement`) is the full ranking. All game
 lists are ordered by kickoff (planning). Score explanations on the participant
 and match pages appear on hovering the points badge (desktop) / tap (mobile);
