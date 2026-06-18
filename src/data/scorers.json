@@ -25,6 +25,11 @@
     "goals": 2
   },
   {
+    "player": "Johan Manzambi",
+    "teamId": "ch",
+    "goals": 2
+  },
+  {
     "player": "Kai Havertz",
     "teamId": "de",
     "goals": 2
@@ -120,6 +125,11 @@
     "goals": 1
   },
   {
+    "player": "Ermin Mahmic",
+    "teamId": "ba",
+    "goals": 1
+  },
+  {
     "player": "Felix Nmecha",
     "teamId": "de",
     "goals": 1
@@ -127,6 +137,11 @@
   {
     "player": "Giovanni Reyna",
     "teamId": "us",
+    "goals": 1
+  },
+  {
+    "player": "Granit Xhaka",
+    "teamId": "ch",
     "goals": 1
   },
   {
@@ -182,21 +197,6 @@
   {
     "player": "Keito Nakamura",
     "teamId": "jp",
-    "goals": 1
-  },
-  {
-    "player": "Ladislav Krejcí",
-    "teamId": "cz",
-    "goals": 1
-  },
-  {
-    "player": "Leo Østigard",
-    "teamId": "no",
-    "goals": 1
-  },
-  {
-    "player": "Livano Comenencia",
-    "teamId": "cw",
     "goals": 1
   }
 ]
