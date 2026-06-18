@@ -56,6 +56,8 @@ before committing.
   is active or <5 min old, plus a Netlify Blob debounce). Needs
   env `GH_DISPATCH_TOKEN` (`actions:write`); no-op without it. See `README.md`.
 - Run `npm run check` before committing; keep `README.md` and this file current.
+- Commit and push directly to `master` — no feature branch / PR for this repo
+  (the results bot and the owner both commit straight to `master`).
 
 ## Testing before committing
 
