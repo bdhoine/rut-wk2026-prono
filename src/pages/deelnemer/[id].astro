@@ -40,10 +40,13 @@ const byRound = ROUND_ORDER
   .filter((g) => g.items.length > 0);
 
 // Group stage split per speeldag as collapsible sections (72 matches is too
-// long as one flat list). A speeldag starts open when it has results or is
-// the next one up; fully-future speeldagen start collapsed.
+// long as one flat list). Exactly one section is open at a time: the one that
+// is currently in progress (the first that isn't fully played). Fully-played
+// sections (e.g. a completed Speeldag 1) start collapsed; fully-future ones
+// also start collapsed. If the whole tournament is finished, the last section
+// stays open so there is always at least one expanded.
 const groupItems = byRound.find((g) => g.round === 'group')?.items ?? [];
-const koRounds = byRound.filter((g) => g.round !== 'group');
+const koGroups = byRound.filter((g) => g.round !== 'group');
 const matchdays = ([1, 2, 3] as const)
   .map((md) => {
     const items = groupItems.filter((r) => r.match.matchday === md);
@@ -55,7 +58,20 @@ const matchdays = ([1, 2, 3] as const)
     };
   })
   .filter((g) => g.items.length > 0);
-const currentMd = matchdays.find((g) => g.finished < g.items.length)?.md;
+const koRounds = koGroups.map((g) => ({
+  round: g.round,
+  items: g.items,
+  finished: g.items.filter((r) => r.score).length,
+  points: g.items.reduce((s, r) => s + (r.score?.points ?? 0), 0),
+}));
+
+// Walk all sections in chronological order; the open one is the first that is
+// not fully played, falling back to the last section once everything is done.
+const sections = [
+  ...matchdays.map((g) => ({ key: `md-${g.md}`, finished: g.finished, total: g.items.length })),
+  ...koRounds.map((g) => ({ key: `ko-${g.round}`, finished: g.finished, total: g.items.length })),
+];
+const openKey = (sections.find((s) => s.finished < s.total) ?? sections.at(-1))?.key;
 
 const pick = (key: keyof BonusPicks) => participant.bonus[key];
 
@@ -225,7 +241,7 @@ const dogH = DOG_ART.length * DOG_PX;
     </SectionHeading>
     <div class="space-y-3">
       {matchdays.map((g) => (
-        <details open={g.finished > 0 || g.md === currentMd} class="group rounded-xl border bg-card shadow-sm">
+        <details open={`md-${g.md}` === openKey} class="group rounded-xl border bg-card shadow-sm">
           <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
             Speeldag {g.md}
             <span class="text-sm font-normal text-muted-foreground">{g.finished}/{g.items.length} gespeeld</span>
@@ -236,21 +252,17 @@ const dogH = DOG_ART.length * DOG_PX;
         </details>
       ))}
 
-      {koRounds.map((g) => {
-        const finished = g.items.filter((r) => r.score).length;
-        const points = g.items.reduce((s, r) => s + (r.score?.points ?? 0), 0);
-        return (
-          <details open={finished > 0} class="group rounded-xl border bg-card shadow-sm">
-            <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
-              {ROUND_LABELS[g.round]}
-              <span class="text-sm font-normal text-muted-foreground">{finished}/{g.items.length} gespeeld</span>
-              {finished > 0 && <span class="ml-auto rounded-md bg-gold/15 px-2 py-0.5 text-sm font-bold tabular-nums text-primary">{points} ptn</span>}
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class:list={['size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180', finished === 0 && 'ml-auto']}><path d="m6 9 6 6 6-6" /></svg>
-            </summary>
-            <PredictionDayList items={g.items} />
-          </details>
-        );
-      })}
+      {koRounds.map((g) => (
+        <details open={`ko-${g.round}` === openKey} class="group rounded-xl border bg-card shadow-sm">
+          <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+            {ROUND_LABELS[g.round]}
+            <span class="text-sm font-normal text-muted-foreground">{g.finished}/{g.items.length} gespeeld</span>
+            {g.finished > 0 && <span class="ml-auto rounded-md bg-gold/15 px-2 py-0.5 text-sm font-bold tabular-nums text-primary">{g.points} ptn</span>}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class:list={['size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180', g.finished === 0 && 'ml-auto']}><path d="m6 9 6 6 6-6" /></svg>
+          </summary>
+          <PredictionDayList items={g.items} />
+        </details>
+      ))}
     </div>
   </section>
 
