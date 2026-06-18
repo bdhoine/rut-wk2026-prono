@@ -71,21 +71,23 @@ const scoringPayload =
 const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) => m.kickoff);
 ---
 <div data-live-root data-live-mode={mode}>
-  <div class="mb-4 flex flex-wrap items-center gap-2">
-    <button
-      id="live-toggle"
-      type="button"
-      aria-pressed="false"
-      class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
-    >
-      <span id="live-dot" class="size-2 rounded-full bg-muted-foreground/50"></span>
-      <span id="live-label">Live scores</span>
-    </button>
-    <span id="live-status" class="text-xs text-muted-foreground"></span>
-    <a href={SUPPORT_HREF} class="ml-auto inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 text-gold"><path d="M17 8h1a4 4 0 0 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" /><line x1="6" x2="6" y1="2" y2="4" /><line x1="10" x2="10" y1="2" y2="4" /><line x1="14" x2="14" y1="2" y2="4" /></svg>
-      Trakteer op een koffie
-    </a>
+  <div class="mb-4">
+    <div class="flex items-center gap-2">
+      <button
+        id="live-toggle"
+        type="button"
+        aria-pressed="false"
+        class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
+      >
+        <span id="live-dot" class="size-2 rounded-full bg-muted-foreground/50"></span>
+        <span id="live-label">Live scores</span>
+      </button>
+      <a href={SUPPORT_HREF} class="ml-auto inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 text-gold"><path d="M17 8h1a4 4 0 0 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" /><line x1="6" x2="6" y1="2" y2="4" /><line x1="10" x2="10" y1="2" y2="4" /><line x1="14" x2="14" y1="2" y2="4" /></svg>
+        Trakteer op een koffie
+      </a>
+    </div>
+    <span id="live-status" class="mt-1.5 block text-xs text-muted-foreground empty:hidden"></span>
   </div>
 
   {mode === 'list' && (
