@@ -774,8 +774,13 @@
     "venue": "Estadio Azteca, Mexico-Stad",
     "homeTeamId": "uz",
     "awayTeamId": "co",
-    "status": "scheduled",
-    "apiId": 760436
+    "status": "finished",
+    "apiId": 760436,
+    "result": {
+      "home": 1,
+      "away": 3
+    },
+    "winnerTeamId": "co"
   },
   {
     "id": "gK-md2-1",

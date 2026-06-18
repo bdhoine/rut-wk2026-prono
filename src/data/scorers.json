@@ -40,6 +40,11 @@
     "goals": 2
   },
   {
+    "player": "Abbosbek Fayzullaev",
+    "teamId": "uz",
+    "goals": 1
+  },
+  {
     "player": "Abdulelah Al-Amri",
     "teamId": "sa",
     "goals": 1
@@ -100,6 +105,11 @@
     "goals": 1
   },
   {
+    "player": "Daniel Muñoz",
+    "teamId": "co",
+    "goals": 1
+  },
+  {
     "player": "Deniz Undav",
     "teamId": "de",
     "goals": 1
@@ -137,6 +147,11 @@
   {
     "player": "Jamal Musiala",
     "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Jáminton Campaz",
+    "teamId": "co",
     "goals": 1
   },
   {
@@ -182,21 +197,6 @@
   {
     "player": "Livano Comenencia",
     "teamId": "cw",
-    "goals": 1
-  },
-  {
-    "player": "Marcus Rashford",
-    "teamId": "gbeng",
-    "goals": 1
-  },
-  {
-    "player": "Marko Arnautovic",
-    "teamId": "at",
-    "goals": 1
-  },
-  {
-    "player": "Martin Baturina",
-    "teamId": "hr",
     "goals": 1
   }
 ]
