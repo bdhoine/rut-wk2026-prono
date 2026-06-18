@@ -39,8 +39,12 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "cz",
     "awayTeamId": "za",
-    "status": "scheduled",
-    "apiId": 760438
+    "status": "finished",
+    "apiId": 760438,
+    "result": {
+      "home": 1,
+      "away": 1
+    }
   },
   {
     "id": "gA-md2-2",
