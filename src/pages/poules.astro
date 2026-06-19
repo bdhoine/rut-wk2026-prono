@@ -14,9 +14,9 @@ const thirds = bestThirdPlaced();
 // Same gating as StandingsTable: no qualification verdict before any results.
 const thirdsHaveResults = thirds.some((t) => t.played > 0);
 ---
-<Layout title="Poules">
-  <PageHeader title="Poulestand">
-    <InfoToggle text="Top 2 per poule plaatst zich rechtstreeks. Tik op een land voor het programma." />
+<Layout title="Groepen">
+  <PageHeader title="Groepen">
+    <InfoToggle text="Top 2 per groep plaatst zich rechtstreeks. Tik op een land voor het programma." />
   </PageHeader>
   <LiveScores />
   <LivePoules />
@@ -30,9 +30,14 @@ const thirdsHaveResults = thirds.some((t) => t.played > 0);
     ))}
   </div>
 
+  <p class="mt-3 flex items-center gap-1.5 px-1 text-xs text-muted-foreground">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+    Naar de volgende ronde
+  </p>
+
   <section class="mt-8">
     <SectionHeading title="Beste nummers 3">
-      <InfoToggle text="De 8 beste derdes plaatsen zich voor de 1/16de finales (groen)." />
+      <InfoToggle text="De 8 beste derdes plaatsen zich voor de 1/16de finales (✓)." />
     </SectionHeading>
     <div class="overflow-hidden rounded-xl border bg-card">
       <table class="w-full table-fixed text-sm">
@@ -60,6 +65,9 @@ const thirdsHaveResults = thirds.some((t) => t.played > 0);
                 <a href={`/land/${t.team.id}`} class="flex items-center gap-2 font-medium hover:underline">
                   <Flag iso={t.team.iso} name={t.team.name} class="shrink-0 text-base" />
                   <span class="truncate">{t.team.name}</span>
+                  {thirdsHaveResults && t.qualifies && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="size-3 shrink-0 text-emerald-600 dark:text-emerald-400" role="img" aria-label="geplaatst"><path d="M20 6 9 17l-5-5" /></svg>
+                  )}
                 </a>
               </td>
               <td class="py-2.5 text-center tabular-nums">{t.group}</td>

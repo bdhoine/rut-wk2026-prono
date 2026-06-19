@@ -4,7 +4,6 @@ import RankingTable from '@/components/RankingTable.tsx';
 import LiveScores from '@/components/LiveScores.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
-import SectionHeading from '@/components/SectionHeading.astro';
 import { ranking, getParticipant, getTeam, participantForm } from '@/lib/data';
 
 const rows = ranking().map((r) => {
@@ -23,10 +22,9 @@ const rows = ranking().map((r) => {
 });
 ---
 <Layout title="Klassement — Rut Prono WK 2026">
-  <PageHeader title="Klassement" />
+  <PageHeader title="Klassement">
+    <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. Een muntje markeert de prijsplaatsen (top 5) — tik erop voor het bedrag. Zoek hieronder op naam. Klassement en resultaten updaten niet meteen na een wedstrijd — dit kan even duren." />
+  </PageHeader>
   <LiveScores mode="list" showRecent={false} />
-  <SectionHeading title="Stand">
-    <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. De groen-getinte rijen zijn de prijsplaatsen (top 5). Zoek hieronder op naam. Klassement en resultaten updaten niet meteen na een match — dit kan even duren." />
-  </SectionHeading>
   <RankingTable client:load rows={rows} searchable />
 </Layout>

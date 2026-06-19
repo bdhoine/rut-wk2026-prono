@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PRIZES } from "@/lib/prizes";
+import { PRIZES, prizeFor } from "@/lib/prizes";
 
 export interface RankingTableRow {
   position: number;
@@ -58,12 +58,41 @@ function Star({ filled, className = "size-5" }: { filled: boolean; className?: s
   );
 }
 
+const fmtEuro = (n: number) => (Number.isInteger(n) ? `€${n}` : `€${n.toFixed(2).replace(".", ",")}`);
+
+// Position badge tones. 1/2/3 are the medals; prize spots 4–5 get a money-green
+// badge. The prize spots reuse this same "stand" badge (no separate marker) and
+// carry the prize-amount tooltip.
+const BADGE_BASE = "inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-bold tabular-nums font-display";
+const BADGE_TONE: Record<number, string> = {
+  1: "bg-gradient-to-b from-[#f6d873] to-[#dca21f] text-[#5a3d08] ring-1 ring-[#caa12e]/60 shadow-sm",
+  2: "bg-gradient-to-b from-zinc-100 to-zinc-300 text-zinc-700 ring-1 ring-zinc-400/50 shadow-sm",
+  3: "bg-gradient-to-b from-[#e3b27e] to-[#a96a32] text-white ring-1 ring-[#8a531f]/50 shadow-sm",
+};
+const BADGE_TONE_LOW = "bg-gradient-to-b from-emerald-200 to-emerald-400 text-emerald-950 ring-1 ring-emerald-500/50 shadow-sm dark:from-emerald-700 dark:to-emerald-600 dark:text-emerald-50";
+
 function positionBadge(position: number) {
-  const base = "inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-bold tabular-nums font-display";
-  if (position === 1) return <span className={`${base} bg-gradient-to-b from-[#f6d873] to-[#dca21f] text-[#5a3d08] ring-1 ring-[#caa12e]/60 shadow-sm`}>1</span>;
-  if (position === 2) return <span className={`${base} bg-gradient-to-b from-zinc-100 to-zinc-300 text-zinc-700 ring-1 ring-zinc-400/50 shadow-sm`}>2</span>;
-  if (position === 3) return <span className={`${base} bg-gradient-to-b from-[#e3b27e] to-[#a96a32] text-white ring-1 ring-[#8a531f]/50 shadow-sm`}>3</span>;
-  return <span className={`${base} font-semibold text-muted-foreground`}>{position}</span>;
+  return <span className={`${BADGE_BASE} ${BADGE_TONE[position] ?? "font-semibold text-muted-foreground"}`}>{position}</span>;
+}
+
+// Prize spot: the standings badge itself, as a button with a hover/tap tooltip
+// showing the (tie-aware) prize money.
+function PrizeBadge({ position, amount, open, onToggle }: { position: number; amount: string; open: boolean; onToggle: () => void }) {
+  const tone = BADGE_TONE[position] ?? BADGE_TONE_LOW;
+  return (
+    <span className="group/coin relative inline-flex">
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onToggle(); }}
+        aria-label={`${position}e plaats — prijzengeld ${amount}`}
+        className={`${BADGE_BASE} ${tone} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70`}
+      >{position}</button>
+      <span
+        role="tooltip"
+        className={`pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded-md bg-popover px-2 py-1 text-xs font-semibold text-popover-foreground shadow-md ring-1 ring-border group-hover/coin:block ${open ? "block" : "hidden"}`}
+      >{amount}</span>
+    </span>
+  );
 }
 
 type DisplayRow = RankingTableRow & { delta: number };
@@ -82,12 +111,14 @@ export default function RankingTable({
   const [favs, setFavs] = React.useState<string[]>([]);
   const [deltas, setDeltas] = React.useState<Record<string, number>>({});
   const [query, setQuery] = React.useState("");
+  const [openCoin, setOpenCoin] = React.useState<string | null>(null);
   const searchTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Favourites onboarding tutorial.
   const [tut, setTut] = React.useState<null | "intro" | "spotlight">(null);
   const [bubble, setBubble] = React.useState<{ top: number; left: number } | null>(null);
   const firstStarRef = React.useRef<HTMLButtonElement | null>(null);
+  const introRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     try {
@@ -125,6 +156,28 @@ export default function RankingTable({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [tut, dismissTutorial]);
+
+  // Trap focus inside the intro dialog and move focus into it on open.
+  React.useEffect(() => {
+    if (tut !== "intro") return;
+    const root = introRef.current;
+    if (!root) return;
+    const focusables = () =>
+      Array.from(root.querySelectorAll<HTMLElement>('button, [href], input, [tabindex]:not([tabindex="-1"])'))
+        .filter((el) => !el.hasAttribute("disabled"));
+    focusables()[0]?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      const f = focusables();
+      if (!f.length) return;
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    root.addEventListener("keydown", onKey);
+    return () => root.removeEventListener("keydown", onKey);
+  }, [tut]);
 
   // Position the spotlight bubble next to the first star (keep it in sync on
   // scroll/resize while the spotlight is active).
@@ -171,6 +224,22 @@ export default function RankingTable({
 
   const favSet = React.useMemo(() => new Set(favs), [favs]);
 
+  // How many participants share each position (standard-competition ties), so a
+  // shared prize spot shows the pooled-and-split amount via prizeFor().
+  const tiedAt = React.useMemo(() => {
+    const m: Record<number, number> = {};
+    for (const r of displayRows) m[r.position] = (m[r.position] ?? 0) + 1;
+    return m;
+  }, [displayRows]);
+
+  // A tap-opened coin tooltip closes on the next outside click.
+  React.useEffect(() => {
+    if (!openCoin) return;
+    const close = () => setOpenCoin(null);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [openCoin]);
+
   const toggle = (id: string) =>
     setFavs((prev) => {
       const adding = !prev.includes(id);
@@ -197,7 +266,10 @@ export default function RankingTable({
     : limit != null
       ? displayRows.slice(0, limit)
       : displayRows;
-  const mainHeading = limit != null ? "Top 10" : favRows.length > 0 ? "Volledig klassement" : null;
+  // No "Top 10"/"Stand" heading here — the page's own SectionHeading names the
+  // ranking ("Klassement"). Only label the full list when favourites split it off.
+  const mainHeading = limit == null && favRows.length > 0 ? "Volledig klassement" : null;
+  const showPrizeLegend = mainRows.some((r) => PRIZES[r.position] != null);
 
   const renderTable = (data: DisplayRow[], showPrizeCut = false, spotlight = false) => (
     <Table className="table-fixed">
@@ -232,13 +304,28 @@ export default function RankingTable({
                   <Star filled={fav} className="size-[18px]" />
                 </button>
               </TableCell>
-              <TableCell className="px-0.5 text-center">{positionBadge(row.position)}</TableCell>
+              <TableCell className="px-0.5 text-center">
+                {inMoney ? (
+                  <PrizeBadge
+                    position={row.position}
+                    amount={fmtEuro(prizeFor(row.position, tiedAt[row.position] ?? 1))}
+                    open={openCoin === row.participantId}
+                    onToggle={() => setOpenCoin((cur) => (cur === row.participantId ? null : row.participantId))}
+                  />
+                ) : positionBadge(row.position)}
+              </TableCell>
               <TableCell className="px-1.5 font-medium">
                 <div className="flex min-w-0 items-center gap-1.5">
                   {row.winnerIso && (
                     <span className={`fi fi-${row.winnerIso} shrink-0 rounded-[2px] text-base shadow-sm`} title={row.winnerName ?? undefined} role="img" aria-label={row.winnerName ?? undefined} />
                   )}
-                  <span className="truncate">{row.name}</span>
+                  <a
+                    href={`/deelnemer/${row.participantId}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="truncate rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                  >
+                    {row.name}
+                  </a>
                 </div>
               </TableCell>
               <TableCell className="px-1 text-right"><div className="flex justify-end"><FormDots form={row.form} /></div></TableCell>
@@ -316,6 +403,16 @@ export default function RankingTable({
         ) : (
           <div className="rounded-xl border bg-card p-1">{renderTable(mainRows, true, true)}</div>
         )}
+        {showPrizeLegend && !(searching && mainRows.length === 0) && (
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">Prijzengeld</span>
+            <span className="inline-flex items-center gap-1"><span className={`size-3.5 rounded ${BADGE_TONE[1]}`} aria-hidden="true" />1e</span>
+            <span className="inline-flex items-center gap-1"><span className={`size-3.5 rounded ${BADGE_TONE[2]}`} aria-hidden="true" />2e</span>
+            <span className="inline-flex items-center gap-1"><span className={`size-3.5 rounded ${BADGE_TONE[3]}`} aria-hidden="true" />3e</span>
+            <span className="inline-flex items-center gap-1"><span className={`size-3.5 rounded ${BADGE_TONE_LOW}`} aria-hidden="true" />4e–5e</span>
+            <span className="text-muted-foreground">tik op de plaats voor het bedrag</span>
+          </div>
+        )}
         {limit != null && moreHref && !searching && (
           <a
             href={moreHref}
@@ -339,7 +436,7 @@ export default function RankingTable({
           aria-labelledby="fav-tut-title"
           onClick={() => dismissTutorial("backdrop")}
         >
-          <div className="w-full max-w-sm rounded-2xl border bg-card p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div ref={introRef} className="w-full max-w-sm rounded-2xl border bg-card p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="mb-2 flex items-center gap-2">
               <Star filled className="size-6" />
               <h2 id="fav-tut-title" className="text-lg font-bold">Volg je favorieten</h2>

@@ -4,8 +4,14 @@ import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import { settings } from '@/lib/data';
+import { PRIZES } from '@/lib/prizes';
 import { ROUND_LABELS, ROUND_ORDER, ROUND_DEADLINES, type RoundId } from '@/lib/types';
 import { formatKickoff } from '@/lib/format';
+
+// Single source of truth for prize money (src/lib/prizes.ts).
+const prizeRows = Object.entries(PRIZES)
+  .map(([pos, prize]) => ({ pos: Number(pos), prize }))
+  .sort((a, b) => a.pos - b.pos);
 
 // Multiplier per round (group ×1 … final ×5).
 const multiplierRows = ROUND_ORDER.map((r) => ({
@@ -16,7 +22,7 @@ const multiplierRows = ROUND_ORDER.map((r) => ({
 
 // What to hand in by when (one row per submission moment).
 const submissions: { round: RoundId; what: string }[] = [
-  { round: 'group', what: 'Alle poulewedstrijden (speeldag 1, 2 én 3) + de tornooivoorspellingen' },
+  { round: 'group', what: 'Alle groepswedstrijden (speeldag 1, 2 én 3) + de tornooivoorspellingen' },
   { round: 'r32', what: '1/16de finales' },
   { round: 'r16', what: '1/8ste finales' },
   { round: 'qf', what: 'Kwartfinales' },
@@ -121,7 +127,7 @@ const submissions: { round: RoundId; what: string }[] = [
           </tr>
         </thead>
         <tbody>
-          {[[1, 320], [2, 200], [3, 120], [4, 90], [5, 60]].map(([pos, prize]) => (
+          {prizeRows.map(({ pos, prize }) => (
             <tr class="border-b last:border-0">
               <td class="px-3 py-2.5 font-medium">{pos}<sup>e</sup> plaats</td>
               <td class="px-3 py-2.5 text-right font-bold tabular-nums">€{prize}</td>
@@ -137,8 +143,8 @@ const submissions: { round: RoundId; what: string }[] = [
   <section>
     <SectionHeading title="Deelname & indienen" />
     <div class="space-y-2 rounded-xl border bg-card p-4 text-sm leading-relaxed">
-      <p><strong>Inzet:</strong> €10, te betalen aan den toog in café De Rut. Inschrijven kan enkel in het café. Je deelname is pas geldig na afgifte van de poulebladen én betaling.</p>
-      <p><strong>Poulefase:</strong> alle pronostieken van de poulewedstrijden breng je <strong>op papier</strong> binnen in De Rut, vóór de start van het WK.</p>
+      <p><strong>Inzet:</strong> €10, te betalen aan den toog in café De Rut. Inschrijven kan enkel in het café. Je deelname is pas geldig na afgifte van de groepsbladen én betaling.</p>
+      <p><strong>Groepsfase:</strong> alle pronostieken van de groepswedstrijden breng je <strong>op papier</strong> binnen in De Rut, vóór de start van het WK.</p>
       <p><strong>Vanaf de knock-outfase:</strong> op papier in de box aan den toog, of als een duidelijke foto via WhatsApp naar <strong>0478 64 77 06</strong> (Hakke). Zet je naam steeds op de foto.</p>
       <p class="text-muted-foreground">Te laat ingediend = 0 punten voor de reeds gestarte wedstrijden. Eenmaal ingediend kan een blad niet meer aangepast worden.</p>
     </div>

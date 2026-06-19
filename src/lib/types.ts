@@ -79,7 +79,7 @@ export interface Scorer {
 }
 
 export const ROUND_LABELS: Record<RoundId, string> = {
-  group: 'Poulefase',
+  group: 'Groepsfase',
   r32: '1/16de finales',
   r16: '1/8ste finales',
   qf: 'Kwartfinales',

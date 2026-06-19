@@ -38,7 +38,22 @@ before committing.
   (`limit`/`moreHref` for the top-10 preview, `searchable` for the full page).
 - Stijgers & dalers is built at build time from `rankingTimeline()` /
   `dayMovements()` in `src/lib/data.ts` (one ranking snapshot per calendar day).
-  Prize money lives in `src/lib/prizes.ts` (`PRIZES` / `prizeFor`).
+  `rankingTimeline()` also powers the per-participant **Klassementsverloop** chart
+  (`RankChart.astro`) on `deelnemer/[id]`.
+  Prize money lives in `src/lib/prizes.ts` (`PRIZES` / `prizeFor`) — the single
+  source of truth, imported by `/reglement`, the `RankingTable` prize coins, and
+  the profile easter-egg. Don't re-type prize amounts anywhere.
+- `/vergelijk` compares two participants client-side (two dropdowns + `?a=&b=`
+  shareable params) from a compact dataset embedded at build time; it's linked
+  from the `Meer` menu and a button on `deelnemer/[id]`.
+- Provisional bonus status (used on `deelnemer/[id]` and the `/statistieken`
+  "voorlopig op koers" board) comes from `bonusStandings()` in `data.ts`
+  (`eliminatedTeamIds()` + `currentBonusLeaders()`); bonus outcomes only resolve
+  at the final, so this is the meaningful mid-tournament view.
+- UI vocabulary is fixed: **Groepen** (not poule/poulestand; route stays
+  `/poules`) and **Klassement** (not "Stand"/"Top 10"). Qualifying standings rows
+  carry a ✓ after the country name, and prize spots use a colour-graded **position
+  badge** (with a prize-amount tooltip) — both non-colour cues, each with a legend.
 - Client-side analytics use **PostHog**, loaded once in `Layout.astro` via
   `src/components/posthog.astro` (reads `PUBLIC_POSTHOG_PROJECT_TOKEN` /
   `PUBLIC_POSTHOG_HOST`; a no-op when unset). A few pages and `RankingTable.tsx`

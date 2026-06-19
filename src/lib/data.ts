@@ -9,7 +9,7 @@ import outcomesRaw from '@/data/outcomes.json';
 import settingsRaw from '@/data/settings.json';
 import scorersRaw from '@/data/scorers.json';
 
-import type { BonusOutcomes, Group, Match, Participant, Prediction, Scorer, Settings, Team } from './types';
+import type { BonusOutcomes, BonusPicks, Group, Match, Participant, Prediction, Scorer, Settings, Team } from './types';
 import { rankParticipants, scoreMatch, type MatchScore, type RankRow } from './scoring';
 import { dayKey, slugify } from './format';
 
@@ -317,16 +317,99 @@ export function eliminatedTeamIds(): Set<string> {
 }
 
 /** Current (provisional) bonus leaders, used to flag whether a bonus pick is on
- *  track. Returns empty strings when there's nothing decided yet. */
-export function currentBonusLeaders(): { topScorer: string; mostScoredTeamId: string; mostConcededTeamId: string } {
-  const sc = topScorers()[0];
-  const ms = mostGoalsScored()[0];
-  const mc = mostGoalsConceded()[0];
+ *  track. Returns ALL tied leaders (e.g. two teams level on most goals), so a
+ *  pick that shares the lead still counts as provisionally correct. Empty arrays
+ *  when nothing is decided yet. */
+export function currentBonusLeaders(): { topScorer: string[]; mostScoredTeamId: string[]; mostConcededTeamId: string[] } {
+  const sc = topScorers();
+  const ms = mostGoalsScored();
+  const mc = mostGoalsConceded();
+  const topGoals = sc[0]?.goals ?? 0;
+  const maxScored = ms[0]?.scored ?? 0;
+  const maxConceded = mc[0]?.conceded ?? 0;
   return {
-    topScorer: sc && sc.goals > 0 ? sc.player : '',
-    mostScoredTeamId: ms && ms.scored > 0 ? ms.team.id : '',
-    mostConcededTeamId: mc && mc.conceded > 0 ? mc.team.id : '',
+    topScorer: topGoals > 0 ? sc.filter((s) => s.goals === topGoals).map((s) => s.player) : [],
+    mostScoredTeamId: maxScored > 0 ? ms.filter((t) => t.scored === maxScored).map((t) => t.team.id) : [],
+    mostConcededTeamId: maxConceded > 0 ? mc.filter((t) => t.conceded === maxConceded).map((t) => t.team.id) : [],
   };
+}
+
+export type BonusStatus = 'good' | 'open' | 'bad';
+export interface BonusPickCell {
+  iso: string | null; // flag of the picked country (or the top scorer's country)
+  label: string; // team / player name, for the title tooltip
+  status: BonusStatus | null;
+}
+export interface BonusStandingRow {
+  participantId: string;
+  name: string;
+  position: number;
+  total: number;
+  winnerIso: string | null; // eindwinnaar pick, for the name-column flag
+  winnerName: string | null;
+  cells: Record<keyof BonusPicks, BonusPickCell>;
+  provGood: number; // bonus picks currently leading (provisionally correct)
+  possible: number; // picks not yet impossible (still alive)
+  provPoints: number; // provGood * bonusPoints
+}
+
+/** Provisional bonus standings: per participant, the live status of each of
+ *  their four bonus picks (good = currently leading, open = still possible, bad
+ *  = no longer possible), the picked country/player (with flag) and a
+ *  "voorlopige bonus" score. Bonus outcomes are only decided at the final, so
+ *  this is the meaningful mid-tournament view. Mirrors the per-pick logic on the
+ *  participant profile. */
+export function bonusStandings(): BonusStandingRow[] {
+  const eliminated = eliminatedTeamIds();
+  const leaders = currentBonusLeaders();
+  const rankMap = new Map(ranking().map((r) => [r.participantId, r]));
+  const keys: (keyof BonusPicks)[] = ['winnerTeamId', 'topScorer', 'mostScoredTeamId', 'mostConcededTeamId'];
+  const statusFor = (key: keyof BonusPicks, value?: string): BonusStatus | null => {
+    if (!value) return null;
+    if (key === 'winnerTeamId') return eliminated.has(value) ? 'bad' : 'open';
+    const lead = key === 'topScorer' ? leaders.topScorer
+      : key === 'mostScoredTeamId' ? leaders.mostScoredTeamId
+      : leaders.mostConcededTeamId;
+    if (!lead.length) return 'open';
+    return lead.includes(value) ? 'good' : 'open';
+  };
+  const cellFor = (key: keyof BonusPicks, value?: string): BonusPickCell => {
+    const status = statusFor(key, value);
+    if (!value) return { iso: null, label: '—', status };
+    if (key === 'topScorer') {
+      const info = scorerInfo(value);
+      return { iso: info.team?.iso ?? null, label: value, status };
+    }
+    const team = getTeam(value);
+    return { iso: team?.iso ?? null, label: team?.name ?? value, status };
+  };
+  return participants
+    .map((p) => {
+      const r = rankMap.get(p.id);
+      const cells = {} as Record<keyof BonusPicks, BonusPickCell>;
+      let provGood = 0;
+      let possible = 0;
+      for (const k of keys) {
+        const cell = cellFor(k, p.bonus[k]);
+        cells[k] = cell;
+        if (cell.status === 'good') provGood++;
+        if (cell.status !== 'bad') possible++;
+      }
+      const winner = getTeam(p.bonus.winnerTeamId);
+      return {
+        participantId: p.id,
+        name: p.name,
+        position: r?.position ?? 999,
+        total: r?.total ?? 0,
+        winnerIso: winner?.iso ?? null,
+        winnerName: winner?.name ?? null,
+        cells,
+        provGood,
+        possible,
+        provPoints: provGood * settings.bonusPoints,
+      };
+    })
+    .sort((a, b) => b.provGood - a.provGood || b.possible - a.possible || a.position - b.position || a.name.localeCompare(b.name, 'nl'));
 }
 
 export function matchesForTeam(teamId: string): Match[] {

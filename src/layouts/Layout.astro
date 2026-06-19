@@ -28,11 +28,13 @@ const klassement = { href: '/klassement', label: 'Klassement', active: path.star
 const wedstrijden = [
   { href: '/programma', label: 'Programma', active: path.startsWith('/programma') },
   { href: '/kalender', label: 'Kalender', active: path.startsWith('/kalender') || path.startsWith('/wedstrijd') },
-  { href: '/poules', label: 'Poules', active: path.startsWith('/poules') || path.startsWith('/land') },
+  { href: '/poules', label: 'Groepen', active: path.startsWith('/poules') || path.startsWith('/land') },
 ];
 const wedstrijdenActive = wedstrijden.some((i) => i.active);
-const statistieken = { href: '/statistieken', label: 'Statistieken', active: path.startsWith('/statistieken') };
+// Topschutter profiles are reached from Statistieken, so they share its highlight.
+const statistieken = { href: '/statistieken', label: 'Statistieken', active: path.startsWith('/statistieken') || path.startsWith('/topschutter') };
 const meer = [
+  { href: '/vergelijk', label: 'Vergelijk', active: path.startsWith('/vergelijk') },
   { href: '/reglement', label: 'Reglement', active: path.startsWith('/reglement') },
   { href: '/changelog', label: 'Changelog', active: path.startsWith('/changelog') },
 ];
@@ -234,15 +236,40 @@ const topLinkCls = (active: boolean) => [
     </footer>
 
     <script>
+      // Mobile drawer: move focus in on open, trap Tab while open, restore focus
+      // to the trigger on close (Escape or backdrop/close button).
       const menu = document.getElementById('mobile-menu');
-      const open = () => menu?.classList.remove('hidden');
-      const close = () => menu?.classList.add('hidden');
-      document.getElementById('menu-toggle')?.addEventListener('click', open);
+      const menuToggle = document.getElementById('menu-toggle');
+      const menuNav = menu?.querySelector('nav') ?? null;
+      let menuLastFocused: HTMLElement | null = null;
+      const open = () => {
+        menuLastFocused = document.activeElement as HTMLElement | null;
+        menu?.classList.remove('hidden');
+        document.getElementById('menu-close')?.focus();
+      };
+      const close = () => {
+        if (menu?.classList.contains('hidden')) return;
+        menu?.classList.add('hidden');
+        (menuLastFocused ?? menuToggle)?.focus();
+      };
+      menuToggle?.addEventListener('click', open);
       document.getElementById('menu-close')?.addEventListener('click', close);
       document.getElementById('menu-backdrop')?.addEventListener('click', close);
+      document.addEventListener('keydown', (e) => {
+        if (menu?.classList.contains('hidden')) return;
+        if (e.key === 'Escape') { close(); return; }
+        if (e.key === 'Tab' && menuNav) {
+          const f = [...menuNav.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')];
+          if (!f.length) return;
+          const first = f[0]; const last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      });
 
       // Desktop nav dropdowns (Wedstrijden, Meer): click to toggle, only one
-      // open at a time, close on outside click or Escape.
+      // open at a time, close on outside click or Escape. On open, focus the
+      // first item; on Escape, return focus to the trigger button.
       const dropdowns = [...document.querySelectorAll<HTMLElement>('[data-dropdown]')].map((btn) => ({
         btn,
         menu: btn.parentElement?.querySelector<HTMLElement>('[data-dropdown-menu]') ?? null,
@@ -256,6 +283,7 @@ const topLinkCls = (active: boolean) => [
           e.stopPropagation();
           const willShow = d.menu?.classList.contains('hidden') ?? false;
           dropdowns.forEach((o) => setDd(o, o === d ? willShow : false));
+          if (willShow) d.menu?.querySelector<HTMLElement>('a[href]')?.focus();
         });
       });
       document.addEventListener('click', (e) => {
@@ -263,7 +291,12 @@ const topLinkCls = (active: boolean) => [
           if (d.menu && !d.menu.classList.contains('hidden') && !d.menu.contains(e.target as Node) && !d.btn.contains(e.target as Node)) setDd(d, false);
         });
       });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') dropdowns.forEach((d) => setDd(d, false)); });
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const openDd = dropdowns.find((d) => d.menu && !d.menu.classList.contains('hidden'));
+        dropdowns.forEach((d) => setDd(d, false));
+        openDd?.btn.focus();
+      });
 
       // Theme: cycles auto → light → dark. 'auto' follows the OS setting.
       const themeBtn = document.getElementById('theme-toggle');

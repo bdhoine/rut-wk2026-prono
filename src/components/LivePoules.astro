@@ -45,6 +45,9 @@ const groupPairs = groupMatches.map((m) => `${m.homeTeamId}|${m.awayTeamId}`);
       return `<span class="ml-1 inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${cls}" title="live"><span class="size-1.5 animate-pulse rounded-full bg-current"></span>${gf}–${ga}</span>`;
     };
     const hi = 'bg-emerald-50/70 dark:bg-emerald-950/30';
+    const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="size-3 shrink-0 text-emerald-600 dark:text-emerald-400" role="img" aria-label="geplaatst"><path d="M20 6 9 17l-5-5"/></svg>';
+    const rankCell = (rank: number) =>
+      `<td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">${rank}</td>`;
 
     type Row = { id: string; played: number; won: number; drawn: number; lost: number; gf: number; ga: number; points: number; goalDiff: number; rank: number; live: { gf: number; ga: number } | null };
     const sortRows = (rows: Omit<Row, 'rank'>[]) =>
@@ -76,10 +79,10 @@ const groupPairs = groupMatches.map((m) => `${m.homeTeamId}|${m.awayTeamId}`);
         if (!tb) continue;
         tb.innerHTML = standings[g.id].map((r) => `
           <tr class="border-b last:border-0 ${r.rank <= 2 ? hi : ''}">
-            <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">${r.rank}</td>
+            ${rankCell(r.rank)}
             <td class="px-2 py-2.5">
               <div class="flex items-center gap-2">
-                <a href="/land/${r.id}" data-standing-team="${r.id}" class="flex min-w-0 items-center gap-2 font-medium hover:underline">${flag(r.id)}<span class="truncate">${teams[r.id]?.shortName || nm(r.id)}</span></a>
+                <a href="/land/${r.id}" data-standing-team="${r.id}" class="flex min-w-0 items-center gap-2 font-medium hover:underline">${flag(r.id)}<span class="truncate">${teams[r.id]?.shortName || nm(r.id)}</span>${r.rank <= 2 ? check : ''}</a>
                 ${r.live ? liveBadge(r.live.gf, r.live.ga) : ''}
               </div>
             </td>
@@ -102,10 +105,10 @@ const groupPairs = groupMatches.map((m) => `${m.homeTeamId}|${m.awayTeamId}`);
       sortRows(thirds as any);
       tb.innerHTML = thirds.map((t, i) => `
         <tr class="border-b last:border-0 ${i < 8 ? hi : ''}">
-          <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">${i + 1}</td>
+          ${rankCell(i + 1)}
           <td class="px-2 py-2.5">
             <div class="flex items-center gap-2">
-              <a href="/land/${t.id}" data-standing-team="${t.id}" class="flex min-w-0 items-center gap-2 font-medium hover:underline">${flag(t.id)}<span class="truncate">${nm(t.id)}</span></a>
+              <a href="/land/${t.id}" data-standing-team="${t.id}" class="flex min-w-0 items-center gap-2 font-medium hover:underline">${flag(t.id)}<span class="truncate">${nm(t.id)}</span>${i < 8 ? check : ''}</a>
               ${t.live ? liveBadge(t.live.gf, t.live.ga) : ''}
             </div>
           </td>

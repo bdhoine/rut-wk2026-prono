@@ -1,6 +1,21 @@
 [
   {
     "date": "2026-06-19",
+    "title": "Vergelijken, klassementsverloop en duidelijkere tabellen",
+    "items": [
+      "Nieuw: vergelijk twee deelnemers naast elkaar (via 'Vergelijk' in het menu of de knop op een deelnemerpagina, met zoekveld) — punten, vorm, bonus, klikbare landen/wedstrijden én wie per wedstrijd de beste tip had. De link is deelbaar.",
+      "Op een deelnemerpagina staat nu een grafiekje met het verloop van zijn plaats in het klassement per speeldag.",
+      "Prijsplaatsen in het klassement krijgen een gekleurde plaats-badge (goud/zilver/brons voor 1-3, groen voor 4-5); tik of hover erop voor het exacte prijzengeld, met een legende eronder.",
+      "In de groepsstanden staat nu een vinkje achter de landen die naar de volgende ronde gaan, met een legende — niet langer enkel een kleur.",
+      "Nieuw bonus-overzicht op de statistiekenpagina: wie staat er voorlopig op koers voor de bonusvoorspellingen (eindwinnaar, topschutter, meeste en minste doelpunten), met de getipte vlaggen. Gedeelde koppositie telt mee — staan twee landen gelijk, dan zijn beide voorlopig juist.",
+      "Topschutter-pagina's tonen nu hun plaats in het topschuttersklassement en linken naar het land; je vindt er ook een knop terug naar de statistieken.",
+      "Op een landpagina worden lege 'getipt door'-blokken ingeklapt zodat de pagina korter is.",
+      "Consistentere taal: overal 'Groepen' en 'Klassement' (niet meer afwisselend poule/stand/top 10).",
+      "Toegankelijkheid: het klassement is nu met het toetsenbord te bedienen, live-updates worden voorgelezen, en de menu's houden de focus netjes vast."
+    ]
+  },
+  {
+    "date": "2026-06-19",
     "title": "Trakteer-pagina overzichtelijker",
     "items": [
       "Op de 'Trakteer op een pint'-pagina staat de uitleg nu meteen als gewone tekst onder de titel (niet langer verstopt achter een info-knopje), en titel en tekst lijnen mooi uit met het betaalvak."

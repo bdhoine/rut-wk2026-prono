@@ -42,10 +42,14 @@ const hasResults = rows.some((r) => r.played > 0);
           <td class="px-2 py-2.5 text-center tabular-nums text-muted-foreground">{r.rank}</td>
           <td class="px-2 py-2.5">
             {/* Short name: this table renders in narrow contexts (390px mobile,
-                half-width grid column on desktop). Full name lives on the land page. */}
+                half-width grid column on desktop). Full name lives on the land page.
+                The ✓ ("door naar de volgende ronde") sits after the country. */}
             <a href={`/land/${r.team.id}`} data-standing-team={r.team.id} class="flex items-center gap-2 font-medium hover:underline">
               <Flag iso={r.team.iso} name={r.team.name} class="shrink-0 text-base" />
               <span class="truncate">{r.team.shortName ?? r.team.name}</span>
+              {hasResults && r.rank <= highlightTop && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="size-3 shrink-0 text-emerald-600 dark:text-emerald-400" role="img" aria-label="geplaatst"><path d="M20 6 9 17l-5-5" /></svg>
+              )}
             </a>
           </td>
           <td class="py-2.5 text-center tabular-nums">{r.played}</td>

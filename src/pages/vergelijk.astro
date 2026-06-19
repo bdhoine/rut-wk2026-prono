@@ -1,0 +1,292 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
+import { participants, ranking, getTeam, participantForm, predictionsForParticipant, matches, scorerInfo } from '@/lib/data';
+import { ROUND_LABELS } from '@/lib/types';
+
+const rankMap = new Map(ranking().map((r) => [r.participantId, r]));
+const flagOf = (id?: string) => {
+  const t = getTeam(id);
+  return t ? { iso: t.iso, name: t.name } : null;
+};
+
+// Per-participant compare payload: summary + finished-match predictions with the
+// points already scored server-side (no client-side scoring needed).
+const compareData = participants
+  .map((p) => {
+    const r = rankMap.get(p.id);
+    const preds: Record<string, [number, number, number, boolean, boolean]> = {};
+    for (const row of predictionsForParticipant(p.id)) {
+      if (!row.score || !row.prediction) continue;
+      preds[row.match.id] = [row.prediction.home, row.prediction.away, row.score.points, row.score.exact, row.score.outcomeCorrect];
+    }
+    const sc = p.bonus.topScorer ? scorerInfo(p.bonus.topScorer) : undefined;
+    return {
+      id: p.id,
+      name: p.name,
+      position: r?.position ?? null,
+      total: r?.total ?? 0,
+      mp: r?.matchPoints ?? 0,
+      bp: r?.bonusPoints ?? 0,
+      form: participantForm(p.id, 5),
+      bonus: {
+        topScorer: { iso: sc?.team?.iso ?? null, name: p.bonus.topScorer ?? '' },
+        winner: flagOf(p.bonus.winnerTeamId),
+        mostScored: flagOf(p.bonus.mostScoredTeamId),
+        mostConceded: flagOf(p.bonus.mostConcededTeamId),
+      },
+      preds,
+    };
+  })
+  .sort((a, b) => a.name.localeCompare(b.name, 'nl'));
+
+// Finished matches (chronological) for the per-match diff table.
+const finishedMatches = matches
+  .filter((m) => m.status === 'finished' && m.result && m.homeTeamId && m.awayTeamId)
+  .sort((a, b) => a.kickoff.localeCompare(b.kickoff))
+  .map((m) => {
+    const h = getTeam(m.homeTeamId!);
+    const a = getTeam(m.awayTeamId!);
+    return {
+      id: m.id,
+      h: { id: h?.id ?? '', iso: h?.iso ?? '', s: h?.shortName ?? h?.name ?? '?' },
+      a: { id: a?.id ?? '', iso: a?.iso ?? '', s: a?.shortName ?? a?.name ?? '?' },
+      gh: m.result!.home,
+      ga: m.result!.away,
+      r: ROUND_LABELS[m.round],
+    };
+  });
+---
+<Layout title="Vergelijk — Rut Prono WK 2026">
+  <PageHeader title="Vergelijk">
+    <InfoToggle text="Kies twee deelnemers en zet hun klassement, vorm, bonus en voorspellingen naast elkaar. De link is deelbaar." />
+  </PageHeader>
+
+  <div class="grid grid-cols-2 gap-3">
+    {[['a', 'Deelnemer A'], ['b', 'Deelnemer B']].map(([key, label]) => (
+      <div>
+        <span class="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
+        <div class="relative" data-cb={key}>
+          <input
+            type="text"
+            data-cb-input
+            autocomplete="off"
+            placeholder="Zoek een deelnemer…"
+            role="combobox"
+            aria-expanded="false"
+            aria-controls={`cb-list-${key}`}
+            class="w-full rounded-lg border bg-card py-2.5 pl-3 pr-9 text-sm font-medium shadow-sm transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+          />
+          <button type="button" data-cb-clear aria-label="Wissen" class="absolute right-2 top-1/2 hidden size-6 -translate-y-1/2 place-items-center rounded-md text-muted-foreground hover:bg-muted">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-4"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+          <svg data-cb-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"><path d="m6 9 6 6 6-6" /></svg>
+          <ul id={`cb-list-${key}`} data-cb-list role="listbox" class="absolute left-0 right-0 top-full z-30 mt-1 hidden max-h-64 overflow-auto rounded-lg border bg-popover p-1 text-popover-foreground shadow-lg"></ul>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div id="cmp-out" class="mt-6" aria-live="polite">
+    <p class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Kies hierboven twee deelnemers om ze te vergelijken.</p>
+  </div>
+
+  <script type="application/json" id="cmp-data" set:html={JSON.stringify({ p: compareData, m: finishedMatches })}></script>
+
+  <script is:inline>
+    (() => {
+      const root = document.getElementById('cmp-out');
+      const raw = JSON.parse(document.getElementById('cmp-data')?.textContent || '{}');
+      const data = raw.p || [];
+      const byId = Object.fromEntries(data.map((p) => [p.id, p]));
+      const matches = raw.m || [];
+      const norm = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+      const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+      const flagSpan = (iso, name) => iso
+        ? `<span class="fi fi-${iso} shrink-0 rounded-[2px] text-base shadow-sm" role="img" aria-label="${esc(name || iso)}"></span>`
+        : '';
+      const dotCls = { exact: 'bg-emerald-500', partial: 'bg-amber-400', wrong: 'bg-red-500' };
+      const dots = (form) => `<span class="inline-flex items-center gap-0.5">${(form || []).map((r) => `<span class="size-2 rounded-full ${dotCls[r] || 'bg-muted'}"></span>`).join('') || '<span class="text-muted-foreground">–</span>'}</span>`;
+      const pct = (num, den) => (den ? Math.round((num / den) * 100) + '%' : '—');
+      // Score boxes mirror ScoreBoxes.astro: dark "scoreboard" tone for the real
+      // result, plain boxes for the predictions.
+      const scoreBoxes = (h, a, tone) => {
+        const fill = tone === 'scoreboard' ? 'border-transparent bg-ink text-ink-foreground shadow-sm' : 'bg-muted';
+        const sep = tone === 'scoreboard' ? 'font-bold text-gold' : 'text-muted-foreground';
+        const box = `inline-flex h-6 min-w-6 items-center justify-center rounded-md border px-1.5 text-xs font-bold tabular-nums ${fill}`;
+        return `<span class="inline-flex items-center gap-1"><span class="${box}">${h}</span><span class="${sep}">–</span><span class="${box}">${a}</span></span>`;
+      };
+      const ptsBadge = (pts, exact) => {
+        const cls = pts === 0 ? 'bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300'
+          : exact ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+          : 'bg-amber-200 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300';
+        return `<span class="inline-flex min-w-[1.4rem] justify-center rounded px-1 py-0.5 text-[11px] font-bold tabular-nums ${cls}">${pts}</span>`;
+      };
+      const heading = (txt) => `<h2 class="mb-2 mt-6 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>${txt}</h2>`;
+
+      const statRow = (label, va, vb, hi) => `
+        <tr class="border-b last:border-0">
+          <td class="px-2 py-2.5 text-right tabular-nums ${hi === 'a' ? 'font-bold text-foreground' : 'text-muted-foreground'}">${va}</td>
+          <td class="px-2 py-2.5 text-center text-sm font-medium text-muted-foreground">${label}</td>
+          <td class="px-2 py-2.5 text-left tabular-nums ${hi === 'b' ? 'font-bold text-foreground' : 'text-muted-foreground'}">${vb}</td>
+        </tr>`;
+      const cmp = (a, b) => (a > b ? 'a' : b > a ? 'b' : null);
+      const cmpLow = (a, b) => (a == null ? 'b' : b == null ? 'a' : a < b ? 'a' : b < a ? 'b' : null);
+
+      function acc(p) {
+        const ids = Object.keys(p.preds);
+        let exact = 0, correct = 0;
+        for (const id of ids) { const e = p.preds[id]; if (e[3]) exact++; if (e[4]) correct++; }
+        return { n: ids.length, exact, correct };
+      }
+
+      function render() {
+        const a = byId[combos.a.value];
+        const b = byId[combos.b.value];
+        if (!a || !b) {
+          root.innerHTML = '<p class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Kies hierboven twee deelnemers om ze te vergelijken.</p>';
+          return;
+        }
+        if (a.id === b.id) {
+          root.innerHTML = '<p class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Kies twee verschillende deelnemers.</p>';
+          return;
+        }
+        const accA = acc(a), accB = acc(b);
+
+        let common = 0;
+        const rows = [];
+        for (const m of matches) {
+          const pa = a.preds[m.id], pb = b.preds[m.id];
+          if (!pa || !pb) continue;
+          common++;
+          rows.push(`
+            <tr class="border-b last:border-0">
+              <td class="px-2 py-2.5"><div class="flex items-center justify-end gap-1.5">${scoreBoxes(pa[0], pa[1], 'default')}${ptsBadge(pa[2], pa[3])}</div></td>
+              <td class="px-1 py-2.5">
+                <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm">
+                  <a href="/land/${m.h.id}" class="flex min-w-0 items-center justify-end gap-1 hover:opacity-80" title="${esc(m.h.s)}">${flagSpan(m.h.iso, m.h.s)}<span class="truncate font-medium">${esc(m.h.s)}</span></a>
+                  <a href="/wedstrijd/${m.id}" class="hover:opacity-80" title="${esc(m.r)}">${scoreBoxes(m.gh, m.ga, 'scoreboard')}</a>
+                  <a href="/land/${m.a.id}" class="flex min-w-0 items-center justify-start gap-1 hover:opacity-80" title="${esc(m.a.s)}"><span class="truncate font-medium">${esc(m.a.s)}</span>${flagSpan(m.a.iso, m.a.s)}</a>
+                </div>
+              </td>
+              <td class="px-2 py-2.5"><div class="flex items-center justify-start gap-1.5">${ptsBadge(pb[2], pb[3])}${scoreBoxes(pb[0], pb[1], 'default')}</div></td>
+            </tr>`);
+        }
+
+        const headCell = (p) => `
+          <div class="min-w-0 flex-1 text-center">
+            <a href="/deelnemer/${p.id}" class="block truncate font-bold hover:underline">${esc(p.name)}</a>
+            <div class="font-display text-3xl font-extrabold tabular-nums text-gold">${p.total}</div>
+            <div class="text-xs text-muted-foreground">${p.position != null ? p.position + 'e plaats' : '—'}</div>
+          </div>`;
+
+        const bonusName = (f) => {
+          if (!f || (!f.iso && !f.name)) return '<span class="text-muted-foreground">—</span>';
+          return `${flagSpan(f.iso, f.name)}<span class="min-w-0 truncate">${esc(f.name || '—')}</span>`;
+        };
+        const bonusRow = (label, fa, fb) => `
+          <tr class="border-b last:border-0">
+            <td class="px-2 py-2.5"><div class="flex min-w-0 items-center gap-2">${fa}</div></td>
+            <td class="px-2 py-2.5 text-center text-xs font-medium text-muted-foreground">${label}</td>
+            <td class="px-2 py-2.5"><div class="flex min-w-0 flex-row-reverse items-center gap-2 text-right">${fb}</div></td>
+          </tr>`;
+
+        root.innerHTML = `
+          <div class="rounded-xl border bg-card p-4 shadow-sm">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">${headCell(a)}<div class="shrink-0 self-center text-xs font-bold text-muted-foreground">vs</div>${headCell(b)}</div>
+          </div>
+
+          ${heading('Cijfers')}
+          <div class="overflow-hidden rounded-xl border bg-card">
+            <table class="w-full text-sm">
+              ${statRow('Totaal', a.total, b.total, cmp(a.total, b.total))}
+              ${statRow('Uit wedstrijden', a.mp, b.mp, cmp(a.mp, b.mp))}
+              ${statRow('Bonus', a.bp, b.bp, cmp(a.bp, b.bp))}
+              ${statRow('Plaats', a.position != null ? a.position + 'e' : '—', b.position != null ? b.position + 'e' : '—', cmpLow(a.position, b.position))}
+              ${statRow('Vorm', dots(a.form), dots(b.form), null)}
+              ${statRow('Exact', `${accA.exact} (${pct(accA.exact, accA.n)})`, `${accB.exact} (${pct(accB.exact, accB.n)})`, cmp(accA.exact, accB.exact))}
+              ${statRow('Juiste 1X2', `${accA.correct} (${pct(accA.correct, accA.n)})`, `${accB.correct} (${pct(accB.correct, accB.n)})`, cmp(accA.correct, accB.correct))}
+            </table>
+          </div>
+
+          ${heading('Bonus')}
+          <div class="overflow-hidden rounded-xl border bg-card">
+            <table class="w-full table-fixed text-sm">
+              ${bonusRow('Eindwinnaar', bonusName(a.bonus.winner), bonusName(b.bonus.winner))}
+              ${bonusRow('Topschutter', bonusName(a.bonus.topScorer), bonusName(b.bonus.topScorer))}
+              ${bonusRow('Meeste doelpunten', bonusName(a.bonus.mostScored), bonusName(b.bonus.mostScored))}
+              ${bonusRow('Meeste tegendoelpunten', bonusName(a.bonus.mostConceded), bonusName(b.bonus.mostConceded))}
+            </table>
+          </div>
+
+          ${common > 0 ? `
+          ${heading(`Onderling (${common} wedstrijden)`)}
+          <div class="overflow-x-auto rounded-xl border bg-card">
+            <table class="w-full min-w-[460px] table-fixed text-sm">
+              <colgroup><col class="w-[27%]" /><col /><col class="w-[27%]" /></colgroup>
+              ${rows.join('')}
+            </table>
+          </div>` : ''}
+        `;
+      }
+
+      function syncUrl() {
+        const u = new URL(location.href);
+        combos.a.value ? u.searchParams.set('a', combos.a.value) : u.searchParams.delete('a');
+        combos.b.value ? u.searchParams.set('b', combos.b.value) : u.searchParams.delete('b');
+        history.replaceState(null, '', u);
+      }
+
+      // Searchable combobox over the participant list.
+      const combos = {};
+      function setupCombo(key) {
+        const rootEl = document.querySelector(`[data-cb="${key}"]`);
+        const input = rootEl.querySelector('[data-cb-input]');
+        const list = rootEl.querySelector('[data-cb-list]');
+        const clear = rootEl.querySelector('[data-cb-clear]');
+        const chevron = rootEl.querySelector('[data-cb-chevron]');
+        let value = '';
+        const nameOf = (id) => byId[id]?.name || '';
+        const renderList = (q) => {
+          const nq = norm(q.trim());
+          const items = data.filter((o) => !nq || norm(o.name).includes(nq)).slice(0, 60);
+          const badge = (o) => o.position != null
+            ? `<span class="ml-2 inline-flex h-5 min-w-[1.5rem] shrink-0 items-center justify-center rounded bg-foreground/10 px-1 text-[11px] font-semibold tabular-nums text-muted-foreground">${o.position}</span>`
+            : '';
+          list.innerHTML = items.length
+            ? items.map((o) => `<li role="option"><button type="button" data-id="${o.id}" class="flex w-full items-center rounded-md px-3 py-2 text-left text-sm hover:bg-muted ${o.id === value ? 'bg-muted font-semibold' : ''}"><span class="min-w-0 flex-1 truncate">${esc(o.name)}</span>${badge(o)}</button></li>`).join('')
+            : '<li class="px-3 py-2 text-sm text-muted-foreground">Geen deelnemer gevonden</li>';
+        };
+        const open = (q) => { renderList(q || ''); list.classList.remove('hidden'); input.setAttribute('aria-expanded', 'true'); };
+        const close = () => { list.classList.add('hidden'); input.setAttribute('aria-expanded', 'false'); };
+        const setValue = (id, fire = true) => {
+          value = id || '';
+          input.value = nameOf(value);
+          clear.classList.toggle('hidden', !value);
+          clear.classList.toggle('grid', !!value);
+          chevron.classList.toggle('hidden', !!value);
+          if (fire) { syncUrl(); render(); }
+        };
+        input.addEventListener('focus', () => open(''));
+        input.addEventListener('input', () => open(input.value));
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') { close(); input.blur(); }
+          else if (e.key === 'Enter') { const f = list.querySelector('[data-id]'); if (f) { e.preventDefault(); setValue(f.getAttribute('data-id')); close(); } }
+        });
+        input.addEventListener('blur', () => setTimeout(() => { close(); input.value = nameOf(value); }, 150));
+        list.addEventListener('mousedown', (e) => { const b = e.target.closest('[data-id]'); if (!b) return; e.preventDefault(); setValue(b.getAttribute('data-id')); close(); });
+        clear.addEventListener('click', () => { setValue('', true); input.focus(); });
+        return { get value() { return value; }, setValue };
+      }
+
+      combos.a = setupCombo('a');
+      combos.b = setupCombo('b');
+      const params = new URLSearchParams(location.search);
+      if (params.get('a') && byId[params.get('a')]) combos.a.setValue(params.get('a'), false);
+      if (params.get('b') && byId[params.get('b')]) combos.b.setValue(params.get('b'), false);
+      render();
+    })();
+  </script>
+</Layout>

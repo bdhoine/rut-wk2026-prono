@@ -22,9 +22,12 @@ const standings = standingsForGroup(team.group);
 const teamScorers = goalscorersForTeam(team.id);
 
 // Who picked this country for which bonus, ranked by klassement position.
-const pickedAsWinner = winnerPickers(team.id);
-const pickedMostScored = mostScoredPickers(team.id);
-const pickedMostConceded = mostConcededPickers(team.id);
+// Kept as three separate sections; empty ones collapse to a compact row.
+const pickSections = [
+  { title: 'Getipt als eindwinnaar', info: 'Deelnemers die dit land als WK-winnaar tipten, op volgorde van hun plaats in het klassement.', rows: winnerPickers(team.id), empty: `Niemand tipte ${team.name} als eindwinnaar.` },
+  { title: 'Getipt voor meeste doelpunten', info: 'Deelnemers die dit land tipten als ploeg met de meeste doelpunten, op volgorde van hun plaats in het klassement.', rows: mostScoredPickers(team.id), empty: `Niemand tipte ${team.name} voor de meeste doelpunten.` },
+  { title: 'Getipt voor meeste tegendoelpunten', info: 'Deelnemers die dit land tipten als ploeg met de meeste tegendoelpunten, op volgorde van hun plaats in het klassement.', rows: mostConcededPickers(team.id), empty: `Niemand tipte ${team.name} voor de meeste tegendoelpunten.` },
+];
 ---
 <Layout title={`${team.name} — Rut Prono WK 2026`}>
   <header class="mb-6 flex items-center gap-3 rounded-xl border border-t-4 border-t-gold bg-card p-4 shadow-sm">
@@ -49,8 +52,12 @@ const pickedMostConceded = mostConcededPickers(team.id);
   <section class="mb-8">
     <SectionHeading title={`Stand groep ${team.group}`} />
     <StandingsTable rows={standings} highlightTop={2} />
+    <p class="mt-2 flex items-center gap-1.5 px-1 text-xs text-muted-foreground">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+      Naar de volgende ronde
+    </p>
     <a href="/poules" class="mt-3 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted">
-      Toon alle poules
+      Toon alle groepen
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
     </a>
   </section>
@@ -86,26 +93,25 @@ const pickedMostConceded = mostConcededPickers(team.id);
     )}
   </section>
 
-  <section class="mb-8">
-    <SectionHeading title="Getipt als eindwinnaar">
-      <InfoToggle text="Deelnemers die dit land als WK-winnaar tipten, op volgorde van hun plaats in het klassement." />
-    </SectionHeading>
-    <PickersTable rows={pickedAsWinner} empty={`Niemand tipte ${team.name} als eindwinnaar.`} />
-  </section>
-
-  <section class="mb-8">
-    <SectionHeading title="Getipt voor meeste doelpunten">
-      <InfoToggle text="Deelnemers die dit land tipten als ploeg met de meeste doelpunten, op volgorde van hun plaats in het klassement." />
-    </SectionHeading>
-    <PickersTable rows={pickedMostScored} empty={`Niemand tipte ${team.name} voor de meeste doelpunten.`} />
-  </section>
-
-  <section>
-    <SectionHeading title="Getipt voor meeste tegendoelpunten">
-      <InfoToggle text="Deelnemers die dit land tipten als ploeg met de meeste tegendoelpunten, op volgorde van hun plaats in het klassement." />
-    </SectionHeading>
-    <PickersTable rows={pickedMostConceded} empty={`Niemand tipte ${team.name} voor de meeste tegendoelpunten.`} />
-  </section>
+  {pickSections.map((s) => (
+    s.rows.length > 0 ? (
+      <section class="mb-8">
+        <SectionHeading title={s.title}>
+          <InfoToggle text={s.info} />
+        </SectionHeading>
+        <PickersTable rows={s.rows} empty={s.empty} />
+      </section>
+    ) : (
+      <details class="group mb-3 rounded-xl border bg-card shadow-sm">
+        <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+          {s.title}
+          <span class="text-muted-foreground/70">· niemand</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto size-4 shrink-0 transition-transform group-open:rotate-180"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        <p class="px-4 pb-3 text-sm text-muted-foreground">{s.empty}</p>
+      </details>
+    )
+  ))}
 
   <script is:inline define:vars={{ teamId: team.id, teamName: team.name, teamGroup: team.group }}>
     window.posthog?.capture('team_profile_viewed', {

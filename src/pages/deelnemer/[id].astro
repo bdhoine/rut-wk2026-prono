@@ -5,9 +5,10 @@ import InfoToggle from '@/components/InfoToggle.astro';
 import LiveScores from '@/components/LiveScores.astro';
 import PredictionDayList from '@/components/PredictionDayList.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
+import RankChart from '@/components/RankChart.astro';
 import {
   participants, getParticipant, getTeam, positionOf, predictionsForParticipant, outcomes, settings,
-  eliminatedTeamIds, currentBonusLeaders, ranking, matches,
+  eliminatedTeamIds, currentBonusLeaders, ranking, matches, rankingTimeline,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
 import { PRIZES } from '@/lib/prizes';
@@ -24,6 +25,11 @@ if (!participant) return Astro.redirect('/404');
 const rank = positionOf(participant.id);
 const rows = predictionsForParticipant(participant.id);
 const bonus = bonusBreakdown(participant.bonus, outcomes, settings);
+
+// Position-over-time (one ranking snapshot per calendar day with results).
+const rankPoints = rankingTimeline()
+  .map((s) => ({ day: s.day, position: s.posById.get(participant.id) }))
+  .filter((p): p is { day: string; position: number } => p.position != null);
 
 const BONUS_LABELS: Record<keyof BonusPicks, string> = {
   topScorer: 'Topschutter',
@@ -87,11 +93,11 @@ function provisional(key: keyof BonusPicks): { tone: 'good' | 'bad' | 'open'; la
       ? { tone: 'bad', label: 'Niet meer mogelijk' }
       : { tone: 'open', label: 'Nog in de running' };
   }
-  const leaderKey = key === 'topScorer' ? leaders.topScorer
+  const lead = key === 'topScorer' ? leaders.topScorer
     : key === 'mostScoredTeamId' ? leaders.mostScoredTeamId
     : leaders.mostConcededTeamId;
-  if (!leaderKey) return { tone: 'open', label: 'Voorlopig geen punten' };
-  return value === leaderKey
+  if (!lead.length) return { tone: 'open', label: 'Voorlopig geen punten' };
+  return lead.includes(value)
     ? { tone: 'good', label: `Voorlopig juist · +${settings.bonusPoints}` }
     : { tone: 'open', label: 'Voorlopig geen punten' };
 }
@@ -193,7 +199,21 @@ const dogH = DOG_ART.length * DOG_PX;
     </div>
   </header>
 
+  <a href={`/vergelijk?a=${participant.id}`} class="mb-6 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gold"><path d="M8 3 4 7l4 4" /><path d="M4 7h16" /><path d="m16 21 4-4-4-4" /><path d="M20 17H4" /></svg>
+    Vergelijk met een andere deelnemer
+  </a>
+
   <LiveScores mode="list" showRecent={false} />
+
+  {rankPoints.length >= 2 && (
+    <section class="mb-8">
+      <SectionHeading title="Klassementsverloop">
+        <InfoToggle text="Plaats in het klassement na elke speeldag met resultaten. Lager getal = hoger geklasseerd." />
+      </SectionHeading>
+      <RankChart points={rankPoints} />
+    </section>
+  )}
 
   <section class="mb-8">
     <SectionHeading title="Bonusvoorspellingen" />

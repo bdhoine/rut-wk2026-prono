@@ -8,7 +8,7 @@ import Flag from '@/components/Flag.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PickersTable from '@/components/PickersTable.astro';
-import { pickedTopScorers, pickedTopScorerBySlug, topScorerPickers } from '@/lib/data';
+import { pickedTopScorers, pickedTopScorerBySlug, topScorerPickers, topScorers } from '@/lib/data';
 
 export function getStaticPaths() {
   return pickedTopScorers().map((s) => ({ params: { slug: s.slug }, props: { player: s.player } }));
@@ -20,17 +20,45 @@ if (!entry) return Astro.redirect('/404');
 
 const pickers = topScorerPickers(player);
 const goalLabel = entry.goals === 1 ? '1 doelpunt' : `${entry.goals} doelpunten`;
+
+// Rank among all WK scorers (tie-aware: shared rank for equal goal counts).
+const allScorers = topScorers();
+const scorerRank = entry.goals > 0 ? allScorers.filter((s) => s.goals > entry.goals).length + 1 : null;
+const sharedRank = scorerRank != null && allScorers.filter((s) => s.goals === entry.goals).length > 1;
+const rankLabel = scorerRank == null ? '—' : `${sharedRank ? 'gedeeld ' : ''}${scorerRank}e`;
 ---
 <Layout title={`${player} — Rut Prono WK 2026`}>
-  <header class="mb-6 flex items-center gap-3 rounded-xl border border-t-4 border-t-gold bg-card p-4 shadow-sm">
+  <a href="/statistieken" class="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4"><path d="m15 18-6-6 6-6" /></svg>
+    Statistieken
+  </a>
+
+  <header class="mb-4 flex items-center gap-3 rounded-xl border border-t-4 border-t-gold bg-card p-4 shadow-sm">
     <Flag iso={entry.team?.iso} name={entry.team?.name} class="text-4xl" />
     <div class="min-w-0">
       <h1 class="truncate text-2xl font-bold tracking-tight">{player}</h1>
       <div class="text-sm text-muted-foreground">
-        {entry.team?.name ?? 'Onbekend land'} · {goalLabel} op het WK
+        {entry.team ? (
+          <a href={`/land/${entry.team.id}`} class="font-medium hover:underline">{entry.team.name}</a>
+        ) : 'Onbekend land'} · {goalLabel} op het WK
       </div>
     </div>
   </header>
+
+  <div class="mb-6 grid grid-cols-3 gap-2">
+    <div class="rounded-xl border bg-card p-3 text-center shadow-sm">
+      <div class="font-display text-2xl font-extrabold tabular-nums">{entry.goals}</div>
+      <div class="mt-0.5 text-xs text-muted-foreground">{entry.goals === 1 ? 'doelpunt' : 'doelpunten'}</div>
+    </div>
+    <div class="rounded-xl border bg-card p-3 text-center shadow-sm">
+      <div class="font-display text-2xl font-extrabold tabular-nums">{rankLabel}</div>
+      <div class="mt-0.5 text-xs text-muted-foreground">WK-topschutters</div>
+    </div>
+    <div class="rounded-xl border bg-card p-3 text-center shadow-sm">
+      <div class="font-display text-2xl font-extrabold tabular-nums">{pickers.length}</div>
+      <div class="mt-0.5 text-xs text-muted-foreground">getipt door</div>
+    </div>
+  </div>
 
   <section>
     <SectionHeading title="Getipt door">

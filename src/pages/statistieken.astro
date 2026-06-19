@@ -6,7 +6,8 @@ import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores } from '@/lib/data';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores, bonusStandings } from '@/lib/data';
+import type { BonusPicks } from '@/lib/types';
 
 const scorers = topScorers();
 // Slug per picked top scorer -> link those names to their profile page.
@@ -30,6 +31,14 @@ const chosenWinners = topChosenWinners(Infinity);
 const chosenScorers = topChosenTopScorers(Infinity);
 const popular = popularScorelines(8);
 const popularMax = popular[0]?.count ?? 1;
+// Provisional bonus standings (decided at the final; this is the live picture).
+const bonusRows = bonusStandings();
+const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
+  { key: 'winnerTeamId', short: 'W', title: 'Eindwinnaar' },
+  { key: 'topScorer', short: 'T', title: 'Topschutter' },
+  { key: 'mostScoredTeamId', short: 'D+', title: 'Meeste doelpunten' },
+  { key: 'mostConcededTeamId', short: 'D−', title: 'Meeste tegendoelpunten' },
+];
 ---
 <Layout title="Statistieken">
   <PageHeader title="Statistieken">
@@ -369,6 +378,73 @@ const popularMax = popular[0]?.count ?? 1;
       )}
     </section>
   </div>
+
+  <section class="mt-8">
+    <SectionHeading title="Bonus — voorlopig op koers">
+      <InfoToggle text="Voorlopige stand van de bonusvoorspellingen. Het vlaggetje toont de keuze: groene rand = staat nu op kop, rode (vage) rand = niet meer mogelijk, grijze rand = nog mogelijk. De eindwinnaar (W) blijft mogelijk tot het land is uitgeschakeld. T = topschutter, D+ = meeste doelpunten, D− = meeste tegendoelpunten. Bonuspunten worden pas na de finale definitief toegekend." />
+    </SectionHeading>
+    <div class="overflow-hidden rounded-xl border bg-card">
+      <table class="w-full table-fixed text-sm">
+        <colgroup>
+          <col class="w-8" />
+          <col />
+          <col class="w-7" />
+          <col class="w-7" />
+          <col class="w-7" />
+          <col class="w-7" />
+          <col class="w-14" />
+        </colgroup>
+        <thead>
+          <tr class="border-b text-muted-foreground">
+            <th class="px-1 py-2 text-center font-medium">#</th>
+            <th class="px-2 py-2 text-left font-medium">Deelnemer</th>
+            {BONUS_COLS.map((c) => <th class="px-0.5 py-2 text-center font-medium" title={c.title}>{c.short}</th>)}
+            <th class="px-1 py-2 text-center font-medium" title="Voorlopige bonuspunten">Bonus</th>
+          </tr>
+        </thead>
+        <tbody>
+          {bonusRows.map((row, i) => (
+            <tr class:list={['border-b last:border-0', i >= 8 && 'more-row hidden']}>
+              <td class="px-1 py-2.5 text-center tabular-nums text-muted-foreground">{i + 1}</td>
+              <td class="px-2 py-2.5">
+                <div class="flex min-w-0 items-center gap-2">
+                  <a href={`/deelnemer/${row.participantId}`} class="min-w-0 truncate font-medium hover:underline">{row.name}</a>
+                  <span class="inline-flex h-5 min-w-[1.4rem] shrink-0 items-center justify-center rounded bg-muted px-1 text-[11px] font-semibold tabular-nums text-muted-foreground" title="Plaats in het klassement">{row.position}</span>
+                </div>
+              </td>
+              {BONUS_COLS.map((c) => {
+                const cell = row.cells[c.key];
+                const ring = cell.status === 'good' ? 'ring-2 ring-emerald-500'
+                  : cell.status === 'bad' ? 'opacity-40 ring-1 ring-red-400'
+                  : 'ring-1 ring-muted-foreground/30';
+                const stTxt = cell.status === 'good' ? 'voorlopig juist' : cell.status === 'bad' ? 'niet meer mogelijk' : 'nog mogelijk';
+                return (
+                  <td class="px-0.5 py-2.5 text-center">
+                    {cell.iso ? (
+                      <span class:list={['inline-flex rounded-[3px]', ring]} title={`${cell.label} — ${stTxt}`}>
+                        <Flag iso={cell.iso} name={cell.label} class="text-base" />
+                      </span>
+                    ) : (
+                      <span class="text-muted-foreground/40" title={cell.label}>–</span>
+                    )}
+                  </td>
+                );
+              })}
+              <td class="px-1 py-2.5 text-center font-bold tabular-nums">{row.provPoints}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {bonusRows.length > 8 && (
+      <div class="mt-3 flex justify-center">
+        <button type="button" data-show-more data-label={`Toon alle ${bonusRows.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <span data-more-label>Toon alle {bonusRows.length}</span>
+          <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+    )}
+  </section>
 
   <script>
     document.querySelectorAll('[data-show-more]').forEach((btn) => {
