@@ -65,6 +65,11 @@
     "goals": 1
   },
   {
+    "player": "Alex Freeman",
+    "teamId": "us",
+    "goals": 1
+  },
+  {
     "player": "Alexander Isak",
     "teamId": "se",
     "goals": 1
@@ -192,11 +197,6 @@
   {
     "player": "Jude Bellingham",
     "teamId": "gbeng",
-    "goals": 1
-  },
-  {
-    "player": "Julián Quiñones",
-    "teamId": "mx",
     "goals": 1
   }
 ]
