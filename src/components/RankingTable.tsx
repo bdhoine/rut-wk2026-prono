@@ -69,7 +69,9 @@ const BADGE_TONE: Record<number, string> = {
   2: "bg-gradient-to-b from-zinc-100 to-zinc-300 text-zinc-700 ring-1 ring-zinc-400/50 shadow-sm",
   3: "bg-gradient-to-b from-[#e3b27e] to-[#a96a32] text-white ring-1 ring-[#8a531f]/50 shadow-sm",
 };
-const BADGE_TONE_LOW = "bg-gradient-to-b from-emerald-200 to-emerald-400 text-emerald-950 ring-1 ring-emerald-500/50 shadow-sm dark:from-emerald-700 dark:to-emerald-600 dark:text-emerald-50";
+// 4th/5th are prize spots too but with different (lower) amounts — a neutral
+// badge, not a colour that implies a tier of its own. The exact amount is in the tooltip.
+const BADGE_TONE_LOW = "bg-muted text-foreground ring-1 ring-border shadow-sm";
 
 function positionBadge(position: number) {
   return <span className={`${BADGE_BASE} ${BADGE_TONE[position] ?? "font-semibold text-muted-foreground"}`}>{position}</span>;

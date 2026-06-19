@@ -2,8 +2,9 @@
 import Layout from '@/layouts/Layout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
-import { participants, ranking, getTeam, participantForm, predictionsForParticipant, matches, scorerInfo } from '@/lib/data';
+import { participants, ranking, getTeam, participantForm, predictionsForParticipant, matches, scorerInfo, outcomes } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
+import { dayKey, formatKickoff } from '@/lib/format';
 
 const rankMap = new Map(ranking().map((r) => [r.participantId, r]));
 const flagOf = (id?: string) => {
@@ -17,9 +18,15 @@ const compareData = participants
   .map((p) => {
     const r = rankMap.get(p.id);
     const preds: Record<string, [number, number, number, boolean, boolean]> = {};
+    const predsUp: Record<string, [number, number]> = {};
     for (const row of predictionsForParticipant(p.id)) {
-      if (!row.score || !row.prediction) continue;
-      preds[row.match.id] = [row.prediction.home, row.prediction.away, row.score.points, row.score.exact, row.score.outcomeCorrect];
+      if (!row.prediction) continue;
+      if (row.score) {
+        preds[row.match.id] = [row.prediction.home, row.prediction.away, row.score.points, row.score.exact, row.score.outcomeCorrect];
+      } else if (row.match.homeTeamId && row.match.awayTeamId && getTeam(row.match.homeTeamId) && getTeam(row.match.awayTeamId)) {
+        // Scheduled match with known teams that the participant already predicted.
+        predsUp[row.match.id] = [row.prediction.home, row.prediction.away];
+      }
     }
     const sc = p.bonus.topScorer ? scorerInfo(p.bonus.topScorer) : undefined;
     return {
@@ -37,6 +44,7 @@ const compareData = participants
         mostConceded: flagOf(p.bonus.mostConcededTeamId),
       },
       preds,
+      predsUp,
     };
   })
   .sort((a, b) => a.name.localeCompare(b.name, 'nl'));
@@ -55,6 +63,23 @@ const finishedMatches = matches
       gh: m.result!.home,
       ga: m.result!.away,
       r: ROUND_LABELS[m.round],
+    };
+  });
+
+// Scheduled matches with known teams (kickoff order) — predictions already made.
+const upcomingMatches = matches
+  .filter((m) => m.status !== 'finished' && m.homeTeamId && m.awayTeamId && getTeam(m.homeTeamId) && getTeam(m.awayTeamId))
+  .sort((a, b) => a.kickoff.localeCompare(b.kickoff))
+  .map((m) => {
+    const h = getTeam(m.homeTeamId!)!;
+    const a = getTeam(m.awayTeamId!)!;
+    const d = dayKey(m.kickoff).split('-');
+    return {
+      id: m.id,
+      h: { id: h.id, iso: h.iso, s: h.shortName ?? h.name },
+      a: { id: a.id, iso: a.iso, s: a.shortName ?? a.name },
+      lbl: `${Number(d[2])}/${Number(d[1])}`,
+      k: formatKickoff(m.kickoff),
     };
   });
 ---
@@ -92,7 +117,7 @@ const finishedMatches = matches
     <p class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Kies hierboven twee deelnemers om ze te vergelijken.</p>
   </div>
 
-  <script type="application/json" id="cmp-data" set:html={JSON.stringify({ p: compareData, m: finishedMatches })}></script>
+  <script type="application/json" id="cmp-data" set:html={JSON.stringify({ p: compareData, m: finishedMatches, u: upcomingMatches, bk: !!outcomes.winnerTeamId })}></script>
 
   <script is:inline>
     (() => {
@@ -101,6 +126,8 @@ const finishedMatches = matches
       const data = raw.p || [];
       const byId = Object.fromEntries(data.map((p) => [p.id, p]));
       const matches = raw.m || [];
+      const upcoming = raw.u || [];
+      const bonusKnown = !!raw.bk;
       const norm = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
       const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -109,7 +136,6 @@ const finishedMatches = matches
         : '';
       const dotCls = { exact: 'bg-emerald-500', partial: 'bg-amber-400', wrong: 'bg-red-500' };
       const dots = (form) => `<span class="inline-flex items-center gap-0.5">${(form || []).map((r) => `<span class="size-2 rounded-full ${dotCls[r] || 'bg-muted'}"></span>`).join('') || '<span class="text-muted-foreground">–</span>'}</span>`;
-      const pct = (num, den) => (den ? Math.round((num / den) * 100) + '%' : '—');
       // Score boxes mirror ScoreBoxes.astro: dark "scoreboard" tone for the real
       // result, plain boxes for the predictions.
       const scoreBoxes = (h, a, tone) => {
@@ -126,11 +152,28 @@ const finishedMatches = matches
       };
       const heading = (txt) => `<h2 class="mb-2 mt-6 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>${txt}</h2>`;
 
-      const statRow = (label, va, vb, hi) => `
+      // win = green, tie = orange, lose = red.
+      const stateCls = {
+        win: 'bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+        tie: 'bg-amber-200 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300',
+        lose: 'bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300',
+      };
+      const numBadge = (val, state) => `<span class="inline-flex min-w-[2.25rem] justify-center rounded-md px-1.5 py-0.5 text-sm font-bold tabular-nums ${stateCls[state]}">${val}</span>`;
+      const statRow = (label, va, vb, hi) => {
+        const sa = hi === 'a' ? 'win' : hi === 'b' ? 'lose' : 'tie';
+        const sb = hi === 'b' ? 'win' : hi === 'a' ? 'lose' : 'tie';
+        return `
         <tr class="border-b last:border-0">
-          <td class="px-2 py-2.5 text-right tabular-nums ${hi === 'a' ? 'font-bold text-foreground' : 'text-muted-foreground'}">${va}</td>
+          <td class="px-2 py-2.5 text-right">${numBadge(va, sa)}</td>
           <td class="px-2 py-2.5 text-center text-sm font-medium text-muted-foreground">${label}</td>
-          <td class="px-2 py-2.5 text-left tabular-nums ${hi === 'b' ? 'font-bold text-foreground' : 'text-muted-foreground'}">${vb}</td>
+          <td class="px-2 py-2.5 text-left">${numBadge(vb, sb)}</td>
+        </tr>`;
+      };
+      const statRowRaw = (label, va, vb) => `
+        <tr class="border-b last:border-0">
+          <td class="px-2 py-2.5 text-right">${va}</td>
+          <td class="px-2 py-2.5 text-center text-sm font-medium text-muted-foreground">${label}</td>
+          <td class="px-2 py-2.5 text-left">${vb}</td>
         </tr>`;
       const cmp = (a, b) => (a > b ? 'a' : b > a ? 'b' : null);
       const cmpLow = (a, b) => (a == null ? 'b' : b == null ? 'a' : a < b ? 'a' : b < a ? 'b' : null);
@@ -162,73 +205,84 @@ const finishedMatches = matches
           if (!pa || !pb) continue;
           common++;
           rows.push(`
-            <tr class="border-b last:border-0">
-              <td class="px-2 py-2.5"><div class="flex items-center justify-end gap-1.5">${scoreBoxes(pa[0], pa[1], 'default')}${ptsBadge(pa[2], pa[3])}</div></td>
-              <td class="px-1 py-2.5">
-                <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm">
-                  <a href="/land/${m.h.id}" class="flex min-w-0 items-center justify-end gap-1 hover:opacity-80" title="${esc(m.h.s)}">${flagSpan(m.h.iso, m.h.s)}<span class="truncate font-medium">${esc(m.h.s)}</span></a>
-                  <a href="/wedstrijd/${m.id}" class="hover:opacity-80" title="${esc(m.r)}">${scoreBoxes(m.gh, m.ga, 'scoreboard')}</a>
-                  <a href="/land/${m.a.id}" class="flex min-w-0 items-center justify-start gap-1 hover:opacity-80" title="${esc(m.a.s)}"><span class="truncate font-medium">${esc(m.a.s)}</span>${flagSpan(m.a.iso, m.a.s)}</a>
-                </div>
-              </td>
-              <td class="px-2 py-2.5"><div class="flex items-center justify-start gap-1.5">${ptsBadge(pb[2], pb[3])}${scoreBoxes(pb[0], pb[1], 'default')}</div></td>
-            </tr>`);
+            <div class="border-b px-3 py-3 last:border-0">
+              <div class="mb-2 grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2 text-sm">
+                <a href="/land/${m.h.id}" class="flex min-w-0 items-center justify-end gap-1 hover:opacity-80" title="${esc(m.h.s)}"><span class="truncate font-medium">${esc(m.h.s)}</span>${flagSpan(m.h.iso, m.h.s)}</a>
+                <a href="/wedstrijd/${m.id}" class="justify-self-center hover:opacity-80" title="${esc(m.r)}">${scoreBoxes(m.gh, m.ga, 'scoreboard')}</a>
+                <a href="/land/${m.a.id}" class="flex min-w-0 items-center justify-start gap-1 hover:opacity-80" title="${esc(m.a.s)}">${flagSpan(m.a.iso, m.a.s)}<span class="truncate font-medium">${esc(m.a.s)}</span></a>
+              </div>
+              <div class="grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2">
+                <div class="flex items-center justify-end gap-1.5">${scoreBoxes(pa[0], pa[1], 'default')}${ptsBadge(pa[2], pa[3])}</div>
+                <div></div>
+                <div class="flex items-center justify-start gap-1.5">${ptsBadge(pb[2], pb[3])}${scoreBoxes(pb[0], pb[1], 'default')}</div>
+              </div>
+            </div>`);
         }
 
-        const headCell = (p) => `
-          <div class="min-w-0 flex-1 text-center">
-            <a href="/deelnemer/${p.id}" class="block truncate font-bold hover:underline">${esc(p.name)}</a>
-            <div class="font-display text-3xl font-extrabold tabular-nums text-gold">${p.total}</div>
-            <div class="text-xs text-muted-foreground">${p.position != null ? p.position + 'e plaats' : '—'}</div>
-          </div>`;
+        // Scheduled matches both already predicted (no result/points yet).
+        let upCommon = 0;
+        const upRows = [];
+        for (const m of upcoming) {
+          const pa = a.predsUp[m.id], pb = b.predsUp[m.id];
+          if (!pa || !pb) continue;
+          upCommon++;
+          upRows.push(`
+            <div class="border-b px-3 py-3 last:border-0">
+              <div class="mb-2 grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2 text-sm">
+                <a href="/land/${m.h.id}" class="flex min-w-0 items-center justify-end gap-1 hover:opacity-80" title="${esc(m.h.s)}"><span class="truncate font-medium">${esc(m.h.s)}</span>${flagSpan(m.h.iso, m.h.s)}</a>
+                <a href="/wedstrijd/${m.id}" class="justify-self-center inline-block min-w-[2.75rem] rounded-md bg-muted px-2 py-1 text-center text-xs font-medium text-muted-foreground hover:opacity-80" title="${esc(m.k)}">${m.lbl}</a>
+                <a href="/land/${m.a.id}" class="flex min-w-0 items-center justify-start gap-1 hover:opacity-80" title="${esc(m.a.s)}">${flagSpan(m.a.iso, m.a.s)}<span class="truncate font-medium">${esc(m.a.s)}</span></a>
+              </div>
+              <div class="grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2">
+                <div class="flex items-center justify-end">${scoreBoxes(pa[0], pa[1], 'default')}</div>
+                <div></div>
+                <div class="flex items-center justify-start">${scoreBoxes(pb[0], pb[1], 'default')}</div>
+              </div>
+            </div>`);
+        }
 
         const bonusName = (f) => {
           if (!f || (!f.iso && !f.name)) return '<span class="text-muted-foreground">—</span>';
           return `${flagSpan(f.iso, f.name)}<span class="min-w-0 truncate">${esc(f.name || '—')}</span>`;
         };
-        const bonusRow = (label, fa, fb) => `
-          <tr class="border-b last:border-0">
-            <td class="px-2 py-2.5"><div class="flex min-w-0 items-center gap-2">${fa}</div></td>
-            <td class="px-2 py-2.5 text-center text-xs font-medium text-muted-foreground">${label}</td>
-            <td class="px-2 py-2.5"><div class="flex min-w-0 flex-row-reverse items-center gap-2 text-right">${fb}</div></td>
-          </tr>`;
+        // Label on its own row; the two picks side by side beneath it.
+        const bonusBlock = (label, fa, fb) => `
+          <div class="border-b px-3 py-2.5 last:border-0">
+            <div class="mb-1.5 text-center text-sm font-medium text-muted-foreground">${label}</div>
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div class="flex min-w-0 items-center gap-2">${fa}</div>
+              <div class="flex min-w-0 flex-row-reverse items-center gap-2 text-right">${fb}</div>
+            </div>
+          </div>`;
 
         root.innerHTML = `
-          <div class="rounded-xl border bg-card p-4 shadow-sm">
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">${headCell(a)}<div class="shrink-0 self-center text-xs font-bold text-muted-foreground">vs</div>${headCell(b)}</div>
-          </div>
-
           ${heading('Cijfers')}
           <div class="overflow-hidden rounded-xl border bg-card">
             <table class="w-full text-sm">
-              ${statRow('Totaal', a.total, b.total, cmp(a.total, b.total))}
-              ${statRow('Uit wedstrijden', a.mp, b.mp, cmp(a.mp, b.mp))}
-              ${statRow('Bonus', a.bp, b.bp, cmp(a.bp, b.bp))}
               ${statRow('Plaats', a.position != null ? a.position + 'e' : '—', b.position != null ? b.position + 'e' : '—', cmpLow(a.position, b.position))}
-              ${statRow('Vorm', dots(a.form), dots(b.form), null)}
-              ${statRow('Exact', `${accA.exact} (${pct(accA.exact, accA.n)})`, `${accB.exact} (${pct(accB.exact, accB.n)})`, cmp(accA.exact, accB.exact))}
-              ${statRow('Juiste 1X2', `${accA.correct} (${pct(accA.correct, accA.n)})`, `${accB.correct} (${pct(accB.correct, accB.n)})`, cmp(accA.correct, accB.correct))}
+              ${statRow('Punten', a.total, b.total, cmp(a.total, b.total))}
+              ${bonusKnown ? statRow('Bonus', a.bp, b.bp, cmp(a.bp, b.bp)) : ''}
+              ${statRowRaw('Vorm', dots(a.form), dots(b.form))}
+              ${statRow('Exact', accA.exact, accB.exact, cmp(accA.exact, accB.exact))}
+              ${statRow('Juiste 1X2', accA.correct, accB.correct, cmp(accA.correct, accB.correct))}
             </table>
           </div>
 
           ${heading('Bonus')}
           <div class="overflow-hidden rounded-xl border bg-card">
-            <table class="w-full table-fixed text-sm">
-              ${bonusRow('Eindwinnaar', bonusName(a.bonus.winner), bonusName(b.bonus.winner))}
-              ${bonusRow('Topschutter', bonusName(a.bonus.topScorer), bonusName(b.bonus.topScorer))}
-              ${bonusRow('Meeste doelpunten', bonusName(a.bonus.mostScored), bonusName(b.bonus.mostScored))}
-              ${bonusRow('Meeste tegendoelpunten', bonusName(a.bonus.mostConceded), bonusName(b.bonus.mostConceded))}
-            </table>
+            ${bonusBlock('Eindwinnaar', bonusName(a.bonus.winner), bonusName(b.bonus.winner))}
+            ${bonusBlock('Topschutter', bonusName(a.bonus.topScorer), bonusName(b.bonus.topScorer))}
+            ${bonusBlock('Meeste doelpunten', bonusName(a.bonus.mostScored), bonusName(b.bonus.mostScored))}
+            ${bonusBlock('Meeste tegendoelpunten', bonusName(a.bonus.mostConceded), bonusName(b.bonus.mostConceded))}
           </div>
 
           ${common > 0 ? `
           ${heading(`Onderling (${common} wedstrijden)`)}
-          <div class="overflow-x-auto rounded-xl border bg-card">
-            <table class="w-full min-w-[460px] table-fixed text-sm">
-              <colgroup><col class="w-[27%]" /><col /><col class="w-[27%]" /></colgroup>
-              ${rows.join('')}
-            </table>
-          </div>` : ''}
+          <div class="overflow-hidden rounded-xl border bg-card">${rows.join('')}</div>` : ''}
+
+          ${upCommon > 0 ? `
+          ${heading(`Nog te spelen (${upCommon})`)}
+          <div class="overflow-hidden rounded-xl border bg-card">${upRows.join('')}</div>` : ''}
         `;
       }
 
