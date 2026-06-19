@@ -1,8 +1,18 @@
 [
   {
+    "player": "Jonathan David",
+    "teamId": "ca",
+    "goals": 3
+  },
+  {
     "player": "Lionel Messi",
     "teamId": "ar",
     "goals": 3
+  },
+  {
+    "player": "Cyle Larin",
+    "teamId": "ca",
+    "goals": 2
   },
   {
     "player": "Elijah Just",
@@ -100,11 +110,6 @@
     "goals": 1
   },
   {
-    "player": "Cyle Larin",
-    "teamId": "ca",
-    "goals": 1
-  },
-  {
     "player": "Daichi Kamada",
     "teamId": "jp",
     "goals": 1
@@ -192,11 +197,6 @@
   {
     "player": "Julián Quiñones",
     "teamId": "mx",
-    "goals": 1
-  },
-  {
-    "player": "Keito Nakamura",
-    "teamId": "jp",
     "goals": 1
   }
 ]
