@@ -386,7 +386,7 @@ export default function RankingTable({
               }}
               placeholder="Zoek op naam…"
               aria-label="Zoek op naam"
-              className="w-full rounded-lg border bg-card py-2 pl-8 pr-8 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+              className="w-full rounded-lg border bg-card py-2 pl-8 pr-8 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 sm:text-sm"
             />
             {query && (
               <button
