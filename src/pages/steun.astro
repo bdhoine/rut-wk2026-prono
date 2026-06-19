@@ -1,6 +1,5 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import { SUPPORT } from '@/lib/links';
 
@@ -11,11 +10,13 @@ const ibanCompact = SUPPORT.iban.replace(/\s+/g, '');
 const config = { iban: ibanCompact, name: SUPPORT.name, remittance: SUPPORT.remittance };
 ---
 <Layout title="Trakteer op een pint">
-  <PageHeader title="Trakteer op een pint">
-    <InfoToggle text="Deze site is een hobbyproject. Vind je 'm leuk? Trakteer gerust op een pint via een gewone overschrijving — scan de QR met je bankapp." />
-  </PageHeader>
+  <div class="mx-auto max-w-md">
+    <PageHeader title="Trakteer op een pint" />
+    <p class="-mt-3 mb-5 text-sm text-muted-foreground">
+      Deze site is een hobbyproject. Vind je 'm leuk? Trakteer gerust op een pint via een gewone overschrijving — scan de QR met je bankapp.
+    </p>
 
-  <section class="mx-auto max-w-md">
+  <section>
     <div class="rounded-xl border bg-card p-5 shadow-sm">
       {SUPPORT.payLink && (
         <a href={SUPPORT.payLink} target="_blank" rel="noopener"
@@ -77,6 +78,7 @@ const config = { iban: ibanCompact, name: SUPPORT.name, remittance: SUPPORT.remi
       </p>
     </div>
   </section>
+  </div>
 
   <script type="application/json" id="support-config" set:html={JSON.stringify(config)}></script>
 
