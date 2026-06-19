@@ -998,7 +998,7 @@
     "round": "r32",
     "kickoff": "2026-06-30T18:00:00-06:00",
     "venue": "Estadio Azteca, Mexico-Stad",
-    "homeTeamId": null,
+    "homeTeamId": "mx",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep A",
     "awayPlaceholder": "Beste 3e (C/E/F/H/I)",
