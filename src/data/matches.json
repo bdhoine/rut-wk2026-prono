@@ -207,8 +207,13 @@
     "venue": "Gillette Stadium, Boston",
     "homeTeamId": "gbsct",
     "awayTeamId": "ma",
-    "status": "scheduled",
-    "apiId": 760445
+    "status": "finished",
+    "apiId": 760445,
+    "result": {
+      "home": 0,
+      "away": 1
+    },
+    "winnerTeamId": "ma"
   },
   {
     "id": "gC-md2-2",

@@ -35,6 +35,11 @@
     "goals": 2
   },
   {
+    "player": "Ismael Saibari",
+    "teamId": "ma",
+    "goals": 2
+  },
+  {
     "player": "Johan Manzambi",
     "teamId": "ch",
     "goals": 2
@@ -162,11 +167,6 @@
   {
     "player": "Ibrahim Mbaye",
     "teamId": "sn",
-    "goals": 1
-  },
-  {
-    "player": "Ismael Saibari",
-    "teamId": "ma",
     "goals": 1
   },
   {
