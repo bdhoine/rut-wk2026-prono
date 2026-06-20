@@ -55,6 +55,16 @@
     "goals": 2
   },
   {
+    "player": "Matheus Cunha",
+    "teamId": "br",
+    "goals": 2
+  },
+  {
+    "player": "Vinícius Júnior",
+    "teamId": "br",
+    "goals": 2
+  },
+  {
     "player": "Yasin Ayari",
     "teamId": "se",
     "goals": 2
@@ -187,16 +197,6 @@
   {
     "player": "John McGinn",
     "teamId": "gbsct",
-    "goals": 1
-  },
-  {
-    "player": "Jovo Lukic",
-    "teamId": "ba",
-    "goals": 1
-  },
-  {
-    "player": "Jude Bellingham",
-    "teamId": "gbeng",
     "goals": 1
   }
 ]
