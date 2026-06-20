@@ -4,13 +4,14 @@
 // not-yet-played mixed together — no divider between them.
 import PredictionRow from './PredictionRow.astro';
 import { predictionsForParticipant } from '@/lib/data';
+import { byKickoff } from '@/lib/format';
 
 type Item = ReturnType<typeof predictionsForParticipant>[number];
 interface Props {
   items: Item[];
 }
 const { items } = Astro.props;
-const ordered = [...items].sort((a, b) => a.match.kickoff.localeCompare(b.match.kickoff));
+const ordered = [...items].sort((a, b) => byKickoff(a.match, b.match));
 ---
 <div class="space-y-2 border-t px-3 py-3">
   {ordered.map(({ match, prediction, score }) => <PredictionRow match={match} prediction={prediction} score={score} />)}

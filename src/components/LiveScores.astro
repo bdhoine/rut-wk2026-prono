@@ -9,9 +9,10 @@
 //    home/klassement page, which has no match cards). In this mode the most
 //    recently finished matches show automatically without the toggle (no API
 //    call needed) — the toggle only adds live matches, which always render on
-//    top. The section holds at most 4 cards: every live match, then the newest
+//    top. The section holds at most 3 cards: every live match, then the newest
 //    finished ones to fill up, with the last 2 finished always included.
 import { teams, matches, predictions, settings, getTeam } from '@/lib/data';
+import { byKickoff } from '@/lib/format';
 
 interface Props {
   mode?: 'overlay' | 'list';
@@ -23,13 +24,13 @@ const { mode = 'overlay', showRecent = true } = Astro.props;
 const teamMap = Object.fromEntries(teams.map((t) => [t.id, { name: t.name, iso: t.iso }]));
 
 // Most recently finished matches for the home page (newest first; a few spare
-// beyond the 4-card cap in case some are dropped as currently-live duplicates).
+// beyond the 3-card cap in case some are dropped as currently-live duplicates).
 // Only meaningful in list mode with recent enabled.
 const recent =
   mode === 'list' && showRecent
     ? matches
         .filter((m) => m.status === 'finished' && m.result && m.homeTeamId && m.awayTeamId)
-        .sort((a, b) => b.kickoff.localeCompare(a.kickoff))
+        .sort((a, b) => byKickoff(b, a))
         .slice(0, 8)
         .map((m) => ({
           id: m.id,
@@ -85,7 +86,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
 
   {mode === 'list' && (
     <div id="live-list" class="mb-6 hidden space-y-3" aria-live="polite">
-      <h2 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground"><span class="bar-cut" aria-hidden="true"></span>{showRecent ? 'Nu live & recent gespeeld' : 'Nu live'}</h2>
+      <h2 class="flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>{showRecent ? 'Nu live & recent gespeeld' : 'Nu live'}</h2>
       <div id="live-list-cards" class="space-y-3"></div>
       <div id="recent-list-cards" class="space-y-3"></div>
     </div>
@@ -152,7 +153,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       window.dispatchEvent(new CustomEvent('rut:live-matches', { detail: { matches: list } }));
     };
 
-    const MAX_CARDS = 4; // live + recent combined
+    const MAX_CARDS = 3; // live + recent combined
     const MIN_RECENT = 2; // the last two finished matches always show
     const POLL_MS = 60 * 1000; // auto-refresh cadence while live is on (matches the function's 60s cache)
 

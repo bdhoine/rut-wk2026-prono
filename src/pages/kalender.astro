@@ -6,11 +6,9 @@ import LiveScores from '@/components/LiveScores.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import { matches } from '@/lib/data';
-import { formatDay } from '@/lib/format';
+import { byKickoff, formatDay } from '@/lib/format';
 import { ROUND_LABELS, type RoundId } from '@/lib/types';
 import type { Match } from '@/lib/types';
-
-const byKickoff = (a: { kickoff: string }, b: { kickoff: string }) => a.kickoff.localeCompare(b.kickoff);
 
 // Group a sorted match list by calendar day (Belgian time) for day subheadings.
 const byDay = (items: Match[]): [string, Match[]][] => {

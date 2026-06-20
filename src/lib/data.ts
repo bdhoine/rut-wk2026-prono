@@ -11,7 +11,7 @@ import scorersRaw from '@/data/scorers.json';
 
 import type { BonusOutcomes, BonusPicks, Group, Match, Participant, Prediction, Scorer, Settings, Team } from './types';
 import { rankParticipants, scoreMatch, type MatchScore, type RankRow } from './scoring';
-import { dayKey, slugify } from './format';
+import { byKickoff, dayKey, slugify } from './format';
 
 export const teams = teamsRaw as Team[];
 export const groups = groupsRaw as Group[];
@@ -186,7 +186,7 @@ export function participantForm(participantId: string, n = 5): FormResult[] {
   const byMatch = new Map(predictions.filter((p) => p.participantId === participantId).map((p) => [p.matchId, p]));
   const finished = matches
     .filter((m) => m.status === 'finished' && m.result)
-    .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
+    .sort(byKickoff);
   const out: FormResult[] = [];
   for (const m of finished) {
     const s = scoreMatch(byMatch.get(m.id), m, settings);
@@ -415,13 +415,13 @@ export function bonusStandings(): BonusStandingRow[] {
 export function matchesForTeam(teamId: string): Match[] {
   return matches
     .filter((m) => m.homeTeamId === teamId || m.awayTeamId === teamId)
-    .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
+    .sort(byKickoff);
 }
 
 export function upcomingMatches(): Match[] {
   return matches
     .filter((m) => m.status !== 'finished')
-    .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
+    .sort(byKickoff);
 }
 
 // ---- Tournament stats ---------------------------------------------------

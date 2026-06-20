@@ -4,7 +4,7 @@ import PageHeader from '@/components/PageHeader.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import { participants, ranking, getTeam, participantForm, predictionsForParticipant, matches, scorerInfo, outcomes } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
-import { dayKey, formatKickoff } from '@/lib/format';
+import { byKickoff, dayKey, formatKickoff } from '@/lib/format';
 
 const rankMap = new Map(ranking().map((r) => [r.participantId, r]));
 const flagOf = (id?: string) => {
@@ -52,7 +52,7 @@ const compareData = participants
 // Finished matches (chronological) for the per-match diff table.
 const finishedMatches = matches
   .filter((m) => m.status === 'finished' && m.result && m.homeTeamId && m.awayTeamId)
-  .sort((a, b) => a.kickoff.localeCompare(b.kickoff))
+  .sort(byKickoff)
   .map((m) => {
     const h = getTeam(m.homeTeamId!);
     const a = getTeam(m.awayTeamId!);
@@ -69,7 +69,7 @@ const finishedMatches = matches
 // Scheduled matches with known teams (kickoff order) — predictions already made.
 const upcomingMatches = matches
   .filter((m) => m.status !== 'finished' && m.homeTeamId && m.awayTeamId && getTeam(m.homeTeamId) && getTeam(m.awayTeamId))
-  .sort((a, b) => a.kickoff.localeCompare(b.kickoff))
+  .sort(byKickoff)
   .map((m) => {
     const h = getTeam(m.homeTeamId!)!;
     const a = getTeam(m.awayTeamId!)!;

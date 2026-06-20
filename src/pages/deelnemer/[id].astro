@@ -11,6 +11,7 @@ import {
   eliminatedTeamIds, currentBonusLeaders, ranking, matches, rankingTimeline,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
+import { byKickoff } from '@/lib/format';
 import { PRIZES } from '@/lib/prizes';
 import { ROUND_LABELS, ROUND_ORDER, type BonusPicks } from '@/lib/types';
 
@@ -41,7 +42,7 @@ const BONUS_LABELS: Record<keyof BonusPicks, string> = {
 const byRound = ROUND_ORDER
   .map((round) => ({
     round,
-    items: rows.filter((r) => r.match.round === round).sort((a, b) => a.match.kickoff.localeCompare(b.match.kickoff)),
+    items: rows.filter((r) => r.match.round === round).sort((a, b) => byKickoff(a.match, b.match)),
   }))
   .filter((g) => g.items.length > 0);
 
@@ -105,7 +106,7 @@ function provisional(key: keyof BonusPicks): { tone: 'good' | 'bad' | 'open'; la
 // Form: last 5 finished matches (chronological) as coloured dots.
 const formScores = rows
   .filter((r) => r.score)
-  .sort((a, b) => a.match.kickoff.localeCompare(b.match.kickoff))
+  .sort((a, b) => byKickoff(a.match, b.match))
   .slice(-5)
   .map((r) => ({
     cls: r.score!.exact ? 'bg-emerald-500' : r.score!.points > 0 ? 'bg-amber-400' : 'bg-red-500',

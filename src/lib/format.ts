@@ -21,6 +21,15 @@ export const formatKickoff = (iso: string) => dateFmt.format(new Date(iso));
 export const formatDay = (iso: string) => dayFmt.format(new Date(iso));
 export const formatTime = (iso: string) => timeFmt.format(new Date(iso));
 
+/**
+ * Chronological comparator for ISO kickoff strings. Compares by absolute
+ * instant — NOT a string sort, because kickoffs carry different timezone
+ * offsets (Mexico/US zones), so e.g. '...20:30:00-04:00' (00:30Z) precedes
+ * '...20:00:00-07:00' (03:00Z) even though the wall-clock string is later.
+ */
+export const byKickoff = (a: { kickoff: string }, b: { kickoff: string }) =>
+  new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime();
+
 /** Sortable Belgian-time calendar day, e.g. '2026-06-14', for grouping by day. */
 export const dayKey = (iso: string) => dayKeyFmt.format(new Date(iso));
 /** Human-readable Dutch label for a 'YYYY-MM-DD' day key (noon avoids TZ rollover). */

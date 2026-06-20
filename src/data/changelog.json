@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-06-20",
+    "title": "Wedstrijden in juiste volgorde + homepagina-finish",
+    "items": [
+      "Wedstrijden in de kalender en op de deelnemerpagina's staan nu in de juiste chronologische volgorde. Wedstrijden in verschillende tijdzones (bv. Mexico en de VS) werden soms verkeerd gesorteerd; ze worden nu op het echte aftrapmoment geordend.",
+      "Op de homepagina staan nu 3 in plaats van 4 wedstrijden in het 'nu live & recent gespeeld'-blok, en de namen in de 'volgende wedstrijd'-kaart zijn wat groter en beter leesbaar.",
+      "Kleine opmaakpoets: alle sectietitels (zoals op de homepagina en het klassement) hebben nu dezelfde stijl."
+    ]
+  },
+  {
     "date": "2026-06-19",
     "title": "Vergelijken, klassementsverloop en duidelijkere tabellen",
     "items": [
