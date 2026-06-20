@@ -10,6 +10,21 @@
     "goals": 3
   },
   {
+    "player": "Brian Brobbey",
+    "teamId": "nl",
+    "goals": 2
+  },
+  {
+    "player": "Cody Gakpo",
+    "teamId": "nl",
+    "goals": 2
+  },
+  {
+    "player": "Crysencio Summerville",
+    "teamId": "nl",
+    "goals": 2
+  },
+  {
     "player": "Cyle Larin",
     "teamId": "ca",
     "goals": 2
@@ -100,6 +115,11 @@
     "goals": 1
   },
   {
+    "player": "Anthony Elanga",
+    "teamId": "se",
+    "goals": 1
+  },
+  {
     "player": "Aymen Hussein",
     "teamId": "iq",
     "goals": 1
@@ -122,11 +142,6 @@
   {
     "player": "Connor Metcalfe",
     "teamId": "au",
-    "goals": 1
-  },
-  {
-    "player": "Crysencio Summerville",
-    "teamId": "nl",
     "goals": 1
   },
   {
@@ -182,21 +197,6 @@
   {
     "player": "Jamal Musiala",
     "teamId": "de",
-    "goals": 1
-  },
-  {
-    "player": "Jáminton Campaz",
-    "teamId": "co",
-    "goals": 1
-  },
-  {
-    "player": "João Neves",
-    "teamId": "pt",
-    "goals": 1
-  },
-  {
-    "player": "John McGinn",
-    "teamId": "gbsct",
     "goals": 1
   }
 ]
