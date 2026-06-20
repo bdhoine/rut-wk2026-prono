@@ -379,8 +379,13 @@
     "venue": "BMO Field, Toronto",
     "homeTeamId": "de",
     "awayTeamId": "ci",
-    "status": "scheduled",
-    "apiId": 760448
+    "status": "finished",
+    "apiId": 760448,
+    "result": {
+      "home": 2,
+      "away": 1
+    },
+    "winnerTeamId": "de"
   },
   {
     "id": "gE-md2-2",

@@ -1,5 +1,10 @@
 [
   {
+    "player": "Deniz Undav",
+    "teamId": "de",
+    "goals": 3
+  },
+  {
     "player": "Jonathan David",
     "teamId": "ca",
     "goals": 3
@@ -155,11 +160,6 @@
     "goals": 1
   },
   {
-    "player": "Deniz Undav",
-    "teamId": "de",
-    "goals": 1
-  },
-  {
     "player": "Emam Ashour",
     "teamId": "eg",
     "goals": 1
@@ -172,6 +172,11 @@
   {
     "player": "Felix Nmecha",
     "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Franck Kessié",
+    "teamId": "ci",
     "goals": 1
   },
   {
@@ -192,11 +197,6 @@
   {
     "player": "Ibrahim Mbaye",
     "teamId": "sn",
-    "goals": 1
-  },
-  {
-    "player": "Jamal Musiala",
-    "teamId": "de",
     "goals": 1
   }
 ]
