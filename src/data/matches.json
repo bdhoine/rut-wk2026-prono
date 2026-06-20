@@ -309,8 +309,13 @@
     "venue": "Levi's Stadium, San Francisco",
     "homeTeamId": "tr",
     "awayTeamId": "py",
-    "status": "scheduled",
-    "apiId": 760443
+    "status": "finished",
+    "apiId": 760443,
+    "result": {
+      "home": 0,
+      "away": 1
+    },
+    "winnerTeamId": "py"
   },
   {
     "id": "gD-md3-1",
@@ -1037,7 +1042,7 @@
     "round": "r32",
     "kickoff": "2026-07-01T18:00:00-07:00",
     "venue": "Levi's Stadium, San Francisco",
-    "homeTeamId": null,
+    "homeTeamId": "us",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep D",
     "awayPlaceholder": "Beste 3e (B/E/F/I/J)",
