@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-06-21",
+    "title": "Favorieten-uitleg uitgeschakeld",
+    "items": [
+      "De korte uitleg over het toevoegen van favorieten wordt niet meer automatisch getoond aan nieuwe bezoekers."
+    ]
+  },
+  {
     "date": "2026-06-20",
     "title": "Wedstrijden in juiste volgorde + homepagina-finish",
     "items": [
