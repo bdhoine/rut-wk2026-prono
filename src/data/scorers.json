@@ -15,6 +15,11 @@
     "goals": 3
   },
   {
+    "player": "Ayase Ueda",
+    "teamId": "jp",
+    "goals": 2
+  },
+  {
     "player": "Brian Brobbey",
     "teamId": "nl",
     "goals": 2
@@ -32,6 +37,11 @@
   {
     "player": "Cyle Larin",
     "teamId": "ca",
+    "goals": 2
+  },
+  {
+    "player": "Daichi Kamada",
+    "teamId": "jp",
     "goals": 2
   },
   {
@@ -150,11 +160,6 @@
     "goals": 1
   },
   {
-    "player": "Daichi Kamada",
-    "teamId": "jp",
-    "goals": 1
-  },
-  {
     "player": "Daniel Muñoz",
     "teamId": "co",
     "goals": 1
@@ -192,11 +197,6 @@
   {
     "player": "Hwang In-Beom",
     "teamId": "kr",
-    "goals": 1
-  },
-  {
-    "player": "Ibrahim Mbaye",
-    "teamId": "sn",
     "goals": 1
   }
 ]

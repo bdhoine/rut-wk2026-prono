@@ -479,8 +479,13 @@
     "venue": "Estadio BBVA, Monterrey",
     "homeTeamId": "tn",
     "awayTeamId": "jp",
-    "status": "scheduled",
-    "apiId": 760449
+    "status": "finished",
+    "apiId": 760449,
+    "result": {
+      "home": 0,
+      "away": 4
+    },
+    "winnerTeamId": "jp"
   },
   {
     "id": "gF-md3-1",
