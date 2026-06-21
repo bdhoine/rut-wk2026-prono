@@ -395,8 +395,12 @@
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": "ec",
     "awayTeamId": "cw",
-    "status": "scheduled",
-    "apiId": 760446
+    "status": "finished",
+    "apiId": 760446,
+    "result": {
+      "home": 0,
+      "away": 0
+    }
   },
   {
     "id": "gE-md3-1",
@@ -968,7 +972,7 @@
     "round": "r32",
     "kickoff": "2026-06-29T21:00:00-04:00",
     "venue": "Gillette Stadium, Boston",
-    "homeTeamId": null,
+    "homeTeamId": "de",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep E",
     "awayPlaceholder": "Beste 3e (A/B/C/D/F)",
