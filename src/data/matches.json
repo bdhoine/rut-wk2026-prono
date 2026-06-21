@@ -621,8 +621,13 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "es",
     "awayTeamId": "sa",
-    "status": "scheduled",
-    "apiId": 760453
+    "status": "finished",
+    "apiId": 760453,
+    "result": {
+      "home": 4,
+      "away": 0
+    },
+    "winnerTeamId": "es"
   },
   {
     "id": "gH-md2-2",

@@ -90,6 +90,11 @@
     "goals": 2
   },
   {
+    "player": "Mikel Oyarzabal",
+    "teamId": "es",
+    "goals": 2
+  },
+  {
     "player": "Vinícius Júnior",
     "teamId": "br",
     "goals": 2
@@ -192,11 +197,6 @@
   {
     "player": "Granit Xhaka",
     "teamId": "ch",
-    "goals": 1
-  },
-  {
-    "player": "Hwang In-Beom",
-    "teamId": "kr",
     "goals": 1
   }
 ]
