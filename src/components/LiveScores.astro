@@ -69,6 +69,23 @@ const scoringPayload =
 // while a match is in progress and auto-disable once it's over (window-based,
 // no API call needed for the decision). Each kickoff carries its venue offset.
 const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) => m.kickoff);
+
+// The next planned match (earliest not-yet-finished, both teams known) — used
+// only by the ?ff-simulate-live=H-A dev/QA flag to fake a live score without a
+// real live match. Embedded in every mode.
+const nextPlanned = matches
+  .filter((m) => m.status !== 'finished' && m.homeTeamId && m.awayTeamId)
+  .sort(byKickoff)[0];
+const nextMatch = nextPlanned
+  ? {
+      id: nextPlanned.id,
+      homeTeamId: nextPlanned.homeTeamId,
+      awayTeamId: nextPlanned.awayTeamId,
+      home: getTeam(nextPlanned.homeTeamId)?.name ?? '',
+      away: getTeam(nextPlanned.awayTeamId)?.name ?? '',
+      kickoff: nextPlanned.kickoff,
+    }
+  : null;
 ---
 <div data-live-root data-live-mode={mode}>
   <div class="mb-4 flex flex-wrap items-center gap-2">
@@ -94,6 +111,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
 
   <script type="application/json" id="live-teams" set:html={JSON.stringify(teamMap)}></script>
   <script type="application/json" id="live-windows" set:html={JSON.stringify(kickoffWindows)}></script>
+  <script type="application/json" id="live-next-match" set:html={JSON.stringify(nextMatch)}></script>
   {mode === 'list' && <script type="application/json" id="live-recent" set:html={JSON.stringify(recent)}></script>}
   {mode === 'list' && <script type="application/json" id="live-scoring" set:html={JSON.stringify(scoringPayload)}></script>}
 </div>
@@ -118,6 +136,19 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       .filter((t) => Number.isFinite(t));
     const scoringByPair = new Map<string, any>();
     if (scoring) for (const m of scoring.matches) { scoringByPair.set(`${m.h}|${m.a}`, m); scoringByPair.set(`${m.a}|${m.h}`, m); }
+
+    // Dev/QA feature flag: ?ff-simulate-live=1-0 fakes a live score for the next
+    // planned match so the live overlay can be exercised without a real live
+    // match. It auto-enables live, bypasses the API fetch entirely, and never
+    // nudges a results refresh. Works on any page that renders <LiveScores />.
+    const nextMatch = JSON.parse(document.getElementById('live-next-match')?.textContent || 'null');
+    const simMatch = (() => {
+      const raw = new URLSearchParams(location.search).get('ff-simulate-live');
+      if (raw == null || !nextMatch) return null;
+      const m = raw.match(/^\s*(\d{1,2})\s*[-–:]\s*(\d{1,2})\s*$/);
+      if (!m) return null;
+      return { ...nextMatch, goalsHome: Number(m[1]), goalsAway: Number(m[2]), elapsed: 1, status: 'in', simulated: true };
+    })();
 
     // Provisional ranking points from a live score (mirrors src/lib/scoring.ts).
     const basePts = (ph: number, pa: number, rh: number, ra: number) => {
@@ -189,7 +220,7 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       } catch { /* ignore */ }
       try { await fetch('/.netlify/functions/trigger-update', { method: 'POST' }); } catch { /* ignore */ }
     };
-    const minLabel = (m: any) => (m.status === 'HT' ? 'rust' : m.elapsed != null ? `${m.elapsed}'` : 'live');
+    const minLabel = (m: any) => (m.simulated ? 'sim' : m.status === 'HT' ? 'rust' : m.elapsed != null ? `${m.elapsed}'` : 'live');
     const teamName = (id: string, fallback: string) => teamMap[id]?.name || fallback || id;
     const flag = (id: string, name: string) => `<span class="fi fi-${teamMap[id]?.iso || id} shrink-0 rounded-[2px] text-lg" role="img" aria-label="${name}"></span>`;
     const livePill = (gh: number, ga: number) =>
@@ -356,6 +387,14 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       loading = true;
       status.textContent = 'Laden…';
       try {
+        if (simMatch) {
+          const list = [simMatch];
+          const shown = applyMatches(list);
+          dispatchRanking(list);
+          dispatchLiveMatches(list);
+          status.textContent = `⚠ Simulatie • ${shown} live (${simMatch.goalsHome}–${simMatch.goalsAway})`;
+          return;
+        }
         const res = await fetch('/.netlify/functions/live', { headers: { accept: 'application/json' } });
         if (res.status === 404) { status.textContent = 'Live werkt enkel op de gepubliceerde site.'; return; }
         const data = await res.json();
@@ -440,8 +479,12 @@ const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) =>
       lastBusy = busy;
       setEnabled(busy, false); // auto state isn't persisted; manual clicks still are
     };
-    autoEvaluate(); // set the initial state from the current time
-    setInterval(autoEvaluate, AUTO_MS);
+    if (simMatch) {
+      setEnabled(true, false); // simulation: force live on and keep it on
+    } else {
+      autoEvaluate(); // set the initial state from the current time
+      setInterval(autoEvaluate, AUTO_MS);
+    }
 
   }
 </script>

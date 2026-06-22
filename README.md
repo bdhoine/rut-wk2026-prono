@@ -106,6 +106,13 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
   about once a minute regardless of traffic. The shared ESPN client/mapper lives
   in [`scripts/lib/espn.mjs`](./scripts/lib/espn.mjs) and is reused by the
   results updater.
+  - **Dev/QA flag `?ff-simulate-live=H-A`.** Append e.g. `?ff-simulate-live=2-1`
+    to any page that renders `<LiveScores />` to fake a live score for the **next
+    planned match** (the earliest not-yet-finished fixture). It auto-enables live,
+    bypasses the `/.netlify/functions/live` fetch entirely, never nudges a results
+    refresh, and tags the badge/status with "sim" — so the overlay (and the
+    home-page provisional klassement recompute) can be tested without a real live
+    match. Accepts `H-A`, `H–A` or `H:A`.
 
 > Knockout scores from this source are the score as reported (no separate
 > after-120-min / penalty handling); double-check knockout results against

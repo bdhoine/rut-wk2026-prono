@@ -70,6 +70,10 @@ before committing.
   continuously during the match window; the function self-guards (skips if a run
   is active or <5 min old, plus a Netlify Blob debounce). Needs
   env `GH_DISPATCH_TOKEN` (`actions:write`); no-op without it. See `README.md`.
+- Simulating live for QA: append `?ff-simulate-live=H-A` (e.g. `=2-1`) to any page
+  with `<LiveScores />`. It fakes a live score on the **next planned match**,
+  auto-enables live, skips the API fetch and any results-refresh nudge, and tags
+  the badge with "sim" — the easiest way to test the live overlay off-tournament.
 - Run `npm run check` before committing; keep `README.md` and this file current.
 - Commit and push directly to `master` — no feature branch / PR for this repo
   (the results bot and the owner both commit straight to `master`).
@@ -90,7 +94,20 @@ Always validate user-facing changes hands-on before committing — a green
    what it should and looks right.
 3. **Check the console** — no errors on the pages you touched.
 4. **Check for visual issues** — layout, overflow/scroll, truncation, dark mode.
-5. **Smoke-test the core features** afterwards: `/` (home), `/klassement` (+name
+5. **Test live states with the simulate flag.** Most of the year there is no
+   real live match, so the live overlay / recompute can't be exercised against
+   real data. Whenever your change touches anything live-related — the live
+   toggle, the overlay on match cards, the home "Nu live" strip, the provisional
+   klassement/poules/land recompute, the easter-egg trigger — **append
+   `?ff-simulate-live=H-A`** (e.g. `?ff-simulate-live=2-1`) to the page in the
+   browser. It fakes a live score on the next planned match, auto-enables live,
+   and bypasses the API (see the convention bullet above and `README.md`).
+   - Confirm: live badge/score appears (tagged "sim"), the recompute reacts
+     (klassement order, poules/land standings, provisional bonus), the console
+     is clean, and removing the param reverts cleanly.
+   - Vary the score (a win, a draw `1-1`, a loss for the favourite) so you cover
+     points/position changes, not just one outcome.
+6. **Smoke-test the core features** afterwards: `/` (home), `/klassement` (+name
    search), `/kalender`, `/poules`, a `/deelnemer/[id]`, a `/wedstrijd/[id]` and
    a `/land/[id]` page — a quick visual + console check on each.
 
