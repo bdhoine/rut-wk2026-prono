@@ -562,8 +562,13 @@
     "venue": "BC Place, Vancouver",
     "homeTeamId": "nz",
     "awayTeamId": "eg",
-    "status": "scheduled",
-    "apiId": 760452
+    "status": "finished",
+    "apiId": 760452,
+    "result": {
+      "home": 1,
+      "away": 3
+    },
+    "winnerTeamId": "eg"
   },
   {
     "id": "gG-md3-1",
