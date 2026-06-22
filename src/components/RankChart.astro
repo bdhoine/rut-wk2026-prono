@@ -29,10 +29,24 @@ const line = coords.map((c) => `${c.cx.toFixed(1)},${c.cy.toFixed(1)}`).join(' '
 const fmtDay = (d: string) => { const [, m, dd] = d.split('-'); return `${Number(dd)}/${Number(m)}`; };
 const first = coords[0];
 const last = coords[coords.length - 1];
+const prev = coords[coords.length - 2] ?? last; // anchor for the live-trend segment
 const axisY = H - padB;
 ---
 <div class="rounded-xl border bg-card px-3 py-2 shadow-sm">
-  <svg viewBox={`0 0 ${W} ${H}`} class="mx-auto h-auto w-full max-w-[440px]" role="img" aria-label={`Klassementsverloop: van plaats ${first.position} naar plaats ${last.position}`}>
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    class="mx-auto h-auto w-full max-w-[440px]"
+    role="img"
+    aria-label={`Klassementsverloop: van plaats ${first.position} naar plaats ${last.position}`}
+    data-rank-chart
+    data-pad-t={padT}
+    data-span={H - padT - padB}
+    data-denom={denom}
+    data-last-x={last.cx.toFixed(1)}
+    data-prev-x={prev.cx.toFixed(1)}
+    data-prev-y={prev.cy.toFixed(1)}
+    data-axis-y={axisY}
+  >
     <!-- axes -->
     <line x1={padL} y1={padT} x2={padL} y2={axisY} class="stroke-border" stroke-width="1" />
     <line x1={padL} y1={axisY} x2={W - padR} y2={axisY} class="stroke-border" stroke-width="1" />
@@ -43,10 +57,14 @@ const axisY = H - padB;
     <text x={first.cx} y={H - 5} text-anchor="middle" class="fill-muted-foreground text-[12px]">{fmtDay(first.day)}</text>
     {n > 1 && <text x={last.cx} y={H - 5} text-anchor="middle" class="fill-muted-foreground text-[12px]">{fmtDay(last.day)}</text>}
     <!-- series -->
-    <polyline points={line} fill="none" stroke="#dca21f" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+    <polyline data-series points={line} fill="none" stroke="#dca21f" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
     {coords.map((c, i) => (
-      <circle cx={c.cx} cy={c.cy} r={i === coords.length - 1 ? 4 : 2.5} fill="#dca21f" />
+      <circle data-last-dot={i === coords.length - 1 ? '' : null} cx={c.cx} cy={c.cy} r={i === coords.length - 1 ? 4 : 2.5} fill="#dca21f" />
     ))}
     <text x={last.cx} y={Math.min(Math.max(last.cy - 8, 12), H - 4)} text-anchor="end" class="fill-foreground text-[14px] font-bold">{last.position}e</text>
+    <!-- live trend: the final leg + endpoint turn red while live is on; the last
+         yellow dot is hidden and the yellow line trimmed (handled client-side). -->
+    <line data-live-line stroke="#ef4444" stroke-width="2" stroke-linecap="round" class="hidden" />
+    <circle data-live-dot r="4.5" fill="#ef4444" stroke="#fff" stroke-width="1.5" class="hidden"><title>Live positie</title></circle>
   </svg>
 </div>

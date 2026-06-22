@@ -180,7 +180,10 @@ const dogH = DOG_ART.length * DOG_PX;
         </div>
       </div>
       <div class="shrink-0 text-right">
-        <div id="hdr-total" class="font-display text-4xl font-extrabold leading-none tabular-nums text-gold">{rank?.total ?? 0}</div>
+        <div class="flex items-center justify-end gap-1.5">
+          <span id="hdr-live-dot" class="hidden size-2.5 shrink-0 animate-pulse rounded-full bg-red-500" title="live tussenstand"></span>
+          <div id="hdr-total" class="font-display text-4xl font-extrabold leading-none tabular-nums text-gold">{rank?.total ?? 0}</div>
+        </div>
         <div class="mt-1 text-xs text-ink-foreground/70">punten</div>
       </div>
     </div>
@@ -206,6 +209,9 @@ const dogH = DOG_ART.length * DOG_PX;
   </a>
 
   <LiveScores ranking />
+  <p id="live-basis-note" class="-mt-2 mb-4 hidden text-xs font-medium text-red-600 dark:text-red-400">
+    Plaats, klassement en punten zijn gebaseerd op de live tussenstand.
+  </p>
 
   {rankPoints.length >= 2 && (
     <section class="mb-8">
@@ -301,6 +307,14 @@ const dogH = DOG_ART.length * DOG_PX;
   <style is:global>
     /* 8-bit easter-egg styling for the participant page. */
     .coin { image-rendering: pixelated; }
+
+    /* A prediction row showing a live score/points gets extra breathing room
+       below so the live badge + score pill aren't cramped. The meta line (live
+       badge + minute) gets space above it so it's clearly separated from the
+       prediction, and the live score pill sits a touch lower. */
+    .live-row { padding-bottom: 0.85rem; }
+    .live-row .match-meta { margin-top: 0.5rem; }
+    .live-row .match-score { margin-top: 0.5rem; }
 
     /* Top-5: the won amount, centred, big. The whole overlay fades after 3s. */
     .pixel-amount {
@@ -413,12 +427,110 @@ const dogH = DOG_ART.length * DOG_PX;
       const posEl = document.getElementById('hdr-pos');
       const totalEl = document.getElementById('hdr-total');
       const mpEl = document.getElementById('hdr-mp');
+      const chartSvg = document.querySelector('[data-rank-chart]');
+      const chartDot = chartSvg?.querySelector('[data-live-dot]');
+      const chartLine = chartSvg?.querySelector('[data-live-line]');
+      const chartSeries = chartSvg?.querySelector('[data-series]');
+      const chartLastDot = chartSvg?.querySelector('[data-last-dot]');
+      const seriesFull = chartSeries?.getAttribute('points') || '';
+      const seriesTrim = seriesFull.trim().split(/\s+/).slice(0, -1).join(' '); // drop last point
+      let liveActive = false; // ≥1 live match is currently adjusting this page
+      let lastDeltas = {};
+      // While live: the last leg of the curve becomes a red "live trend" segment
+      // ending in a red dot at the live position; the last yellow dot is hidden
+      // and the yellow line trimmed so there's no doubled-up endpoint.
+      function updateChartDot(pos) {
+        if (!chartSvg || !chartDot) return;
+        if (!liveActive || pos == null) {
+          chartDot.classList.add('hidden');
+          chartLine?.classList.add('hidden');
+          chartLastDot?.classList.remove('hidden');
+          if (chartSeries && seriesFull) chartSeries.setAttribute('points', seriesFull);
+          return;
+        }
+        const padT = +chartSvg.dataset.padT, span = +chartSvg.dataset.span, denom = +chartSvg.dataset.denom;
+        const lastX = +chartSvg.dataset.lastX, axisY = +chartSvg.dataset.axisY;
+        const prevX = +chartSvg.dataset.prevX, prevY = +chartSvg.dataset.prevY;
+        const cy = Math.max(padT, Math.min(padT + ((pos - 1) / denom) * span, axisY));
+        if (chartSeries && seriesTrim) chartSeries.setAttribute('points', seriesTrim);
+        chartLastDot?.classList.add('hidden');
+        if (chartLine) {
+          chartLine.setAttribute('x1', String(prevX));
+          chartLine.setAttribute('y1', String(prevY));
+          chartLine.setAttribute('x2', String(lastX));
+          chartLine.setAttribute('y2', cy.toFixed(1));
+          chartLine.classList.remove('hidden');
+        }
+        chartDot.setAttribute('cx', String(lastX));
+        chartDot.setAttribute('cy', cy.toFixed(1));
+        chartDot.classList.remove('hidden');
+      }
       function updateHeader(deltas) {
+        lastDeltas = deltas;
         const r = compute(deltas);
-        if (posEl && r.pos != null) { posEl.textContent = String(r.pos); posEl.className = MEDAL_BASE + ' ' + (MEDALS[r.pos] || MEDAL_DEFAULT); }
+        // Live cue: a red ring on the position badge (overrides the medal ring).
+        if (posEl && r.pos != null) { posEl.textContent = String(r.pos); posEl.className = MEDAL_BASE + ' ' + (MEDALS[r.pos] || MEDAL_DEFAULT) + (liveActive ? ' !ring-red-500' : ''); }
         if (totalEl) totalEl.textContent = String(r.total);
         if (mpEl) mpEl.textContent = String(D.staticMp + (deltas[PID] || 0));
+        updateChartDot(r.pos);
       }
+
+      // ---- Live indicators: per-match provisional points + header red cues ----
+      // Mirrors LiveScores' scoring so the per-match badges agree with the header
+      // total. #live-scoring is embedded because this page uses <LiveScores ranking />.
+      const scoring = JSON.parse(document.getElementById('live-scoring')?.textContent || 'null');
+      const scoreByPair = new Map();
+      if (scoring) for (const m of scoring.matches) { scoreByPair.set(m.h + '|' + m.a, m); scoreByPair.set(m.a + '|' + m.h, m); }
+      const basePts = (ph, pa, rh, ra) => {
+        if (ph === rh && pa === ra) return 9;
+        if (Math.sign(ph - pa) !== Math.sign(rh - ra)) return 0;
+        return Math.max(3, 7 - (Math.abs(ph - rh) + Math.abs(pa - ra)));
+      };
+      const pointsColor = (pts, exact) => pts === 0
+        ? 'bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300'
+        : exact
+          ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+          : 'bg-amber-200 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300';
+      const liveNote = document.getElementById('live-basis-note');
+      const liveDot = document.getElementById('hdr-live-dot');
+      const liveRows = new Set();
+
+      function clearLivePoints() {
+        for (const card of liveRows) {
+          const slot = card.querySelector('[data-points-slot]');
+          if (slot && slot.dataset.orig != null) { slot.innerHTML = slot.dataset.orig; delete slot.dataset.orig; }
+          card.classList.remove('live-row');
+        }
+        liveRows.clear();
+      }
+
+      function applyLiveMatches(list) {
+        clearLivePoints();
+        liveActive = (list || []).length > 0 && !!scoring;
+        liveNote?.classList.toggle('hidden', !liveActive);
+        liveDot?.classList.toggle('hidden', !liveActive);
+        for (const lm of list || []) {
+          const m = scoreByPair.get(lm.homeTeamId + '|' + lm.awayTeamId);
+          if (!m) continue;
+          const pred = (scoring.preds[m.id] || {})[PID];
+          if (!pred) continue; // this participant didn't (validly) predict it
+          const swapped = m.h !== lm.homeTeamId;
+          const rh = swapped ? lm.goalsAway : lm.goalsHome;
+          const ra = swapped ? lm.goalsHome : lm.goalsAway;
+          const base = basePts(pred[0], pred[1], rh, ra);
+          const mult = scoring.multipliers[m.round] ?? 1;
+          const pts = base * mult;
+          const card = document.querySelector('[data-match-card][data-match-id="' + m.id + '"]');
+          const slot = card?.querySelector('[data-points-slot]');
+          if (!slot) continue;
+          if (slot.dataset.orig == null) slot.dataset.orig = slot.innerHTML;
+          slot.innerHTML = '<span class="inline-flex min-w-9 items-center justify-center rounded-md px-2 py-1.5 text-sm font-bold tabular-nums ring-2 ring-red-500 ' + pointsColor(pts, base === 9) + '" title="Voorlopige punten (live)">' + pts + '</span>';
+          card.classList.add('live-row');
+          liveRows.add(card);
+        }
+        updateHeader(lastDeltas); // re-apply the position ring for the new live state
+      }
+      window.addEventListener('rut:live-matches', (e) => applyLiveMatches((e.detail && e.detail.matches) || []));
 
       const COIN = '<svg class="coin" viewBox="0 0 12 11" width="100%" height="100%" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="12" height="11" rx="1" fill="#1b7a3a"/><rect x="1" y="1" width="10" height="9" fill="#2eb35a"/><g fill="#ffd64a"><rect x="5" y="0" width="2" height="11"/><rect x="3" y="2" width="6" height="1"/><rect x="3" y="5" width="6" height="1"/><rect x="3" y="8" width="6" height="1"/><rect x="3" y="2" width="1" height="3"/><rect x="8" y="6" width="1" height="3"/></g></svg>';
       function showMoney(prize) {

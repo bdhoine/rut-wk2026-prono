@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-06-22",
+    "title": "Live punten en duidelijke live-markering op de deelnemerpagina",
+    "items": [
+      "Op een deelnemerspagina toont 'Live scores' nu de voorlopige punten van een lopende wedstrijd meteen in de pronostiekenrij, met een rood kader rond de punten.",
+      "Het is nu duidelijk gemarkeerd dat plaats, klassement en punten op de live tussenstand zijn gebaseerd: een rode rand rond de plaats, een rode stip bij de punten, een tekstje onder de live-knop, en in het klassementsverloop een rode live-stip met de lijn naar de live-positie.",
+      "De rij van een lopende wedstrijd heeft wat meer ruimte zodat de live-badge en tussenstand niet tegen de voorspelling gedrukt staan."
+    ]
+  },
+  {
     "date": "2026-06-21",
     "title": "Live scores rechtstreeks in pronostiekenrij",
     "items": [

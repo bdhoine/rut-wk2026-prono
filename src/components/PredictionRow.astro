@@ -20,6 +20,7 @@ const away = sideLabel(match, 'away');
 ---
 <div
   data-match-card
+  data-match-id={match.id}
   data-home-team={home.team?.id}
   data-away-team={away.team?.id}
   class="relative flex items-center gap-2 rounded-xl border bg-card px-3 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:gap-3 sm:px-4"
@@ -40,7 +41,7 @@ const away = sideLabel(match, 'away');
       <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" muted placeholder />
     </div>
   </div>
-  <div class="relative z-10 shrink-0">
+  <div data-points-slot class="relative z-10 shrink-0">
     {score
       ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} />
       : <span class="inline-flex min-w-9 items-center justify-center rounded-md border border-dashed border-muted-foreground/25 px-2 py-1.5 text-sm text-muted-foreground/40">·</span>}
