@@ -16,6 +16,7 @@ export interface RankingTableRow {
 
 const FAV_KEY = "rut-wk2026-favorieten";
 const TUT_KEY = "rut-wk2026-fav-tutorial"; // "1" once the favourites tutorial is seen/skipped
+const ENABLE_TUTORIAL = false; // set to true to re-enable the onboarding tutorial
 
 const capture = (event: string, props?: Record<string, unknown>) =>
   (window as unknown as { posthog?: { capture: (e: string, p?: Record<string, unknown>) => void } }).posthog?.capture(event, props);
@@ -138,6 +139,7 @@ export default function RankingTable({
   // First-run tutorial: show only for visitors with no favourites who haven't
   // seen/skipped it yet (same flag across home + klassement).
   React.useEffect(() => {
+    if (!ENABLE_TUTORIAL) return;
     try {
       const hasFav = JSON.parse(localStorage.getItem(FAV_KEY) || "[]").length > 0;
       if (hasFav || localStorage.getItem(TUT_KEY)) return;
