@@ -90,6 +90,11 @@
     "goals": 2
   },
   {
+    "player": "Maxi Araújo",
+    "teamId": "uy",
+    "goals": 2
+  },
+  {
     "player": "Mikel Oyarzabal",
     "teamId": "es",
     "goals": 2
@@ -112,6 +117,11 @@
   {
     "player": "Abdulelah Al-Amri",
     "teamId": "sa",
+    "goals": 1
+  },
+  {
+    "player": "Agustín Canobbio",
+    "teamId": "uy",
     "goals": 1
   },
   {
@@ -187,16 +197,6 @@
   {
     "player": "Franck Kessié",
     "teamId": "ci",
-    "goals": 1
-  },
-  {
-    "player": "Giovanni Reyna",
-    "teamId": "us",
-    "goals": 1
-  },
-  {
-    "player": "Granit Xhaka",
-    "teamId": "ch",
     "goals": 1
   }
 ]
