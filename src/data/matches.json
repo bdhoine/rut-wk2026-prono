@@ -791,8 +791,13 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "ar",
     "awayTeamId": "at",
-    "status": "scheduled",
-    "apiId": 760456
+    "status": "finished",
+    "apiId": 760456,
+    "result": {
+      "home": 2,
+      "away": 0
+    },
+    "winnerTeamId": "ar"
   },
   {
     "id": "gJ-md2-2",
