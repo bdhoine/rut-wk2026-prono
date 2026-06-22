@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
 import MatchCard from '@/components/MatchCard.astro';
 import StandingsTable from '@/components/StandingsTable.astro';
+import LiveScores from '@/components/LiveScores.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PickersTable from '@/components/PickersTable.astro';
@@ -37,6 +38,10 @@ const pickSections = [
       <div class="text-sm text-muted-foreground">Groep {team.group}</div>
     </div>
   </header>
+
+  {/* Overlay mode: patches the Programma MatchCards (live score + badge) and the
+      Stand rows (live indicator) in place while a match is live. */}
+  <LiveScores />
 
   <section class="mb-8">
     <SectionHeading title="Programma" />

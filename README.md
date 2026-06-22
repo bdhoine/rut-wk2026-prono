@@ -27,7 +27,7 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/programma` | Upcoming matches, grouped per calendar day |
 | `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with sticky day subheadings and prono submission deadlines |
 | `/poules` | Group standings (two-column grid on desktop, "Groepen") + best third-placed ranking; qualifying rows carry a **✓ next to the rank** (plus the green tint) with a legend, shown only once a group has results. With **live** on, both the group tables and the best-thirds are recomputed client-side including in-progress matches (LivePoules), each live team carrying a green/orange/red win/draw/loss badge (the ✓ updates live too) |
-| `/land/[id]` | Country detail: full schedule + group standings (with the qualification ✓ + legend) + a **Doelpuntenmakers** table (the team's goal scorers: flag, name, goals) + three "who picked this country" sections (eindwinnaar, meeste doelpunten, meeste tegendoelpunten), each ranked by klassement position with a "Toon alle" expander; **empty sections collapse** to a compact `<details>` row |
+| `/land/[id]` | Country detail: full schedule + group standings (with the qualification ✓ + legend) + a **Doelpuntenmakers** table (the team's goal scorers: flag, name, goals) + three "who picked this country" sections (eindwinnaar, meeste doelpunten, meeste tegendoelpunten), each ranked by klassement position with a "Toon alle" expander; **empty sections collapse** to a compact `<details>` row. With **live** on, the Programma cards and the group Stand rows update in place |
 | `/topschutter/[slug]` | Top-scorer profile (only generated for scorers picked by ≥1 participant): country flag (links to `/land/[id]`), a stat strip (goals, **rank among all WK scorers** tie-aware, times picked), the participants who picked them (with eindwinnaar flag + position), and a "← Statistieken" backlink. Picks are matched to `scorers.json` best-effort on surname + first initial |
 | `/statistieken` | Top scorers (names cleaned + merged, own goals excluded), most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, **most correct 1X2 predictions per participant** (top 5 + "Toon alle"), popular scorelines, most-picked winner/top scorer, and a **provisional bonus leaderboard** ("voorlopig op koers": per participant a ✓/–/✗ status per bonus pick + provisional bonus points, from `bonusStandings()`). Picked top-scorer names link to their `/topschutter/[slug]` profile |
 | `/vergelijk` | Compare two participants side by side (selected via two dropdowns or `?a=&b=` for a shareable link): totals, match/bonus split, position, form, exact% / correct-1X2%, the four bonus picks, and a head-to-head over commonly-played matches (who scored more, agreement count) + a per-match prediction diff. Client-rendered from a compact embedded dataset |
@@ -93,12 +93,14 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
   second safety net). It needs a GitHub token with `actions:write` on the repo in
   env **`GH_DISPATCH_TOKEN`**; without it the function is a harmless no-op.
 - **Live scores (client-side).** A "Live scores" toggle on the home, Programma,
-  Kalender and Poules pages fetches the in-progress scores and then auto-refreshes
-  every minute while on. On the home page live matches show as cards above the
-  recently-finished ones (max 4 total) and the **klassement recomputes
+  Kalender, Poules and country (Land) pages fetches the in-progress scores and then
+  auto-refreshes every minute while on. On the home page live matches show as cards
+  above the recently-finished ones (max 4 total) and the **klassement recomputes
   provisional points live**; on Programma/Kalender the live score overlays the
   match card (badge above the score pill); on Poules the playing countries get a
-  pulsing red dot with their live score. The client polls
+  pulsing red dot with their live score. On a `/land/[id]` page the same overlay
+  patches the Programma match cards and the group Stand rows in place (no extra
+  card on top). The client polls
   [`netlify/functions/live.mjs`](./netlify/functions/live.mjs) (at
   `/.netlify/functions/live`), which fetches ESPN's scoreboard directly (it
   responds in well under a second) and caches the result for ~60 s via a
