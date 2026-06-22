@@ -19,8 +19,13 @@ interface Props {
   // List mode only: also show the most recently finished matches. When false,
   // only live matches appear (used on /klassement, which is live-only).
   showRecent?: boolean;
+  // Overlay mode only: embed the scoring payload so rut:live-ranking events are
+  // dispatched (needed on pages that show per-participant live point deltas, such
+  // as deelnemer/[id]).
+  ranking?: boolean;
 }
-const { mode = 'overlay', showRecent = true } = Astro.props;
+const { mode = 'overlay', showRecent = true, ranking = false } = Astro.props;
+const withScoring = mode === 'list' || ranking;
 const teamMap = Object.fromEntries(teams.map((t) => [t.id, { name: t.name, iso: t.iso }]));
 
 // Most recently finished matches for the home page (newest first; a few spare
@@ -50,20 +55,19 @@ const recent =
 const liveMatches = matches.filter((m) => m.status !== 'finished' && m.homeTeamId && m.awayTeamId);
 const liveMatchIds = new Set(liveMatches.map((m) => m.id));
 const predsByMatch: Record<string, Record<string, [number, number]>> = {};
-if (mode === 'list') {
+if (withScoring) {
   for (const p of predictions) {
     if (!liveMatchIds.has(p.matchId) || p.late) continue;
     (predsByMatch[p.matchId] ??= {})[p.participantId] = [p.home, p.away];
   }
 }
-const scoringPayload =
-  mode === 'list'
-    ? {
-        multipliers: settings.multipliers,
-        matches: liveMatches.map((m) => ({ id: m.id, h: m.homeTeamId, a: m.awayTeamId, round: m.round })),
-        preds: predsByMatch,
-      }
-    : null;
+const scoringPayload = withScoring
+  ? {
+      multipliers: settings.multipliers,
+      matches: liveMatches.map((m) => ({ id: m.id, h: m.homeTeamId, a: m.awayTeamId, round: m.round })),
+      preds: predsByMatch,
+    }
+  : null;
 
 // Kickoff times of not-yet-finished matches, so the client can auto-enable live
 // while a match is in progress and auto-disable once it's over (window-based,
@@ -113,7 +117,7 @@ const nextMatch = nextPlanned
   <script type="application/json" id="live-windows" set:html={JSON.stringify(kickoffWindows)}></script>
   <script type="application/json" id="live-next-match" set:html={JSON.stringify(nextMatch)}></script>
   {mode === 'list' && <script type="application/json" id="live-recent" set:html={JSON.stringify(recent)}></script>}
-  {mode === 'list' && <script type="application/json" id="live-scoring" set:html={JSON.stringify(scoringPayload)}></script>}
+  {withScoring && <script type="application/json" id="live-scoring" set:html={JSON.stringify(scoringPayload)}></script>}
 </div>
 
 <script>

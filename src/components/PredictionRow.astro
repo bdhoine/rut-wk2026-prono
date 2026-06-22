@@ -18,7 +18,12 @@ const { match, prediction, score } = Astro.props;
 const home = sideLabel(match, 'home');
 const away = sideLabel(match, 'away');
 ---
-<div class="relative flex items-center gap-2 rounded-xl border bg-card px-3 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:gap-3 sm:px-4">
+<div
+  data-match-card
+  data-home-team={home.team?.id}
+  data-away-team={away.team?.id}
+  class="relative flex items-center gap-2 rounded-xl border bg-card px-3 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:gap-3 sm:px-4"
+>
   <a href={`/wedstrijd/${match.id}`} class="absolute inset-0 rounded-xl" aria-label={`${home.label} tegen ${away.label}`}></a>
   <div class="min-w-0 flex-1">
     <div class="flex items-center justify-center gap-2 sm:gap-2.5">
@@ -30,7 +35,8 @@ const away = sideLabel(match, 'away');
       <span class="hidden min-w-0 flex-1 truncate text-sm font-medium sm:block">{away.label}</span>
       <span class="min-w-0 flex-1 truncate text-sm font-medium sm:hidden">{away.short}</span>
     </div>
-    <div class="mt-1.5 flex h-6 items-center justify-center">
+    <div class="match-meta flex items-center justify-center gap-1 text-xs text-muted-foreground"></div>
+    <div class="match-score mt-1.5 flex h-6 items-center justify-center">
       <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" muted placeholder />
     </div>
   </div>
