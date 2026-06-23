@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-06-23",
+    "title": "Stabieler klassement",
+    "items": [
+      "Een zeldzame fout opgelost waardoor bij sommige bezoekers het klassement (favorieten, zoeken) niet meer reageerde, meestal vlak na een update van de site."
+    ]
+  },
+  {
+    "date": "2026-06-23",
     "title": "Kansen, vorm en reeksen",
     "items": [
       "Op je deelnemerspagina verschijnt vanaf de kwartfinales onderaan een 'Mathematisch kan het nog'-blok: kun je nog bij de prijzen (top 5), op het podium (top 3) of winnen? Het rekent met het beste geval — jij pakt alles, niemand anders scoort nog — en toont de hoogst haalbare plaats.",

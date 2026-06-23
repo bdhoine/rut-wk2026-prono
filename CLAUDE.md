@@ -88,6 +88,13 @@ before committing.
   with `<LiveScores />`. It fakes a live score on the **next planned match**,
   auto-enables live, skips the API fetch and any results-refresh nudge, and tags
   the badge with "sim" — the easiest way to test the live overlay off-tournament.
+- `astro.config.mjs` forces `react`, `react-dom` and `scheduler` into one
+  `react-vendor` Vite chunk (`build.rollupOptions.output.manualChunks`). Don't
+  remove this: otherwise react-dom (which **sets** React's hooks dispatcher
+  `ReactSharedInternals.H`) and React core (which **reads** it on every hook)
+  split into separate chunks, and a deploy/cache skew that mixes chunk instances
+  makes an island's first `useState` read a null dispatcher
+  (`null is not an object (evaluating 'f.H.useState')`).
 - Run `npm run check` before committing; keep `README.md` and this file current.
 - Commit and push directly to `master` — no feature branch / PR for this repo
   (the results bot and the owner both commit straight to `master`).
