@@ -150,6 +150,11 @@
     "goals": 1
   },
   {
+    "player": "Amine Gouiri",
+    "teamId": "dz",
+    "goals": 1
+  },
+  {
     "player": "Anthony Elanga",
     "teamId": "se",
     "goals": 1
@@ -192,11 +197,6 @@
   {
     "player": "Ermin Mahmic",
     "teamId": "ba",
-    "goals": 1
-  },
-  {
-    "player": "Felix Nmecha",
-    "teamId": "de",
     "goals": 1
   }
 ]

@@ -817,8 +817,13 @@
     "venue": "Levi's Stadium, San Francisco",
     "homeTeamId": "jo",
     "awayTeamId": "dz",
-    "status": "scheduled",
-    "apiId": 760455
+    "status": "finished",
+    "apiId": 760455,
+    "result": {
+      "home": 1,
+      "away": 2
+    },
+    "winnerTeamId": "dz"
   },
   {
     "id": "gJ-md3-1",
@@ -1154,7 +1159,7 @@
     "round": "r32",
     "kickoff": "2026-07-03T21:00:00-04:00",
     "venue": "Hard Rock Stadium, Miami",
-    "homeTeamId": null,
+    "homeTeamId": "ar",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep J",
     "awayPlaceholder": "2e Groep H",
