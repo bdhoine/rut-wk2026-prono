@@ -60,7 +60,11 @@ before committing.
   onward** (gated on the round of 16 being complete; earlier the bound is too
   loose — everyone is trivially "Ja"). The **Beste vorm** card on `/statistieken`
   (`bestForm()` + `BestFormCard.astro`) and the two **op-een-rij** streak tables
-  (`longestOutcomeStreak()` / `longestExactStreak()`) live in the same file.
+  (`longestOutcomeStreak()` / `longestExactStreak()`) live in the same file. Each
+  streak row carries an `ongoing` flag (the record run is still live — it reaches
+  the latest finished match); the `/statistieken` tables render a `Flame.astro`
+  icon (amber, hover tooltip) for those rows in the right-aligned **Aantal**
+  column, with a legend under each table.
 - UI vocabulary is fixed: **Groepen** (not poule/poulestand; route stays
   `/poules`) and **Klassement** (not "Stand"/"Top 10"). Qualifying standings rows
   carry a ✓ after the country name, and prize spots use a colour-graded **position

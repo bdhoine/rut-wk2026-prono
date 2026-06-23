@@ -748,7 +748,7 @@ export function pickedTopScorerSlugs(): Map<string, string> {
 
 /** Participants ranked by the number of correct 1X2 (winner/draw) predictions on
  *  finished matches. Late/missing predictions don't count. */
-type PredictionStatRow = { participantId: string; name: string; correct: number; played: number; position: number | null; winnerIso: string | null; winnerName: string | null };
+type PredictionStatRow = { participantId: string; name: string; correct: number; played: number; position: number | null; winnerIso: string | null; winnerName: string | null; ongoing?: boolean };
 
 /** Rank participants by how many of their (non-late) predictions on played
  *  matches satisfy `pick` — most first, then by current klassement position. */
@@ -785,7 +785,9 @@ export function topExactScores(): PredictionStatRow[] {
 
 /** Rank participants by their LONGEST run of consecutive finished matches that
  *  all satisfy `pick` (in kickoff order). A late/missing/failing prediction
- *  breaks the run. `correct` carries the best streak length. */
+ *  breaks the run. `correct` carries the best streak length; `ongoing` is true
+ *  when that best run is still live — it reaches the latest finished match and
+ *  hasn't been broken, so it can still grow. */
 function topStreakStat(pick: (s: ReturnType<typeof scoreMatch>) => boolean): PredictionStatRow[] {
   const finishedMatches = matches.filter((m) => m.status === 'finished' && m.result).sort(byKickoff);
   const rank = new Map(ranking().map((r) => [r.participantId, r.position]));
@@ -800,7 +802,7 @@ function topStreakStat(pick: (s: ReturnType<typeof scoreMatch>) => boolean): Pre
         if (ok) { run++; if (run > best) best = run; } else { run = 0; }
       }
       const winner = getTeam(p.bonus.winnerTeamId);
-      return { participantId: p.id, name: p.name, correct: best, played, position: rank.get(p.id) ?? null, winnerIso: winner?.iso ?? null, winnerName: winner?.name ?? null };
+      return { participantId: p.id, name: p.name, correct: best, played, position: rank.get(p.id) ?? null, winnerIso: winner?.iso ?? null, winnerName: winner?.name ?? null, ongoing: best > 0 && run === best };
     })
     .sort((a, b) => b.correct - a.correct || (a.position ?? Infinity) - (b.position ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
 }

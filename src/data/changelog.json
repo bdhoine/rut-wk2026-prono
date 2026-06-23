@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-06-23",
+    "title": "Lopende reeksen in beeld",
+    "items": [
+      "Bij \"Juiste/exacte uitslagen op een rij\" toont een vlammetje 🔥 nu welke reeksen nog lopen (nog niet onderbroken), met een legende onder de tabel."
+    ]
+  },
+  {
+    "date": "2026-06-23",
     "title": "Stabieler klassement",
     "items": [
       "Een zeldzame fout opgelost waardoor bij sommige bezoekers het klassement (favorieten, zoeken) niet meer reageerde, meestal vlak na een update van de site."
