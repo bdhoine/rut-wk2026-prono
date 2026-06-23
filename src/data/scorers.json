@@ -5,6 +5,11 @@
     "goals": 5
   },
   {
+    "player": "Kylian Mbappé",
+    "teamId": "fr",
+    "goals": 4
+  },
+  {
     "player": "Deniz Undav",
     "teamId": "de",
     "goals": 3
@@ -77,11 +82,6 @@
   {
     "player": "Kai Havertz",
     "teamId": "de",
-    "goals": 2
-  },
-  {
-    "player": "Kylian Mbappé",
-    "teamId": "fr",
     "goals": 2
   },
   {
