@@ -56,7 +56,9 @@ before committing.
   win Ja/Nee) comes from `mathematicalOutlook()` in `data.ts`: a simple sound
   upper bound where the participant scores the max on everything left (9×mult per
   unfinished match + open bonus picks) and nobody else gains — gives `bestPos`.
-  Build-time only (not recomputed live). The **Beste vorm** card on `/statistieken`
+  Build-time only (not recomputed live) and shown **from the quarter-finals
+  onward** (gated on the round of 16 being complete; earlier the bound is too
+  loose — everyone is trivially "Ja"). The **Beste vorm** card on `/statistieken`
   (`bestForm()` + `BestFormCard.astro`) and the two **op-een-rij** streak tables
   (`longestOutcomeStreak()` / `longestExactStreak()`) live in the same file.
 - UI vocabulary is fixed: **Groepen** (not poule/poulestand; route stays

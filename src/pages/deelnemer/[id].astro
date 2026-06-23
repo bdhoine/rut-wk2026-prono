@@ -49,7 +49,13 @@ const rankMarkers = [
 ].filter((mk): mk is { day: string; label: string } => mk.day != null);
 
 // Mathematical outlook: can this participant still finish in the money / on the
-// podium / first? Simple worst-case-for-others upper bound (see data.ts).
+// podium / first? Simple worst-case-for-others upper bound (see data.ts). Only
+// shown from the quarter-finals onward (i.e. once the round of 16 is complete);
+// earlier the bound is so loose that everyone is trivially still "Ja".
+const r16Matches = matches.filter((m) => m.round === 'r16');
+const qfReached =
+  (r16Matches.length > 0 && r16Matches.every((m) => m.status === 'finished')) ||
+  matches.some((m) => ['qf', 'sf', 'third', 'final'].includes(m.round) && m.status === 'finished');
 const outlook = mathematicalOutlook(participant.id);
 const outlookCards = outlook
   ? [
@@ -320,7 +326,7 @@ const dogH = DOG_ART.length * DOG_PX;
     </div>
   </section>
 
-  {finishedCount > 0 && outlook && (
+  {qfReached && outlook && (
     <section class="mt-8">
       <SectionHeading title="Mathematisch kan het nog">
         <InfoToggle text="Eenvoudige inschatting: kan deze deelnemer wiskundig nog top 5 (geld), top 3 (podium) of de eerste plaats halen? We gaan uit van het beste geval — jij pakt het maximum op alle resterende wedstrijden en nog mogelijke bonuspunten, terwijl niemand anders nog punten bijdoet." />
