@@ -23,27 +23,30 @@ const away = sideLabel(match, 'away');
   data-match-id={match.id}
   data-home-team={home.team?.id}
   data-away-team={away.team?.id}
-  class="relative flex items-center gap-2 rounded-xl border bg-card px-3 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:gap-3 sm:px-4"
+  class="relative flex flex-col rounded-xl border bg-card px-3 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md sm:px-4"
 >
   <a href={`/wedstrijd/${match.id}`} class="absolute inset-0 rounded-xl" aria-label={`${home.label} tegen ${away.label}`}></a>
-  <div class="min-w-0 flex-1">
-    <div class="flex items-center justify-center gap-2 sm:gap-2.5">
-      <span class="hidden min-w-0 flex-1 truncate text-right text-sm font-medium sm:block">{home.label}</span>
-      <span class="min-w-0 flex-1 truncate text-right text-sm font-medium sm:hidden">{home.short}</span>
-      <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
-      <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" placeholder />
-      <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
-      <span class="hidden min-w-0 flex-1 truncate text-sm font-medium sm:block">{away.label}</span>
-      <span class="min-w-0 flex-1 truncate text-sm font-medium sm:hidden">{away.short}</span>
-    </div>
-    <div class="match-meta flex items-center justify-center gap-1 text-xs text-muted-foreground"></div>
-    <div class="match-score mt-1.5 flex h-6 items-center justify-center">
+  <!-- Voorspelling op volle breedte: het streepje tussen de scoreboxen valt zo
+       exact op het midden van de kaart. -->
+  <div class="flex items-center justify-center gap-2 sm:gap-2.5">
+    <span class="hidden min-w-0 flex-1 truncate text-right text-sm font-medium sm:block">{home.label}</span>
+    <span class="min-w-0 flex-1 truncate text-right text-sm font-medium sm:hidden">{home.short}</span>
+    <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
+    <ScoreBoxes home={prediction?.home} away={prediction?.away} size="md" placeholder />
+    <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
+    <span class="hidden min-w-0 flex-1 truncate text-sm font-medium sm:block">{away.label}</span>
+    <span class="min-w-0 flex-1 truncate text-sm font-medium sm:hidden">{away.short}</span>
+  </div>
+  <div class="match-meta flex items-center justify-center gap-1 text-xs text-muted-foreground"></div>
+  <!-- Onderlijn: uitslag gecentreerd, puntenbadge rechtsonder. -->
+  <div class="relative mt-1.5 flex min-h-7 items-center">
+    <div class="match-score absolute inset-x-0 flex items-center justify-center">
       <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" muted placeholder />
     </div>
-  </div>
-  <div data-points-slot class="relative z-10 shrink-0">
-    {score
-      ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} />
-      : <span class="inline-flex min-w-9 items-center justify-center rounded-md border border-dashed border-muted-foreground/25 px-2 py-1.5 text-sm text-muted-foreground/40">·</span>}
+    <div data-points-slot class="relative z-10 ml-auto">
+      {score
+        ? <PointsBadge points={score.points} exact={score.exact} explanation={explainScore(score)} />
+        : <span class="inline-flex min-w-9 items-center justify-center rounded-md border border-dashed border-muted-foreground/25 px-2 py-1.5 text-sm text-muted-foreground/40">·</span>}
+    </div>
   </div>
 </div>

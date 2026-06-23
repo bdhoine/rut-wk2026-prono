@@ -8,12 +8,12 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import RankChart from '@/components/RankChart.astro';
 import {
   participants, getParticipant, getTeam, positionOf, predictionsForParticipant, outcomes, settings,
-  eliminatedTeamIds, currentBonusLeaders, ranking, matches, rankingTimeline,
+  eliminatedTeamIds, currentBonusLeaders, ranking, matches, rankingTimeline, mathematicalOutlook,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
-import { byKickoff } from '@/lib/format';
+import { byKickoff, dayKey } from '@/lib/format';
 import { PRIZES } from '@/lib/prizes';
-import { ROUND_LABELS, ROUND_ORDER, type BonusPicks } from '@/lib/types';
+import { ROUND_LABELS, ROUND_ORDER, type BonusPicks, type RoundId } from '@/lib/types';
 
 export function getStaticPaths() {
   return participants.map((p) => ({ params: { id: p.id } }));
@@ -27,10 +27,37 @@ const rank = positionOf(participant.id);
 const rows = predictionsForParticipant(participant.id);
 const bonus = bonusBreakdown(participant.bonus, outcomes, settings);
 
-// Position-over-time (one ranking snapshot per calendar day with results).
+// Position-over-time (one ranking snapshot per calendar day with results),
+// capped at the 10 most recent days so the chart stays readable.
 const rankPoints = rankingTimeline()
   .map((s) => ({ day: s.day, position: s.posById.get(participant.id) }))
-  .filter((p): p is { day: string; position: number } => p.position != null);
+  .filter((p): p is { day: string; position: number } => p.position != null)
+  .slice(-10);
+
+// Speeldag / knockout-round boundaries for the chart: the last calendar day on
+// which each matchday/round had a finished match (a dashed divider shows e.g.
+// where Speeldag 1 ended). Only those within the visible window draw a line.
+const finishedForMarkers = matches.filter((m) => m.status === 'finished' && m.result);
+const lastDayWith = (pred: (m: typeof matches[number]) => boolean): string | null => {
+  const days = finishedForMarkers.filter(pred).map((m) => dayKey(m.kickoff)).sort();
+  return days.at(-1) ?? null;
+};
+const KO_MARKERS: [RoundId, string][] = [['r32', '1/16'], ['r16', '1/8'], ['qf', 'KF'], ['sf', 'HF'], ['third', '3e'], ['final', 'F']];
+const rankMarkers = [
+  ...([1, 2, 3] as const).map((md) => ({ day: lastDayWith((m) => m.round === 'group' && m.matchday === md), label: `S${md}` })),
+  ...KO_MARKERS.map(([round, label]) => ({ day: lastDayWith((m) => m.round === round), label })),
+].filter((mk): mk is { day: string; label: string } => mk.day != null);
+
+// Mathematical outlook: can this participant still finish in the money / on the
+// podium / first? Simple worst-case-for-others upper bound (see data.ts).
+const outlook = mathematicalOutlook(participant.id);
+const outlookCards = outlook
+  ? [
+      { title: 'Geld winnen', sub: 'top 5', can: outlook.canMoney },
+      { title: 'Op het podium', sub: 'top 3', can: outlook.canPodium },
+      { title: 'Winnen', sub: '1e plaats', can: outlook.canWin },
+    ]
+  : [];
 
 const BONUS_LABELS: Record<keyof BonusPicks, string> = {
   topScorer: 'Topschutter',
@@ -216,9 +243,9 @@ const dogH = DOG_ART.length * DOG_PX;
   {rankPoints.length >= 2 && (
     <section class="mb-8">
       <SectionHeading title="Klassementsverloop">
-        <InfoToggle text="Plaats in het klassement na elke speeldag met resultaten. Lager getal = hoger geklasseerd." />
+        <InfoToggle text="Plaats in het klassement na elke speeldag met resultaten (max. 10 dagen). Tik op een punt voor de plaats; stippellijnen tonen het einde van een speeldag/ronde. Lager getal = hoger geklasseerd." />
       </SectionHeading>
-      <RankChart points={rankPoints} />
+      <RankChart points={rankPoints} markers={rankMarkers} />
     </section>
   )}
 
@@ -292,6 +319,28 @@ const dogH = DOG_ART.length * DOG_PX;
       ))}
     </div>
   </section>
+
+  {finishedCount > 0 && outlook && (
+    <section class="mt-8">
+      <SectionHeading title="Mathematisch kan het nog">
+        <InfoToggle text="Eenvoudige inschatting: kan deze deelnemer wiskundig nog top 5 (geld), top 3 (podium) of de eerste plaats halen? We gaan uit van het beste geval — jij pakt het maximum op alle resterende wedstrijden en nog mogelijke bonuspunten, terwijl niemand anders nog punten bijdoet." />
+      </SectionHeading>
+      <div class="grid grid-cols-3 gap-2 sm:gap-3">
+        {outlookCards.map((c) => (
+          <div class="flex flex-col items-center rounded-xl border bg-card p-3 text-center shadow-sm">
+            <div class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/80">{c.title}</div>
+            <div class="text-[10px] text-muted-foreground/60">{c.sub}</div>
+            <div class:list={['mt-1.5 font-display text-2xl font-extrabold leading-none', c.can ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400']}>{c.can ? 'Ja' : 'Nee'}</div>
+          </div>
+        ))}
+      </div>
+      <p class="mt-2 text-center text-xs text-muted-foreground">
+        {outlook.decided
+          ? <>De eindstand is definitief: plaats {outlook.bestPos}e.</>
+          : <>In het beste geval (jij scoort alles, de rest niets meer) eindig je op plaats <strong class="tabular-nums">{outlook.bestPos}e</strong> — nog max <strong class="tabular-nums">{outlook.remaining}</strong> punten te verdienen.</>}
+      </p>
+    </section>
+  )}
 
   {/* Easter-egg data + a dog sprite template; the script below decides which (if
       any) to show from the live-aware position and animates it once. */}

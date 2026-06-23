@@ -39,7 +39,9 @@ before committing.
 - Stijgers & dalers is built at build time from `rankingTimeline()` /
   `dayMovements()` in `src/lib/data.ts` (one ranking snapshot per calendar day).
   `rankingTimeline()` also powers the per-participant **Klassementsverloop** chart
-  (`RankChart.astro`) on `deelnemer/[id]`.
+  (`RankChart.astro`) on `deelnemer/[id]` — capped at the last 10 days, with
+  tappable dots (place per day) and dashed speeldag/round dividers (the page
+  computes the boundary days from `matches` and passes them as `markers`).
   Prize money lives in `src/lib/prizes.ts` (`PRIZES` / `prizeFor`) — the single
   source of truth, imported by `/reglement`, the `RankingTable` prize coins, and
   the profile easter-egg. Don't re-type prize amounts anywhere.
@@ -50,13 +52,23 @@ before committing.
   "voorlopig op koers" board) comes from `bonusStandings()` in `data.ts`
   (`eliminatedTeamIds()` + `currentBonusLeaders()`); bonus outcomes only resolve
   at the final, so this is the meaningful mid-tournament view.
+- A bottom **Mathematisch kan het nog** block on `deelnemer/[id]` (money/podium/
+  win Ja/Nee) comes from `mathematicalOutlook()` in `data.ts`: a simple sound
+  upper bound where the participant scores the max on everything left (9×mult per
+  unfinished match + open bonus picks) and nobody else gains — gives `bestPos`.
+  Build-time only (not recomputed live). The **Beste vorm** card on `/statistieken`
+  (`bestForm()` + `BestFormCard.astro`) and the two **op-een-rij** streak tables
+  (`longestOutcomeStreak()` / `longestExactStreak()`) live in the same file.
 - UI vocabulary is fixed: **Groepen** (not poule/poulestand; route stays
   `/poules`) and **Klassement** (not "Stand"/"Top 10"). Qualifying standings rows
   carry a ✓ after the country name, and prize spots use a colour-graded **position
   badge** (with a prize-amount tooltip) — both non-colour cues, each with a legend.
 - Client-side analytics use **PostHog**, loaded once in `Layout.astro` via
   `src/components/posthog.astro` (reads `PUBLIC_POSTHOG_PROJECT_TOKEN` /
-  `PUBLIC_POSTHOG_HOST`; a no-op when unset). A few pages and `RankingTable.tsx`
+  `PUBLIC_POSTHOG_HOST`; a no-op when unset). Analytics load on the **production**
+  deploy only: `posthog.astro` gates on Netlify's `process.env.CONTEXT ===
+  'production'` (preview/branch deploys + local dev get no events); set
+  `PUBLIC_POSTHOG_FORCE=true` to force-enable locally. A few pages and `RankingTable.tsx`
   fire named `posthog.capture(...)` events — keep those calls null-safe (`?.`).
   `posthog.astro` disables the auto pageview, registers `page_name` (the title)
   as a super property, and fires `$pageview` with per-page props. Pages pass

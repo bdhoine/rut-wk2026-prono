@@ -10,7 +10,7 @@ import settingsRaw from '@/data/settings.json';
 import scorersRaw from '@/data/scorers.json';
 
 import type { BonusOutcomes, BonusPicks, Group, Match, Participant, Prediction, Scorer, Settings, Team } from './types';
-import { rankParticipants, scoreMatch, type MatchScore, type RankRow } from './scoring';
+import { multiplierFor, rankParticipants, scoreMatch, type MatchScore, type RankRow } from './scoring';
 import { byKickoff, dayKey, slugify } from './format';
 
 export const teams = teamsRaw as Team[];
@@ -194,6 +194,119 @@ export function participantForm(participantId: string, n = 5): FormResult[] {
     out.push(s.exact ? 'exact' : s.points > 0 ? 'partial' : 'wrong');
   }
   return out.slice(-n);
+}
+
+/** Whether a participant can still finish in the money / on the podium / first.
+ *  Simple, sound upper bound: this participant scores the maximum on everything
+ *  that's left (exact score on every unfinished match + every bonus pick still
+ *  possible), while everyone else gains nothing more (worst case for the rest).
+ *  Under that assumption `bestPos` is the best place they can still reach. */
+export interface Outlook {
+  bestPos: number; // best place still reachable under the optimistic assumption
+  myMax: number; // this participant's maximum attainable total
+  matchMax: number; // points still attainable on unfinished matches
+  bonusMax: number; // points still attainable from open bonus picks
+  remaining: number; // matchMax + bonusMax
+  canMoney: boolean; // top 5
+  canPodium: boolean; // top 3
+  canWin: boolean; // first
+  decided: boolean; // nothing left to win (final played, bonus resolved)
+}
+
+export function mathematicalOutlook(participantId: string): Outlook | null {
+  const cur = ranking();
+  const me = cur.find((r) => r.participantId === participantId);
+  if (!me) return null;
+  // Max points still attainable on unfinished matches (assume an exact score,
+  // incl. knockout matches not predicted yet — an upper bound, so soundly
+  // "still possible"). Bonus currently counts 0 for everyone (resolves at the
+  // final), so totals are pure match points until then.
+  let matchMax = 0;
+  for (const m of matches) {
+    if (m.status === 'finished' && m.result) continue;
+    matchMax += 9 * multiplierFor(m.round, settings);
+  }
+  // Bonus picks still able to gain points: only those whose outcome isn't known
+  // yet (an undecided pick can still come true), and the eindwinnaar only while
+  // the picked country isn't eliminated.
+  const eliminated = eliminatedTeamIds();
+  const p = getParticipant(participantId);
+  const undecided = (key: keyof BonusOutcomes) => { const o = outcomes[key]; return o === undefined || o === ''; };
+  let possibleBonus = 0;
+  if (p) {
+    const b = p.bonus;
+    if (b.winnerTeamId && undecided('winnerTeamId') && !eliminated.has(b.winnerTeamId)) possibleBonus++;
+    if (b.topScorer && undecided('topScorer')) possibleBonus++;
+    if (b.mostScoredTeamId && undecided('mostScoredTeamId')) possibleBonus++;
+    if (b.mostConcededTeamId && undecided('mostConcededTeamId')) possibleBonus++;
+  }
+  const bonusMax = possibleBonus * settings.bonusPoints;
+  const myMax = me.total + matchMax + bonusMax;
+  const above = cur.filter((r) => r.participantId !== participantId && r.total > myMax).length;
+  const remaining = matchMax + bonusMax;
+  const bestPos = above + 1;
+  return {
+    bestPos, myMax, matchMax, bonusMax, remaining,
+    canMoney: bestPos <= 5, canPodium: bestPos <= 3, canWin: bestPos <= 1,
+    decided: remaining === 0,
+  };
+}
+
+/** Best "form": per participant the highest total over any `windowSize`
+ *  consecutive finished matches (chronological). Returns ALL participants tied
+ *  for the global best window (so the UI can cycle through them), each with the
+ *  matches in that window for display. Participants with fewer than `windowSize`
+ *  played matches are skipped. */
+export interface FormWindowMatch { label: string; pts: number; cls: string }
+export interface BestFormRow {
+  participantId: string;
+  name: string;
+  position: number | null;
+  winnerIso: string | null;
+  winnerName: string | null;
+  sum: number;
+  window: FormWindowMatch[];
+}
+
+export function bestForm(windowSize = 5): BestFormRow[] {
+  const finished = matches.filter((m) => m.status === 'finished' && m.result).sort(byKickoff);
+  const rank = new Map(ranking().map((r) => [r.participantId, r.position]));
+  const rows: BestFormRow[] = [];
+  for (const p of participants) {
+    const byMatch = new Map(predictions.filter((x) => x.participantId === p.id).map((x) => [x.matchId, x]));
+    const seq = finished.map((m) => {
+      const s = scoreMatch(byMatch.get(m.id), m, settings);
+      const pts = s?.points ?? 0;
+      const home = sideLabel(m, 'home');
+      const away = sideLabel(m, 'away');
+      return {
+        label: `${home.short}–${away.short}`,
+        pts,
+        cls: s?.exact ? 'bg-emerald-500' : pts > 0 ? 'bg-amber-400' : 'bg-red-500',
+      };
+    });
+    if (seq.length < windowSize) continue;
+    let bestSum = -1, bestStart = 0;
+    for (let i = 0; i + windowSize <= seq.length; i++) {
+      const sum = seq.slice(i, i + windowSize).reduce((s, x) => s + x.pts, 0);
+      if (sum > bestSum) { bestSum = sum; bestStart = i; }
+    }
+    const winner = getTeam(p.bonus.winnerTeamId);
+    rows.push({
+      participantId: p.id,
+      name: p.name,
+      position: rank.get(p.id) ?? null,
+      winnerIso: winner?.iso ?? null,
+      winnerName: winner?.name ?? null,
+      sum: bestSum,
+      window: seq.slice(bestStart, bestStart + windowSize),
+    });
+  }
+  if (!rows.length) return [];
+  const max = Math.max(...rows.map((r) => r.sum));
+  return rows
+    .filter((r) => r.sum === max)
+    .sort((a, b) => (a.position ?? Infinity) - (b.position ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
 }
 
 /** All of a participant's predictions joined to their match + computed score. */
@@ -668,6 +781,38 @@ export function topCorrectOutcomes(): PredictionStatRow[] {
 /** Participants by number of fully-correct (exact-score) predictions. */
 export function topExactScores(): PredictionStatRow[] {
   return topPredictionStat((s) => !!s?.exact);
+}
+
+/** Rank participants by their LONGEST run of consecutive finished matches that
+ *  all satisfy `pick` (in kickoff order). A late/missing/failing prediction
+ *  breaks the run. `correct` carries the best streak length. */
+function topStreakStat(pick: (s: ReturnType<typeof scoreMatch>) => boolean): PredictionStatRow[] {
+  const finishedMatches = matches.filter((m) => m.status === 'finished' && m.result).sort(byKickoff);
+  const rank = new Map(ranking().map((r) => [r.participantId, r.position]));
+  return participants
+    .map((p) => {
+      const byMatch = new Map(predictions.filter((x) => x.participantId === p.id).map((x) => [x.matchId, x]));
+      let best = 0, run = 0, played = 0;
+      for (const m of finishedMatches) {
+        played++;
+        const pred = byMatch.get(m.id);
+        const ok = !!pred && !pred.late && pick(scoreMatch(pred, m, settings));
+        if (ok) { run++; if (run > best) best = run; } else { run = 0; }
+      }
+      const winner = getTeam(p.bonus.winnerTeamId);
+      return { participantId: p.id, name: p.name, correct: best, played, position: rank.get(p.id) ?? null, winnerIso: winner?.iso ?? null, winnerName: winner?.name ?? null };
+    })
+    .sort((a, b) => b.correct - a.correct || (a.position ?? Infinity) - (b.position ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
+}
+
+/** Participants by longest run of consecutive correct 1X2 predictions. */
+export function longestOutcomeStreak(): PredictionStatRow[] {
+  return topStreakStat((s) => !!s?.outcomeCorrect);
+}
+
+/** Participants by longest run of consecutive exact-score predictions. */
+export function longestExactStreak(): PredictionStatRow[] {
+  return topStreakStat((s) => !!s?.exact);
 }
 
 /** Most-predicted scorelines across all participants' predictions. */

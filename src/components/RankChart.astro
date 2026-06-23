@@ -4,13 +4,17 @@
 // rescaled to the participant's own range); a higher line = a better position.
 // The SVG scales with its rendered width, so on mobile (full width) it's tall
 // with large labels; a max-width keeps it sane on desktop.
+//
+// Dots are tappable (show a place label); dashed vertical dividers mark where a
+// speeldag / knockout round ended (`markers`).
 interface Props {
   points: { day: string; position: number }[];
+  markers?: { day: string; label: string }[];
 }
-const { points } = Astro.props;
+const { points, markers = [] } = Astro.props;
 
 const W = 320;
-const H = 114;
+const H = 124;
 const padL = 30;
 const padR = 12;
 const padT = 14;
@@ -31,6 +35,18 @@ const first = coords[0];
 const last = coords[coords.length - 1];
 const prev = coords[coords.length - 2] ?? last; // anchor for the live-trend segment
 const axisY = H - padB;
+
+// Boundary dividers: map each marker day to the last visible point on/before it
+// and draw the dashed line midway to the next point. Skip markers before the
+// window or sitting on the right edge (the last point).
+const markerLines = markers
+  .map((mk) => {
+    let idx = -1;
+    for (let i = 0; i < coords.length; i++) if (coords[i].day <= mk.day) idx = i;
+    return { label: mk.label, idx };
+  })
+  .filter((mk) => mk.idx >= 0 && mk.idx < coords.length - 1)
+  .map((mk) => ({ label: mk.label, mx: (x(mk.idx) + x(mk.idx + 1)) / 2 }));
 ---
 <div class="rounded-xl border bg-card px-3 py-2 shadow-sm">
   <svg
@@ -50,6 +66,13 @@ const axisY = H - padB;
     <!-- axes -->
     <line x1={padL} y1={padT} x2={padL} y2={axisY} class="stroke-border" stroke-width="1" />
     <line x1={padL} y1={axisY} x2={W - padR} y2={axisY} class="stroke-border" stroke-width="1" />
+    <!-- speeldag / round dividers -->
+    {markerLines.map((mk) => (
+      <g>
+        <line x1={mk.mx} y1={padT} x2={mk.mx} y2={axisY} class="stroke-muted-foreground/35" stroke-width="1" stroke-dasharray="3 3" />
+        <text x={mk.mx} y={padT - 4} text-anchor="middle" class="fill-muted-foreground/70 text-[9px] font-medium">{mk.label}</text>
+      </g>
+    ))}
     <!-- y labels: 1 at top (always), worst at bottom -->
     <text x={padL - 5} y={padT + 4} text-anchor="end" class="fill-muted-foreground text-[12px]">1</text>
     <text x={padL - 5} y={axisY + 4} text-anchor="end" class="fill-muted-foreground text-[12px]">{maxP}</text>
@@ -61,10 +84,74 @@ const axisY = H - padB;
     {coords.map((c, i) => (
       <circle data-last-dot={i === coords.length - 1 ? '' : null} cx={c.cx} cy={c.cy} r={i === coords.length - 1 ? 4 : 2.5} fill="#dca21f" />
     ))}
+    <!-- tappable hit targets: each shows a place label on click/focus -->
+    {coords.map((c) => (
+      <circle
+        data-dot
+        data-pos={c.position}
+        data-day={fmtDay(c.day)}
+        data-cx={c.cx.toFixed(1)}
+        data-cy={c.cy.toFixed(1)}
+        cx={c.cx}
+        cy={c.cy}
+        r="9"
+        fill="transparent"
+        tabindex="0"
+        role="button"
+        aria-label={`Plaats ${c.position}e op ${fmtDay(c.day)}`}
+        style="cursor:pointer;outline:none"
+      />
+    ))}
     <text x={last.cx} y={Math.min(Math.max(last.cy - 8, 12), H - 4)} text-anchor="end" class="fill-foreground text-[14px] font-bold">{last.position}e</text>
+    <!-- shared tap label (positioned by the script) -->
+    <g data-rank-label class="hidden">
+      <rect data-rank-label-bg rx="3" class="fill-popover stroke-border" stroke-width="1" />
+      <text data-rank-label-text text-anchor="middle" class="fill-popover-foreground text-[10px] font-semibold"></text>
+    </g>
     <!-- live trend: the final leg + endpoint turn red while live is on; the last
          yellow dot is hidden and the yellow line trimmed (handled client-side). -->
     <line data-live-line stroke="#ef4444" stroke-width="2" stroke-linecap="round" class="hidden" />
     <circle data-live-dot r="4.5" fill="#ef4444" stroke="#fff" stroke-width="1.5" class="hidden"><title>Live positie</title></circle>
   </svg>
 </div>
+
+<script>
+  // Tap/focus a dot to show its place label; tap elsewhere or the same dot to
+  // hide. One shared label element per chart, repositioned each time.
+  document.querySelectorAll<SVGSVGElement>('[data-rank-chart]').forEach((svg) => {
+    const label = svg.querySelector<SVGGElement>('[data-rank-label]');
+    const bg = svg.querySelector<SVGRectElement>('[data-rank-label-bg]');
+    const txt = svg.querySelector<SVGTextElement>('[data-rank-label-text]');
+    if (!label || !bg || !txt) return;
+    let openDot: Element | null = null;
+    const hide = () => { label.classList.add('hidden'); openDot = null; };
+    const show = (dot: Element) => {
+      const cx = parseFloat(dot.getAttribute('data-cx') || '0');
+      const cy = parseFloat(dot.getAttribute('data-cy') || '0');
+      const pos = dot.getAttribute('data-pos') || '';
+      const day = dot.getAttribute('data-day') || '';
+      txt.textContent = `${pos}e · ${day}`;
+      const w = txt.textContent.length * 5.4 + 10;
+      const h = 15;
+      let lx = cx;
+      lx = Math.max(padHalf(w), Math.min(lx, 320 - padHalf(w)));
+      const ly = Math.max(cy - 12, h);
+      bg.setAttribute('x', String(lx - w / 2));
+      bg.setAttribute('y', String(ly - h));
+      bg.setAttribute('width', String(w));
+      bg.setAttribute('height', String(h));
+      txt.setAttribute('x', String(lx));
+      txt.setAttribute('y', String(ly - 4));
+      label.classList.remove('hidden');
+      openDot = dot;
+    };
+    const padHalf = (w: number) => w / 2 + 1;
+    svg.querySelectorAll('[data-dot]').forEach((dot) => {
+      const toggle = (e: Event) => { e.preventDefault(); e.stopPropagation(); openDot === dot ? hide() : show(dot); };
+      dot.addEventListener('click', toggle);
+      dot.addEventListener('focus', () => show(dot));
+      dot.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') toggle(e); });
+    });
+    document.addEventListener('click', (e) => { if (!(e.target as Element)?.closest('[data-dot]')) hide(); });
+  });
+</script>

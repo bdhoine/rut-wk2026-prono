@@ -6,7 +6,8 @@ import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores, bonusStandings } from '@/lib/data';
+import BestFormCard from '@/components/BestFormCard.astro';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores, bonusStandings, bestForm, longestOutcomeStreak, longestExactStreak } from '@/lib/data';
 import type { BonusPicks } from '@/lib/types';
 
 const scorers = topScorers();
@@ -26,6 +27,14 @@ const anyOutcomePlayed = correctOutcomes.some((r) => r.played > 0);
 // Participants by number of fully-correct (exact-score) predictions.
 const exactScores = topExactScores();
 const anyExactPlayed = exactScores.some((r) => r.played > 0);
+// Best form: highest points total over any 5 consecutive played matches (all
+// tied toppers, cycled in a carousel).
+const FORM_WINDOW = 5;
+const bestFormers = bestForm(FORM_WINDOW);
+// Longest run of consecutive correct 1X2 / exact predictions.
+const outcomeStreaks = longestOutcomeStreak();
+const exactStreaks = longestExactStreak();
+const anyStreakPlayed = outcomeStreaks.some((r) => r.played > 0);
 // Show the top 5 by default; the rest is revealed with a "Toon alle" button.
 const chosenWinners = topChosenWinners(Infinity);
 const chosenScorers = topChosenTopScorers(Infinity);
@@ -184,6 +193,15 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
     </div>
   </section>
 
+  {bestFormers.length > 0 && (
+    <section class="mt-8">
+      <SectionHeading title="Beste vorm">
+        <InfoToggle text={`Wie het hoogste puntentotaal pakte over ${FORM_WINDOW} opeenvolgende gespeelde wedstrijden. Bolletjes: groen = exacte uitslag, oranje = juiste uitslag, rood = mis.`} />
+      </SectionHeading>
+      <BestFormCard entries={bestFormers} windowSize={FORM_WINDOW} />
+    </section>
+  )}
+
   <div class="mt-8 grid gap-8 md:grid-cols-2">
   {anyOutcomePlayed && (
     <section>
@@ -277,6 +295,94 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
     </section>
   )}
   </div>
+
+  {anyStreakPlayed && (
+  <div class="mt-8 grid gap-8 md:grid-cols-2">
+    <section>
+      <SectionHeading title="Juiste uitslagen op een rij">
+        <InfoToggle text="Langste reeks opeenvolgende juiste 1X2-voorspellingen (juiste winnaar of gelijkspel), in speelvolgorde. Een foute of te late voorspelling breekt de reeks." />
+      </SectionHeading>
+      <div class="overflow-hidden rounded-xl border bg-card">
+        <table class="w-full table-fixed text-sm">
+          <thead>
+            <tr class="border-b text-muted-foreground">
+              <th class="w-10 px-2 py-2 text-center font-medium">#</th>
+              <th class="px-2 py-2 text-left font-medium">Deelnemer</th>
+              <th class="w-20 px-2 py-2 text-center font-medium" title="Langste reeks juiste uitslagen op een rij">Op een rij</th>
+            </tr>
+          </thead>
+          <tbody>
+            {outcomeStreaks.map((r, i) => (
+              <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
+                <td class="w-6 px-2 py-2.5 text-center tabular-nums text-muted-foreground">{i + 1}</td>
+                <td class="px-2 py-2.5">
+                  <div class="flex min-w-0 items-center gap-2">
+                    {r.winnerIso && <Flag iso={r.winnerIso} name={r.winnerName ?? undefined} class="shrink-0 text-base" />}
+                    <a href={`/deelnemer/${r.participantId}`} class="min-w-0 truncate font-medium hover:underline">{r.name}</a>
+                    {r.position != null && (
+                      <span class="inline-flex h-5 min-w-[1.4rem] shrink-0 items-center justify-center rounded bg-muted px-1 text-[11px] font-semibold tabular-nums text-muted-foreground" title="Plaats in het klassement">{r.position}</span>
+                    )}
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-2 py-2.5 text-center font-bold tabular-nums">{r.correct}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {outcomeStreaks.length > 10 && (
+        <div class="mt-3 flex justify-center">
+          <button type="button" data-show-more data-label={`Toon alle ${outcomeStreaks.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <span data-more-label>Toon alle {outcomeStreaks.length}</span>
+            <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+        </div>
+      )}
+    </section>
+
+    <section>
+      <SectionHeading title="Exacte uitslagen op een rij">
+        <InfoToggle text="Langste reeks opeenvolgende volledig juiste voorspellingen (exacte uitslag), in speelvolgorde. Een niet-exacte of te late voorspelling breekt de reeks." />
+      </SectionHeading>
+      <div class="overflow-hidden rounded-xl border bg-card">
+        <table class="w-full table-fixed text-sm">
+          <thead>
+            <tr class="border-b text-muted-foreground">
+              <th class="w-10 px-2 py-2 text-center font-medium">#</th>
+              <th class="px-2 py-2 text-left font-medium">Deelnemer</th>
+              <th class="w-20 px-2 py-2 text-center font-medium" title="Langste reeks exacte uitslagen op een rij">Op een rij</th>
+            </tr>
+          </thead>
+          <tbody>
+            {exactStreaks.map((r, i) => (
+              <tr class:list={['border-b last:border-0', i >= 10 && 'more-row hidden']}>
+                <td class="w-6 px-2 py-2.5 text-center tabular-nums text-muted-foreground">{i + 1}</td>
+                <td class="px-2 py-2.5">
+                  <div class="flex min-w-0 items-center gap-2">
+                    {r.winnerIso && <Flag iso={r.winnerIso} name={r.winnerName ?? undefined} class="shrink-0 text-base" />}
+                    <a href={`/deelnemer/${r.participantId}`} class="min-w-0 truncate font-medium hover:underline">{r.name}</a>
+                    {r.position != null && (
+                      <span class="inline-flex h-5 min-w-[1.4rem] shrink-0 items-center justify-center rounded bg-muted px-1 text-[11px] font-semibold tabular-nums text-muted-foreground" title="Plaats in het klassement">{r.position}</span>
+                    )}
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-2 py-2.5 text-center font-bold tabular-nums">{r.correct}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {exactStreaks.length > 10 && (
+        <div class="mt-3 flex justify-center">
+          <button type="button" data-show-more data-label={`Toon alle ${exactStreaks.length}`} aria-expanded="false" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <span data-more-label>Toon alle {exactStreaks.length}</span>
+            <svg data-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+        </div>
+      )}
+    </section>
+  </div>
+  )}
 
   {popular.length > 0 && (
     <section class="mt-8">
