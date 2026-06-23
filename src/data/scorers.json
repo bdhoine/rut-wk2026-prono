@@ -198,5 +198,290 @@
     "player": "Emam Ashour",
     "teamId": "eg",
     "goals": 1
+  },
+  {
+    "player": "Ermin Mahmic",
+    "teamId": "ba",
+    "goals": 1
+  },
+  {
+    "player": "Felix Nmecha",
+    "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Finn Surman",
+    "teamId": "nz",
+    "goals": 1
+  },
+  {
+    "player": "Franck Kessié",
+    "teamId": "ci",
+    "goals": 1
+  },
+  {
+    "player": "Giovanni Reyna",
+    "teamId": "us",
+    "goals": 1
+  },
+  {
+    "player": "Granit Xhaka",
+    "teamId": "ch",
+    "goals": 1
+  },
+  {
+    "player": "Hélio Varela",
+    "teamId": "cv",
+    "goals": 1
+  },
+  {
+    "player": "Hwang In-Beom",
+    "teamId": "kr",
+    "goals": 1
+  },
+  {
+    "player": "Ibrahim Mbaye",
+    "teamId": "sn",
+    "goals": 1
+  },
+  {
+    "player": "Jamal Musiala",
+    "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Jáminton Campaz",
+    "teamId": "co",
+    "goals": 1
+  },
+  {
+    "player": "João Neves",
+    "teamId": "pt",
+    "goals": 1
+  },
+  {
+    "player": "John McGinn",
+    "teamId": "gbsct",
+    "goals": 1
+  },
+  {
+    "player": "Jovo Lukic",
+    "teamId": "ba",
+    "goals": 1
+  },
+  {
+    "player": "Jude Bellingham",
+    "teamId": "gbeng",
+    "goals": 1
+  },
+  {
+    "player": "Julián Quiñones",
+    "teamId": "mx",
+    "goals": 1
+  },
+  {
+    "player": "Junya Ito",
+    "teamId": "jp",
+    "goals": 1
+  },
+  {
+    "player": "Keito Nakamura",
+    "teamId": "jp",
+    "goals": 1
+  },
+  {
+    "player": "Kevin Pina",
+    "teamId": "cv",
+    "goals": 1
+  },
+  {
+    "player": "Ladislav Krejcí",
+    "teamId": "cz",
+    "goals": 1
+  },
+  {
+    "player": "Lamine Yamal",
+    "teamId": "es",
+    "goals": 1
+  },
+  {
+    "player": "Leo Østigard",
+    "teamId": "no",
+    "goals": 1
+  },
+  {
+    "player": "Livano Comenencia",
+    "teamId": "cw",
+    "goals": 1
+  },
+  {
+    "player": "Luis Díaz",
+    "teamId": "co",
+    "goals": 1
+  },
+  {
+    "player": "Luis Romo",
+    "teamId": "mx",
+    "goals": 1
+  },
+  {
+    "player": "Marcus Holmgren Pedersen",
+    "teamId": "no",
+    "goals": 1
+  },
+  {
+    "player": "Marcus Rashford",
+    "teamId": "gbeng",
+    "goals": 1
+  },
+  {
+    "player": "Marko Arnautovic",
+    "teamId": "at",
+    "goals": 1
+  },
+  {
+    "player": "Martin Baturina",
+    "teamId": "hr",
+    "goals": 1
+  },
+  {
+    "player": "Matías Galarza",
+    "teamId": "py",
+    "goals": 1
+  },
+  {
+    "player": "Mattias Svanberg",
+    "teamId": "se",
+    "goals": 1
+  },
+  {
+    "player": "Maurício",
+    "teamId": "py",
+    "goals": 1
+  },
+  {
+    "player": "Michal Sadílek",
+    "teamId": "cz",
+    "goals": 1
+  },
+  {
+    "player": "Mohamed Salah",
+    "teamId": "eg",
+    "goals": 1
+  },
+  {
+    "player": "Mohammad Mohebbi",
+    "teamId": "ir",
+    "goals": 1
+  },
+  {
+    "player": "Mostafa Zico",
+    "teamId": "eg",
+    "goals": 1
+  },
+  {
+    "player": "Nadhir Benbouali",
+    "teamId": "dz",
+    "goals": 1
+  },
+  {
+    "player": "Nathan Saliba",
+    "teamId": "ca",
+    "goals": 1
+  },
+  {
+    "player": "Nathaniel Brown",
+    "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Nestory Irankunda",
+    "teamId": "au",
+    "goals": 1
+  },
+  {
+    "player": "Nico Schlotterbeck",
+    "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Nizar Al-Rashdan",
+    "teamId": "jo",
+    "goals": 1
+  },
+  {
+    "player": "Nuno Mendes",
+    "teamId": "pt",
+    "goals": 1
+  },
+  {
+    "player": "Oh Hyeon-Gyu",
+    "teamId": "kr",
+    "goals": 1
+  },
+  {
+    "player": "Omar Rekik",
+    "teamId": "tn",
+    "goals": 1
+  },
+  {
+    "player": "Ousmane Dembélé",
+    "teamId": "fr",
+    "goals": 1
+  },
+  {
+    "player": "Petar Musa",
+    "teamId": "hr",
+    "goals": 1
+  },
+  {
+    "player": "Rafael Leão",
+    "teamId": "pt",
+    "goals": 1
+  },
+  {
+    "player": "Ramin Rezaeian",
+    "teamId": "ir",
+    "goals": 1
+  },
+  {
+    "player": "Raúl Jiménez",
+    "teamId": "mx",
+    "goals": 1
+  },
+  {
+    "player": "Romano Schmid",
+    "teamId": "at",
+    "goals": 1
+  },
+  {
+    "player": "Rubén Vargas",
+    "teamId": "ch",
+    "goals": 1
+  },
+  {
+    "player": "Teboho Mokoena",
+    "teamId": "za",
+    "goals": 1
+  },
+  {
+    "player": "Trézéguet",
+    "teamId": "eg",
+    "goals": 1
+  },
+  {
+    "player": "Viktor Gyökeres",
+    "teamId": "se",
+    "goals": 1
+  },
+  {
+    "player": "Virgil van Dijk",
+    "teamId": "nl",
+    "goals": 1
+  },
+  {
+    "player": "Yoane Wissa",
+    "teamId": "cd",
+    "goals": 1
   }
 ]

@@ -77,11 +77,13 @@ async function main() {
         tally.set(player, cur);
       }
     }
+    // Keep every scorer — no count cap. A cap combined with the alphabetical
+    // tiebreak silently drops one-goal scorers whose name sorts late (e.g.
+    // Lamine Yamal), so the standing would be missing real goalscorers.
     const next = [...tally.entries()]
       .map(([player, v]) => ({ player, teamId: v.teamId, goals: v.goals }))
       .filter((s) => s.player && s.goals > 0)
-      .sort((a, b) => b.goals - a.goals || a.player.localeCompare(b.player, 'nl'))
-      .slice(0, 40);
+      .sort((a, b) => b.goals - a.goals || a.player.localeCompare(b.player, 'nl'));
     if (next.length) scorers = next;
     log(`top scorers: ${scorers.length}`);
   } catch (err) {
