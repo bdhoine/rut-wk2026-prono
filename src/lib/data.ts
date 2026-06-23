@@ -830,11 +830,3 @@ export function popularScorelines(limit = 8): { home: number; away: number; coun
     .sort((a, b) => b.count - a.count || a.home + a.away - (b.home + b.away))
     .slice(0, limit);
 }
-
-/** Overall average points scored per (participant, finished match). */
-export function averageMatchPoints(): number {
-  const stats = matchPointStats();
-  const total = stats.reduce((s, m) => s + m.total, 0);
-  const count = stats.reduce((s, m) => s + m.n, 0);
-  return count ? total / count : 0;
-}
