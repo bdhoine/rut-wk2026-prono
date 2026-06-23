@@ -967,8 +967,12 @@
     "venue": "Gillette Stadium, Boston",
     "homeTeamId": "gbeng",
     "awayTeamId": "gh",
-    "status": "scheduled",
-    "apiId": 760458
+    "status": "finished",
+    "apiId": 760458,
+    "result": {
+      "home": 0,
+      "away": 0
+    }
   },
   {
     "id": "gL-md2-2",
