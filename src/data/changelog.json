@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-06-23",
+    "title": "Bladeren tussen wedstrijden",
+    "items": [
+      "Op een wedstrijdpagina staan nu pijlen naar de vorige en volgende wedstrijd (in speelvolgorde), zodat je vlot door de kalender kan bladeren."
+    ]
+  },
+  {
+    "date": "2026-06-23",
     "title": "Lopende reeksen in beeld",
     "items": [
       "Bij \"Juiste/exacte uitslagen op een rij\" toont een vlammetje 🔥 nu welke reeksen nog lopen (nog niet onderbroken), met een legende onder de tabel."

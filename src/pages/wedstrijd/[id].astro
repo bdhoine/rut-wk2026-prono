@@ -9,7 +9,7 @@ import InfoToggle from '@/components/InfoToggle.astro';
 import { matches, getMatch, sideLabel, predictionsForMatch, ranking, settings, getTeam, type MatchPredictionRow } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
 import { outcomeOf } from '@/lib/scoring';
-import { explainScore, formatKickoff } from '@/lib/format';
+import { explainScore, formatKickoff, byKickoff } from '@/lib/format';
 
 export function getStaticPaths() {
   return matches.map((m) => ({ params: { id: m.id } }));
@@ -18,6 +18,13 @@ export function getStaticPaths() {
 const { id } = Astro.params;
 const match = getMatch(id!);
 if (!match) return Astro.redirect('/404');
+
+// Previous / next match in chronological (kickoff) order, for the pager.
+const ordered = [...matches].sort(byKickoff);
+const idx = ordered.findIndex((m) => m.id === match.id);
+const prevMatch = idx > 0 ? ordered[idx - 1] : null;
+const nextMatch = idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : null;
+const pagerLabel = (m: typeof match) => `${sideLabel(m, 'home').short} – ${sideLabel(m, 'away').short}`;
 
 const home = sideLabel(match, 'home');
 const away = sideLabel(match, 'away');
@@ -111,6 +118,27 @@ const liveCalc = hasTeams && !finished
     </div>
     <p class="mt-4 text-center text-xs text-ink-foreground/70">{match.venue}</p>
   </header>
+
+  <nav class="mb-6 grid grid-cols-2 gap-2" aria-label="Wedstrijd navigatie">
+    {prevMatch ? (
+      <a href={`/wedstrijd/${prevMatch.id}`} class="group flex items-center gap-2 rounded-xl border bg-card px-3 py-2.5 text-sm shadow-sm transition-colors hover:bg-muted/50" rel="prev">
+        <span class="shrink-0 text-muted-foreground transition-transform group-hover:-translate-x-0.5" aria-hidden="true">←</span>
+        <span class="min-w-0">
+          <span class="block text-[11px] uppercase tracking-wide text-muted-foreground">Vorige</span>
+          <span class="block truncate font-medium">{pagerLabel(prevMatch)}</span>
+        </span>
+      </a>
+    ) : <span></span>}
+    {nextMatch ? (
+      <a href={`/wedstrijd/${nextMatch.id}`} class="group flex items-center justify-end gap-2 rounded-xl border bg-card px-3 py-2.5 text-right text-sm shadow-sm transition-colors hover:bg-muted/50" rel="next">
+        <span class="min-w-0">
+          <span class="block text-[11px] uppercase tracking-wide text-muted-foreground">Volgende</span>
+          <span class="block truncate font-medium">{pagerLabel(nextMatch)}</span>
+        </span>
+        <span class="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
+      </a>
+    ) : <span></span>}
+  </nav>
 
   {finished && (
     <div class="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
