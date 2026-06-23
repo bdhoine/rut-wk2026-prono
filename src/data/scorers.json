@@ -40,6 +40,11 @@
     "goals": 2
   },
   {
+    "player": "Cristiano Ronaldo",
+    "teamId": "pt",
+    "goals": 2
+  },
+  {
     "player": "Crysencio Summerville",
     "teamId": "nl",
     "goals": 2
@@ -192,11 +197,6 @@
   {
     "player": "Emam Ashour",
     "teamId": "eg",
-    "goals": 1
-  },
-  {
-    "player": "Ermin Mahmic",
-    "teamId": "ba",
     "goals": 1
   }
 ]

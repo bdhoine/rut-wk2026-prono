@@ -886,8 +886,13 @@
     "venue": "NRG Stadium, Houston",
     "homeTeamId": "pt",
     "awayTeamId": "uz",
-    "status": "scheduled",
-    "apiId": 760461
+    "status": "finished",
+    "apiId": 760461,
+    "result": {
+      "home": 5,
+      "away": 0
+    },
+    "winnerTeamId": "pt"
   },
   {
     "id": "gK-md2-2",
