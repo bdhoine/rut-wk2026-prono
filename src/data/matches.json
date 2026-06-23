@@ -731,8 +731,13 @@
     "venue": "MetLife Stadium, New York",
     "homeTeamId": "no",
     "awayTeamId": "sn",
-    "status": "scheduled",
-    "apiId": 760454
+    "status": "finished",
+    "apiId": 760454,
+    "result": {
+      "home": 3,
+      "away": 2
+    },
+    "winnerTeamId": "no"
   },
   {
     "id": "gI-md3-1",

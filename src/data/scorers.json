@@ -5,6 +5,11 @@
     "goals": 5
   },
   {
+    "player": "Erling Haaland",
+    "teamId": "no",
+    "goals": 4
+  },
+  {
     "player": "Kylian Mbappé",
     "teamId": "fr",
     "goals": 4
@@ -55,11 +60,6 @@
     "goals": 2
   },
   {
-    "player": "Erling Haaland",
-    "teamId": "no",
-    "goals": 2
-  },
-  {
     "player": "Folarin Balogun",
     "teamId": "us",
     "goals": 2
@@ -72,6 +72,11 @@
   {
     "player": "Ismael Saibari",
     "teamId": "ma",
+    "goals": 2
+  },
+  {
+    "player": "Ismaïla Sarr",
+    "teamId": "sn",
     "goals": 2
   },
   {
@@ -192,11 +197,6 @@
   {
     "player": "Felix Nmecha",
     "teamId": "de",
-    "goals": 1
-  },
-  {
-    "player": "Finn Surman",
-    "teamId": "nz",
     "goals": 1
   }
 ]
