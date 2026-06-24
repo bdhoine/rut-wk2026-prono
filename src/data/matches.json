@@ -170,8 +170,13 @@
     "venue": "Lumen Field, Seattle",
     "homeTeamId": "ba",
     "awayTeamId": "qa",
-    "status": "scheduled",
-    "apiId": 760462
+    "status": "finished",
+    "apiId": 760462,
+    "result": {
+      "home": 3,
+      "away": 1
+    },
+    "winnerTeamId": "ba"
   },
   {
     "id": "gC-md1-1",
@@ -1028,7 +1033,7 @@
     "kickoff": "2026-06-28T18:00:00-07:00",
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": null,
-    "awayTeamId": null,
+    "awayTeamId": "ca",
     "homePlaceholder": "2e Groep A",
     "awayPlaceholder": "2e Groep B",
     "status": "scheduled",
@@ -1171,7 +1176,7 @@
     "round": "r32",
     "kickoff": "2026-07-02T18:00:00-07:00",
     "venue": "BC Place, Vancouver",
-    "homeTeamId": null,
+    "homeTeamId": "ch",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep B",
     "awayPlaceholder": "Beste 3e (E/F/G/I/J)",

@@ -75,6 +75,11 @@
     "goals": 2
   },
   {
+    "player": "Ermin Mahmic",
+    "teamId": "ba",
+    "goals": 2
+  },
+  {
     "player": "Folarin Balogun",
     "teamId": "us",
     "goals": 2
@@ -210,11 +215,6 @@
     "goals": 1
   },
   {
-    "player": "Ermin Mahmic",
-    "teamId": "ba",
-    "goals": 1
-  },
-  {
     "player": "Felix Nmecha",
     "teamId": "de",
     "goals": 1
@@ -237,6 +237,11 @@
   {
     "player": "Granit Xhaka",
     "teamId": "ch",
+    "goals": 1
+  },
+  {
+    "player": "Hassan Al-Haydos",
+    "teamId": "qa",
     "goals": 1
   },
   {
@@ -297,6 +302,11 @@
   {
     "player": "Keito Nakamura",
     "teamId": "jp",
+    "goals": 1
+  },
+  {
+    "player": "Kerim Alajbegovic",
+    "teamId": "ba",
     "goals": 1
   },
   {
