@@ -60,6 +60,11 @@
     "goals": 2
   },
   {
+    "player": "Daniel Muñoz",
+    "teamId": "co",
+    "goals": 2
+  },
+  {
     "player": "Elijah Just",
     "teamId": "nz",
     "goals": 2
@@ -192,11 +197,6 @@
   {
     "player": "Connor Metcalfe",
     "teamId": "au",
-    "goals": 1
-  },
-  {
-    "player": "Daniel Muñoz",
-    "teamId": "co",
     "goals": 1
   },
   {

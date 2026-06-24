@@ -902,8 +902,13 @@
     "venue": "Estadio Akron, Guadalajara",
     "homeTeamId": "co",
     "awayTeamId": "cd",
-    "status": "scheduled",
-    "apiId": 760459
+    "status": "finished",
+    "apiId": 760459,
+    "result": {
+      "home": 1,
+      "away": 0
+    },
+    "winnerTeamId": "co"
   },
   {
     "id": "gK-md3-1",
