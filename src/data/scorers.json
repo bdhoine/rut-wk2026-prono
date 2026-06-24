@@ -20,6 +20,11 @@
     "goals": 3
   },
   {
+    "player": "Johan Manzambi",
+    "teamId": "ch",
+    "goals": 3
+  },
+  {
     "player": "Jonathan David",
     "teamId": "ca",
     "goals": 3
@@ -90,11 +95,6 @@
     "goals": 2
   },
   {
-    "player": "Johan Manzambi",
-    "teamId": "ch",
-    "goals": 2
-  },
-  {
     "player": "Kai Havertz",
     "teamId": "de",
     "goals": 2
@@ -112,6 +112,11 @@
   {
     "player": "Mikel Oyarzabal",
     "teamId": "es",
+    "goals": 2
+  },
+  {
+    "player": "Rubén Vargas",
+    "teamId": "ch",
     "goals": 2
   },
   {
@@ -440,6 +445,11 @@
     "goals": 1
   },
   {
+    "player": "Promise David",
+    "teamId": "ca",
+    "goals": 1
+  },
+  {
     "player": "Rafael Leão",
     "teamId": "pt",
     "goals": 1
@@ -457,11 +467,6 @@
   {
     "player": "Romano Schmid",
     "teamId": "at",
-    "goals": 1
-  },
-  {
-    "player": "Rubén Vargas",
-    "teamId": "ch",
     "goals": 1
   },
   {
