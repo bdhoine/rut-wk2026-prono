@@ -1122,7 +1122,7 @@
     "round": "r32",
     "kickoff": "2026-06-30T21:00:00-05:00",
     "venue": "AT&T Stadium, Dallas",
-    "homeTeamId": null,
+    "homeTeamId": "ci",
     "awayTeamId": null,
     "homePlaceholder": "2e Groep E",
     "awayPlaceholder": "2e Groep I",
