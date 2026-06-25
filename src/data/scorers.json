@@ -130,6 +130,11 @@
     "goals": 2
   },
   {
+    "player": "Nicolas Pépé",
+    "teamId": "ci",
+    "goals": 2
+  },
+  {
     "player": "Rubén Vargas",
     "teamId": "ch",
     "goals": 2
@@ -255,6 +260,11 @@
     "goals": 1
   },
   {
+    "player": "Gonzalo Plata",
+    "teamId": "ec",
+    "goals": 1
+  },
+  {
     "player": "Granit Xhaka",
     "teamId": "ch",
     "goals": 1
@@ -342,6 +352,11 @@
   {
     "player": "Leo Østigard",
     "teamId": "no",
+    "goals": 1
+  },
+  {
+    "player": "Leroy Sané",
+    "teamId": "de",
     "goals": 1
   },
   {
@@ -442,6 +457,11 @@
   {
     "player": "Nico Schlotterbeck",
     "teamId": "de",
+    "goals": 1
+  },
+  {
+    "player": "Nilson Angulo",
+    "teamId": "ec",
     "goals": 1
   },
   {

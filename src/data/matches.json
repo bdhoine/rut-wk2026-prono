@@ -440,8 +440,13 @@
     "venue": "Lincoln Financial Field, Philadelphia",
     "homeTeamId": "cw",
     "awayTeamId": "ci",
-    "status": "scheduled",
-    "apiId": 760473
+    "status": "finished",
+    "apiId": 760473,
+    "result": {
+      "home": 0,
+      "away": 2
+    },
+    "winnerTeamId": "ci"
   },
   {
     "id": "gE-md3-2",
@@ -451,8 +456,13 @@
     "venue": "MetLife Stadium, New York",
     "homeTeamId": "ec",
     "awayTeamId": "de",
-    "status": "scheduled",
-    "apiId": 760468
+    "status": "finished",
+    "apiId": 760468,
+    "result": {
+      "home": 2,
+      "away": 1
+    },
+    "winnerTeamId": "ec"
   },
   {
     "id": "gF-md1-1",
