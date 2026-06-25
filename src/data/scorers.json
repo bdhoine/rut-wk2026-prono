@@ -15,8 +15,18 @@
     "goals": 4
   },
   {
+    "player": "Vinícius Júnior",
+    "teamId": "br",
+    "goals": 4
+  },
+  {
     "player": "Deniz Undav",
     "teamId": "de",
+    "goals": 3
+  },
+  {
+    "player": "Ismael Saibari",
+    "teamId": "ma",
     "goals": 3
   },
   {
@@ -27,6 +37,11 @@
   {
     "player": "Jonathan David",
     "teamId": "ca",
+    "goals": 3
+  },
+  {
+    "player": "Matheus Cunha",
+    "teamId": "br",
     "goals": 3
   },
   {
@@ -90,11 +105,6 @@
     "goals": 2
   },
   {
-    "player": "Ismael Saibari",
-    "teamId": "ma",
-    "goals": 2
-  },
-  {
     "player": "Ismaïla Sarr",
     "teamId": "sn",
     "goals": 2
@@ -102,11 +112,6 @@
   {
     "player": "Kai Havertz",
     "teamId": "de",
-    "goals": 2
-  },
-  {
-    "player": "Matheus Cunha",
-    "teamId": "br",
     "goals": 2
   },
   {
@@ -125,11 +130,6 @@
     "goals": 2
   },
   {
-    "player": "Vinícius Júnior",
-    "teamId": "br",
-    "goals": 2
-  },
-  {
     "player": "Yasin Ayari",
     "teamId": "se",
     "goals": 2
@@ -142,6 +142,11 @@
   {
     "player": "Abdulelah Al-Amri",
     "teamId": "sa",
+    "goals": 1
+  },
+  {
+    "player": "Achraf Hakimi",
+    "teamId": "ma",
     "goals": 1
   },
   {
@@ -227,6 +232,11 @@
   {
     "player": "Franck Kessié",
     "teamId": "ci",
+    "goals": 1
+  },
+  {
+    "player": "Gessime Yassine",
+    "teamId": "ma",
     "goals": 1
   },
   {
@@ -480,6 +490,11 @@
     "goals": 1
   },
   {
+    "player": "Soufiane Rahimi",
+    "teamId": "ma",
+    "goals": 1
+  },
+  {
     "player": "Teboho Mokoena",
     "teamId": "za",
     "goals": 1
@@ -497,6 +512,11 @@
   {
     "player": "Virgil van Dijk",
     "teamId": "nl",
+    "goals": 1
+  },
+  {
+    "player": "Wilson Isidor",
+    "teamId": "ht",
     "goals": 1
   },
   {

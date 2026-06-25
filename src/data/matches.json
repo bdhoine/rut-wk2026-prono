@@ -249,8 +249,13 @@
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": "gbsct",
     "awayTeamId": "br",
-    "status": "scheduled",
-    "apiId": 760465
+    "status": "finished",
+    "apiId": 760465,
+    "result": {
+      "home": 0,
+      "away": 3
+    },
+    "winnerTeamId": "br"
   },
   {
     "id": "gC-md3-2",
@@ -260,8 +265,13 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "ma",
     "awayTeamId": "ht",
-    "status": "scheduled",
-    "apiId": 760464
+    "status": "finished",
+    "apiId": 760464,
+    "result": {
+      "home": 4,
+      "away": 2
+    },
+    "winnerTeamId": "ma"
   },
   {
     "id": "gD-md1-1",
@@ -1057,7 +1067,7 @@
     "kickoff": "2026-06-29T18:00:00-06:00",
     "venue": "Estadio BBVA, Monterrey",
     "homeTeamId": null,
-    "awayTeamId": null,
+    "awayTeamId": "ma",
     "homePlaceholder": "Winnaar Groep F",
     "awayPlaceholder": "2e Groep C",
     "status": "scheduled",
@@ -1068,7 +1078,7 @@
     "round": "r32",
     "kickoff": "2026-06-29T21:00:00-05:00",
     "venue": "NRG Stadium, Houston",
-    "homeTeamId": null,
+    "homeTeamId": "br",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar Groep C",
     "awayPlaceholder": "2e Groep F",
