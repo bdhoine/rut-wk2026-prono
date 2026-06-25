@@ -70,8 +70,13 @@
     "venue": "Estadio Azteca, Mexico-Stad",
     "homeTeamId": "cz",
     "awayTeamId": "mx",
-    "status": "scheduled",
-    "apiId": 760467
+    "status": "finished",
+    "apiId": 760467,
+    "result": {
+      "home": 0,
+      "away": 3
+    },
+    "winnerTeamId": "mx"
   },
   {
     "id": "gA-md3-2",
@@ -81,8 +86,13 @@
     "venue": "Estadio BBVA, Monterrey",
     "homeTeamId": "za",
     "awayTeamId": "kr",
-    "status": "scheduled",
-    "apiId": 760466
+    "status": "finished",
+    "apiId": 760466,
+    "result": {
+      "home": 1,
+      "away": 0
+    },
+    "winnerTeamId": "za"
   },
   {
     "id": "gB-md1-1",

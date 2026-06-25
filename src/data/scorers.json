@@ -110,6 +110,11 @@
     "goals": 2
   },
   {
+    "player": "Julián Quiñones",
+    "teamId": "mx",
+    "goals": 2
+  },
+  {
     "player": "Kai Havertz",
     "teamId": "de",
     "goals": 2
@@ -167,6 +172,11 @@
   {
     "player": "Ali Olwan",
     "teamId": "jo",
+    "goals": 1
+  },
+  {
+    "player": "Álvaro Fidalgo",
+    "teamId": "mx",
     "goals": 1
   },
   {
@@ -300,11 +310,6 @@
     "goals": 1
   },
   {
-    "player": "Julián Quiñones",
-    "teamId": "mx",
-    "goals": 1
-  },
-  {
     "player": "Junya Ito",
     "teamId": "jp",
     "goals": 1
@@ -372,6 +377,11 @@
   {
     "player": "Martin Baturina",
     "teamId": "hr",
+    "goals": 1
+  },
+  {
+    "player": "Mateo Chávez",
+    "teamId": "mx",
     "goals": 1
   },
   {
@@ -496,6 +506,11 @@
   },
   {
     "player": "Teboho Mokoena",
+    "teamId": "za",
+    "goals": 1
+  },
+  {
+    "player": "Thapelo Maseko",
     "teamId": "za",
     "goals": 1
   },
