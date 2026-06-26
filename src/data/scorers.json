@@ -40,6 +40,11 @@
     "goals": 3
   },
   {
+    "player": "Ismaïla Sarr",
+    "teamId": "sn",
+    "goals": 3
+  },
+  {
     "player": "Johan Manzambi",
     "teamId": "ch",
     "goals": 3
@@ -115,11 +120,6 @@
     "goals": 2
   },
   {
-    "player": "Ismaïla Sarr",
-    "teamId": "sn",
-    "goals": 2
-  },
-  {
     "player": "Julián Quiñones",
     "teamId": "mx",
     "goals": 2
@@ -142,6 +142,11 @@
   {
     "player": "Nicolas Pépé",
     "teamId": "ci",
+    "goals": 2
+  },
+  {
+    "player": "Pape Gueye",
+    "teamId": "sn",
     "goals": 2
   },
   {
@@ -300,6 +305,11 @@
     "goals": 1
   },
   {
+    "player": "Habib Diarra",
+    "teamId": "sn",
+    "goals": 1
+  },
+  {
     "player": "Hassan Al-Haydos",
     "teamId": "qa",
     "goals": 1
@@ -321,6 +331,11 @@
   },
   {
     "player": "Ibrahim Mbaye",
+    "teamId": "sn",
+    "goals": 1
+  },
+  {
+    "player": "Iliman Ndiaye",
     "teamId": "sn",
     "goals": 1
   },
