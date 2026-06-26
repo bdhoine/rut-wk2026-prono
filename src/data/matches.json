@@ -355,8 +355,13 @@
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": "tr",
     "awayTeamId": "us",
-    "status": "scheduled",
-    "apiId": 760470
+    "status": "finished",
+    "apiId": 760470,
+    "result": {
+      "home": 3,
+      "away": 2
+    },
+    "winnerTeamId": "tr"
   },
   {
     "id": "gD-md3-2",
@@ -366,8 +371,12 @@
     "venue": "Levi's Stadium, San Francisco",
     "homeTeamId": "py",
     "awayTeamId": "au",
-    "status": "scheduled",
-    "apiId": 760469
+    "status": "finished",
+    "apiId": 760469,
+    "result": {
+      "home": 0,
+      "away": 0
+    }
   },
   {
     "id": "gE-md1-1",

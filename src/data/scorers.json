@@ -205,8 +205,23 @@
     "goals": 1
   },
   {
+    "player": "Arda Güler",
+    "teamId": "tr",
+    "goals": 1
+  },
+  {
+    "player": "Auston Trusty",
+    "teamId": "us",
+    "goals": 1
+  },
+  {
     "player": "Aymen Hussein",
     "teamId": "iq",
+    "goals": 1
+  },
+  {
+    "player": "Baris Alper Yilmaz",
+    "teamId": "tr",
     "goals": 1
   },
   {
@@ -337,6 +352,11 @@
   {
     "player": "Junya Ito",
     "teamId": "jp",
+    "goals": 1
+  },
+  {
+    "player": "Kaan Ayhan",
+    "teamId": "tr",
     "goals": 1
   },
   {
@@ -532,6 +552,11 @@
   {
     "player": "Romano Schmid",
     "teamId": "at",
+    "goals": 1
+  },
+  {
+    "player": "Sebastian Berhalter",
+    "teamId": "us",
     "goals": 1
   },
   {
