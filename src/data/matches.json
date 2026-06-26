@@ -535,8 +535,12 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "jp",
     "awayTeamId": "se",
-    "status": "scheduled",
-    "apiId": 760471
+    "status": "finished",
+    "apiId": 760471,
+    "result": {
+      "home": 1,
+      "away": 1
+    }
   },
   {
     "id": "gF-md3-2",
@@ -546,8 +550,13 @@
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": "tn",
     "awayTeamId": "nl",
-    "status": "scheduled",
-    "apiId": 760472
+    "status": "finished",
+    "apiId": 760472,
+    "result": {
+      "home": 1,
+      "away": 3
+    },
+    "winnerTeamId": "nl"
   },
   {
     "id": "gG-md1-1",
@@ -1086,7 +1095,7 @@
     "round": "r32",
     "kickoff": "2026-06-29T18:00:00-06:00",
     "venue": "Estadio BBVA, Monterrey",
-    "homeTeamId": null,
+    "homeTeamId": "nl",
     "awayTeamId": "ma",
     "homePlaceholder": "Winnaar Groep F",
     "awayPlaceholder": "2e Groep C",
@@ -1099,7 +1108,7 @@
     "kickoff": "2026-06-29T21:00:00-05:00",
     "venue": "NRG Stadium, Houston",
     "homeTeamId": "br",
-    "awayTeamId": null,
+    "awayTeamId": "jp",
     "homePlaceholder": "Winnaar Groep C",
     "awayPlaceholder": "2e Groep F",
     "status": "scheduled",
@@ -1159,7 +1168,7 @@
     "kickoff": "2026-07-01T18:00:00-07:00",
     "venue": "Levi's Stadium, San Francisco",
     "homeTeamId": "us",
-    "awayTeamId": null,
+    "awayTeamId": "ba",
     "homePlaceholder": "Winnaar Groep D",
     "awayPlaceholder": "Beste 3e (B/E/F/I/J)",
     "status": "scheduled",

@@ -20,6 +20,11 @@
     "goals": 4
   },
   {
+    "player": "Brian Brobbey",
+    "teamId": "nl",
+    "goals": 3
+  },
+  {
     "player": "Deniz Undav",
     "teamId": "de",
     "goals": 3
@@ -45,13 +50,13 @@
     "goals": 3
   },
   {
-    "player": "Ayase Ueda",
-    "teamId": "jp",
+    "player": "Anthony Elanga",
+    "teamId": "se",
     "goals": 2
   },
   {
-    "player": "Brian Brobbey",
-    "teamId": "nl",
+    "player": "Ayase Ueda",
+    "teamId": "jp",
     "goals": 2
   },
   {
@@ -200,11 +205,6 @@
     "goals": 1
   },
   {
-    "player": "Anthony Elanga",
-    "teamId": "se",
-    "goals": 1
-  },
-  {
     "player": "Aymen Hussein",
     "teamId": "iq",
     "goals": 1
@@ -227,6 +227,11 @@
   {
     "player": "Connor Metcalfe",
     "teamId": "au",
+    "goals": 1
+  },
+  {
+    "player": "Daizen Maeda",
+    "teamId": "jp",
     "goals": 1
   },
   {
@@ -275,6 +280,11 @@
     "goals": 1
   },
   {
+    "player": "Hazem Mastouri",
+    "teamId": "tn",
+    "goals": 1
+  },
+  {
     "player": "Hélio Varela",
     "teamId": "cv",
     "goals": 1
@@ -297,6 +307,11 @@
   {
     "player": "Jáminton Campaz",
     "teamId": "co",
+    "goals": 1
+  },
+  {
+    "player": "Jan Paul van Hecke",
+    "teamId": "nl",
     "goals": 1
   },
   {
