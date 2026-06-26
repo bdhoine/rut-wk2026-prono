@@ -1078,7 +1078,7 @@
   {
     "id": "r32-1",
     "round": "r32",
-    "kickoff": "2026-06-28T18:00:00-07:00",
+    "kickoff": "2026-06-28T19:00Z",
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": "za",
     "awayTeamId": "ca",
@@ -1090,7 +1090,7 @@
   {
     "id": "r32-2",
     "round": "r32",
-    "kickoff": "2026-06-29T21:00:00-04:00",
+    "kickoff": "2026-06-29T20:30Z",
     "venue": "Gillette Stadium, Boston",
     "homeTeamId": "de",
     "awayTeamId": null,
@@ -1102,7 +1102,7 @@
   {
     "id": "r32-3",
     "round": "r32",
-    "kickoff": "2026-06-29T18:00:00-06:00",
+    "kickoff": "2026-06-30T01:00Z",
     "venue": "Estadio BBVA, Monterrey",
     "homeTeamId": "nl",
     "awayTeamId": "ma",
@@ -1114,7 +1114,7 @@
   {
     "id": "r32-4",
     "round": "r32",
-    "kickoff": "2026-06-29T21:00:00-05:00",
+    "kickoff": "2026-06-29T17:00Z",
     "venue": "NRG Stadium, Houston",
     "homeTeamId": "br",
     "awayTeamId": "jp",
@@ -1126,7 +1126,7 @@
   {
     "id": "r32-5",
     "round": "r32",
-    "kickoff": "2026-06-30T18:00:00-04:00",
+    "kickoff": "2026-06-30T21:00Z",
     "venue": "MetLife Stadium, New York",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1138,7 +1138,7 @@
   {
     "id": "r32-6",
     "round": "r32",
-    "kickoff": "2026-06-30T21:00:00-05:00",
+    "kickoff": "2026-06-30T17:00Z",
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "ci",
     "awayTeamId": null,
@@ -1150,7 +1150,7 @@
   {
     "id": "r32-7",
     "round": "r32",
-    "kickoff": "2026-06-30T18:00:00-06:00",
+    "kickoff": "2026-07-01T01:00Z",
     "venue": "Estadio Azteca, Mexico-Stad",
     "homeTeamId": "mx",
     "awayTeamId": null,
@@ -1162,7 +1162,7 @@
   {
     "id": "r32-8",
     "round": "r32",
-    "kickoff": "2026-07-01T21:00:00-04:00",
+    "kickoff": "2026-07-01T16:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1174,7 +1174,7 @@
   {
     "id": "r32-9",
     "round": "r32",
-    "kickoff": "2026-07-01T18:00:00-07:00",
+    "kickoff": "2026-07-02T00:00Z",
     "venue": "Levi's Stadium, San Francisco",
     "homeTeamId": "us",
     "awayTeamId": "ba",
@@ -1186,7 +1186,7 @@
   {
     "id": "r32-10",
     "round": "r32",
-    "kickoff": "2026-07-01T21:00:00-07:00",
+    "kickoff": "2026-07-01T20:00Z",
     "venue": "Lumen Field, Seattle",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1198,7 +1198,7 @@
   {
     "id": "r32-11",
     "round": "r32",
-    "kickoff": "2026-07-02T18:00:00-04:00",
+    "kickoff": "2026-07-02T23:00Z",
     "venue": "BMO Field, Toronto",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1210,7 +1210,7 @@
   {
     "id": "r32-12",
     "round": "r32",
-    "kickoff": "2026-07-02T21:00:00-07:00",
+    "kickoff": "2026-07-02T19:00Z",
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1222,7 +1222,7 @@
   {
     "id": "r32-13",
     "round": "r32",
-    "kickoff": "2026-07-02T18:00:00-07:00",
+    "kickoff": "2026-07-03T03:00Z",
     "venue": "BC Place, Vancouver",
     "homeTeamId": "ch",
     "awayTeamId": null,
@@ -1234,7 +1234,7 @@
   {
     "id": "r32-14",
     "round": "r32",
-    "kickoff": "2026-07-03T21:00:00-04:00",
+    "kickoff": "2026-07-03T22:00Z",
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": "ar",
     "awayTeamId": null,
@@ -1246,7 +1246,7 @@
   {
     "id": "r32-15",
     "round": "r32",
-    "kickoff": "2026-07-03T18:00:00-05:00",
+    "kickoff": "2026-07-04T01:30Z",
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1258,7 +1258,7 @@
   {
     "id": "r32-16",
     "round": "r32",
-    "kickoff": "2026-07-03T21:00:00-05:00",
+    "kickoff": "2026-07-03T18:00Z",
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "au",
     "awayTeamId": null,
@@ -1270,7 +1270,7 @@
   {
     "id": "r16-1",
     "round": "r16",
-    "kickoff": "2026-07-04T18:00:00-04:00",
+    "kickoff": "2026-07-04T21:00Z",
     "venue": "Lincoln Financial Field, Philadelphia",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1282,7 +1282,7 @@
   {
     "id": "r16-2",
     "round": "r16",
-    "kickoff": "2026-07-04T21:00:00-05:00",
+    "kickoff": "2026-07-04T17:00Z",
     "venue": "NRG Stadium, Houston",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1294,7 +1294,7 @@
   {
     "id": "r16-3",
     "round": "r16",
-    "kickoff": "2026-07-05T18:00:00-04:00",
+    "kickoff": "2026-07-05T20:00Z",
     "venue": "MetLife Stadium, New York",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1306,7 +1306,7 @@
   {
     "id": "r16-4",
     "round": "r16",
-    "kickoff": "2026-07-05T21:00:00-06:00",
+    "kickoff": "2026-07-06T00:00Z",
     "venue": "Estadio Azteca, Mexico-Stad",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1318,7 +1318,7 @@
   {
     "id": "r16-5",
     "round": "r16",
-    "kickoff": "2026-07-06T18:00:00-05:00",
+    "kickoff": "2026-07-06T19:00Z",
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1330,7 +1330,7 @@
   {
     "id": "r16-6",
     "round": "r16",
-    "kickoff": "2026-07-06T21:00:00-07:00",
+    "kickoff": "2026-07-07T00:00Z",
     "venue": "Lumen Field, Seattle",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1342,7 +1342,7 @@
   {
     "id": "r16-7",
     "round": "r16",
-    "kickoff": "2026-07-07T18:00:00-04:00",
+    "kickoff": "2026-07-07T16:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1354,7 +1354,7 @@
   {
     "id": "r16-8",
     "round": "r16",
-    "kickoff": "2026-07-07T21:00:00-07:00",
+    "kickoff": "2026-07-07T20:00Z",
     "venue": "BC Place, Vancouver",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1366,7 +1366,7 @@
   {
     "id": "qf-1",
     "round": "qf",
-    "kickoff": "2026-07-09T18:00:00-04:00",
+    "kickoff": "2026-07-09T20:00Z",
     "venue": "Gillette Stadium, Boston",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1378,7 +1378,7 @@
   {
     "id": "qf-2",
     "round": "qf",
-    "kickoff": "2026-07-10T21:00:00-07:00",
+    "kickoff": "2026-07-10T19:00Z",
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1390,7 +1390,7 @@
   {
     "id": "qf-3",
     "round": "qf",
-    "kickoff": "2026-07-11T18:00:00-04:00",
+    "kickoff": "2026-07-11T21:00Z",
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1402,7 +1402,7 @@
   {
     "id": "qf-4",
     "round": "qf",
-    "kickoff": "2026-07-11T21:00:00-05:00",
+    "kickoff": "2026-07-12T01:00Z",
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1414,7 +1414,7 @@
   {
     "id": "sf-1",
     "round": "sf",
-    "kickoff": "2026-07-14T18:00:00-05:00",
+    "kickoff": "2026-07-14T19:00Z",
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1426,7 +1426,7 @@
   {
     "id": "sf-2",
     "round": "sf",
-    "kickoff": "2026-07-15T21:00:00-04:00",
+    "kickoff": "2026-07-15T19:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1438,7 +1438,7 @@
   {
     "id": "third-1",
     "round": "third",
-    "kickoff": "2026-07-18T18:00:00-04:00",
+    "kickoff": "2026-07-18T21:00Z",
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": null,
     "awayTeamId": null,
@@ -1450,7 +1450,7 @@
   {
     "id": "final-1",
     "round": "final",
-    "kickoff": "2026-07-19T18:00:00-04:00",
+    "kickoff": "2026-07-19T19:00Z",
     "venue": "MetLife Stadium, New York",
     "homeTeamId": null,
     "awayTeamId": null,

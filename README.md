@@ -77,7 +77,8 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
   links each fixture to our match (by stored ESPN event id, resolved team pair,
   or — for unresolved knockouts — the bracket-label token, e.g. "2e Groep A" ↔
   "Group A 2nd Place"), writes finished-match scores, fills knockout teams as
-  brackets resolve,
+  brackets resolve, syncs each match's `kickoff` to ESPN's confirmed time (the
+  seed's knockout kickoffs were preliminary placeholders),
   aggregates `scorers.json`, and resolves the bonus `outcomes.json` once the
   final is played. It commits any changes, which triggers a Netlify rebuild. Run
   locally with `npm run results:update`.
@@ -191,7 +192,7 @@ results* above) does this automatically. To update by hand instead:
 3. Update `scorers.json` and `outcomes.json` as the tournament progresses.
 4. Commit & push — Netlify rebuilds and the ranking updates automatically.
 
-> The repo data uses the **real WK 2026 draw and fixture schedule** (groups, dates, venues, kickoff times). Kickoffs are stored with each venue's UTC offset and shown in Belgium time. The **79 real contestants** and their predictions (full group stage + tournament bonus picks) come from the official Café De Rut prono sheet. Real results are entered as matches are played; matchday 3 and the knockout bracket are still to come.
+> The repo data uses the **real WK 2026 draw and fixture schedule** (groups, dates, venues, kickoff times). Kickoffs are stored as ISO instants (group matches with each venue's UTC offset, knockout matches in UTC as synced from ESPN) and always shown in Belgium time. The **79 real contestants** and their predictions (full group stage + tournament bonus picks) come from the official Café De Rut prono sheet. Real results are entered as matches are played; matchday 3 and the knockout bracket are still to come.
 
 ## Deployment
 

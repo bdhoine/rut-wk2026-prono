@@ -40,11 +40,21 @@ async function main() {
 
   let teamsFilled = 0;
   let scored = 0;
+  let kickoffsFixed = 0;
 
   for (const m of matches) {
     const e = link.get(m.id);
     if (!e) continue;
     m.apiId = Number(e.id);
+
+    // Keep the kickoff in sync with ESPN. The seed's knockout kickoffs were
+    // preliminary (date-only placeholders); FIFA confirms the exact times once
+    // the bracket nears. Only rewrite when the instant actually changed so the
+    // already-correct group matches don't churn the diff.
+    if (e.date && new Date(e.date).getTime() !== new Date(m.kickoff).getTime()) {
+      m.kickoff = e.date;
+      kickoffsFixed++;
+    }
 
     const s = eventSides(e);
     if (!m.homeTeamId && s.homeId) { m.homeTeamId = s.homeId; teamsFilled++; }
@@ -115,7 +125,7 @@ async function main() {
   const wS = writeIfChanged('scorers.json', scorers);
   const wO = writeIfChanged('outcomes.json', outcomes);
   log(
-    `filled ${teamsFilled} knockout teams, ${scored} new/changed results. ` +
+    `filled ${teamsFilled} knockout teams, ${scored} new/changed results, ${kickoffsFixed} kickoffs synced. ` +
       `wrote: matches=${wM} scorers=${wS} outcomes=${wO}`,
   );
 }
