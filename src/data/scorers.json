@@ -15,6 +15,11 @@
     "goals": 4
   },
   {
+    "player": "Ousmane Dembélé",
+    "teamId": "fr",
+    "goals": 4
+  },
+  {
     "player": "Vinícius Júnior",
     "teamId": "br",
     "goals": 4
@@ -247,6 +252,11 @@
   {
     "player": "Daizen Maeda",
     "teamId": "jp",
+    "goals": 1
+  },
+  {
+    "player": "Désiré Doué",
+    "teamId": "fr",
     "goals": 1
   },
   {
@@ -520,11 +530,6 @@
     "goals": 1
   },
   {
-    "player": "Ousmane Dembélé",
-    "teamId": "fr",
-    "goals": 1
-  },
-  {
     "player": "Petar Musa",
     "teamId": "hr",
     "goals": 1
@@ -572,6 +577,11 @@
   {
     "player": "Thapelo Maseko",
     "teamId": "za",
+    "goals": 1
+  },
+  {
+    "player": "Thelo Aasgaard",
+    "teamId": "no",
     "goals": 1
   },
   {
