@@ -285,6 +285,11 @@
     "goals": 1
   },
   {
+    "player": "Derrick Luckassen",
+    "teamId": "gh",
+    "goals": 1
+  },
+  {
     "player": "Désiré Doué",
     "teamId": "fr",
     "goals": 1
@@ -550,6 +555,11 @@
     "goals": 1
   },
   {
+    "player": "Nikola Vlasic",
+    "teamId": "hr",
+    "goals": 1
+  },
+  {
     "player": "Nilson Angulo",
     "teamId": "ec",
     "goals": 1
@@ -576,6 +586,11 @@
   },
   {
     "player": "Petar Musa",
+    "teamId": "hr",
+    "goals": 1
+  },
+  {
+    "player": "Petar Sucic",
     "teamId": "hr",
     "goals": 1
   },

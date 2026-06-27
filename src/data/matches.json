@@ -1105,8 +1105,13 @@
     "venue": "Lincoln Financial Field, Philadelphia",
     "homeTeamId": "hr",
     "awayTeamId": "gh",
-    "status": "scheduled",
-    "apiId": 760480
+    "status": "finished",
+    "apiId": 760480,
+    "result": {
+      "home": 2,
+      "away": 1
+    },
+    "winnerTeamId": "hr"
   },
   {
     "id": "r32-1",
