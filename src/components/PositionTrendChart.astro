@@ -1,0 +1,93 @@
+---
+// Build-time inline SVG: position trend for the top-5 participants over the
+// last (up to) 10 game days. Y is inverted — rank 1 is fixed at the top.
+import type { PositionTrendSeries } from '@/lib/data';
+
+interface Props {
+  series: PositionTrendSeries[];
+}
+const { series } = Astro.props;
+
+const COLORS = ['#dca21f', '#3b82f6', '#ef4444', '#10b981', '#a855f7'];
+
+const W = 320;
+const H = 160;
+const padL = 26;
+const padR = 12;
+const padT = 14;
+const padB = 24;
+
+// Collect all positions across all series to determine the Y-axis range.
+const allPositions = series.flatMap((s) => s.days.map((d) => d.position));
+const maxP = Math.max(2, ...allPositions);
+const denom = maxP - 1 || 1;
+
+const days = series[0]?.days ?? [];
+const n = days.length;
+const x = (i: number) => (n <= 1 ? (padL + W - padR) / 2 : padL + (i * (W - padL - padR)) / (n - 1));
+const y = (pos: number) => padT + ((pos - 1) / denom) * (H - padT - padB);
+
+const fmtDay = (d: string) => { const [, m, dd] = d.split('-'); return `${Number(dd)}/${Number(m)}`; };
+
+const built = series.map((s, si) => {
+  const coords = s.days.map((d, i) => ({ ...d, cx: x(i), cy: y(d.position) }));
+  const line = coords.map((c) => `${c.cx.toFixed(1)},${c.cy.toFixed(1)}`).join(' ');
+  const last = coords[coords.length - 1];
+  return { ...s, coords, line, last, color: COLORS[si] };
+});
+
+const axisY = H - padB;
+const first = days[0];
+const lastDay = days[days.length - 1];
+---
+<div class="rounded-xl border bg-card px-3 py-3 shadow-sm">
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    class="mx-auto h-auto w-full max-w-[480px]"
+    role="img"
+    aria-label="Klassementspositie van de huidige top 5 over de afgelopen speeldagen"
+  >
+    <!-- axes -->
+    <line x1={padL} y1={padT} x2={padL} y2={axisY} class="stroke-border" stroke-width="1" />
+    <line x1={padL} y1={axisY} x2={W - padR} y2={axisY} class="stroke-border" stroke-width="1" />
+    <!-- grid lines at positions 25% and 75% of axis height -->
+    {[0.25, 0.5, 0.75].map((t) => (
+      <line x1={padL} y1={padT + t * (H - padT - padB)} x2={W - padR} y2={padT + t * (H - padT - padB)} class="stroke-border/40" stroke-width="1" stroke-dasharray="3 3" />
+    ))}
+    <!-- y labels -->
+    <text x={padL - 5} y={padT + 4} text-anchor="end" class="fill-muted-foreground text-[10px]">1</text>
+    <text x={padL - 5} y={axisY + 4} text-anchor="end" class="fill-muted-foreground text-[10px]">{maxP}</text>
+    <!-- x labels: first + last day -->
+    {first && <text x={x(0)} y={H - 5} text-anchor="middle" class="fill-muted-foreground text-[10px]">{fmtDay(first.day)}</text>}
+    {n > 1 && lastDay && <text x={x(n - 1)} y={H - 5} text-anchor="middle" class="fill-muted-foreground text-[10px]">{fmtDay(lastDay.day)}</text>}
+    <!-- series lines + dots -->
+    {built.map((s) => (
+      <g>
+        <polyline points={s.line} fill="none" stroke={s.color} stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        {s.coords.map((c, i) => (
+          <circle
+            cx={c.cx}
+            cy={c.cy}
+            r={i === s.coords.length - 1 ? 3.5 : 2}
+            fill={s.color}
+          />
+        ))}
+        <text
+          x={s.last.cx + 5}
+          y={Math.min(Math.max(s.last.cy + 4, padT + 8), axisY - 4)}
+          class="fill-foreground text-[9px] font-bold"
+        >{s.last.position}</text>
+      </g>
+    ))}
+  </svg>
+
+  <!-- Legend -->
+  <div class="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1.5 px-2">
+    {built.map((s) => (
+      <a href={`/deelnemer/${s.participantId}`} class="flex items-center gap-1.5 text-xs hover:underline">
+        <span class="inline-block size-2.5 shrink-0 rounded-full" style={`background:${s.color}`} />
+        <span class="font-medium">{s.name}</span>
+      </a>
+    ))}
+  </div>
+</div>

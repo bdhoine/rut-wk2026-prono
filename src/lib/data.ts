@@ -817,6 +817,32 @@ export function longestExactStreak(): PredictionStatRow[] {
   return topStreakStat((s) => !!s?.exact);
 }
 
+export interface PositionTrendSeries {
+  participantId: string;
+  name: string;
+  days: { day: string; position: number }[];
+}
+
+/** Position trend of the current top-5 over the last `maxDays` game days. */
+export function top5PositionTrend(maxDays = 10): PositionTrendSeries[] {
+  const timeline = rankingTimeline();
+  if (timeline.length === 0) return [];
+  const slice = timeline.slice(-maxDays);
+  const latest = timeline[timeline.length - 1];
+  const top5 = [...latest.posById.entries()]
+    .sort((a, b) => a[1] - b[1])
+    .slice(0, 5)
+    .map(([id]) => id);
+  return top5.map((id) => {
+    const p = participants.find((x) => x.id === id)!;
+    return {
+      participantId: id,
+      name: p.name,
+      days: slice.map((snap) => ({ day: snap.day, position: snap.posById.get(id) ?? latest.posById.get(id)! })),
+    };
+  });
+}
+
 /** Most-predicted scorelines across all participants' predictions. */
 export function popularScorelines(limit = 8): { home: number; away: number; count: number }[] {
   const counts = new Map<string, number>();
