@@ -40,6 +40,11 @@
     "goals": 3
   },
   {
+    "player": "Harry Kane",
+    "teamId": "gbeng",
+    "goals": 3
+  },
+  {
     "player": "Ismael Saibari",
     "teamId": "ma",
     "goals": 3
@@ -115,7 +120,7 @@
     "goals": 2
   },
   {
-    "player": "Harry Kane",
+    "player": "Jude Bellingham",
     "teamId": "gbeng",
     "goals": 2
   },
@@ -387,11 +392,6 @@
   {
     "player": "Jovo Lukic",
     "teamId": "ba",
-    "goals": 1
-  },
-  {
-    "player": "Jude Bellingham",
-    "teamId": "gbeng",
     "goals": 1
   },
   {
