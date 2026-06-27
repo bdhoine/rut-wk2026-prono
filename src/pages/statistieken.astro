@@ -8,7 +8,8 @@ import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import BestFormCard from '@/components/BestFormCard.astro';
 import Flame from '@/components/Flame.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores, bonusStandings, bestForm, longestOutcomeStreak, longestExactStreak } from '@/lib/data';
+import PositionTrendChart from '@/components/PositionTrendChart.astro';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores, bonusStandings, bestForm, longestOutcomeStreak, longestExactStreak, top5PositionTrend } from '@/lib/data';
 import type { BonusPicks } from '@/lib/types';
 
 const scorers = topScorers();
@@ -32,6 +33,8 @@ const anyExactPlayed = exactScores.some((r) => r.played > 0);
 // tied toppers, cycled in a carousel).
 const FORM_WINDOW = 5;
 const bestFormers = bestForm(FORM_WINDOW);
+// Position trend of the current top 5 over the last 10 game days.
+const trendSeries = top5PositionTrend(10);
 // Longest run of consecutive correct 1X2 / exact predictions.
 const outcomeStreaks = longestOutcomeStreak();
 const exactStreaks = longestExactStreak();
@@ -196,6 +199,15 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
       ))}
     </div>
   </section>
+
+  {trendSeries.length > 0 && (
+    <section class="mt-8">
+      <SectionHeading title="Klassementsverloop top 5">
+        <InfoToggle text="Klassementspositie van de huidige top 5 per speeldag (laatste 10). Positie 1 = bovenaan." />
+      </SectionHeading>
+      <PositionTrendChart series={trendSeries} />
+    </section>
+  )}
 
   {bestFormers.length > 0 && (
     <section class="mt-8">
