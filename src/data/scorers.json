@@ -35,6 +35,11 @@
     "goals": 3
   },
   {
+    "player": "Elijah Just",
+    "teamId": "nz",
+    "goals": 3
+  },
+  {
     "player": "Ismael Saibari",
     "teamId": "ma",
     "goals": 3
@@ -100,11 +105,6 @@
     "goals": 2
   },
   {
-    "player": "Elijah Just",
-    "teamId": "nz",
-    "goals": 2
-  },
-  {
     "player": "Ermin Mahmic",
     "teamId": "ba",
     "goals": 2
@@ -127,6 +127,11 @@
   {
     "player": "Kai Havertz",
     "teamId": "de",
+    "goals": 2
+  },
+  {
+    "player": "Leandro Trossard",
+    "teamId": "be",
     "goals": 2
   },
   {
@@ -192,6 +197,11 @@
   {
     "player": "Alexander Isak",
     "teamId": "se",
+    "goals": 1
+  },
+  {
+    "player": "Alexis Saelemaekers",
+    "teamId": "be",
     "goals": 1
   },
   {
@@ -400,6 +410,11 @@
     "goals": 1
   },
   {
+    "player": "Kevin De Bruyne",
+    "teamId": "be",
+    "goals": 1
+  },
+  {
     "player": "Kevin Pina",
     "teamId": "cv",
     "goals": 1
@@ -577,6 +592,11 @@
   {
     "player": "Romano Schmid",
     "teamId": "at",
+    "goals": 1
+  },
+  {
+    "player": "Romelu Lukaku",
+    "teamId": "be",
     "goals": 1
   },
   {
