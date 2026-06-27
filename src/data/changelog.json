@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-06-27",
+    "title": "Puntenverloop top 5",
+    "items": [
+      "Nieuw grafiek op de statistiekenpagina: het cumulatief puntenverloop van de huidige top 5, over de laatste 10 speeldagen, met een kleur per deelnemer en een legende eronder."
+    ]
+  },
+  {
     "date": "2026-06-26",
     "title": "Juiste aanvangsuren knockoutfase",
     "items": [

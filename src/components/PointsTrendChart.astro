@@ -1,0 +1,81 @@
+---
+// Build-time inline SVG chart: cumulative points of the top-5 participants
+// over the last N game days. One coloured line per participant; legend below.
+export interface PointsSeries {
+  participantId: string;
+  name: string;
+  points: { day: string; total: number }[];
+}
+interface Props {
+  series: PointsSeries[];
+}
+const { series } = Astro.props;
+
+const COLORS = ['#dca21f', '#3b82f6', '#ef4444', '#10b981', '#a855f7'];
+
+const W = 320;
+const H = 120;
+const PAD_L = 38;
+const PAD_R = 12;
+const PAD_T = 12;
+const PAD_B = 20;
+
+const allDays = [...new Set(series.flatMap((s) => s.points.map((p) => p.day)))].sort();
+const n = allDays.length;
+const dayIndex = new Map(allDays.map((d, i) => [d, i]));
+
+const allTotals = series.flatMap((s) => s.points.map((p) => p.total));
+const maxPts = Math.max(10, ...allTotals);
+const yMax = Math.ceil(maxPts / 50) * 50;
+
+const xOf = (i: number) => n <= 1 ? (PAD_L + W - PAD_R) / 2 : PAD_L + (i * (W - PAD_L - PAD_R)) / (n - 1);
+const yOf = (pts: number) => PAD_T + (1 - pts / yMax) * (H - PAD_T - PAD_B);
+const axisY = H - PAD_B;
+const fmtDay = (d: string) => { const [, m, dd] = d.split('-'); return `${Number(dd)}/${Number(m)}`; };
+---
+
+<div class="rounded-xl border bg-card px-3 py-3 shadow-sm">
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    class="mx-auto h-auto w-full max-w-[480px]"
+    role="img"
+    aria-label="Puntenverloop top 5"
+  >
+    <!-- Subtle horizontal grid lines -->
+    <line x1={PAD_L} y1={yOf(yMax / 2)} x2={W - PAD_R} y2={yOf(yMax / 2)} class="stroke-border" stroke-width="0.5" stroke-dasharray="3 3" />
+    <line x1={PAD_L} y1={yOf(yMax)} x2={W - PAD_R} y2={yOf(yMax)} class="stroke-border" stroke-width="0.5" stroke-dasharray="3 3" />
+    <!-- Axes -->
+    <line x1={PAD_L} y1={PAD_T} x2={PAD_L} y2={axisY} class="stroke-border" stroke-width="1" />
+    <line x1={PAD_L} y1={axisY} x2={W - PAD_R} y2={axisY} class="stroke-border" stroke-width="1" />
+    <!-- Y labels -->
+    <text x={PAD_L - 5} y={yOf(0) + 4} text-anchor="end" class="fill-muted-foreground text-[10px]">0</text>
+    <text x={PAD_L - 5} y={yOf(yMax / 2) + 4} text-anchor="end" class="fill-muted-foreground text-[10px]">{yMax / 2}</text>
+    <text x={PAD_L - 5} y={yOf(yMax) + 4} text-anchor="end" class="fill-muted-foreground text-[10px]">{yMax}</text>
+    <!-- X labels: first and last game day -->
+    {n > 0 && <text x={xOf(0)} y={H - 4} text-anchor="middle" class="fill-muted-foreground text-[10px]">{fmtDay(allDays[0])}</text>}
+    {n > 1 && <text x={xOf(n - 1)} y={H - 4} text-anchor="middle" class="fill-muted-foreground text-[10px]">{fmtDay(allDays[n - 1])}</text>}
+    <!-- Series: one polyline + dots per participant -->
+    {series.map((s, si) => {
+      const pts = s.points.map((p) => ({ xi: dayIndex.get(p.day) ?? 0, v: p.total }));
+      const polyPoints = pts.map((p) => `${xOf(p.xi).toFixed(1)},${yOf(p.v).toFixed(1)}`).join(' ');
+      const color = COLORS[si] ?? '#888';
+      return (
+        <g>
+          <polyline points={polyPoints} fill="none" stroke={color} stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+          {pts.map((p) => (
+            <circle cx={xOf(p.xi)} cy={yOf(p.v)} r="2.5" fill={color} />
+          ))}
+        </g>
+      );
+    })}
+  </svg>
+  <!-- Legend -->
+  <div class="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-1.5">
+    {series.map((s, si) => (
+      <div class="flex items-center gap-1.5">
+        <span class="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={`background-color:${COLORS[si] ?? '#888'}`}></span>
+        <a href={`/deelnemer/${s.participantId}`} class="text-xs font-medium hover:underline">{s.name}</a>
+      </div>
+    ))}
+  </div>
+</div>

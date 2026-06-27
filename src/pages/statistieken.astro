@@ -8,9 +8,11 @@ import PageHeader from '@/components/PageHeader.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import BestFormCard from '@/components/BestFormCard.astro';
 import Flame from '@/components/Flame.astro';
-import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores, bonusStandings, bestForm, longestOutcomeStreak, longestExactStreak } from '@/lib/data';
+import PointsTrendChart from '@/components/PointsTrendChart.astro';
+import { topScorers, mostGoalsScored, mostGoalsConceded, topMatchesByPoints, topMatchesByWrong, topChosenWinners, topChosenTopScorers, popularScorelines, pickedTopScorerSlugs, topCorrectOutcomes, topExactScores, bonusStandings, bestForm, longestOutcomeStreak, longestExactStreak, top5PointsTrend } from '@/lib/data';
 import type { BonusPicks } from '@/lib/types';
 
+const trendSeries = top5PointsTrend(10);
 const scorers = topScorers();
 // Slug per picked top scorer -> link those names to their profile page.
 const pickedSlugs = pickedTopScorerSlugs();
@@ -57,6 +59,15 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
   <PageHeader title="Statistieken">
     <InfoToggle text="Doelpunten in de verlengingen tellen mee. Strafschoppenreeksen niet." />
   </PageHeader>
+
+  {trendSeries.length > 0 && (
+    <section class="mb-8">
+      <SectionHeading title="Puntenverloop top 5">
+        <InfoToggle text="Cumulatieve punten van de huidige top 5 over de laatste 10 speeldagen." />
+      </SectionHeading>
+      <PointsTrendChart series={trendSeries} />
+    </section>
+  )}
 
   <section class="mb-8">
     <SectionHeading title="Topschutters" />

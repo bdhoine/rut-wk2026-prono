@@ -817,6 +817,37 @@ export function longestExactStreak(): PredictionStatRow[] {
   return topStreakStat((s) => !!s?.exact);
 }
 
+// ---- Top-5 points trend -------------------------------------------------
+
+export interface PointsTrendSeries {
+  participantId: string;
+  name: string;
+  points: { day: string; total: number }[];
+}
+
+/** Cumulative points of the current top-5 participants over the last `maxDays`
+ *  game days (calendar days with at least one finished match). The top 5 is
+ *  determined from the most recent snapshot; their points history is then
+ *  extracted from the windowed timeline. */
+export function top5PointsTrend(maxDays = 10): PointsTrendSeries[] {
+  const timeline = rankingTimeline();
+  const recent = timeline.slice(-maxDays);
+  if (!recent.length) return [];
+  const latest = recent[recent.length - 1];
+  const top5Ids = [...latest.byId.values()]
+    .sort((a, b) => a.position - b.position || a.name.localeCompare(b.name, 'nl'))
+    .slice(0, 5)
+    .map((r) => r.participantId);
+  return top5Ids.map((id) => {
+    const name = participants.find((p) => p.id === id)?.name ?? id;
+    const points = recent.map((snap) => ({
+      day: snap.day,
+      total: snap.byId.get(id)?.total ?? 0,
+    }));
+    return { participantId: id, name, points };
+  });
+}
+
 /** Most-predicted scorelines across all participants' predictions. */
 export function popularScorelines(limit = 8): { home: number; away: number; count: number }[] {
   const counts = new Map<string, number>();
