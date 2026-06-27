@@ -719,8 +719,12 @@
     "venue": "NRG Stadium, Houston",
     "homeTeamId": "cv",
     "awayTeamId": "sa",
-    "status": "scheduled",
-    "apiId": 760478
+    "status": "finished",
+    "apiId": 760478,
+    "result": {
+      "home": 0,
+      "away": 0
+    }
   },
   {
     "id": "gH-md3-2",
@@ -730,8 +734,13 @@
     "venue": "Estadio Akron, Guadalajara",
     "homeTeamId": "uy",
     "awayTeamId": "es",
-    "status": "scheduled",
-    "apiId": 760479
+    "status": "finished",
+    "apiId": 760479,
+    "result": {
+      "home": 0,
+      "away": 1
+    },
+    "winnerTeamId": "es"
   },
   {
     "id": "gI-md1-1",
