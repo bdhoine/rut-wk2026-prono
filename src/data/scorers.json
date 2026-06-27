@@ -155,6 +155,11 @@
     "goals": 2
   },
   {
+    "player": "Ramin Rezaeian",
+    "teamId": "ir",
+    "goals": 2
+  },
+  {
     "player": "Rubén Vargas",
     "teamId": "ch",
     "goals": 2
@@ -455,6 +460,11 @@
     "goals": 1
   },
   {
+    "player": "Mahmoud Saber",
+    "teamId": "eg",
+    "goals": 1
+  },
+  {
     "player": "Marcus Holmgren Pedersen",
     "teamId": "no",
     "goals": 1
@@ -577,11 +587,6 @@
   {
     "player": "Rafael Leão",
     "teamId": "pt",
-    "goals": 1
-  },
-  {
-    "player": "Ramin Rezaeian",
-    "teamId": "ir",
     "goals": 1
   },
   {

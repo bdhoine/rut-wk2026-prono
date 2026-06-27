@@ -636,8 +636,12 @@
     "venue": "Lumen Field, Seattle",
     "homeTeamId": "eg",
     "awayTeamId": "ir",
-    "status": "scheduled",
-    "apiId": 760476
+    "status": "finished",
+    "apiId": 760476,
+    "result": {
+      "home": 1,
+      "away": 1
+    }
   },
   {
     "id": "gG-md3-2",
