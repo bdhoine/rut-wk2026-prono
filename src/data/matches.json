@@ -1019,8 +1019,13 @@
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "cd",
     "awayTeamId": "uz",
-    "status": "scheduled",
-    "apiId": 760482
+    "status": "finished",
+    "apiId": 760482,
+    "result": {
+      "home": 3,
+      "away": 1
+    },
+    "winnerTeamId": "cd"
   },
   {
     "id": "gL-md1-1",
@@ -1207,7 +1212,7 @@
     "kickoff": "2026-07-01T16:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "gbeng",
-    "awayTeamId": null,
+    "awayTeamId": "cd",
     "homePlaceholder": "Winnaar Groep L",
     "awayPlaceholder": "Beste 3e (E/H/I/J/K)",
     "status": "scheduled",
@@ -1231,7 +1236,7 @@
     "kickoff": "2026-07-01T20:00Z",
     "venue": "Lumen Field, Seattle",
     "homeTeamId": "be",
-    "awayTeamId": null,
+    "awayTeamId": "sn",
     "homePlaceholder": "Winnaar Groep G",
     "awayPlaceholder": "Beste 3e (A/E/H/I/J)",
     "status": "scheduled",
@@ -1242,7 +1247,7 @@
     "round": "r32",
     "kickoff": "2026-07-02T23:00Z",
     "venue": "BMO Field, Toronto",
-    "homeTeamId": null,
+    "homeTeamId": "pt",
     "awayTeamId": "hr",
     "homePlaceholder": "2e Groep K",
     "awayPlaceholder": "2e Groep L",
@@ -1290,7 +1295,7 @@
     "round": "r32",
     "kickoff": "2026-07-04T01:30Z",
     "venue": "Arrowhead Stadium, Kansas City",
-    "homeTeamId": null,
+    "homeTeamId": "co",
     "awayTeamId": "gh",
     "homePlaceholder": "Winnaar Groep K",
     "awayPlaceholder": "Beste 3e (D/E/I/J/L)",

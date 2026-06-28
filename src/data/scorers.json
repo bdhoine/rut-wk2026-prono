@@ -70,6 +70,11 @@
     "goals": 3
   },
   {
+    "player": "Yoane Wissa",
+    "teamId": "cd",
+    "goals": 3
+  },
+  {
     "player": "Anthony Elanga",
     "teamId": "se",
     "goals": 2
@@ -295,6 +300,11 @@
     "goals": 1
   },
   {
+    "player": "Eldor Shomurodov",
+    "teamId": "uz",
+    "goals": 1
+  },
+  {
     "player": "Emam Ashour",
     "teamId": "eg",
     "goals": 1
@@ -307,6 +317,11 @@
   {
     "player": "Finn Surman",
     "teamId": "nz",
+    "goals": 1
+  },
+  {
+    "player": "Fiston Mayele",
+    "teamId": "cd",
     "goals": 1
   },
   {
@@ -662,11 +677,6 @@
   {
     "player": "Wilson Isidor",
     "teamId": "ht",
-    "goals": 1
-  },
-  {
-    "player": "Yoane Wissa",
-    "teamId": "cd",
     "goals": 1
   }
 ]
