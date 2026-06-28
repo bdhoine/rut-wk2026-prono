@@ -919,8 +919,12 @@
     "venue": "Arrowhead Stadium, Kansas City",
     "homeTeamId": "dz",
     "awayTeamId": "at",
-    "status": "scheduled",
-    "apiId": 760484
+    "status": "finished",
+    "apiId": 760484,
+    "result": {
+      "home": 3,
+      "away": 3
+    }
   },
   {
     "id": "gJ-md3-2",
@@ -930,8 +934,13 @@
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": "jo",
     "awayTeamId": "ar",
-    "status": "scheduled",
-    "apiId": 760483
+    "status": "finished",
+    "apiId": 760483,
+    "result": {
+      "home": 1,
+      "away": 3
+    },
+    "winnerTeamId": "ar"
   },
   {
     "id": "gK-md1-1",

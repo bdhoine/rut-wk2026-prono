@@ -2,7 +2,7 @@
   {
     "player": "Lionel Messi",
     "teamId": "ar",
-    "goals": 5
+    "goals": 6
   },
   {
     "player": "Erling Haaland",
@@ -145,6 +145,11 @@
     "goals": 2
   },
   {
+    "player": "Marko Arnautovic",
+    "teamId": "at",
+    "goals": 2
+  },
+  {
     "player": "Maxi Araújo",
     "teamId": "uy",
     "goals": 2
@@ -167,6 +172,11 @@
   {
     "player": "Ramin Rezaeian",
     "teamId": "ir",
+    "goals": 2
+  },
+  {
+    "player": "Riyad Mahrez",
+    "teamId": "dz",
     "goals": 2
   },
   {
@@ -335,6 +345,11 @@
     "goals": 1
   },
   {
+    "player": "Giovani Lo Celso",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Giovanni Reyna",
     "teamId": "us",
     "goals": 1
@@ -455,6 +470,11 @@
     "goals": 1
   },
   {
+    "player": "Lautaro Martínez",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Leo Østigard",
     "teamId": "no",
     "goals": 1
@@ -485,6 +505,11 @@
     "goals": 1
   },
   {
+    "player": "Marcel Sabitzer",
+    "teamId": "at",
+    "goals": 1
+  },
+  {
     "player": "Marcus Holmgren Pedersen",
     "teamId": "no",
     "goals": 1
@@ -492,11 +517,6 @@
   {
     "player": "Marcus Rashford",
     "teamId": "gbeng",
-    "goals": 1
-  },
-  {
-    "player": "Marko Arnautovic",
-    "teamId": "at",
     "goals": 1
   },
   {
@@ -542,6 +562,11 @@
   {
     "player": "Mostafa Zico",
     "teamId": "eg",
+    "goals": 1
+  },
+  {
+    "player": "Mousa Al-Tamari",
+    "teamId": "jo",
     "goals": 1
   },
   {
@@ -620,6 +645,11 @@
     "goals": 1
   },
   {
+    "player": "Rafik Belghali",
+    "teamId": "dz",
+    "goals": 1
+  },
+  {
     "player": "Raúl Jiménez",
     "teamId": "mx",
     "goals": 1
@@ -632,6 +662,11 @@
   {
     "player": "Romelu Lukaku",
     "teamId": "be",
+    "goals": 1
+  },
+  {
+    "player": "Sasa Kalajdzic",
+    "teamId": "at",
     "goals": 1
   },
   {
