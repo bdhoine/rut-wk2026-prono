@@ -1004,8 +1004,12 @@
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": "co",
     "awayTeamId": "pt",
-    "status": "scheduled",
-    "apiId": 760481
+    "status": "finished",
+    "apiId": 760481,
+    "result": {
+      "home": 0,
+      "away": 0
+    }
   },
   {
     "id": "gK-md3-2",
