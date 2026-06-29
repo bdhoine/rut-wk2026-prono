@@ -63,6 +63,7 @@ const finishedMatches = matches
       a: { id: a?.id ?? '', iso: a?.iso ?? '', s: a?.shortName ?? a?.name ?? '?' },
       gh: m.result!.home,
       ga: m.result!.away,
+      pen: m.penalties ?? null,
       r: ROUND_LABELS[m.round],
     };
   });
@@ -141,11 +142,14 @@ const upcomingMatches = matches
       const dots = (form) => `<span class="inline-flex items-center gap-0.5">${(form || []).map((r) => `<span class="size-2 rounded-full ${dotCls[r] || 'bg-muted'}"></span>`).join('') || '<span class="text-muted-foreground">–</span>'}</span>`;
       // Score boxes mirror ScoreBoxes.astro: dark "scoreboard" tone for the real
       // result, plain boxes for the predictions.
-      const scoreBoxes = (h, a, tone) => {
+      const scoreBoxes = (h, a, tone, pen) => {
         const fill = tone === 'scoreboard' ? 'border-transparent bg-ink text-ink-foreground shadow-sm' : 'bg-muted';
         const sep = tone === 'scoreboard' ? 'font-bold text-gold' : 'text-muted-foreground';
         const box = `inline-flex h-6 min-w-6 items-center justify-center rounded-md border px-1.5 text-xs font-bold tabular-nums ${fill}`;
-        return `<span class="inline-flex items-center gap-1"><span class="${box}">${h}</span><span class="${sep}">–</span><span class="${box}">${a}</span></span>`;
+        const mid = pen
+          ? `<span class="inline-flex items-center gap-0.5 text-[9px] font-bold leading-none tabular-nums text-muted-foreground" title="na strafschoppen ${pen.home}–${pen.away}"><span>${pen.home}</span><span class="opacity-60">-</span><span>${pen.away}</span></span>`
+          : `<span class="${sep}">–</span>`;
+        return `<span class="inline-flex items-center gap-1"><span class="${box}">${h}</span>${mid}<span class="${box}">${a}</span></span>`;
       };
       const ptsBadge = (pts, exact) => {
         const cls = pts === 0 ? 'bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300'
@@ -234,7 +238,7 @@ const upcomingMatches = matches
           rowInner.push(`
               <div class="mb-2 grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2 text-sm">
                 <a href="/land/${m.h.id}" class="flex min-w-0 items-center justify-end gap-1 hover:opacity-80" title="${esc(m.h.s)}"><span class="truncate font-medium">${esc(m.h.s)}</span>${flagSpan(m.h.iso, m.h.s)}</a>
-                <a href="/wedstrijd/${m.id}" class="justify-self-center hover:opacity-80" title="${esc(m.r)}">${scoreBoxes(m.gh, m.ga, 'scoreboard')}</a>
+                <a href="/wedstrijd/${m.id}" class="justify-self-center hover:opacity-80" title="${esc(m.r)}">${scoreBoxes(m.gh, m.ga, 'scoreboard', m.pen)}</a>
                 <a href="/land/${m.a.id}" class="flex min-w-0 items-center justify-start gap-1 hover:opacity-80" title="${esc(m.a.s)}">${flagSpan(m.a.iso, m.a.s)}<span class="truncate font-medium">${esc(m.a.s)}</span></a>
               </div>
               <div class="grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2">

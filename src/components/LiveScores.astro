@@ -45,6 +45,7 @@ const recent =
           away: getTeam(m.awayTeamId)?.name ?? '',
           goalsHome: m.result!.home,
           goalsAway: m.result!.away,
+          pens: m.penalties ?? null,
           kickoff: m.kickoff,
         }))
     : [];
@@ -231,21 +232,26 @@ const nextMatch = nextPlanned
       `<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-0.5 text-base font-bold tabular-nums text-red-800">${gh}<span class="px-1 text-red-400">–</span>${ga}</span>`;
     const finalPill = (gh: number, ga: number) =>
       `<span class="inline-flex items-center rounded-md bg-ink px-2 py-0.5 text-base font-bold tabular-nums text-ink-foreground shadow-sm">${gh}<span class="px-1 text-gold">–</span>${ga}</span>`;
+    // Penalty score shown beneath the main score when decided on penalties.
+    const penSub = (pens?: { home: number; away: number } | null) =>
+      pens ? `<span class="text-[11px] font-semibold leading-none tabular-nums text-muted-foreground" title="na strafschoppen">${pens.home} – ${pens.away}</span>` : '';
     const liveBadge = (m: any) =>
       `<span class="live-badge inline-flex items-center gap-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"><span class="size-1.5 animate-pulse rounded-full bg-white"></span>${minLabel(m)}</span>`;
 
-    function card(homeId: string, awayId: string, hName: string, aName: string, meta: string, scoreHtml: string, href?: string) {
+    function card(homeId: string, awayId: string, hName: string, aName: string, meta: string, scoreHtml: string, href?: string, sub?: string) {
       const el = document.createElement(href ? 'a' : 'div') as HTMLElement;
       if (href) (el as HTMLAnchorElement).href = href;
       el.className = href
         ? 'block rounded-xl border bg-card px-4 py-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md'
         : 'rounded-xl border bg-card px-4 py-3 shadow-sm';
       el.dataset.key = key(homeId, awayId);
+      // Top-align so the team names stay on the score line even when the score
+      // cell carries a second line (e.g. the penalty caption beneath it).
       el.innerHTML = `
         <div class="mb-2 flex items-center justify-center gap-2 text-center text-xs font-medium text-muted-foreground">${meta}</div>
-        <div class="flex items-center justify-center gap-3">
+        <div class="flex items-start justify-center gap-3">
           <div class="flex min-w-0 flex-1 items-center justify-end gap-2"><span class="truncate text-right font-medium">${hName}</span>${flag(homeId, hName)}</div>
-          <div class="shrink-0">${scoreHtml}</div>
+          <div class="flex shrink-0 flex-col items-center gap-0.5">${scoreHtml}${sub || ''}</div>
           <div class="flex min-w-0 flex-1 items-center gap-2">${flag(awayId, aName)}<span class="truncate font-medium">${aName}</span></div>
         </div>`;
       return el;
@@ -265,7 +271,7 @@ const nextMatch = nextPlanned
         recentCards.appendChild(
           card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
             `<span>${fmtDateTime(m.kickoff)}</span>`, finalPill(m.goalsHome, m.goalsAway),
-            m.id ? `/wedstrijd/${m.id}` : undefined),
+            m.id ? `/wedstrijd/${m.id}` : undefined, penSub(m.pens)),
         );
       }
       updateListVisibility();

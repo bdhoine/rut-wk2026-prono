@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { getEvents, linkMatches, eventSides, eventStatus, scorersFromEvent } from './lib/espn.mjs';
+import { getEvents, linkMatches, eventSides, eventStatus, scorersFromEvent, fetchShootout } from './lib/espn.mjs';
 
 const DATA = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data');
 const read = (name) => JSON.parse(readFileSync(join(DATA, name), 'utf8'));
@@ -68,8 +68,27 @@ async function main() {
       const changed = m.status !== 'finished' || m.result?.home !== home || m.result?.away !== away;
       m.status = 'finished';
       m.result = { home, away };
-      if (home > away) m.winnerTeamId = m.homeTeamId;
+      // Winner: prefer ESPN's declared winner (also set after a penalty shootout
+      // when the 120-min score is level); otherwise infer from the score.
+      if (s.winnerId === m.homeTeamId || s.winnerId === m.awayTeamId) m.winnerTeamId = s.winnerId;
+      else if (home > away) m.winnerTeamId = m.homeTeamId;
       else if (away > home) m.winnerTeamId = m.awayTeamId;
+      // Penalty shootout score (knockouts decided on penalties), in our orientation.
+      if (s.homeShootout != null && s.awayShootout != null) {
+        m.penalties = flip
+          ? { home: s.awayShootout, away: s.homeShootout }
+          : { home: s.homeShootout, away: s.awayShootout };
+        // Enrich with the per-kick sequence (summary endpoint) for the detail view.
+        try {
+          const kicks = await fetchShootout(e.id, { retries: 2, timeoutMs: 12000 });
+          const homeKicks = kicks?.find((k) => k.teamId === m.homeTeamId)?.kicks;
+          const awayKicks = kicks?.find((k) => k.teamId === m.awayTeamId)?.kicks;
+          if (homeKicks?.length) m.penalties.homeKicks = homeKicks;
+          if (awayKicks?.length) m.penalties.awayKicks = awayKicks;
+        } catch (err) {
+          log(`shootout detail fetch failed for ${m.id} (${err.message})`);
+        }
+      }
       if (changed) scored++;
     }
   }

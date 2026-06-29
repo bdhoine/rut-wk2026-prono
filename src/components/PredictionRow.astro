@@ -41,7 +41,7 @@ const away = sideLabel(match, 'away');
   <!-- Onderlijn: uitslag gecentreerd, puntenbadge rechtsonder. -->
   <div class="relative mt-1.5 flex min-h-7 items-center">
     <div class="match-score absolute inset-x-0 flex items-center justify-center">
-      <ScoreBoxes home={match.result?.home} away={match.result?.away} size="sm" muted placeholder />
+      <ScoreBoxes home={match.result?.home} away={match.result?.away} penalties={match.penalties} size="sm" muted placeholder />
     </div>
     <div data-points-slot class="relative z-10 ml-auto">
       {score

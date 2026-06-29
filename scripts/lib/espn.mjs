@@ -107,11 +107,16 @@ export function eventStatus(e) {
   return 'scheduled';
 }
 
-/** { homeName, awayName, homeId, awayId, homeScore, awayScore } for an event;
- *  ids are null for unresolved bracket placeholders, scores null when absent. */
+/** { homeName, awayName, homeId, awayId, homeScore, awayScore, homeShootout,
+ *  awayShootout, winnerId } for an event; ids are null for unresolved bracket
+ *  placeholders, scores null when absent. `homeShootout`/`awayShootout` are the
+ *  penalty-shootout goals (only when a knockout is decided on penalties);
+ *  `winnerId` is ESPN's declared winner (set even when the 120-min score is
+ *  level, i.e. after penalties). */
 export function eventSides(e) {
   const { home, away } = sides(e);
   const num = (v) => { const n = parseInt(v, 10); return Number.isFinite(n) ? n : null; };
+  const winner = home?.winner ? home : away?.winner ? away : null;
   return {
     homeName: home?.team?.displayName ?? null,
     awayName: away?.team?.displayName ?? null,
@@ -119,6 +124,9 @@ export function eventSides(e) {
     awayId: resolveTeamId(away?.team?.displayName),
     homeScore: num(home?.score),
     awayScore: num(away?.score),
+    homeShootout: typeof home?.shootoutScore === 'number' ? home.shootoutScore : null,
+    awayShootout: typeof away?.shootoutScore === 'number' ? away.shootoutScore : null,
+    winnerId: winner ? resolveTeamId(winner.team?.displayName) : null,
   };
 }
 
@@ -241,6 +249,21 @@ async function fetchJson(url, { timeoutMs = 12000, retries = 1 } = {}) {
 export async function getEvents({ dates = TOURNAMENT_DATES, timeoutMs, retries } = {}) {
   const json = await fetchJson(`${SCOREBOARD}?dates=${dates}&limit=300`, { timeoutMs, retries });
   return json.events ?? [];
+}
+
+const SUMMARY = `https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/summary`;
+
+/** Penalty-shootout kicks for an event, from the summary endpoint (the
+ *  scoreboard only carries the totals). Returns `[{ teamId, kicks: boolean[] }]`
+ *  (kicks in shot order, true = scored), or null when there's no shootout. */
+export async function fetchShootout(eventId, opts = {}) {
+  const json = await fetchJson(`${SUMMARY}?event=${eventId}`, opts);
+  const arr = json?.shootout;
+  if (!Array.isArray(arr) || arr.length < 2) return null;
+  return arr.map((t) => ({
+    teamId: resolveTeamId(t.team),
+    kicks: [...(t.shots ?? [])].sort((a, b) => (a.shotNumber ?? 0) - (b.shotNumber ?? 0)).map((s) => !!s.didScore),
+  }));
 }
 
 /** Link our matches.json entries to ESPN events. Each match resolves via, in

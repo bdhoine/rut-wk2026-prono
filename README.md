@@ -176,7 +176,7 @@ through the bracket). Edit the JSON in `src/data/` directly for real data.
 |------|----------|
 | `teams.json` | Teams: `id`, `iso` (lowercase ISO 3166-1 alpha-2 for flags), Dutch `name`, optional `shortName` (compact display), `group` |
 | `groups.json` | Groups A–L → team ids |
-| `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result`, plus `apiId` / `winnerTeamId` filled by the results updater |
+| `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result`, plus `apiId` / `winnerTeamId` / `penalties` (shootout score, home/away) filled by the results updater. Penalty-decided knockouts keep the 120-min `result` for scoring but set `penalties` + `winnerTeamId`, shown as "Na strafschoppen 3–4 · X gaat door" / "n.s. 3–4" |
 | `participants.json` | Participants: `id`, `name`, `bonus` picks. **No phone numbers** (kept off the repo by design) |
 | `predictions.json` | Per-participant, per-match predicted scores (`late: true` ⇒ 0 points) |
 | `outcomes.json` | Actual tournament bonus outcomes (top scorer, winner, most scored/conceded) |
@@ -188,7 +188,7 @@ through the bracket). Edit the JSON in `src/data/` directly for real data.
 Normally the **GitHub Actions results workflow** (see *Live scores & automatic
 results* above) does this automatically. To update by hand instead:
 
-1. Enter final scores on the relevant match in `matches.json` (set `status: "finished"` and `result`). For knockouts, use the **score after 120 min** (penalties are ignored — see `docs/rules.md`).
+1. Enter final scores on the relevant match in `matches.json` (set `status: "finished"` and `result`). For knockouts, use the **score after 120 min** (penalties don't count for scoring — see `docs/rules.md`); when decided on penalties, also set `winnerTeamId` and `penalties` ({home, away} shootout goals) so the UI shows who advanced. The results updater fills these from ESPN automatically.
 2. Fill in `homeTeamId` / `awayTeamId` on knockout matches as brackets resolve.
 3. Update `scorers.json` and `outcomes.json` as the tournament progresses.
 4. Commit & push — Netlify rebuilds and the ranking updates automatically.

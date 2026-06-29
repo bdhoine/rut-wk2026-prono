@@ -34,6 +34,9 @@ export interface Match {
   awayPlaceholder?: string; // e.g. '2e Groep B'
   status: MatchStatus;
   result?: Score; // score after 120 min for knockouts; penalties ignored
+  // Shootout score (home/away) when a knockout is decided on penalties, plus the
+  // optional per-kick sequence (true = scored) in shot order, for the detail view.
+  penalties?: { home: number; away: number; homeKicks?: boolean[]; awayKicks?: boolean[] };
   apiId?: number; // API-Football fixture id, set by scripts/update-results.mjs
   winnerTeamId?: string; // knockout winner (incl. on penalties), set by the updater
 }

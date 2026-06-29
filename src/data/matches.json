@@ -1162,6 +1162,27 @@
     "result": {
       "home": 1,
       "away": 1
+    },
+    "winnerTeamId": "py",
+    "penalties": {
+      "home": 3,
+      "away": 4,
+      "homeKicks": [
+        false,
+        true,
+        true,
+        false,
+        true,
+        false
+      ],
+      "awayKicks": [
+        true,
+        true,
+        true,
+        false,
+        false,
+        true
+      ]
     }
   },
   {
