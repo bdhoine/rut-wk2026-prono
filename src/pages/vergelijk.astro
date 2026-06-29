@@ -2,7 +2,8 @@
 import Layout from '@/layouts/Layout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
-import { participants, ranking, getTeam, participantForm, predictionsForParticipant, matches, scorerInfo, outcomes } from '@/lib/data';
+import LiveScores from '@/components/LiveScores.astro';
+import { participants, ranking, getTeam, participantForm, predictionsForParticipant, matches, scorerInfo, outcomes, settings } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
 import { byKickoff, dayKey, formatKickoff } from '@/lib/format';
 
@@ -80,10 +81,12 @@ const upcomingMatches = matches
       a: { id: a.id, iso: a.iso, s: a.shortName ?? a.name },
       lbl: `${Number(d[2])}/${Number(d[1])}`,
       k: formatKickoff(m.kickoff),
+      mult: settings.multipliers[m.round] ?? 1,
     };
   });
 ---
 <Layout title="Vergelijk — Rut Prono WK 2026">
+  <LiveScores />
   <PageHeader title="Vergelijk">
     <InfoToggle text="Kies twee deelnemers en zet hun klassement, vorm, bonus en voorspellingen naast elkaar. De link is deelbaar." />
   </PageHeader>
@@ -150,6 +153,27 @@ const upcomingMatches = matches
           : 'bg-amber-200 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300';
         return `<span class="inline-flex min-w-[1.4rem] justify-center rounded px-1 py-0.5 text-[11px] font-bold tabular-nums ${cls}">${pts}</span>`;
       };
+      // Base points for a prediction vs a (live) result, mirroring the scoring engine.
+      const basePts = (ph, pa, rh, ra) => {
+        if (ph === rh && pa === ra) return 9;
+        if (Math.sign(ph - pa) !== Math.sign(rh - ra)) return 0;
+        return Math.max(3, 7 - (Math.abs(ph - rh) + Math.abs(pa - ra)));
+      };
+      // Live indicators, mirroring LiveScores.astro (red score pill + pulsing
+      // minute badge) so live looks the same everywhere.
+      const minLabel = (m) => m && m.simulated ? 'sim' : m && m.status === 'HT' ? 'rust' : m && m.elapsed != null ? `${m.elapsed}'` : 'live';
+      const livePill = (gh, ga) => `<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-0.5 text-base font-bold tabular-nums text-red-800">${gh}<span class="px-1 text-red-400">–</span>${ga}</span>`;
+      const liveBadge = (m) => `<span class="inline-flex items-center gap-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"><span class="size-1.5 animate-pulse rounded-full bg-white"></span>${minLabel(m)}</span>`;
+      // Live matches broadcast by <LiveScores>. The live result for an upcoming
+      // match `m`, oriented to our home/away (+ the raw entry), or null when not live.
+      let liveMatches = (typeof window !== 'undefined' && window.__rutLiveMatches) || [];
+      let showPrev = false; // "Toon vorige" expands the older Onderling matches
+      const liveResultFor = (m) => {
+        const lm = (liveMatches || []).find((x) => (x.homeTeamId === m.h.id && x.awayTeamId === m.a.id) || (x.homeTeamId === m.a.id && x.awayTeamId === m.h.id));
+        if (!lm) return null;
+        const swapped = lm.homeTeamId !== m.h.id;
+        return { rh: swapped ? lm.goalsAway : lm.goalsHome, ra: swapped ? lm.goalsHome : lm.goalsAway, lm };
+      };
       const heading = (txt) => `<h2 class="mb-2 mt-6 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>${txt}</h2>`;
 
       // win = green, tie = orange, lose = red.
@@ -198,14 +222,16 @@ const upcomingMatches = matches
         }
         const accA = acc(a), accB = acc(b);
 
+        // Commonly-played (finished) matches, chronological. Show the last RECENT
+        // by default; older ones collapse behind a "Toon vorige" button.
+        const RECENT = 5;
         let common = 0;
-        const rows = [];
+        const rowInner = [];
         for (const m of matches) {
           const pa = a.preds[m.id], pb = b.preds[m.id];
           if (!pa || !pb) continue;
           common++;
-          rows.push(`
-            <div class="border-b px-3 py-3 last:border-0">
+          rowInner.push(`
               <div class="mb-2 grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2 text-sm">
                 <a href="/land/${m.h.id}" class="flex min-w-0 items-center justify-end gap-1 hover:opacity-80" title="${esc(m.h.s)}"><span class="truncate font-medium">${esc(m.h.s)}</span>${flagSpan(m.h.iso, m.h.s)}</a>
                 <a href="/wedstrijd/${m.id}" class="justify-self-center hover:opacity-80" title="${esc(m.r)}">${scoreBoxes(m.gh, m.ga, 'scoreboard')}</a>
@@ -215,28 +241,42 @@ const upcomingMatches = matches
                 <div class="flex items-center justify-end gap-1.5">${scoreBoxes(pa[0], pa[1], 'default')}${ptsBadge(pa[2], pa[3])}</div>
                 <div></div>
                 <div class="flex items-center justify-start gap-1.5">${ptsBadge(pb[2], pb[3])}${scoreBoxes(pb[0], pb[1], 'default')}</div>
-              </div>
-            </div>`);
+              </div>`);
         }
+        const hideCount = showPrev ? 0 : Math.max(0, rowInner.length - RECENT);
+        const rows = rowInner.map((inner, i) => `<div class="border-b px-3 py-3 last:border-0${i < hideCount ? ' hidden' : ''}">${inner}</div>`);
+        const prevBtn = common > RECENT
+          ? `<div class="mb-2 flex justify-center"><button type="button" data-cmp-prev aria-expanded="${showPrev}" class="inline-flex items-center gap-1.5 rounded-full border bg-card px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">${showPrev ? 'Toon minder' : `Toon vorige (${common - RECENT})`}</button></div>`
+          : '';
 
-        // Scheduled matches both already predicted (no result/points yet).
+        // Scheduled matches both already predicted (no result/points yet). When a
+        // match is live, show its live score and each pick's provisional points.
         let upCommon = 0;
         const upRows = [];
         for (const m of upcoming) {
           const pa = a.predsUp[m.id], pb = b.predsUp[m.id];
           if (!pa || !pb) continue;
           upCommon++;
+          const live = liveResultFor(m);
+          const center = live
+            ? `<a href="/wedstrijd/${m.id}" class="flex flex-col items-center gap-1 justify-self-center hover:opacity-80" title="${esc(m.k)}">${liveBadge(live.lm)}${livePill(live.rh, live.ra)}</a>`
+            : `<a href="/wedstrijd/${m.id}" class="justify-self-center inline-block min-w-[2.75rem] rounded-md bg-muted px-2 py-1 text-center text-xs font-medium text-muted-foreground hover:opacity-80" title="${esc(m.k)}">${m.lbl}</a>`;
+          const livePts = (p) => {
+            if (!live) return '';
+            const pts = basePts(p[0], p[1], live.rh, live.ra) * (m.mult || 1);
+            return ptsBadge(pts, p[0] === live.rh && p[1] === live.ra);
+          };
           upRows.push(`
             <div class="border-b px-3 py-3 last:border-0">
-              <div class="mb-2 grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2 text-sm">
+              <div class="mb-2 grid grid-cols-[1fr_4.5rem_1fr] ${live ? 'items-end' : 'items-center'} gap-2 text-sm">
                 <a href="/land/${m.h.id}" class="flex min-w-0 items-center justify-end gap-1 hover:opacity-80" title="${esc(m.h.s)}"><span class="truncate font-medium">${esc(m.h.s)}</span>${flagSpan(m.h.iso, m.h.s)}</a>
-                <a href="/wedstrijd/${m.id}" class="justify-self-center inline-block min-w-[2.75rem] rounded-md bg-muted px-2 py-1 text-center text-xs font-medium text-muted-foreground hover:opacity-80" title="${esc(m.k)}">${m.lbl}</a>
+                ${center}
                 <a href="/land/${m.a.id}" class="flex min-w-0 items-center justify-start gap-1 hover:opacity-80" title="${esc(m.a.s)}">${flagSpan(m.a.iso, m.a.s)}<span class="truncate font-medium">${esc(m.a.s)}</span></a>
               </div>
               <div class="grid grid-cols-[1fr_4.5rem_1fr] items-center gap-2">
-                <div class="flex items-center justify-end">${scoreBoxes(pa[0], pa[1], 'default')}</div>
+                <div class="flex items-center justify-end gap-1.5">${scoreBoxes(pa[0], pa[1], 'default')}${livePts(pa)}</div>
                 <div></div>
-                <div class="flex items-center justify-start">${scoreBoxes(pb[0], pb[1], 'default')}</div>
+                <div class="flex items-center justify-start gap-1.5">${livePts(pb)}${scoreBoxes(pb[0], pb[1], 'default')}</div>
               </div>
             </div>`);
         }
@@ -277,11 +317,12 @@ const upcomingMatches = matches
           </div>
 
           ${common > 0 ? `
-          ${heading(`Onderling (${common} wedstrijden)`)}
+          ${heading('Onderling')}
+          ${prevBtn}
           <div class="overflow-hidden rounded-xl border bg-card">${rows.join('')}</div>` : ''}
 
           ${upCommon > 0 ? `
-          ${heading(`Nog te spelen (${upCommon})`)}
+          ${heading('Nog te spelen')}
           <div class="overflow-hidden rounded-xl border bg-card">${upRows.join('')}</div>` : ''}
         `;
       }
@@ -341,6 +382,21 @@ const upcomingMatches = matches
       if (params.get('a') && byId[params.get('a')]) combos.a.setValue(params.get('a'), false);
       if (params.get('b') && byId[params.get('b')]) combos.b.setValue(params.get('b'), false);
       render();
+
+      // "Toon vorige" expands/collapses the older Onderling matches (delegated so
+      // it survives re-renders).
+      root.addEventListener('click', (e) => {
+        if (!e.target.closest('[data-cmp-prev]')) return;
+        showPrev = !showPrev;
+        render();
+      });
+
+      // Re-render with provisional points whenever the live scores update.
+      window.addEventListener('rut:live-matches', (e) => {
+        liveMatches = (e.detail && e.detail.matches) || [];
+        render();
+      });
+      if (window.__rutLiveMatches) { liveMatches = window.__rutLiveMatches; render(); }
     })();
   </script>
 </Layout>

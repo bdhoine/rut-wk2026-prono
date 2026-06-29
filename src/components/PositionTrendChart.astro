@@ -72,11 +72,6 @@ const lastDay = days[days.length - 1];
             fill={s.color}
           />
         ))}
-        <text
-          x={s.last.cx + 5}
-          y={Math.min(Math.max(s.last.cy + 4, padT + 8), axisY - 4)}
-          class="fill-foreground text-[9px] font-bold"
-        >{s.last.position}</text>
       </g>
     ))}
   </svg>

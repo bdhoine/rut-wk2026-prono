@@ -817,6 +817,48 @@ export function longestExactStreak(): PredictionStatRow[] {
   return topStreakStat((s) => !!s?.exact);
 }
 
+/** How often each participant stood first / last in the klassement, counted
+ *  after every finished match (in kickoff order): one cumulative standing per
+ *  match, tallying everyone at position 1 ("eerste") and everyone at the last
+ *  position ("laatste"). Ties share a position, so co-leaders / co-last all
+ *  count. `correct` carries the tally; `played` is the number of standings
+ *  considered. Returned ready for the op-een-rij-style tables (no streak/flame).
+ */
+export function matchPositionExtremes(): { first: PredictionStatRow[]; last: PredictionStatRow[] } {
+  const finished = matches.filter((m) => m.status === 'finished' && m.result).sort(byKickoff);
+  const firstC = new Map<string, number>();
+  const lastC = new Map<string, number>();
+  const upTo: Match[] = [];
+  for (const m of finished) {
+    upTo.push(m);
+    const rank = rankParticipants(participants, predictions, upTo, outcomes, settings);
+    let maxPos = 0;
+    for (const r of rank) if (r.position > maxPos) maxPos = r.position;
+    for (const r of rank) {
+      if (r.position === 1) firstC.set(r.participantId, (firstC.get(r.participantId) ?? 0) + 1);
+      if (r.position === maxPos) lastC.set(r.participantId, (lastC.get(r.participantId) ?? 0) + 1);
+    }
+  }
+  const curRank = new Map(ranking().map((r) => [r.participantId, r.position]));
+  const played = finished.length;
+  const build = (counts: Map<string, number>): PredictionStatRow[] =>
+    participants
+      .map((p) => {
+        const winner = getTeam(p.bonus.winnerTeamId);
+        return {
+          participantId: p.id,
+          name: p.name,
+          correct: counts.get(p.id) ?? 0,
+          played,
+          position: curRank.get(p.id) ?? null,
+          winnerIso: winner?.iso ?? null,
+          winnerName: winner?.name ?? null,
+        };
+      })
+      .sort((a, b) => b.correct - a.correct || (a.position ?? Infinity) - (b.position ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
+  return { first: build(firstC), last: build(lastC) };
+}
+
 export interface PositionTrendSeries {
   participantId: string;
   name: string;

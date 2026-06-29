@@ -105,11 +105,13 @@ export default function RankingTable({
   limit,
   moreHref,
   searchable = false,
+  favCompareHref,
 }: {
   rows: RankingTableRow[];
   limit?: number;
   moreHref?: string;
   searchable?: boolean;
+  favCompareHref?: string;
 }) {
   const [favs, setFavs] = React.useState<string[]>([]);
   const [deltas, setDeltas] = React.useState<Record<string, number>>({});
@@ -356,6 +358,16 @@ export default function RankingTable({
             <Star filled className="size-5" /> Favorieten
           </h2>
           <div className="rounded-xl border bg-card p-1">{renderTable(favRows)}</div>
+          {favCompareHref && (
+            <a
+              href={favCompareHref}
+              onClick={() => capture("fav_compare_click", { count: favRows.length })}
+              className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
+            >
+              Vergelijk favorieten
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="size-4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+          )}
         </section>
       )}
       <section>

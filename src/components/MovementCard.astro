@@ -22,7 +22,7 @@ const { periode, cols } = Astro.props;
   <p class="mb-3 text-xs font-medium text-muted-foreground">{periode}</p>
   <div class="grid gap-x-5 gap-y-4 sm:grid-cols-2">
     {cols.map((col) => (
-      <div>
+      <div class="min-w-0">
         <div class:list={[
           'mb-1.5 flex items-center gap-1.5 px-2 text-xs font-semibold',
           col.tone === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400',
@@ -40,7 +40,7 @@ const { periode, cols } = Astro.props;
           <ul class="space-y-0.5">
             {col.rows.map((r) => (
               <li>
-                <a href={`/deelnemer/${r.participantId}`} class="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-muted">
+                <a href={`/deelnemer/${r.participantId}`} class="flex items-center gap-3 rounded-md py-1.5 pl-2 pr-3 hover:bg-muted">
                   <span class:list={[
                     'inline-flex min-w-[2.5rem] shrink-0 items-center justify-center gap-0.5 rounded-md px-1.5 py-0.5 text-xs font-bold tabular-nums',
                     col.tone === 'up'

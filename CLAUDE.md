@@ -47,7 +47,17 @@ before committing.
   the profile easter-egg. Don't re-type prize amounts anywhere.
 - `/vergelijk` compares two participants client-side (two dropdowns + `?a=&b=`
   shareable params) from a compact dataset embedded at build time; it's linked
-  from the `Meer` menu and a button on `deelnemer/[id]`.
+  from the `Meer` menu and a button on `deelnemer/[id]`. It also has
+  `<LiveScores />`: while a match is live the "Nog te spelen" rows show the live
+  score + both participants' provisional points (so `?ff-simulate-live=H-A`
+  works here too).
+- `/favorieten` ("Vergelijk favorieten") lists the upcoming matches (known teams)
+  with each favourited participant's predicted score, client-rendered from an
+  embedded dataset of everyone's upcoming predictions and filtered to the
+  `rut-wk2026-favorieten` localStorage set. It's reached only via the
+  `favCompareHref` CTA `RankingTable.tsx` renders under the Favorieten block —
+  passed on the home page only (not `/klassement`), and shown only when there are
+  favourites.
 - Provisional bonus status (used on `deelnemer/[id]` and the `/statistieken`
   "voorlopig op koers" board) comes from `bonusStandings()` in `data.ts`
   (`eliminatedTeamIds()` + `currentBonusLeaders()`); bonus outcomes only resolve
@@ -64,7 +74,13 @@ before committing.
   streak row carries an `ongoing` flag (the record run is still live — it reaches
   the latest finished match); the `/statistieken` tables render a `Flame.astro`
   icon (amber, hover tooltip) for those rows in the right-aligned **Aantal**
-  column, with a legend under each table.
+  column, with a legend under each table. Two more **op-een-rij-style** tables
+  (no flame) come from `matchPositionExtremes()` in the same file — **Vaakst
+  eerste** / **Vaakst laatste**: it walks one cumulative standing per finished
+  match (kickoff order) and tallies everyone at position 1 and at the last
+  position (ties count for all). The **Klassementsverloop top 5** chart
+  (`top5PositionTrend()` + `PositionTrendChart.astro`) draws lines + dots only —
+  no per-line end labels.
 - UI vocabulary is fixed: **Groepen** (not poule/poulestand; route stays
   `/poules`) and **Klassement** (not "Stand"/"Top 10"). Qualifying standings rows
   carry a ✓ after the country name, and prize spots use a colour-graded **position

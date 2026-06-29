@@ -29,7 +29,7 @@ const rows = ranking().map((r) => {
   <SectionHeading title="Klassement">
     <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. Een muntje markeert de prijsplaatsen (top 5) — tik erop voor het bedrag. Klassement en resultaten updaten niet meteen na een wedstrijd — dit kan even duren." />
   </SectionHeading>
-  <RankingTable client:load rows={rows} limit={10} moreHref="/klassement" />
+  <RankingTable client:load rows={rows} limit={10} moreHref="/klassement" favCompareHref="/favorieten" />
 
   <div class="mt-8">
     <MovementSection />

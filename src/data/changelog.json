@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-06-29",
+    "title": "Favorieten vergelijken & nieuwe klassementen",
+    "items": [
+      "Heb je favorieten gevolgd, dan verschijnt onder je favorieten op de homepagina de knop 'Vergelijk favorieten'. Die opent een overzicht van de volgende geplande wedstrijden met, per wedstrijd, de voorspelling van elk van je favorieten. Bij een lopende wedstrijd zie je er de live stand en de voorlopige punten per favoriet.",
+      "Op de vergelijkpagina werkt 'Live scores' nu ook: bij een lopende wedstrijd zie je de live stand en de voorlopige punten van beide deelnemers (een knockoutwedstrijd telt dubbel). De 'Onderling'-lijst toont standaard de laatste 5 wedstrijden, met een knop 'Toon vorige' voor de rest.",
+      "Twee nieuwe klassementen op de statistiekenpagina: 'Vaakst eerste' en 'Vaakst laatste' tonen na hoeveel gespeelde wedstrijden elke deelnemer (voorlopig) eerste of laatste stond in het klassement.",
+      "'Meeste juiste 1X2' en 'Meeste exacte uitslagen' tonen nu standaard de top 10 (in plaats van top 5), met 'Toon alle' voor de rest.",
+      "In de grafiek 'Klassementsverloop top 5' staan de cijfers rechts niet meer; de lijnen en de legende blijven.",
+      "Kleine opmaakfix bij 'Stijgers & dalers': bij een lange naam blijven de plaatscijfers rechts nu netjes binnen de kaart."
+    ]
+  },
+  {
     "date": "2026-06-28",
     "title": "Voorspellingen 1/16de finales online",
     "items": [

@@ -1,0 +1,177 @@
+---
+// Client-side "Vergelijk favorieten" page: the upcoming (not-yet-played) matches
+// with known teams, and per match the predicted score of each favourited
+// participant. Favourites live in localStorage (set by RankingTable), so the
+// page embeds every participant's upcoming predictions at build time and filters
+// to the favourites in the browser.
+import Layout from '@/layouts/Layout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
+import LiveScores from '@/components/LiveScores.astro';
+import { participants, ranking, getTeam, matches, predictions, settings } from '@/lib/data';
+import { ROUND_LABELS } from '@/lib/types';
+import { byKickoff, formatKickoff } from '@/lib/format';
+
+const rankMap = new Map(ranking().map((r) => [r.participantId, r]));
+
+// Upcoming matches with known teams (predictions can only exist for these), in
+// kickoff order.
+const upcoming = matches
+  .filter((m) => m.status !== 'finished' && m.homeTeamId && m.awayTeamId && getTeam(m.homeTeamId) && getTeam(m.awayTeamId))
+  .sort(byKickoff)
+  .map((m) => {
+    const h = getTeam(m.homeTeamId!)!;
+    const a = getTeam(m.awayTeamId!)!;
+    return {
+      id: m.id,
+      hId: h.id,
+      aId: a.id,
+      h: { iso: h.iso, n: h.shortName ?? h.name },
+      a: { iso: a.iso, n: a.shortName ?? a.name },
+      r: ROUND_LABELS[m.round],
+      k: formatKickoff(m.kickoff),
+      mult: settings.multipliers[m.round] ?? 1,
+    };
+  });
+const upIds = new Set(upcoming.map((m) => m.id));
+
+// Each participant's predictions for those upcoming matches only.
+const predByPart = new Map<string, Record<string, [number, number]>>();
+for (const p of predictions) {
+  if (!upIds.has(p.matchId)) continue;
+  let byMatch = predByPart.get(p.participantId);
+  if (!byMatch) predByPart.set(p.participantId, (byMatch = {}));
+  byMatch[p.matchId] = [p.home, p.away];
+}
+
+const favData = participants
+  .map((p) => ({
+    id: p.id,
+    name: p.name,
+    pos: rankMap.get(p.id)?.position ?? null,
+    preds: predByPart.get(p.id) ?? {},
+  }))
+  .sort((a, b) => (a.pos ?? Infinity) - (b.pos ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
+---
+<Layout title="Favorieten — Rut Prono WK 2026">
+  <LiveScores />
+  <PageHeader title="Favorieten">
+    <InfoToggle text="De volgende geplande wedstrijden met daaronder, per wedstrijd, de voorspelling van elke favoriet. Bij een lopende wedstrijd zie je de live stand en de voorlopige punten per favoriet. Volg deelnemers via de ster in het klassement; je favorieten worden hier op je toestel bewaard." />
+  </PageHeader>
+
+  <div id="fav-out" aria-live="polite">
+    <p class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Laden…</p>
+  </div>
+
+  <script type="application/json" id="fav-data" set:html={JSON.stringify({ m: upcoming, p: favData })}></script>
+
+  <script is:inline>
+    (() => {
+      const FAV_KEY = 'rut-wk2026-favorieten';
+      const root = document.getElementById('fav-out');
+      const raw = JSON.parse(document.getElementById('fav-data')?.textContent || '{}');
+      const upcoming = raw.m || [];
+      const byId = Object.fromEntries((raw.p || []).map((p) => [p.id, p]));
+      const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+      const flag = (iso, name) => iso
+        ? `<span class="fi fi-${iso} shrink-0 rounded-[2px] text-base shadow-sm" role="img" aria-label="${esc(name || iso)}"></span>`
+        : '';
+      const box = 'inline-flex h-6 min-w-6 items-center justify-center rounded-md border bg-muted px-1.5 text-xs font-bold tabular-nums';
+      const scoreBoxes = (h, a) => `<span class="inline-flex items-center gap-1"><span class="${box}">${h}</span><span class="text-muted-foreground">–</span><span class="${box}">${a}</span></span>`;
+      // Live indicators, mirroring LiveScores.astro (red score pill + pulsing
+      // minute badge) so live looks the same everywhere.
+      const minLabel = (m) => m && m.simulated ? 'sim' : m && m.status === 'HT' ? 'rust' : m && m.elapsed != null ? `${m.elapsed}'` : 'live';
+      const livePill = (gh, ga) => `<span class="inline-flex items-center rounded-md bg-red-100 px-2 py-0.5 text-base font-bold tabular-nums text-red-800">${gh}<span class="px-1 text-red-400">–</span>${ga}</span>`;
+      const liveBadge = (m) => `<span class="inline-flex items-center gap-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"><span class="size-1.5 animate-pulse rounded-full bg-white"></span>${minLabel(m)}</span>`;
+      const posBadge = (pos) => pos == null ? '' :
+        `<span class="inline-flex h-5 min-w-[1.4rem] shrink-0 items-center justify-center rounded bg-muted px-1 text-[11px] font-semibold tabular-nums text-muted-foreground" title="Plaats in het klassement">${pos}</span>`;
+      const ptsBadge = (pts, exact) => {
+        const cls = pts === 0 ? 'bg-red-200 text-red-800 dark:bg-red-950/60 dark:text-red-300'
+          : exact ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+          : 'bg-amber-200 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300';
+        return `<span class="inline-flex min-w-[1.4rem] shrink-0 justify-center rounded px-1 py-0.5 text-[11px] font-bold tabular-nums ${cls}" title="voorlopige punten">${pts}</span>`;
+      };
+      const basePts = (ph, pa, rh, ra) => {
+        if (ph === rh && pa === ra) return 9;
+        if (Math.sign(ph - pa) !== Math.sign(rh - ra)) return 0;
+        return Math.max(3, 7 - (Math.abs(ph - rh) + Math.abs(pa - ra)));
+      };
+      // Live matches broadcast by <LiveScores>; the live result for match `m`
+      // oriented to our home/away, or null when it isn't live.
+      let liveMatches = window.__rutLiveMatches || [];
+      const liveResultFor = (m) => {
+        const lm = (liveMatches || []).find((x) => (x.homeTeamId === m.hId && x.awayTeamId === m.aId) || (x.homeTeamId === m.aId && x.awayTeamId === m.hId));
+        if (!lm) return null;
+        const swapped = lm.homeTeamId !== m.hId;
+        return { rh: swapped ? lm.goalsAway : lm.goalsHome, ra: swapped ? lm.goalsHome : lm.goalsAway, lm };
+      };
+
+      const render = () => {
+        let favs = [];
+        try { favs = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { favs = []; }
+        // Keep only favourites we know, ordered by klassement position.
+        const favList = favs.map((id) => byId[id]).filter(Boolean)
+          .sort((a, b) => (a.pos ?? Infinity) - (b.pos ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
+
+        if (favList.length === 0) {
+          root.innerHTML = `<div class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+            <p>Je hebt nog geen favorieten gekozen.</p>
+            <p class="mt-2">Ga naar het <a href="/klassement" class="font-medium text-foreground underline">klassement</a> en tik op de ster naast een deelnemer om die te volgen.</p>
+          </div>`;
+          return;
+        }
+        if (upcoming.length === 0) {
+          root.innerHTML = `<div class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Er staan momenteel geen geplande wedstrijden met voorspellingen klaar.</div>`;
+          return;
+        }
+
+        const cards = upcoming.map((m) => {
+          const live = liveResultFor(m);
+          const rows = favList.map((p) => {
+            const pred = p.preds[m.id];
+            let right;
+            if (!pred) {
+              right = `<span class="text-xs text-muted-foreground">geen voorspelling</span>`;
+            } else if (live) {
+              const pts = basePts(pred[0], pred[1], live.rh, live.ra) * (m.mult || 1);
+              right = `<span class="inline-flex items-center gap-1.5">${scoreBoxes(pred[0], pred[1])}${ptsBadge(pts, pred[0] === live.rh && pred[1] === live.ra)}</span>`;
+            } else {
+              right = scoreBoxes(pred[0], pred[1]);
+            }
+            return `<li class="flex items-center gap-2 px-3 py-2">
+              ${posBadge(p.pos)}
+              <a href="/deelnemer/${p.id}" class="min-w-0 flex-1 truncate text-sm font-medium hover:underline">${esc(p.name)}</a>
+              <span class="shrink-0">${right}</span>
+            </li>`;
+          }).join('');
+          const right = live
+            ? `<span class="flex shrink-0 items-center gap-1.5">${livePill(live.rh, live.ra)}${liveBadge(live.lm)}</span>`
+            : `<span class="shrink-0 text-xs text-muted-foreground">${esc(m.k)}</span>`;
+          return `<div class="overflow-hidden rounded-xl border bg-card shadow-sm">
+            <a href="/wedstrijd/${m.id}" class="flex items-center justify-between gap-2 border-b bg-muted/40 px-3 py-2.5 hover:bg-muted/70">
+              <span class="flex min-w-0 items-center gap-2 text-sm font-semibold">
+                ${flag(m.h.iso, m.h.n)}<span class="truncate">${esc(m.h.n)}</span>
+                <span class="shrink-0 text-muted-foreground">–</span>
+                ${flag(m.a.iso, m.a.n)}<span class="truncate">${esc(m.a.n)}</span>
+              </span>
+              ${right}
+            </a>
+            <ul class="divide-y">${rows}</ul>
+          </div>`;
+        }).join('');
+
+        root.innerHTML = `<p class="mb-3 text-sm text-muted-foreground">${favList.length} ${favList.length === 1 ? 'favoriet' : 'favorieten'} · ${upcoming.length} geplande ${upcoming.length === 1 ? 'wedstrijd' : 'wedstrijden'}</p><div class="space-y-4">${cards}</div>`;
+      };
+
+      render();
+      window.posthog?.capture?.('fav_compare_viewed');
+      // Re-render with the live score + provisional points whenever live updates.
+      window.addEventListener('rut:live-matches', (e) => {
+        liveMatches = (e.detail && e.detail.matches) || [];
+        render();
+      });
+      if (window.__rutLiveMatches) { liveMatches = window.__rutLiveMatches; render(); }
+    })();
+  </script>
+</Layout>
