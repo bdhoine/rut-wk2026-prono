@@ -1181,8 +1181,13 @@
     "awayTeamId": "jp",
     "homePlaceholder": "Winnaar Groep C",
     "awayPlaceholder": "2e Groep F",
-    "status": "scheduled",
-    "apiId": 760487
+    "status": "finished",
+    "apiId": 760487,
+    "result": {
+      "home": 2,
+      "away": 1
+    },
+    "winnerTeamId": "br"
   },
   {
     "id": "r32-5",
@@ -1357,7 +1362,7 @@
     "round": "r16",
     "kickoff": "2026-07-05T20:00Z",
     "venue": "MetLife Stadium, New York",
-    "homeTeamId": null,
+    "homeTeamId": "br",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-4",
     "awayPlaceholder": "Winnaar R32-6",

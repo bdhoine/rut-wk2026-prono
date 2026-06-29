@@ -290,6 +290,11 @@
     "goals": 1
   },
   {
+    "player": "Casemiro",
+    "teamId": "br",
+    "goals": 1
+  },
+  {
     "player": "Connor Metcalfe",
     "teamId": "au",
     "goals": 1
@@ -337,6 +342,11 @@
   {
     "player": "Franck Kessié",
     "teamId": "ci",
+    "goals": 1
+  },
+  {
+    "player": "Gabriel Martinelli",
+    "teamId": "br",
     "goals": 1
   },
   {
@@ -437,6 +447,11 @@
   {
     "player": "Kaan Ayhan",
     "teamId": "tr",
+    "goals": 1
+  },
+  {
+    "player": "Kaishu Sano",
+    "teamId": "jp",
     "goals": 1
   },
   {
