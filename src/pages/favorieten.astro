@@ -45,12 +45,17 @@ for (const p of predictions) {
 }
 
 const favData = participants
-  .map((p) => ({
-    id: p.id,
-    name: p.name,
-    pos: rankMap.get(p.id)?.position ?? null,
-    preds: predByPart.get(p.id) ?? {},
-  }))
+  .map((p) => {
+    const winner = getTeam(p.bonus.winnerTeamId);
+    return {
+      id: p.id,
+      name: p.name,
+      pos: rankMap.get(p.id)?.position ?? null,
+      winnerIso: winner?.iso ?? null,
+      winnerName: winner?.name ?? null,
+      preds: predByPart.get(p.id) ?? {},
+    };
+  })
   .sort((a, b) => (a.pos ?? Infinity) - (b.pos ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
 ---
 <Layout title="Favorieten — Rut Prono WK 2026">
@@ -141,6 +146,7 @@ const favData = participants
             }
             return `<li class="flex items-center gap-2 px-3 py-2">
               ${posBadge(p.pos)}
+              ${flag(p.winnerIso, p.winnerName)}
               <a href="/deelnemer/${p.id}" class="min-w-0 flex-1 truncate text-sm font-medium hover:underline">${esc(p.name)}</a>
               <span class="shrink-0">${right}</span>
             </li>`;
