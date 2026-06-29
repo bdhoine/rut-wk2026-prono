@@ -65,6 +65,11 @@
     "goals": 3
   },
   {
+    "player": "Kai Havertz",
+    "teamId": "de",
+    "goals": 3
+  },
+  {
     "player": "Matheus Cunha",
     "teamId": "br",
     "goals": 3
@@ -132,11 +137,6 @@
   {
     "player": "Julián Quiñones",
     "teamId": "mx",
-    "goals": 2
-  },
-  {
-    "player": "Kai Havertz",
-    "teamId": "de",
     "goals": 2
   },
   {
@@ -437,6 +437,11 @@
   {
     "player": "Jovo Lukic",
     "teamId": "ba",
+    "goals": 1
+  },
+  {
+    "player": "Julio Enciso",
+    "teamId": "py",
     "goals": 1
   },
   {

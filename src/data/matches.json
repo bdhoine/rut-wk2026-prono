@@ -1157,8 +1157,12 @@
     "awayTeamId": "py",
     "homePlaceholder": "Winnaar Groep E",
     "awayPlaceholder": "Beste 3e (A/B/C/D/F)",
-    "status": "scheduled",
-    "apiId": 760489
+    "status": "finished",
+    "apiId": 760489,
+    "result": {
+      "home": 1,
+      "away": 1
+    }
   },
   {
     "id": "r32-3",
@@ -1338,7 +1342,7 @@
     "round": "r16",
     "kickoff": "2026-07-04T21:00Z",
     "venue": "Lincoln Financial Field, Philadelphia",
-    "homeTeamId": null,
+    "homeTeamId": "py",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-2",
     "awayPlaceholder": "Winnaar R32-5",
