@@ -7,7 +7,7 @@
   {
     "player": "Erling Haaland",
     "teamId": "no",
-    "goals": 4
+    "goals": 5
   },
   {
     "player": "Kylian Mbappé",
@@ -83,6 +83,11 @@
     "player": "Yoane Wissa",
     "teamId": "cd",
     "goals": 3
+  },
+  {
+    "player": "Amad Diallo",
+    "teamId": "ci",
+    "goals": 2
   },
   {
     "player": "Anthony Elanga",
@@ -240,11 +245,6 @@
     "goals": 1
   },
   {
-    "player": "Amad Diallo",
-    "teamId": "ci",
-    "goals": 1
-  },
-  {
     "player": "Amine Gouiri",
     "teamId": "dz",
     "goals": 1
@@ -252,6 +252,11 @@
   {
     "player": "Ante Budimir",
     "teamId": "hr",
+    "goals": 1
+  },
+  {
+    "player": "Antonio Nusa",
+    "teamId": "no",
     "goals": 1
   },
   {

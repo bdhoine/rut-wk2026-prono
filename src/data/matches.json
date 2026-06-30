@@ -1258,8 +1258,13 @@
     "awayTeamId": "no",
     "homePlaceholder": "2e Groep E",
     "awayPlaceholder": "2e Groep I",
-    "status": "scheduled",
-    "apiId": 760490
+    "status": "finished",
+    "apiId": 760490,
+    "result": {
+      "home": 1,
+      "away": 2
+    },
+    "winnerTeamId": "no"
   },
   {
     "id": "r32-7",
