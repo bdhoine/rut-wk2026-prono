@@ -1,5 +1,10 @@
 [
   {
+    "player": "Kylian Mbappé",
+    "teamId": "fr",
+    "goals": 6
+  },
+  {
     "player": "Lionel Messi",
     "teamId": "ar",
     "goals": 6
@@ -8,11 +13,6 @@
     "player": "Erling Haaland",
     "teamId": "no",
     "goals": 5
-  },
-  {
-    "player": "Kylian Mbappé",
-    "teamId": "fr",
-    "goals": 4
   },
   {
     "player": "Ousmane Dembélé",
@@ -97,6 +97,11 @@
   {
     "player": "Ayase Ueda",
     "teamId": "jp",
+    "goals": 2
+  },
+  {
+    "player": "Bradley Barcola",
+    "teamId": "fr",
     "goals": 2
   },
   {
@@ -277,11 +282,6 @@
   {
     "player": "Baris Alper Yilmaz",
     "teamId": "tr",
-    "goals": 1
-  },
-  {
-    "player": "Bradley Barcola",
-    "teamId": "fr",
     "goals": 1
   },
   {
