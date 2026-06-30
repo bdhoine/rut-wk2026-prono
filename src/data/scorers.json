@@ -30,6 +30,11 @@
     "goals": 3
   },
   {
+    "player": "Cody Gakpo",
+    "teamId": "nl",
+    "goals": 3
+  },
+  {
     "player": "Deniz Undav",
     "teamId": "de",
     "goals": 3
@@ -87,11 +92,6 @@
   {
     "player": "Ayase Ueda",
     "teamId": "jp",
-    "goals": 2
-  },
-  {
-    "player": "Cody Gakpo",
-    "teamId": "nl",
     "goals": 2
   },
   {
@@ -407,6 +407,11 @@
   {
     "player": "Iliman Ndiaye",
     "teamId": "sn",
+    "goals": 1
+  },
+  {
+    "player": "Issa Diop",
+    "teamId": "ma",
     "goals": 1
   },
   {

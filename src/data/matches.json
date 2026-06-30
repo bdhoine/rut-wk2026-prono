@@ -1194,8 +1194,31 @@
     "awayTeamId": "ma",
     "homePlaceholder": "Winnaar Groep F",
     "awayPlaceholder": "2e Groep C",
-    "status": "scheduled",
-    "apiId": 760488
+    "status": "finished",
+    "apiId": 760488,
+    "result": {
+      "home": 1,
+      "away": 1
+    },
+    "winnerTeamId": "ma",
+    "penalties": {
+      "home": 2,
+      "away": 3,
+      "homeKicks": [
+        true,
+        false,
+        true,
+        false,
+        false
+      ],
+      "awayKicks": [
+        false,
+        true,
+        true,
+        false,
+        true
+      ]
+    }
   },
   {
     "id": "r32-4",
@@ -1376,7 +1399,7 @@
     "kickoff": "2026-07-04T17:00Z",
     "venue": "NRG Stadium, Houston",
     "homeTeamId": "ca",
-    "awayTeamId": null,
+    "awayTeamId": "ma",
     "homePlaceholder": "Winnaar R32-1",
     "awayPlaceholder": "Winnaar R32-3",
     "status": "scheduled",
