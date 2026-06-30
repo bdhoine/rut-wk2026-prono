@@ -117,18 +117,21 @@ const liveCalc = hasTeams && !finished
       </a>
     </div>
     {finished && match.penalties && (
-      <div class="mt-4 flex items-center justify-center gap-2 sm:gap-3" aria-label={`Strafschoppen ${match.penalties.home}–${match.penalties.away}`}>
-        <div class="flex flex-1 flex-wrap items-center justify-end gap-1">
-          {(match.penalties.homeKicks ?? []).map((ok) => (
-            <span class:list={['inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold leading-none text-white', ok ? 'bg-emerald-500' : 'bg-red-500']} title={ok ? 'gescoord' : 'gemist'} aria-label={ok ? 'gescoord' : 'gemist'}>{ok ? '✓' : '✗'}</span>
-          ))}
-        </div>
-        <ScoreBoxes home={match.penalties.home} away={match.penalties.away} size="md" tone="scoreboard" />
-        <div class="flex flex-1 flex-wrap items-center justify-start gap-1">
-          {(match.penalties.awayKicks ?? []).map((ok) => (
-            <span class:list={['inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold leading-none text-white', ok ? 'bg-emerald-500' : 'bg-red-500']} title={ok ? 'gescoord' : 'gemist'} aria-label={ok ? 'gescoord' : 'gemist'}>{ok ? '✓' : '✗'}</span>
-          ))}
-        </div>
+      <div class="mt-4 space-y-1.5" aria-label={`Strafschoppen ${match.penalties.home}–${match.penalties.away}`}>
+        {([
+          { side: home, kicks: match.penalties.homeKicks, score: match.penalties.home },
+          { side: away, kicks: match.penalties.awayKicks, score: match.penalties.away },
+        ] as const).map(({ side, kicks, score }) => (
+          <div class="flex items-center gap-2">
+            <Flag iso={side.team?.iso} name={side.label} class="text-xl shrink-0" />
+            <div class="flex flex-wrap items-center gap-1">
+              {(kicks ?? []).map((ok) => (
+                <span class:list={['inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold leading-none text-white', ok ? 'bg-emerald-500' : 'bg-red-500']} title={ok ? 'gescoord' : 'gemist'} aria-label={ok ? 'gescoord' : 'gemist'}>{ok ? '✓' : '✗'}</span>
+              ))}
+            </div>
+            <span class="inline-flex h-8 min-w-8 items-center justify-center rounded-md border border-transparent bg-ink px-1.5 font-bold tabular-nums text-base text-ink-foreground shadow-sm">{score}</span>
+          </div>
+        ))}
       </div>
     )}
     <p class="mt-4 text-center text-xs text-ink-foreground/70">{match.venue}</p>
