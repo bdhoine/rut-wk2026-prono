@@ -117,17 +117,24 @@ const liveCalc = hasTeams && !finished
       </a>
     </div>
     {finished && match.penalties && (
-      <div class="mt-4 flex items-center justify-center gap-2 sm:gap-3" aria-label={`Strafschoppen ${match.penalties.home}–${match.penalties.away}`}>
-        <div class="flex flex-1 flex-wrap items-center justify-end gap-1">
-          {(match.penalties.homeKicks ?? []).map((ok) => (
-            <span class:list={['inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold leading-none text-white', ok ? 'bg-emerald-500' : 'bg-red-500']} title={ok ? 'gescoord' : 'gemist'} aria-label={ok ? 'gescoord' : 'gemist'}>{ok ? '✓' : '✗'}</span>
-          ))}
+      <div class="mt-4 space-y-1.5" aria-label={`Strafschoppen ${match.penalties.home}–${match.penalties.away}`}>
+        <div class="flex items-center justify-center gap-2">
+          <Flag iso={home.team?.iso} name={home.label} class="shrink-0 text-base" />
+          <div class="flex flex-wrap items-center gap-1">
+            {(match.penalties.homeKicks ?? []).map((ok) => (
+              <span class:list={['inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold leading-none text-white', ok ? 'bg-emerald-500' : 'bg-red-500']} title={ok ? 'gescoord' : 'gemist'} aria-label={ok ? 'gescoord' : 'gemist'}>{ok ? '✓' : '✗'}</span>
+            ))}
+          </div>
+          <span class="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border border-transparent bg-ink px-1.5 text-xs font-bold tabular-nums text-ink-foreground shadow-sm">{match.penalties.home}</span>
         </div>
-        <ScoreBoxes home={match.penalties.home} away={match.penalties.away} size="md" tone="scoreboard" />
-        <div class="flex flex-1 flex-wrap items-center justify-start gap-1">
-          {(match.penalties.awayKicks ?? []).map((ok) => (
-            <span class:list={['inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold leading-none text-white', ok ? 'bg-emerald-500' : 'bg-red-500']} title={ok ? 'gescoord' : 'gemist'} aria-label={ok ? 'gescoord' : 'gemist'}>{ok ? '✓' : '✗'}</span>
-          ))}
+        <div class="flex items-center justify-center gap-2">
+          <Flag iso={away.team?.iso} name={away.label} class="shrink-0 text-base" />
+          <div class="flex flex-wrap items-center gap-1">
+            {(match.penalties.awayKicks ?? []).map((ok) => (
+              <span class:list={['inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold leading-none text-white', ok ? 'bg-emerald-500' : 'bg-red-500']} title={ok ? 'gescoord' : 'gemist'} aria-label={ok ? 'gescoord' : 'gemist'}>{ok ? '✓' : '✗'}</span>
+            ))}
+          </div>
+          <span class="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border border-transparent bg-ink px-1.5 text-xs font-bold tabular-nums text-ink-foreground shadow-sm">{match.penalties.away}</span>
         </div>
       </div>
     )}
