@@ -1416,7 +1416,7 @@
     "kickoff": "2026-07-05T20:00Z",
     "venue": "MetLife Stadium, New York",
     "homeTeamId": "br",
-    "awayTeamId": null,
+    "awayTeamId": "no",
     "homePlaceholder": "Winnaar R32-4",
     "awayPlaceholder": "Winnaar R32-6",
     "status": "scheduled",
