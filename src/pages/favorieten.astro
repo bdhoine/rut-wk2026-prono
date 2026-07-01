@@ -63,10 +63,10 @@ const favData = participants
 const trend = positionTrendAll(10);
 ---
 <Layout title="Favorieten — Rut Prono WK 2026">
-  <LiveScores />
   <PageHeader title="Favorieten">
     <InfoToggle text="De volgende geplande wedstrijden met daaronder, per wedstrijd, de voorspelling van elke favoriet. Bij een lopende wedstrijd zie je de live stand en de voorlopige punten per favoriet. Volg deelnemers via de ster in het klassement; je favorieten worden hier op je toestel bewaard." />
   </PageHeader>
+  <LiveScores />
 
   <div id="fav-out" aria-live="polite">
     <p class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Laden…</p>
@@ -151,8 +151,11 @@ const trend = positionTrendAll(10);
         }).join('');
         const legend = series.map((s, si) =>
           `<a href="/deelnemer/${s.id}" class="flex items-center gap-1.5 text-xs hover:underline"><span class="inline-block size-2.5 shrink-0 rounded-full" style="background:${COLORS[si]}"></span><span class="font-medium">${esc(s.name)}</span></a>`).join('');
+        // The ⓘ reuses InfoToggle.astro's classes — the delegated click
+        // listener from the PageHeader InfoToggle on this page handles it.
+        const infoBtn = `<button type="button" class="info-toggle grid size-6 shrink-0 place-items-center rounded-full border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-[expanded=true]:border-primary/40 aria-[expanded=true]:bg-secondary aria-[expanded=true]:text-foreground" aria-label="Meer info" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5"><circle cx="12" cy="12" r="10" /><line x1="12" y1="11" x2="12" y2="16" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg></button><p class="info-text mt-1 hidden basis-full text-sm text-muted-foreground">Plaats in het klassement per speeldag, over de laatste 10 speeldagen. De best geplaatste favoriet staat bovenaan in de legende.</p>`;
         return `<section class="mb-8">
-          <h2 class="mb-2 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>Klassementsverloop</h2>
+          <div class="mb-2 flex flex-wrap items-center gap-2"><h2 class="flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>Klassementsverloop</h2>${infoBtn}</div>
           <div class="rounded-xl border bg-card px-3 py-3 shadow-sm">
             <svg viewBox="0 0 ${W} ${H}" class="mx-auto h-auto w-full max-w-[480px]" role="img" aria-label="Klassementspositie van je favorieten over de afgelopen speeldagen">
               <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${axisY}" class="stroke-border" stroke-width="1" />
@@ -184,12 +187,16 @@ const trend = positionTrendAll(10);
           </div>`;
           return;
         }
-        if (upcoming.length === 0) {
+        // Only matches for which at least one favourite has a prediction —
+        // future rounds whose prono deadline hasn't passed would otherwise
+        // show as all-"geen voorspelling" cards.
+        const playable = upcoming.filter((m) => favList.some((p) => p.preds[m.id]));
+        if (playable.length === 0) {
           root.innerHTML = `${trendSection(favList)}<div class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Er staan momenteel geen geplande wedstrijden met voorspellingen klaar.</div>`;
           return;
         }
 
-        const cards = upcoming.map((m) => {
+        const cards = playable.map((m) => {
           const live = liveResultFor(m);
           const rows = favList.map((p) => {
             const pred = p.preds[m.id];
@@ -226,7 +233,7 @@ const trend = positionTrendAll(10);
         }).join('');
 
         const listHeading = `<h2 class="mb-2 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>Volgende wedstrijden</h2>`;
-        root.innerHTML = `${trendSection(favList)}${listHeading}<p class="mb-3 text-sm text-muted-foreground">${favList.length} ${favList.length === 1 ? 'favoriet' : 'favorieten'} · ${upcoming.length} geplande ${upcoming.length === 1 ? 'wedstrijd' : 'wedstrijden'}</p><div class="space-y-4">${cards}</div>`;
+        root.innerHTML = `${trendSection(favList)}${listHeading}<p class="mb-3 text-sm text-muted-foreground">${favList.length} ${favList.length === 1 ? 'favoriet' : 'favorieten'} · ${playable.length} geplande ${playable.length === 1 ? 'wedstrijd' : 'wedstrijden'}</p><div class="space-y-4">${cards}</div>`;
       };
 
       render();

@@ -1,11 +1,17 @@
 ---
 // Compact goal-scorers line under a finished match's score: home scorers in
 // the left half (right-aligned, mirroring the card's team columns), a small
-// ball divider, away scorers in the right half. Two variants:
+// ball divider, away scorers in the right half. When only one side scored the
+// line is a single centered span (no dangling ball). Each scorer token (name +
+// first minute, extra minutes separately) is a nowrap unit joined by REAL
+// spaces (`{' '}` — Astro strips inter-element whitespace, and without spaces
+// the halves can't wrap and overlap each other); token-level nowrap keeps a
+// name with its minute while a hat-trick's minute list can still wrap.
+// Two variants:
 //  - card: muted small print for MatchCard (non-compact) and similar contexts;
 //  - hero: light-on-dark for the match-detail hero panel.
 import type { MatchGoal } from '@/lib/types';
-import { scorerLine } from '@/lib/scorers';
+import { scorerGroups, scorerTokens } from '@/lib/scorers';
 
 interface Props {
   goals: MatchGoal[];
@@ -15,15 +21,23 @@ interface Props {
   class?: string;
 }
 const { goals, homeTeamId, awayTeamId, variant = 'card', class: className } = Astro.props;
-const home = scorerLine(goals, homeTeamId);
-const away = scorerLine(goals, awayTeamId);
+const home = scorerTokens(scorerGroups(goals, homeTeamId));
+const away = scorerTokens(scorerGroups(goals, awayTeamId));
 const tone = variant === 'hero' ? 'text-ink-foreground/80' : 'text-muted-foreground';
 const ballTone = variant === 'hero' ? 'text-ink-foreground/50' : 'text-muted-foreground/60';
 ---
-{(home || away) && (
+{home.length > 0 && away.length > 0 ? (
   <div class:list={['flex items-start justify-center gap-2 text-[11px] leading-4', tone, className]}>
-    <span class="min-w-0 flex-1 text-right">{home}</span>
+    <span class="min-w-0 flex-1 text-right">
+      {home.map((t) => <><span class="whitespace-nowrap">{t}</span>{' '}</>)}
+    </span>
     <span class={`shrink-0 ${ballTone}`} aria-hidden="true">⚽</span>
-    <span class="min-w-0 flex-1 text-left">{away}</span>
+    <span class="min-w-0 flex-1 text-left">
+      {away.map((t) => <><span class="whitespace-nowrap">{t}</span>{' '}</>)}
+    </span>
   </div>
-)}
+) : home.length > 0 || away.length > 0 ? (
+  <div class:list={['text-center text-[11px] leading-4', tone, className]}>
+    {(home.length ? home : away).map((t) => <><span class="whitespace-nowrap">{t}</span>{' '}</>)}
+  </div>
+) : null}

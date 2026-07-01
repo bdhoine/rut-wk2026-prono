@@ -56,12 +56,17 @@ const bars = values.map((v, i) => {
 const minuteX = (min: number) => padL + (Math.min(min, minutesTotal) / minutesTotal) * innerW;
 const dividers = [45, ...(extraTime ? [90] : [])];
 
-// Goal markers on the scoring side (own goals already carry the benefiting team).
+// Goal markers ride just beyond the tip of their bucket's bar on the scoring
+// side (own goals already carry the benefiting team), with a minimum offset
+// from the centre line so a goal in a quiet bucket doesn't sit on the axis.
 const goalMarks = (match.goals ?? []).map((g) => {
   const min = parseInt(g.minute, 10) || 0;
+  const isHome = g.teamId === match.homeTeamId;
+  const bucket = Math.min(Math.floor(min / momentum.bucketMin), n - 1);
+  const tip = Math.max(bars[bucket]?.h ?? 0, 4);
   return {
     x: minuteX(min),
-    isHome: g.teamId === match.homeTeamId,
+    y: isHome ? midY - tip - 5 : midY + tip + 11,
     title: `${g.minute} ${shortPlayer(g.player)}${g.pen ? ' (p)' : ''}${g.og ? ' (e.d.)' : ''}`,
   };
 });
@@ -85,7 +90,7 @@ const goalMarks = (match.goals ?? []).map((g) => {
     ))}
     <!-- goal markers -->
     {goalMarks.map((g) => (
-      <text x={g.x} y={g.isHome ? padT - 4 : H - padB + 12} text-anchor="middle" font-size="9" aria-hidden="true">⚽<title>{g.title}</title></text>
+      <text x={g.x} y={g.y.toFixed(1)} text-anchor="middle" font-size="9" aria-hidden="true">⚽<title>{g.title}</title></text>
     ))}
     <!-- minute labels -->
     <text x={padL} y={H - 4} text-anchor="start" class="fill-muted-foreground text-[10px]">0'</text>

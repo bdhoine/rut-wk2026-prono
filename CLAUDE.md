@@ -51,10 +51,12 @@ before committing.
   `<LiveScores />`: while a match is live the "Nog te spelen" rows show the live
   score + both participants' provisional points (so `?ff-simulate-live=H-A`
   works here too).
-- `/favorieten` ("Vergelijk favorieten") lists the upcoming matches (known teams)
-  with each favourited participant's predicted score, client-rendered from an
-  embedded dataset of everyone's upcoming predictions and filtered to the
-  `rut-wk2026-favorieten` localStorage set. It's reached only via the
+- `/favorieten` ("Vergelijk favorieten") lists the upcoming matches (known
+  teams, and only those where at least one favourite has a prediction — future
+  rounds before their prono deadline are hidden) with each favourited
+  participant's predicted score, client-rendered from an embedded dataset of
+  everyone's upcoming predictions and filtered to the `rut-wk2026-favorieten`
+  localStorage set. It's reached only via the
   `favCompareHref` CTA `RankingTable.tsx` renders under the Favorieten block —
   passed on the home page and `/klassement`, and shown only when there are
   favourites. A top **Klassementsverloop** section (above the match list, which

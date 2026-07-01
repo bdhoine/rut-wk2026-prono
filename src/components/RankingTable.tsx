@@ -281,9 +281,9 @@ export default function RankingTable({
     <Table className="table-fixed">
       <TableHeader>
         <TableRow>
-          {/* Star col: size-7 button + padding must fit the declared width,
+          {/* Star col: size-9 button + padding must fit the declared width,
               or table-fixed overflows and shows a scrollbar strip on mobile. */}
-          <TableHead className="w-8 px-0.5" />
+          <TableHead className="w-10 px-0.5" />
           <TableHead className="w-8 px-0.5 text-center">#</TableHead>
           <TableHead className="px-1.5">Naam</TableHead>
           <TableHead className="w-14 px-1 text-right">Vorm</TableHead>
@@ -305,7 +305,7 @@ export default function RankingTable({
                   aria-label={fav ? `${row.name} uit favorieten` : `${row.name} als favoriet`}
                   aria-pressed={fav}
                   onClick={(e) => { e.stopPropagation(); toggle(row.participantId); }}
-                  className={`mx-auto grid size-7 place-items-center rounded-md hover:bg-muted${spot && tut === "spotlight" ? " animate-pulse ring-2 ring-amber-400 ring-offset-1" : ""}`}
+                  className={`mx-auto grid size-9 place-items-center rounded-md hover:bg-muted${spot && tut === "spotlight" ? " animate-pulse ring-2 ring-amber-400 ring-offset-1" : ""}`}
                 >
                   <Star filled={fav} className="size-[18px]" />
                 </button>
@@ -403,7 +403,7 @@ export default function RankingTable({
               }}
               placeholder="Zoek op naam…"
               aria-label="Zoek op naam"
-              className="w-full rounded-lg border bg-card py-2 pl-8 pr-8 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 sm:text-sm"
+              className="w-full rounded-lg border bg-card py-2 pl-8 pr-8 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 sm:text-sm [&::-webkit-search-cancel-button]:hidden"
             />
             {query && (
               <button

@@ -66,7 +66,9 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
   </PageHeader>
 
   <section class="mb-8">
-    <SectionHeading title="Topschutters" />
+    <SectionHeading title="Topschutters">
+      <InfoToggle text="Alle WK-doelpuntenmakers, gerangschikt op aantal doelpunten. Owngoals en strafschoppenreeksen tellen niet mee." />
+    </SectionHeading>
     <div class="overflow-x-auto rounded-xl border bg-card">
       <table class="w-full text-sm">
         <thead>
@@ -74,7 +76,7 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
             <th class="w-6 px-2 py-2 text-left font-medium">#</th>
             <th class="px-2 py-2 text-left font-medium">Speler</th>
             <th class="px-2 py-2 text-left font-medium">Land</th>
-            <th class="px-2 py-2 text-center font-medium">Goals</th>
+            <th class="px-2 py-2 text-center font-medium">Doelpunten</th>
           </tr>
         </thead>
         <tbody>
@@ -112,7 +114,9 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
 
   <div class="grid gap-8 md:grid-cols-2">
     <section>
-      <SectionHeading title="Meeste doelpunten" />
+      <SectionHeading title="Meeste doelpunten">
+        <InfoToggle text="Gemaakte doelpunten per land — een van de bonusvragen. Verlengingen tellen mee, strafschoppenreeksen niet." />
+      </SectionHeading>
       <div class="overflow-x-auto rounded-xl border bg-card">
         <table class="w-full text-sm">
           <thead>
@@ -147,7 +151,9 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
     </section>
 
     <section>
-      <SectionHeading title="Meeste tegendoelpunten" />
+      <SectionHeading title="Meeste tegendoelpunten">
+        <InfoToggle text="Tegendoelpunten per land — een van de bonusvragen. Verlengingen tellen mee, strafschoppenreeksen niet." />
+      </SectionHeading>
       <div class="overflow-x-auto rounded-xl border bg-card">
         <table class="w-full text-sm">
           <thead>
@@ -535,7 +541,9 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
 
   <div class="mt-8 grid gap-8 md:grid-cols-2">
     <section>
-      <SectionHeading title="Meest getipte eindwinnaar" />
+      <SectionHeading title="Meest getipte eindwinnaar">
+        <InfoToggle text="Hoeveel deelnemers elk land als wereldkampioen tipten." />
+      </SectionHeading>
       <div class="overflow-hidden rounded-xl border bg-card">
         <table class="w-full text-sm">
           <thead>
@@ -572,14 +580,16 @@ const BONUS_COLS: { key: keyof BonusPicks; short: string; title: string }[] = [
     </section>
 
     <section>
-      <SectionHeading title="Meest getipte topschutter" />
+      <SectionHeading title="Meest getipte topschutter">
+        <InfoToggle text="Hoeveel deelnemers elke speler als WK-topschutter tipten. Tik op een speler voor zijn profiel." />
+      </SectionHeading>
       <div class="overflow-hidden rounded-xl border bg-card">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b text-muted-foreground">
               <th class="w-6 px-2 py-2 text-center font-medium">#</th>
               <th class="px-2 py-2 text-left font-medium">Speler</th>
-              <th class="w-14 px-2 py-2 text-center font-medium" title="Doelpunten op het WK">Goals</th>
+              <th class="w-14 px-2 py-2 text-center font-medium" title="Doelpunten op het WK">Dlp.</th>
               <th class="w-16 px-2 py-2 text-center font-medium" title="Aantal deelnemers dat hem tipte">Getipt</th>
             </tr>
           </thead>

@@ -126,7 +126,7 @@ const nextMatch = nextPlanned
 </div>
 
 <script>
-  import { scorerLine } from '@/lib/scorers';
+  import { scorerGroups, scorerTokens } from '@/lib/scorers';
 
   const root = document.querySelector('[data-live-root]') as HTMLElement | null;
   if (root) {
@@ -175,16 +175,23 @@ const nextMatch = nextPlanned
     })();
 
     // Goal-scorer foot line (mirrors MatchScorers.astro's card layout): home
-    // scorers right-aligned, ball divider, away scorers left-aligned. `hero`
-    // switches to the light-on-dark tones of the match-detail hero panel.
+    // scorers right-aligned, ball divider, away scorers left-aligned; a single
+    // centered line (no dangling ball) when only one side scored. Each
+    // player+minutes group stays a nowrap unit so wraps never split a name
+    // from its minutes. `hero` switches to the light-on-dark hero tones.
     const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const groupSpans = (tokens: string[]) =>
+      tokens.map((t) => `<span class="whitespace-nowrap">${esc(t)}</span>`).join(' ');
     const scorersFoot = (goals: any[] | null | undefined, homeId: string, awayId: string, hero = false) => {
-      const h = scorerLine(goals ?? [], homeId);
-      const a = scorerLine(goals ?? [], awayId);
-      if (!h && !a) return '';
+      const h = scorerTokens(scorerGroups(goals ?? [], homeId));
+      const a = scorerTokens(scorerGroups(goals ?? [], awayId));
+      if (!h.length && !a.length) return '';
       const tone = hero ? 'text-ink-foreground/80' : 'text-muted-foreground';
       const ball = hero ? 'text-ink-foreground/50' : 'text-muted-foreground/60';
-      return `<div class="live-scorers mt-2 flex items-start justify-center gap-2 text-[11px] leading-4 ${tone}"><span class="min-w-0 flex-1 text-right">${esc(h)}</span><span class="shrink-0 ${ball}" aria-hidden="true">⚽</span><span class="min-w-0 flex-1 text-left">${esc(a)}</span></div>`;
+      if (!h.length || !a.length) {
+        return `<div class="live-scorers mt-2 text-center text-[11px] leading-4 ${tone}">${groupSpans(h.length ? h : a)}</div>`;
+      }
+      return `<div class="live-scorers mt-2 flex items-start justify-center gap-2 text-[11px] leading-4 ${tone}"><span class="min-w-0 flex-1 text-right">${groupSpans(h)}</span><span class="shrink-0 ${ball}" aria-hidden="true">⚽</span><span class="min-w-0 flex-1 text-left">${groupSpans(a)}</span></div>`;
     };
 
     // Provisional ranking points from a live score (mirrors src/lib/scoring.ts).

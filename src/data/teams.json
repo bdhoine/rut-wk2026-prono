@@ -48,7 +48,8 @@
     "id": "ch",
     "iso": "ch",
     "name": "Zwitserland",
-    "group": "B"
+    "group": "B",
+    "shortName": "Zwits."
   },
   {
     "id": "br",
@@ -182,7 +183,8 @@
     "id": "cv",
     "iso": "cv",
     "name": "Kaapverdië",
-    "group": "H"
+    "group": "H",
+    "shortName": "Kaapv."
   },
   {
     "id": "sa",
@@ -225,7 +227,8 @@
     "id": "ar",
     "iso": "ar",
     "name": "Argentinië",
-    "group": "J"
+    "group": "J",
+    "shortName": "Argent."
   },
   {
     "id": "dz",
@@ -237,7 +240,8 @@
     "id": "at",
     "iso": "at",
     "name": "Oostenrijk",
-    "group": "J"
+    "group": "J",
+    "shortName": "Oostenr."
   },
   {
     "id": "jo",
@@ -261,7 +265,8 @@
     "id": "uz",
     "iso": "uz",
     "name": "Oezbekistan",
-    "group": "K"
+    "group": "K",
+    "shortName": "Oezb."
   },
   {
     "id": "co",
