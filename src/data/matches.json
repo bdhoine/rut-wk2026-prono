@@ -1437,7 +1437,7 @@
     "round": "r16",
     "kickoff": "2026-07-06T00:00Z",
     "venue": "Estadio Azteca, Mexico-Stad",
-    "homeTeamId": null,
+    "homeTeamId": "mx",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar R32-7",
     "awayPlaceholder": "Winnaar R32-8",
