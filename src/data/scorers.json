@@ -20,6 +20,11 @@
     "goals": 5
   },
   {
+    "player": "Ismaïla Sarr",
+    "teamId": "sn",
+    "goals": 4
+  },
+  {
     "player": "Ousmane Dembélé",
     "teamId": "fr",
     "goals": 4
@@ -52,11 +57,6 @@
   {
     "player": "Ismael Saibari",
     "teamId": "ma",
-    "goals": 3
-  },
-  {
-    "player": "Ismaïla Sarr",
-    "teamId": "sn",
     "goals": 3
   },
   {
@@ -145,6 +145,11 @@
     "goals": 2
   },
   {
+    "player": "Habib Diarra",
+    "teamId": "sn",
+    "goals": 2
+  },
+  {
     "player": "Jude Bellingham",
     "teamId": "gbeng",
     "goals": 2
@@ -195,6 +200,11 @@
     "goals": 2
   },
   {
+    "player": "Romelu Lukaku",
+    "teamId": "be",
+    "goals": 2
+  },
+  {
     "player": "Rubén Vargas",
     "teamId": "ch",
     "goals": 2
@@ -202,6 +212,11 @@
   {
     "player": "Yasin Ayari",
     "teamId": "se",
+    "goals": 2
+  },
+  {
+    "player": "Youri Tielemans",
+    "teamId": "be",
     "goals": 2
   },
   {
@@ -387,11 +402,6 @@
   {
     "player": "Granit Xhaka",
     "teamId": "ch",
-    "goals": 1
-  },
-  {
-    "player": "Habib Diarra",
-    "teamId": "sn",
     "goals": 1
   },
   {
@@ -692,11 +702,6 @@
   {
     "player": "Romano Schmid",
     "teamId": "at",
-    "goals": 1
-  },
-  {
-    "player": "Romelu Lukaku",
-    "teamId": "be",
     "goals": 1
   },
   {
