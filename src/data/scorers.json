@@ -15,6 +15,11 @@
     "goals": 5
   },
   {
+    "player": "Harry Kane",
+    "teamId": "gbeng",
+    "goals": 5
+  },
+  {
     "player": "Ousmane Dembélé",
     "teamId": "fr",
     "goals": 4
@@ -42,11 +47,6 @@
   {
     "player": "Elijah Just",
     "teamId": "nz",
-    "goals": 3
-  },
-  {
-    "player": "Harry Kane",
-    "teamId": "gbeng",
     "goals": 3
   },
   {
@@ -292,6 +292,11 @@
   {
     "player": "Breel Embolo",
     "teamId": "ch",
+    "goals": 1
+  },
+  {
+    "player": "Brian Cipenga",
+    "teamId": "cd",
     "goals": 1
   },
   {

@@ -1297,8 +1297,13 @@
     "awayTeamId": "cd",
     "homePlaceholder": "Winnaar Groep L",
     "awayPlaceholder": "Beste 3e (E/H/I/J/K)",
-    "status": "scheduled",
-    "apiId": 760495
+    "status": "finished",
+    "apiId": 760495,
+    "result": {
+      "home": 2,
+      "away": 1
+    },
+    "winnerTeamId": "gbeng"
   },
   {
     "id": "r32-9",
@@ -1438,7 +1443,7 @@
     "kickoff": "2026-07-06T00:00Z",
     "venue": "Estadio Azteca, Mexico-Stad",
     "homeTeamId": "mx",
-    "awayTeamId": null,
+    "awayTeamId": "gbeng",
     "homePlaceholder": "Winnaar R32-7",
     "awayPlaceholder": "Winnaar R32-8",
     "status": "scheduled",
