@@ -151,7 +151,7 @@ const trend = positionTrendAll(10);
         }).join('');
         const legend = series.map((s, si) =>
           `<a href="/deelnemer/${s.id}" class="flex items-center gap-1.5 text-xs hover:underline"><span class="inline-block size-2.5 shrink-0 rounded-full" style="background:${COLORS[si]}"></span><span class="font-medium">${esc(s.name)}</span></a>`).join('');
-        return `<section class="mt-8">
+        return `<section class="mb-8">
           <h2 class="mb-2 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>Klassementsverloop</h2>
           <div class="rounded-xl border bg-card px-3 py-3 shadow-sm">
             <svg viewBox="0 0 ${W} ${H}" class="mx-auto h-auto w-full max-w-[480px]" role="img" aria-label="Klassementspositie van je favorieten over de afgelopen speeldagen">
@@ -185,7 +185,7 @@ const trend = positionTrendAll(10);
           return;
         }
         if (upcoming.length === 0) {
-          root.innerHTML = `<div class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Er staan momenteel geen geplande wedstrijden met voorspellingen klaar.</div>${trendSection(favList)}`;
+          root.innerHTML = `${trendSection(favList)}<div class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Er staan momenteel geen geplande wedstrijden met voorspellingen klaar.</div>`;
           return;
         }
 
@@ -225,7 +225,8 @@ const trend = positionTrendAll(10);
           </div>`;
         }).join('');
 
-        root.innerHTML = `<p class="mb-3 text-sm text-muted-foreground">${favList.length} ${favList.length === 1 ? 'favoriet' : 'favorieten'} · ${upcoming.length} geplande ${upcoming.length === 1 ? 'wedstrijd' : 'wedstrijden'}</p><div class="space-y-4">${cards}</div>${trendSection(favList)}`;
+        const listHeading = `<h2 class="mb-2 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>Volgende wedstrijden</h2>`;
+        root.innerHTML = `${trendSection(favList)}${listHeading}<p class="mb-3 text-sm text-muted-foreground">${favList.length} ${favList.length === 1 ? 'favoriet' : 'favorieten'} · ${upcoming.length} geplande ${upcoming.length === 1 ? 'wedstrijd' : 'wedstrijden'}</p><div class="space-y-4">${cards}</div>`;
       };
 
       render();

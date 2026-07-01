@@ -56,8 +56,9 @@ before committing.
   embedded dataset of everyone's upcoming predictions and filtered to the
   `rut-wk2026-favorieten` localStorage set. It's reached only via the
   `favCompareHref` CTA `RankingTable.tsx` renders under the Favorieten block —
-  passed on the home page only (not `/klassement`), and shown only when there are
-  favourites. A bottom **Klassementsverloop** section draws the favourites'
+  passed on the home page and `/klassement`, and shown only when there are
+  favourites. A top **Klassementsverloop** section (above the match list, which
+  gets its own "Volgende wedstrijden" heading) draws the favourites'
   position trend (last 10 game days) as a client-built SVG in the same style as
   the stats-page top-5 chart, from `positionTrendAll()` (`data.ts`, also the
   base of `top5PositionTrend()`) embedded in the same `fav-data` JSON — but with

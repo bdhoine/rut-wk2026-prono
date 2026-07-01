@@ -26,5 +26,5 @@ const rows = ranking().map((r) => {
     <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. Een muntje markeert de prijsplaatsen (top 5) — tik erop voor het bedrag. Zoek hieronder op naam. Klassement en resultaten updaten niet meteen na een wedstrijd — dit kan even duren." />
   </PageHeader>
   <LiveScores mode="list" showRecent={false} />
-  <RankingTable client:load rows={rows} searchable />
+  <RankingTable client:load rows={rows} searchable favCompareHref="/favorieten" />
 </Layout>
