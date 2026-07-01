@@ -74,7 +74,10 @@ const scoringPayload = withScoring
 // Kickoff times of not-yet-finished matches, so the client can auto-enable live
 // while a match is in progress and auto-disable once it's over (window-based,
 // no API call needed for the decision). Each kickoff carries its venue offset.
-const kickoffWindows = matches.filter((m) => m.status !== 'finished').map((m) => m.kickoff);
+// Knockouts (`et`) can run to 120 min + penalties, so they get a longer window.
+const kickoffWindows = matches
+  .filter((m) => m.status !== 'finished')
+  .map((m) => ({ k: m.kickoff, et: m.round !== 'group' }));
 
 // The next planned match (earliest not-yet-finished, both teams known) — used
 // only by the ?ff-simulate-live=H-A dev/QA flag to fake a live score without a
@@ -139,9 +142,9 @@ const nextMatch = nextPlanned
     const teamMap = JSON.parse(document.getElementById('live-teams')?.textContent || '{}');
     const recentData = JSON.parse(document.getElementById('live-recent')?.textContent || '[]');
     const scoring = JSON.parse(document.getElementById('live-scoring')?.textContent || 'null');
-    const kickoffWindows: number[] = (JSON.parse(document.getElementById('live-windows')?.textContent || '[]') as string[])
-      .map((iso) => new Date(iso).getTime())
-      .filter((t) => Number.isFinite(t));
+    const kickoffWindows = (JSON.parse(document.getElementById('live-windows')?.textContent || '[]') as { k: string; et?: boolean }[])
+      .map((w) => ({ t: new Date(w.k).getTime(), et: !!w.et }))
+      .filter((w) => Number.isFinite(w.t));
     const scoringByPair = new Map<string, any>();
     if (scoring) for (const m of scoring.matches) { scoringByPair.set(`${m.h}|${m.a}`, m); scoringByPair.set(`${m.a}|${m.h}`, m); }
 
@@ -520,15 +523,17 @@ const nextMatch = nextPlanned
     if (mode === 'list') { renderRecent(); }
 
     // Auto-enable while a match is in progress and auto-disable once it's over,
-    // based on kickoff windows (kickoff − 5 min … kickoff + 2.5 h). We only act
-    // on a busy↔idle transition, so a manual toggle in between is respected
-    // until the next match starts or ends.
+    // based on kickoff windows: kickoff − 5 min … kickoff + 2.5 h for group
+    // matches, + 3.25 h for knockouts (which can run to 120 min + penalties).
+    // We only act on a busy↔idle transition, so a manual toggle in between is
+    // respected until the next match starts or ends.
     const PRE_MS = 5 * 60 * 1000;
     const PLAY_MS = 2.5 * 60 * 60 * 1000;
+    const PLAY_ET_MS = 3.25 * 60 * 60 * 1000; // 90' + HT + stoppage + 30' ET + breaks + shootout
     const AUTO_MS = 30 * 1000; // how often to re-check the windows
     const matchBusyNow = () => {
       const now = Date.now();
-      return kickoffWindows.some((k) => now >= k - PRE_MS && now <= k + PLAY_MS);
+      return kickoffWindows.some((w) => now >= w.t - PRE_MS && now <= w.t + (w.et ? PLAY_ET_MS : PLAY_MS));
     };
     let lastBusy: boolean | null = null;
     const autoEvaluate = () => {
