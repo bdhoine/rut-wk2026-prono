@@ -57,7 +57,30 @@ before committing.
   `rut-wk2026-favorieten` localStorage set. It's reached only via the
   `favCompareHref` CTA `RankingTable.tsx` renders under the Favorieten block —
   passed on the home page only (not `/klassement`), and shown only when there are
-  favourites.
+  favourites. A bottom **Klassementsverloop** section draws the favourites'
+  position trend (last 10 game days) as a client-built SVG in the same style as
+  the stats-page top-5 chart, from `positionTrendAll()` (`data.ts`, also the
+  base of `top5PositionTrend()`) embedded in the same `fav-data` JSON — but with
+  the Y-axis spanning the favourites' own position band (not from 1), max 8
+  lines (best-placed first, "+N meer" note beyond that).
+- Goal scorers live per match in `matches.json` (`goals`: player, minute,
+  `og`/`pen` flags; `teamId` is the side the goal counts for — own goals carry
+  the benefiting team, both in the scoreboard details and the summary
+  commentary). `MatchScorers.astro` renders the muted scorer line (home right-
+  aligned · ⚽ · away left-aligned; formatting helpers in `src/lib/scorers.ts`,
+  shared with the LiveScores client bundle) on non-compact `MatchCard`s and — as
+  the `hero` variant — under the score on `wedstrijd/[id]` (compact
+  kalender/programma cards deliberately skip it). Live matches get the same line
+  from the live function payload (`scorers` via `goalsFromEvent()` in
+  `espn.mjs`); `?ff-simulate-live` fabricates "Testspeler" scorers so it stays
+  testable.
+- The **Momentum** section on `wedstrijd/[id]` (finished matches only) renders
+  `match.momentum` — computed by the results updater from ESPN's summary
+  play-by-play (goals/shots/corners weighted per 5-minute bucket, + = home; one
+  summary fetch per match, skipped once `momentum` and the shootout kicks are
+  stored) — via `MomentumChart.astro`: bars around a centre line, dashed
+  half-time/ET dividers, ball markers per goal on the scoring side. It is
+  build-time only (no live recompute).
 - Provisional bonus status (used on `deelnemer/[id]` and the `/statistieken`
   "voorlopig op koers" board) comes from `bonusStandings()` in `data.ts`
   (`eliminatedTeamIds()` + `currentBonusLeaders()`); bonus outcomes only resolve

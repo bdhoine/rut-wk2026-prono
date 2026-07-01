@@ -865,24 +865,40 @@ export interface PositionTrendSeries {
   days: { day: string; position: number }[];
 }
 
-/** Position trend of the current top-5 over the last `maxDays` game days. */
-export function top5PositionTrend(maxDays = 10): PositionTrendSeries[] {
+/** Compact position trend of ALL participants over the last `maxDays` game
+ *  days, ordered by current position — the embeddable dataset behind the
+ *  client-rendered favourites chart on /favorieten (which filters it to the
+ *  visitor's localStorage favourites) and the source for top5PositionTrend. */
+export interface PositionTrendData {
+  days: string[];
+  p: { id: string; name: string; pos: number[] }[];
+}
+
+export function positionTrendAll(maxDays = 10): PositionTrendData {
   const timeline = rankingTimeline();
-  if (timeline.length === 0) return [];
+  if (timeline.length === 0) return { days: [], p: [] };
   const slice = timeline.slice(-maxDays);
   const latest = timeline[timeline.length - 1];
-  const top5 = [...latest.posById.entries()]
-    .sort((a, b) => a[1] - b[1])
-    .slice(0, 5)
-    .map(([id]) => id);
-  return top5.map((id) => {
-    const p = participants.find((x) => x.id === id)!;
-    return {
-      participantId: id,
-      name: p.name,
-      days: slice.map((snap) => ({ day: snap.day, position: snap.posById.get(id) ?? latest.posById.get(id)! })),
-    };
-  });
+  return {
+    days: slice.map((s) => s.day),
+    p: participants
+      .map((x) => ({
+        id: x.id,
+        name: x.name,
+        pos: slice.map((snap) => snap.posById.get(x.id) ?? latest.posById.get(x.id) ?? 0),
+      }))
+      .sort((a, b) => a.pos[a.pos.length - 1] - b.pos[b.pos.length - 1]),
+  };
+}
+
+/** Position trend of the current top-5 over the last `maxDays` game days. */
+export function top5PositionTrend(maxDays = 10): PositionTrendSeries[] {
+  const { days, p } = positionTrendAll(maxDays);
+  return p.slice(0, 5).map((s) => ({
+    participantId: s.id,
+    name: s.name,
+    days: days.map((day, i) => ({ day, position: s.pos[i] })),
+  }));
 }
 
 /** Most-predicted scorelines across all participants' predictions. */

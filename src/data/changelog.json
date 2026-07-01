@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-07-02",
+    "title": "Doelpuntenmakers, momentum & favorieten-grafiek",
+    "items": [
+      "Bij elke gespeelde wedstrijd zie je nu wie er scoorde en wanneer: op de wedstrijdpagina onder de score en op de wedstrijdkaarten (bv. op een landpagina en bij 'recent gespeeld' op de homepagina). Strafschoppen zijn gemarkeerd met (p), owngoals met (e.d.).",
+      "Ook tijdens een lopende wedstrijd verschijnen de doelpuntenmakers live onder de score, op de wedstrijdpagina en op de live-kaarten.",
+      "Nieuw op de wedstrijdpagina: een momentum-grafiek zoals op tv — per 5 minuten zie je welk land de bovenhand had (berekend uit doelpunten, schoten en hoekschoppen), met de doelpunten als balletjes op de tijdlijn.",
+      "De favorietenpagina kreeg onderaan een 'Klassementsverloop'-grafiek: het positieverloop van je favorieten over de laatste 10 speeldagen, zoals de top 5-grafiek op de statistiekenpagina."
+    ]
+  },
+  {
     "date": "2026-06-30",
     "title": "Strafschoppenreeksen in beeld",
     "items": [

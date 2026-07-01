@@ -1,0 +1,29 @@
+---
+// Compact goal-scorers line under a finished match's score: home scorers in
+// the left half (right-aligned, mirroring the card's team columns), a small
+// ball divider, away scorers in the right half. Two variants:
+//  - card: muted small print for MatchCard (non-compact) and similar contexts;
+//  - hero: light-on-dark for the match-detail hero panel.
+import type { MatchGoal } from '@/lib/types';
+import { scorerLine } from '@/lib/scorers';
+
+interface Props {
+  goals: MatchGoal[];
+  homeTeamId: string | null;
+  awayTeamId: string | null;
+  variant?: 'card' | 'hero';
+  class?: string;
+}
+const { goals, homeTeamId, awayTeamId, variant = 'card', class: className } = Astro.props;
+const home = scorerLine(goals, homeTeamId);
+const away = scorerLine(goals, awayTeamId);
+const tone = variant === 'hero' ? 'text-ink-foreground/80' : 'text-muted-foreground';
+const ballTone = variant === 'hero' ? 'text-ink-foreground/50' : 'text-muted-foreground/60';
+---
+{(home || away) && (
+  <div class:list={['flex items-start justify-center gap-2 text-[11px] leading-4', tone, className]}>
+    <span class="min-w-0 flex-1 text-right">{home}</span>
+    <span class={`shrink-0 ${ballTone}`} aria-hidden="true">⚽</span>
+    <span class="min-w-0 flex-1 text-left">{away}</span>
+  </div>
+)}

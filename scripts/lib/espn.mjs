@@ -148,9 +148,41 @@ export function liveMatchesFromEvents(events) {
         goalsAway: parseInt(away?.score, 10) || 0,
         elapsed: ht ? null : clock || null,
         status: ht ? 'HT' : 'LIVE',
+        scorers: goalsFromEvent(e),
       };
     })
     .filter((m) => m.homeTeamId && m.awayTeamId);
+}
+
+/** Per-goal events of a match as [{ player, teamId, minute, og?, pen? }] in
+ *  scoring order, shootout kicks excluded. Own goals are kept (flagged `og`);
+ *  ESPN attributes them to the team the goal counts FOR (verified: an own goal
+ *  by a Morocco player carries Haiti's team id), so `teamId` is always the
+ *  side the goal belongs to on the scoreboard. Used for the match-card /
+ *  match-page scorer lines (committed via matches.json and in the live payload). */
+export function goalsFromEvent(e) {
+  const { comp } = sides(e);
+  const ourByEspnId = new Map();
+  for (const c of comp.competitors ?? []) ourByEspnId.set(String(c.team?.id), resolveTeamId(c.team?.displayName));
+  const out = [];
+  for (const p of comp.details ?? []) {
+    if (!p.scoringPlay || p.shootout) continue;
+    const player = (p.athletesInvolved ?? [])[0]?.displayName;
+    const teamId = ourByEspnId.get(String(p.team?.id));
+    if (!player || !teamId) continue;
+    const goal = {
+      player,
+      teamId,
+      minute: p.clock?.displayValue ?? '',
+      order: typeof p.clock?.value === 'number' ? p.clock.value : 0,
+    };
+    if (p.ownGoal) goal.og = true;
+    if (p.penaltyKick) goal.pen = true;
+    out.push(goal);
+  }
+  // clock.value is continuous across periods (2nd half continues past 2700s),
+  // so a plain sort restores scoring order; drop the helper key afterwards.
+  return out.sort((a, b) => a.order - b.order).map(({ order, ...g }) => g);
 }
 
 /** Goal scorers of an event as [{ player, teamId }], own goals excluded (they
@@ -253,17 +285,71 @@ export async function getEvents({ dates = TOURNAMENT_DATES, timeoutMs, retries }
 
 const SUMMARY = `https://site.api.espn.com/apis/site/v2/sports/soccer/${LEAGUE}/summary`;
 
-/** Penalty-shootout kicks for an event, from the summary endpoint (the
- *  scoreboard only carries the totals). Returns `[{ teamId, kicks: boolean[] }]`
- *  (kicks in shot order, true = scored), or null when there's no shootout. */
-export async function fetchShootout(eventId, opts = {}) {
-  const json = await fetchJson(`${SUMMARY}?event=${eventId}`, opts);
+/** Full summary payload for an event — carries the shootout kicks and the
+ *  play-by-play commentary the scoreboard lacks. One fetch serves both
+ *  `shootoutFromSummary` and `momentumFromSummary`. */
+export async function fetchSummary(eventId, opts = {}) {
+  return fetchJson(`${SUMMARY}?event=${eventId}`, opts);
+}
+
+/** Penalty-shootout kicks from a summary payload. Returns
+ *  `[{ teamId, kicks: boolean[] }]` (kicks in shot order, true = scored), or
+ *  null when there's no shootout. */
+export function shootoutFromSummary(json) {
   const arr = json?.shootout;
   if (!Array.isArray(arr) || arr.length < 2) return null;
   return arr.map((t) => ({
     teamId: resolveTeamId(t.team),
     kicks: [...(t.shots ?? [])].sort((a, b) => (a.shotNumber ?? 0) - (b.shotNumber ?? 0)).map((s) => !!s.didScore),
   }));
+}
+
+// TV-style momentum: weight of each commentary play type toward the acting
+// team's pressure. Goals dominate, attempts count by how threatening they were.
+const MOMENTUM_WEIGHTS = [
+  [/^(own )?goal\b|^penalty - scored/i, 6], // "Goal", "Goal - Header/Volley/Free-kick", "Own Goal", "Penalty - Scored"
+  [/shot on target/i, 3],
+  [/shot blocked/i, 2],
+  [/shot off target/i, 1],
+  [/corner awarded/i, 1],
+];
+// End of each period in 5-minute buckets: 45' → 9, 90' → 18, 105' → 21, 120' → 24.
+const PERIOD_END_BUCKET = { 1: 9, 2: 18, 3: 21, 4: 24 };
+
+/** Momentum per 5 minutes from a summary payload's commentary, signed toward
+ *  the given home side (+ = home pressure, − = away). Returns
+ *  `{ bucketMin: 5, values: number[] }` (18 buckets, 24 with extra time), or
+ *  null when the commentary is missing or has no weighable plays. */
+export function momentumFromSummary(json, homeTeamId) {
+  const plays = (json?.commentary ?? []).map((c) => c?.play).filter(Boolean);
+  let maxPeriod = 2;
+  const scored = [];
+  for (const p of plays) {
+    const typeText = p?.type?.text ?? '';
+    const weight = MOMENTUM_WEIGHTS.find(([re]) => re.test(typeText))?.[1];
+    if (!weight) continue;
+    const teamId = resolveTeamId(p?.team?.displayName);
+    if (!teamId) continue;
+    const period = p?.period?.number ?? 1;
+    if (period > 4) continue; // shootout "period" carries no momentum
+    const seconds = typeof p?.clock?.value === 'number' ? p.clock.value : null;
+    if (seconds == null) continue;
+    // Own goals need no flip: like the scoreboard details, the commentary
+    // attributes them to the team the goal counts FOR (verified: "Own Goal by
+    // Aymen Hussein, Iraq" carries team = Norway).
+    const forHome = teamId === homeTeamId;
+    // clock.value caps at the period's regulation end (45'+4' → 2700s), so
+    // stoppage-time plays clamp into the period's last bucket.
+    const bucket = Math.min(Math.floor(seconds / 300), (PERIOD_END_BUCKET[period] ?? 18) - 1);
+    scored.push({ bucket, delta: forHome ? weight : -weight });
+    if (period > maxPeriod) maxPeriod = period;
+  }
+  if (!scored.length) return null;
+  // Extra time always runs to 120' — pad to 24 buckets even when the last ET
+  // half had no weighable play.
+  const values = new Array(PERIOD_END_BUCKET[maxPeriod > 2 ? 4 : 2]).fill(0);
+  for (const { bucket, delta } of scored) values[Math.min(bucket, values.length - 1)] += delta;
+  return { bucketMin: 5, values };
 }
 
 /** Link our matches.json entries to ESPN events. Each match resolves via, in

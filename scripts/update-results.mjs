@@ -17,7 +17,17 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { getEvents, linkMatches, eventSides, eventStatus, scorersFromEvent, fetchShootout } from './lib/espn.mjs';
+import {
+  getEvents,
+  linkMatches,
+  eventSides,
+  eventStatus,
+  scorersFromEvent,
+  goalsFromEvent,
+  fetchSummary,
+  shootoutFromSummary,
+  momentumFromSummary,
+} from './lib/espn.mjs';
 
 const DATA = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data');
 const read = (name) => JSON.parse(readFileSync(join(DATA, name), 'utf8'));
@@ -73,20 +83,43 @@ async function main() {
       if (s.winnerId === m.homeTeamId || s.winnerId === m.awayTeamId) m.winnerTeamId = s.winnerId;
       else if (home > away) m.winnerTeamId = m.homeTeamId;
       else if (away > home) m.winnerTeamId = m.awayTeamId;
+      // Per-goal scorers (player, minute, own goal / penalty flags) for the
+      // match-card and match-page scorer lines. Entries carry our team ids, so
+      // no home/away flip is needed.
+      const goals = goalsFromEvent(e);
+      if (goals.length) m.goals = goals;
       // Penalty shootout score (knockouts decided on penalties), in our orientation.
       if (s.homeShootout != null && s.awayShootout != null) {
+        const prev = m.penalties ?? {};
         m.penalties = flip
           ? { home: s.awayShootout, away: s.homeShootout }
           : { home: s.homeShootout, away: s.awayShootout };
-        // Enrich with the per-kick sequence (summary endpoint) for the detail view.
+        // Keep the previously enriched kick sequences so the summary fetch
+        // below stays a one-off per match.
+        if (prev.homeKicks?.length) m.penalties.homeKicks = prev.homeKicks;
+        if (prev.awayKicks?.length) m.penalties.awayKicks = prev.awayKicks;
+      }
+      // Enrich from the summary endpoint (one fetch per match, skipped once
+      // both are stored): the per-kick shootout sequence for the detail view
+      // and the per-5-minutes momentum curve for the match page.
+      const needKicks = !!m.penalties && !(m.penalties.homeKicks?.length && m.penalties.awayKicks?.length);
+      const needMomentum = !m.momentum?.values?.length;
+      if (needKicks || needMomentum) {
         try {
-          const kicks = await fetchShootout(e.id, { retries: 2, timeoutMs: 12000 });
-          const homeKicks = kicks?.find((k) => k.teamId === m.homeTeamId)?.kicks;
-          const awayKicks = kicks?.find((k) => k.teamId === m.awayTeamId)?.kicks;
-          if (homeKicks?.length) m.penalties.homeKicks = homeKicks;
-          if (awayKicks?.length) m.penalties.awayKicks = awayKicks;
+          const summary = await fetchSummary(e.id, { retries: 2, timeoutMs: 12000 });
+          if (needKicks) {
+            const kicks = shootoutFromSummary(summary);
+            const homeKicks = kicks?.find((k) => k.teamId === m.homeTeamId)?.kicks;
+            const awayKicks = kicks?.find((k) => k.teamId === m.awayTeamId)?.kicks;
+            if (homeKicks?.length) m.penalties.homeKicks = homeKicks;
+            if (awayKicks?.length) m.penalties.awayKicks = awayKicks;
+          }
+          if (needMomentum) {
+            const momentum = momentumFromSummary(summary, m.homeTeamId);
+            if (momentum) m.momentum = momentum;
+          }
         } catch (err) {
-          log(`shootout detail fetch failed for ${m.id} (${err.message})`);
+          log(`summary detail fetch failed for ${m.id} (${err.message})`);
         }
       }
       if (changed) scored++;

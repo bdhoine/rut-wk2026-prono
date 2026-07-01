@@ -1,0 +1,111 @@
+---
+// Build-time inline SVG: TV-style momentum for a finished match. One bar per
+// 5 minutes — above the centre line is home pressure (gold), below is away
+// (blue) — lightly smoothed with the neighbouring buckets for the broadcast
+// feel. Dashed dividers mark half-time (and 90' when there was extra time);
+// ball markers sit on the scoring side at each goal's minute.
+import Flag from './Flag.astro';
+import { sideLabel } from '@/lib/data';
+import { shortPlayer } from '@/lib/scorers';
+import type { Match } from '@/lib/types';
+
+interface Props {
+  match: Match;
+}
+const { match } = Astro.props;
+const momentum = match.momentum!;
+const home = sideLabel(match, 'home');
+const away = sideLabel(match, 'away');
+
+const HOME_COLOR = '#dca21f';
+const AWAY_COLOR = '#3b82f6';
+
+const W = 320;
+const H = 158;
+const padL = 8;
+const padR = 8;
+const padT = 16;
+const padB = 26; // room for the away-side goal markers AND the minute labels below them
+const innerW = W - padL - padR;
+const midY = padT + (H - padT - padB) / 2;
+const halfH = (H - padT - padB) / 2 - 2;
+
+const raw = momentum.values;
+const n = raw.length;
+const minutesTotal = n * momentum.bucketMin;
+const extraTime = n > 18;
+
+// Light 1-2-1 smoothing so single events don't spike the curve.
+const at = (i: number) => raw[Math.min(Math.max(i, 0), n - 1)];
+const values = raw.map((_, i) => (at(i - 1) + 2 * at(i) + at(i + 1)) / 4);
+const maxAbs = Math.max(1, ...values.map((v) => Math.abs(v)));
+
+const gap = 1.5;
+const barW = innerW / n - gap;
+const bars = values.map((v, i) => {
+  const h = (Math.abs(v) / maxAbs) * halfH;
+  return {
+    x: padL + i * (innerW / n) + gap / 2,
+    y: v >= 0 ? midY - h : midY,
+    h,
+    home: v >= 0,
+  };
+});
+
+// Vertical dividers at half boundaries: always 45', plus 90' with extra time.
+const minuteX = (min: number) => padL + (Math.min(min, minutesTotal) / minutesTotal) * innerW;
+const dividers = [45, ...(extraTime ? [90] : [])];
+
+// Goal markers on the scoring side (own goals already carry the benefiting team).
+const goalMarks = (match.goals ?? []).map((g) => {
+  const min = parseInt(g.minute, 10) || 0;
+  return {
+    x: minuteX(min),
+    isHome: g.teamId === match.homeTeamId,
+    title: `${g.minute} ${shortPlayer(g.player)}${g.pen ? ' (p)' : ''}${g.og ? ' (e.d.)' : ''}`,
+  };
+});
+---
+<div class="rounded-xl border bg-card px-3 py-3 shadow-sm">
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    class="mx-auto h-auto w-full max-w-[480px]"
+    role="img"
+    aria-label={`Momentum per 5 minuten: boven de middellijn ${home.label}, eronder ${away.label}`}
+  >
+    <!-- bars -->
+    {bars.map((b) => (
+      <rect x={b.x.toFixed(1)} y={b.y.toFixed(1)} width={barW.toFixed(1)} height={Math.max(b.h, 0.5).toFixed(1)} rx="1" fill={b.home ? HOME_COLOR : AWAY_COLOR} opacity="0.85" />
+    ))}
+    <!-- centre line above the bars -->
+    <line x1={padL} y1={midY} x2={W - padR} y2={midY} class="stroke-border" stroke-width="1" />
+    <!-- half dividers -->
+    {dividers.map((min) => (
+      <line x1={minuteX(min)} y1={padT - 2} x2={minuteX(min)} y2={H - padB + 2} class="stroke-border/70" stroke-width="1" stroke-dasharray="3 3" />
+    ))}
+    <!-- goal markers -->
+    {goalMarks.map((g) => (
+      <text x={g.x} y={g.isHome ? padT - 4 : H - padB + 12} text-anchor="middle" font-size="9" aria-hidden="true">⚽<title>{g.title}</title></text>
+    ))}
+    <!-- minute labels -->
+    <text x={padL} y={H - 4} text-anchor="start" class="fill-muted-foreground text-[10px]">0'</text>
+    {dividers.map((min) => (
+      <text x={minuteX(min)} y={H - 4} text-anchor="middle" class="fill-muted-foreground text-[10px]">{min}'</text>
+    ))}
+    <text x={W - padR} y={H - 4} text-anchor="end" class="fill-muted-foreground text-[10px]">{minutesTotal}'</text>
+  </svg>
+
+  <!-- Legend -->
+  <div class="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1.5 px-2">
+    <span class="flex items-center gap-1.5 text-xs">
+      <span class="inline-block size-2.5 shrink-0 rounded-full" style={`background:${HOME_COLOR}`}></span>
+      <Flag iso={home.team?.iso} name={home.label} class="text-sm" />
+      <span class="font-medium">{home.label}</span>
+    </span>
+    <span class="flex items-center gap-1.5 text-xs">
+      <span class="inline-block size-2.5 shrink-0 rounded-full" style={`background:${AWAY_COLOR}`}></span>
+      <Flag iso={away.team?.iso} name={away.label} class="text-sm" />
+      <span class="font-medium">{away.label}</span>
+    </span>
+  </div>
+</div>

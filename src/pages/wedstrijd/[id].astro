@@ -1,6 +1,8 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import Flag from '@/components/Flag.astro';
+import MatchScorers from '@/components/MatchScorers.astro';
+import MomentumChart from '@/components/MomentumChart.astro';
 import ScoreBoxes from '@/components/ScoreBoxes.astro';
 import PointsBadge from '@/components/PointsBadge.astro';
 import LiveScores from '@/components/LiveScores.astro';
@@ -116,6 +118,9 @@ const liveCalc = hasTeams && !finished
         <span class:list={['text-sm font-medium', awayHref && 'group-hover:underline']}>{away.label}</span>
       </a>
     </div>
+    {finished && match.goals?.length && (
+      <MatchScorers goals={match.goals} homeTeamId={match.homeTeamId} awayTeamId={match.awayTeamId} variant="hero" class="mt-1 text-xs" />
+    )}
     {finished && match.penalties && (
       <div class="mt-4 space-y-1.5" aria-label={`Strafschoppen ${match.penalties.home}–${match.penalties.away}`}>
         <div class="flex items-center justify-center gap-2">
@@ -171,6 +176,15 @@ const liveCalc = hasTeams && !finished
         </div>
       ))}
     </div>
+  )}
+
+  {finished && match.momentum?.values?.length && (
+    <section class="mb-6">
+      <SectionHeading title="Momentum">
+        <InfoToggle text="Wie had de bovenhand tijdens de wedstrijd? Balken boven de middellijn: druk van de thuisploeg, eronder: van de uitploeg — berekend uit doelpunten, schoten en hoekschoppen per 5 minuten. De ballen markeren de doelpunten." />
+      </SectionHeading>
+      <MomentumChart match={match} />
+    </section>
   )}
 
   <section>

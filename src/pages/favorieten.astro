@@ -8,7 +8,7 @@ import Layout from '@/layouts/Layout.astro';
 import PageHeader from '@/components/PageHeader.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import LiveScores from '@/components/LiveScores.astro';
-import { participants, ranking, getTeam, matches, predictions, settings } from '@/lib/data';
+import { participants, ranking, getTeam, matches, predictions, settings, positionTrendAll } from '@/lib/data';
 import { ROUND_LABELS } from '@/lib/types';
 import { byKickoff, formatKickoff } from '@/lib/format';
 
@@ -57,6 +57,10 @@ const favData = participants
     };
   })
   .sort((a, b) => (a.pos ?? Infinity) - (b.pos ?? Infinity) || a.name.localeCompare(b.name, 'nl'));
+
+// Per-day positions of everyone over the last 10 game days, for the
+// client-rendered "Klassementsverloop" chart of the favourites.
+const trend = positionTrendAll(10);
 ---
 <Layout title="Favorieten — Rut Prono WK 2026">
   <LiveScores />
@@ -68,7 +72,7 @@ const favData = participants
     <p class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Laden…</p>
   </div>
 
-  <script type="application/json" id="fav-data" set:html={JSON.stringify({ m: upcoming, p: favData })}></script>
+  <script type="application/json" id="fav-data" set:html={JSON.stringify({ m: upcoming, p: favData, t: trend })}></script>
 
   <script is:inline>
     (() => {
@@ -112,6 +116,60 @@ const favData = participants
         return { rh: swapped ? lm.goalsAway : lm.goalsHome, ra: swapped ? lm.goalsHome : lm.goalsAway, lm };
       };
 
+      // "Klassementsverloop" chart of the favourites: same look/geometry as
+      // PositionTrendChart.astro (stats page), but built in the browser because
+      // the shown lines depend on the localStorage favourites. Unlike the top-5
+      // chart the Y-axis spans the favourites' own position band (not from 1),
+      // so lines low in the klassement still get the full chart height.
+      const trend = raw.t || { days: [], p: [] };
+      const trendById = Object.fromEntries((trend.p || []).map((s) => [s.id, s]));
+      const COLORS = ['#dca21f', '#3b82f6', '#ef4444', '#10b981', '#a855f7', '#f97316', '#14b8a6', '#ec4899'];
+      const MAX_LINES = COLORS.length;
+      const fmtDay = (d) => { const [, m, dd] = d.split('-'); return `${Number(dd)}/${Number(m)}`; };
+      const trendSection = (favList) => {
+        const days = trend.days || [];
+        // favList is sorted by current position, so the slice keeps the best-placed.
+        const series = favList.map((p) => trendById[p.id]).filter(Boolean).slice(0, MAX_LINES);
+        if (days.length < 2 || series.length === 0) return '';
+        const dropped = favList.length - series.length;
+        const W = 320, H = 160, padL = 26, padR = 12, padT = 14, padB = 24;
+        const all = series.flatMap((s) => s.pos);
+        const minP = Math.min(...all);
+        const maxP = Math.max(minP + 1, ...all);
+        const denom = maxP - minP;
+        const n = days.length;
+        const x = (i) => padL + (i * (W - padL - padR)) / (n - 1);
+        const y = (pos) => padT + ((pos - minP) / denom) * (H - padT - padB);
+        const axisY = H - padB;
+        const grid = [0.25, 0.5, 0.75].map((t) =>
+          `<line x1="${padL}" y1="${padT + t * (H - padT - padB)}" x2="${W - padR}" y2="${padT + t * (H - padT - padB)}" class="stroke-border/40" stroke-width="1" stroke-dasharray="3 3" />`).join('');
+        const lines = series.map((s, si) => {
+          const pts = s.pos.map((p, i) => `${x(i).toFixed(1)},${y(p).toFixed(1)}`).join(' ');
+          const dots = s.pos.map((p, i) =>
+            `<circle cx="${x(i).toFixed(1)}" cy="${y(p).toFixed(1)}" r="${i === n - 1 ? 3.5 : 2}" fill="${COLORS[si]}" />`).join('');
+          return `<g><polyline points="${pts}" fill="none" stroke="${COLORS[si]}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />${dots}</g>`;
+        }).join('');
+        const legend = series.map((s, si) =>
+          `<a href="/deelnemer/${s.id}" class="flex items-center gap-1.5 text-xs hover:underline"><span class="inline-block size-2.5 shrink-0 rounded-full" style="background:${COLORS[si]}"></span><span class="font-medium">${esc(s.name)}</span></a>`).join('');
+        return `<section class="mt-8">
+          <h2 class="mb-2 flex items-center gap-2 text-lg font-semibold"><span class="bar-cut" aria-hidden="true"></span>Klassementsverloop</h2>
+          <div class="rounded-xl border bg-card px-3 py-3 shadow-sm">
+            <svg viewBox="0 0 ${W} ${H}" class="mx-auto h-auto w-full max-w-[480px]" role="img" aria-label="Klassementspositie van je favorieten over de afgelopen speeldagen">
+              <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${axisY}" class="stroke-border" stroke-width="1" />
+              <line x1="${padL}" y1="${axisY}" x2="${W - padR}" y2="${axisY}" class="stroke-border" stroke-width="1" />
+              ${grid}
+              <text x="${padL - 5}" y="${padT + 4}" text-anchor="end" class="fill-muted-foreground text-[10px]">${minP}</text>
+              <text x="${padL - 5}" y="${axisY + 4}" text-anchor="end" class="fill-muted-foreground text-[10px]">${maxP}</text>
+              <text x="${x(0)}" y="${H - 5}" text-anchor="middle" class="fill-muted-foreground text-[10px]">${fmtDay(days[0])}</text>
+              <text x="${x(n - 1)}" y="${H - 5}" text-anchor="middle" class="fill-muted-foreground text-[10px]">${fmtDay(days[n - 1])}</text>
+              ${lines}
+            </svg>
+            <div class="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1.5 px-2">${legend}</div>
+            ${dropped > 0 ? `<p class="mt-1.5 text-center text-xs text-muted-foreground">De ${MAX_LINES} best geplaatste favorieten worden getoond (+${dropped} meer).</p>` : ''}
+          </div>
+        </section>`;
+      };
+
       const render = () => {
         let favs = [];
         try { favs = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { favs = []; }
@@ -127,7 +185,7 @@ const favData = participants
           return;
         }
         if (upcoming.length === 0) {
-          root.innerHTML = `<div class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Er staan momenteel geen geplande wedstrijden met voorspellingen klaar.</div>`;
+          root.innerHTML = `<div class="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">Er staan momenteel geen geplande wedstrijden met voorspellingen klaar.</div>${trendSection(favList)}`;
           return;
         }
 
@@ -167,7 +225,7 @@ const favData = participants
           </div>`;
         }).join('');
 
-        root.innerHTML = `<p class="mb-3 text-sm text-muted-foreground">${favList.length} ${favList.length === 1 ? 'favoriet' : 'favorieten'} · ${upcoming.length} geplande ${upcoming.length === 1 ? 'wedstrijd' : 'wedstrijden'}</p><div class="space-y-4">${cards}</div>`;
+        root.innerHTML = `<p class="mb-3 text-sm text-muted-foreground">${favList.length} ${favList.length === 1 ? 'favoriet' : 'favorieten'} · ${upcoming.length} geplande ${upcoming.length === 1 ? 'wedstrijd' : 'wedstrijden'}</p><div class="space-y-4">${cards}</div>${trendSection(favList)}`;
       };
 
       render();

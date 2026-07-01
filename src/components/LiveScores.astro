@@ -46,6 +46,7 @@ const recent =
           goalsHome: m.result!.home,
           goalsAway: m.result!.away,
           pens: m.penalties ?? null,
+          goals: m.goals ?? null,
           kickoff: m.kickoff,
         }))
     : [];
@@ -122,6 +123,8 @@ const nextMatch = nextPlanned
 </div>
 
 <script>
+  import { scorerLine } from '@/lib/scorers';
+
   const root = document.querySelector('[data-live-root]') as HTMLElement | null;
   if (root) {
     const mode = root.dataset.liveMode || 'overlay';
@@ -152,8 +155,34 @@ const nextMatch = nextPlanned
       if (raw == null || !nextMatch) return null;
       const m = raw.match(/^\s*(\d{1,2})\s*[-–:]\s*(\d{1,2})\s*$/);
       if (!m) return null;
-      return { ...nextMatch, goalsHome: Number(m[1]), goalsAway: Number(m[2]), elapsed: 1, status: 'in', simulated: true };
+      // Fabricate one scorer per simulated goal so the live scorer line can be QA'd.
+      const fake = (n: number, teamId: string) =>
+        Array.from({ length: n }, (_, i) => ({ player: 'Testspeler', teamId, minute: `${12 + i * 17}'` }));
+      const goalsHome = Number(m[1]);
+      const goalsAway = Number(m[2]);
+      return {
+        ...nextMatch,
+        goalsHome,
+        goalsAway,
+        elapsed: 1,
+        status: 'in',
+        simulated: true,
+        scorers: [...fake(goalsHome, nextMatch.homeTeamId), ...fake(goalsAway, nextMatch.awayTeamId)],
+      };
     })();
+
+    // Goal-scorer foot line (mirrors MatchScorers.astro's card layout): home
+    // scorers right-aligned, ball divider, away scorers left-aligned. `hero`
+    // switches to the light-on-dark tones of the match-detail hero panel.
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const scorersFoot = (goals: any[] | null | undefined, homeId: string, awayId: string, hero = false) => {
+      const h = scorerLine(goals ?? [], homeId);
+      const a = scorerLine(goals ?? [], awayId);
+      if (!h && !a) return '';
+      const tone = hero ? 'text-ink-foreground/80' : 'text-muted-foreground';
+      const ball = hero ? 'text-ink-foreground/50' : 'text-muted-foreground/60';
+      return `<div class="live-scorers mt-2 flex items-start justify-center gap-2 text-[11px] leading-4 ${tone}"><span class="min-w-0 flex-1 text-right">${esc(h)}</span><span class="shrink-0 ${ball}" aria-hidden="true">⚽</span><span class="min-w-0 flex-1 text-left">${esc(a)}</span></div>`;
+    };
 
     // Provisional ranking points from a live score (mirrors src/lib/scoring.ts).
     const basePts = (ph: number, pa: number, rh: number, ra: number) => {
@@ -238,7 +267,7 @@ const nextMatch = nextPlanned
     const liveBadge = (m: any) =>
       `<span class="live-badge inline-flex items-center gap-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white"><span class="size-1.5 animate-pulse rounded-full bg-white"></span>${minLabel(m)}</span>`;
 
-    function card(homeId: string, awayId: string, hName: string, aName: string, meta: string, scoreHtml: string, href?: string, sub?: string) {
+    function card(homeId: string, awayId: string, hName: string, aName: string, meta: string, scoreHtml: string, href?: string, sub?: string, foot?: string) {
       const el = document.createElement(href ? 'a' : 'div') as HTMLElement;
       if (href) (el as HTMLAnchorElement).href = href;
       el.className = href
@@ -253,7 +282,7 @@ const nextMatch = nextPlanned
           <div class="flex min-w-0 flex-1 items-center justify-end gap-2"><span class="truncate text-right font-medium">${hName}</span>${flag(homeId, hName)}</div>
           <div class="flex shrink-0 flex-col items-center gap-0.5">${scoreHtml}${sub || ''}</div>
           <div class="flex min-w-0 flex-1 items-center gap-2">${flag(awayId, aName)}<span class="truncate font-medium">${aName}</span></div>
-        </div>`;
+        </div>${foot || ''}`;
       return el;
     }
 
@@ -271,7 +300,8 @@ const nextMatch = nextPlanned
         recentCards.appendChild(
           card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
             `<span>${fmtDateTime(m.kickoff)}</span>`, finalPill(m.goalsHome, m.goalsAway),
-            m.id ? `/wedstrijd/${m.id}` : undefined, penSub(m.pens)),
+            m.id ? `/wedstrijd/${m.id}` : undefined, penSub(m.pens),
+            scorersFoot(m.goals, m.homeTeamId, m.awayTeamId)),
         );
       }
       updateListVisibility();
@@ -297,6 +327,7 @@ const nextMatch = nextPlanned
         }
         touched.clear();
         document.querySelectorAll('.live-standing').forEach((el) => el.remove());
+        document.querySelectorAll('.live-scorers').forEach((el) => el.remove());
       }
     }
 
@@ -344,7 +375,8 @@ const nextMatch = nextPlanned
             const mid = scoringByPair.get(key(m.homeTeamId, m.awayTeamId))?.id;
             liveCards.appendChild(
               card(m.homeTeamId, m.awayTeamId, teamName(m.homeTeamId, m.home), teamName(m.awayTeamId, m.away),
-                liveBadge(m), livePill(m.goalsHome, m.goalsAway), mid ? `/wedstrijd/${mid}` : undefined),
+                liveBadge(m), livePill(m.goalsHome, m.goalsAway), mid ? `/wedstrijd/${mid}` : undefined, undefined,
+                scorersFoot(m.scorers, m.homeTeamId, m.awayTeamId)),
             );
             shown++;
           }
@@ -385,6 +417,22 @@ const nextMatch = nextPlanned
         if (!stack) {
           const meta = c.querySelector('.match-meta');
           if (meta && !meta.querySelector('.live-badge')) meta.insertAdjacentHTML('afterbegin', liveBadge(m));
+        }
+        // Live scorer line at the card's foot, oriented to the card's sides.
+        // Skipped on compact cards (kalender/programma keep their density);
+        // the hero variant slots in above the venue line.
+        if (!compact && m.scorers?.length && !c.querySelector('.live-scorers')) {
+          const foot = scorersFoot(
+            m.scorers,
+            swapped ? m.awayTeamId : m.homeTeamId,
+            swapped ? m.homeTeamId : m.awayTeamId,
+            heroStack,
+          );
+          if (foot) {
+            const venue = heroStack ? c.querySelector('p:last-of-type') : null;
+            if (venue) venue.insertAdjacentHTML('beforebegin', foot);
+            else c.insertAdjacentHTML('beforeend', foot);
+          }
         }
         touched.add(c);
         shown++;

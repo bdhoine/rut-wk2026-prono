@@ -21,6 +21,14 @@ export interface Score {
   away: number;
 }
 
+export interface MatchGoal {
+  player: string;
+  teamId: string;
+  minute: string; // ESPN display clock, e.g. "62'" or "90'+4'"
+  og?: boolean; // own goal (player belongs to the other side)
+  pen?: boolean; // converted in-game penalty
+}
+
 export interface Match {
   id: string;
   round: RoundId;
@@ -34,6 +42,12 @@ export interface Match {
   awayPlaceholder?: string; // e.g. '2e Groep B'
   status: MatchStatus;
   result?: Score; // score after 120 min for knockouts; penalties ignored
+  // Per-goal scorers in scoring order (shootout kicks excluded). `teamId` is the
+  // side the goal counts for — own goals (`og`) carry the benefiting team.
+  goals?: MatchGoal[];
+  // Momentum per `bucketMin` minutes, signed toward home (+ = home pressure).
+  // 18 buckets for 90 minutes, 24 with extra time; set by the updater.
+  momentum?: { bucketMin: number; values: number[] };
   // Shootout score (home/away) when a knockout is decided on penalties, plus the
   // optional per-kick sequence (true = scored) in shot order, for the detail view.
   penalties?: { home: number; away: number; homeKicks?: boolean[]; awayKicks?: boolean[] };

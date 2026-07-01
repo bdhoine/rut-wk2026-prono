@@ -7,6 +7,7 @@
 // The .match-meta/.match-score classes and data-* attributes are the contract
 // LiveScores.astro overlay mode injects into; keep them in both variants.
 import Flag from './Flag.astro';
+import MatchScorers from './MatchScorers.astro';
 import ScoreBoxes from './ScoreBoxes.astro';
 import { sideLabel } from '@/lib/data';
 import { formatKickoff, formatTime } from '@/lib/format';
@@ -59,4 +60,8 @@ const Tag = href ? 'a' : 'div';
       <span class="truncate font-medium sm:hidden">{away.short}</span>
     </div>
   </div>
+  {/* Goal scorers, non-compact only — the day-grouped kalender/programma lists stay scannable. */}
+  {finished && !compact && match.goals?.length && (
+    <MatchScorers goals={match.goals} homeTeamId={match.homeTeamId} awayTeamId={match.awayTeamId} class="mt-2" />
+  )}
 </Tag>

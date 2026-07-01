@@ -23,7 +23,7 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/` | Home (landing) — hero panel with current speeldag and next match(es), the "Nu live & recent gespeeld" strip (live matches + recently finished only — no scheduled fixtures), your favourites, the **top 10** of the ranking with a button to the full ranking, and two movement cards for the latest calendar day (today vs. yesterday): **Stijgers & dalers** (strongest risers/fallers) and **Top 5 — winnaars & verliezers** (who entered/left the prize spots, with the number of positions moved). Movement rows show each participant's eindwinnaar flag. The hero's next-match panel shows the first fixture that hasn't kicked off yet (a match in progress moves to the live strip and the hero advances), and shows both fixtures when two kick off at the same time |
 | `/klassement` | Full ranking — favourites table on top (★, saved in `localStorage`), eindwinnaar flag per row, the participant name is a real link (keyboard/screen-reader navigable) and the whole row is clickable, plus a client-side **search box** to filter by name. The **position badge** of prize spots (top 5) is medal-graded (gold/silver/bronze for 1-3, green for 4-5) and reveals the exact prize on hover/tap (tie-aware via `prizeFor`), with a legend below the table. Live-only (shows in-progress matches if any) and recomputes a provisional ranking from live scores |
 | `/deelnemer/[id]` | Participant detail: position, total, bonus picks, a **Klassementsverloop** line chart of their position per calendar day (build-time SVG via `RankChart.astro`, shown once ≥2 days of results; capped at the last 10 days, with **tappable dots** that reveal the place on that day and **dashed dividers** marking where a speeldag/round ended), a bottom **Mathematisch kan het nog** block (three Ja/Nee cards — money/podium/win — from `mathematicalOutlook()`: an optimistic upper bound where this participant scores the max on everything left and nobody else gains, shown **from the quarter-finals onward**, i.e. once the round of 16 is complete — earlier the bound is too loose to be meaningful), a **Vergelijk** button (deep-links `/vergelijk?a={id}`), predictions per speeldag in collapsible sections (only the section in progress is open — the first not fully played; played and future sections are collapsed, with the last section open once everything is finished so one is always expanded) + score breakdown. A **Live scores** toggle recomputes the header position/total and the easter-egg trigger from the live provisional standing, shows each in-progress match's **provisional points** in its prediction row, and marks everything as live with red cues (red ring on the position badge, red dot before the total, a note under the toggle, a red-boxed points badge per live row, and a red live dot + trend segment on the Klassementsverloop chart). Easter eggs once the tournament is under way: an 8-bit money rain with the prize amount for top-5 spots, and an 8-bit dog popping up to laugh at the last-placed player |
-| `/wedstrijd/[id]` | Match detail: per-match stats (avg points, exact, correct 1X2, wrong) + predictions grouped by predicted outcome (1/X/2). Each row shows the participant's klassement position and eindwinnaar flag and is fully clickable to the profile; finished matches sort each group by points scored, then by klassement position. A prev/next pager (in kickoff order) sits under the hero |
+| `/wedstrijd/[id]` | Match detail: hero with the score, the **goal scorers** under it (from `match.goals` via `MatchScorers.astro`, above the penalty-kick rows), per-match stats (avg points, exact, correct 1X2, wrong), a **Momentum** section for finished matches (build-time SVG via `MomentumChart.astro`: one bar per 5 minutes toward home/away from `match.momentum`, dashed half-time/ET dividers, ball markers at each goal on the scoring side) + predictions grouped by predicted outcome (1/X/2). Each row shows the participant's klassement position and eindwinnaar flag and is fully clickable to the profile; finished matches sort each group by points scored, then by klassement position. A prev/next pager (in kickoff order) sits under the hero |
 | `/programma` | Upcoming matches, grouped per calendar day |
 | `/kalender` | Full fixtures grouped by speeldag (group stage) and knockout round, with sticky day subheadings and prono submission deadlines |
 | `/poules` | Group standings (two-column grid on desktop, "Groepen") + best third-placed ranking; qualifying rows carry a **✓ next to the rank** (plus the green tint) with a legend, shown only once a group has results. With **live** on, both the group tables and the best-thirds are recomputed client-side including in-progress matches (LivePoules), each live team carrying a green/orange/red win/draw/loss badge (the ✓ updates live too) |
@@ -31,7 +31,7 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/topschutter/[slug]` | Top-scorer profile (only generated for scorers picked by ≥1 participant): country flag (links to `/land/[id]`), a stat strip (goals, **rank among all WK scorers** tie-aware, times picked), the participants who picked them (with eindwinnaar flag + position), and a "← Statistieken" backlink. Picks are matched to `scorers.json` best-effort on surname + first initial |
 | `/statistieken` | Top scorers (names cleaned + merged, own goals excluded), most goals scored/conceded (unplayed teams hidden behind "Toon alle"), top-10 matches by points and by wrong predictions, a **Beste vorm** card under the "meeste foute prono's" list (the participant[s] with the highest points total over any 5 consecutive played matches — a carousel when several tie, via `bestForm()` + `BestFormCard.astro`), **most correct 1X2 predictions per participant** (top 5 + "Toon alle"), the **longest run of consecutive correct 1X2 and consecutive exact predictions** (top 10 + "Toon alle", via `longestOutcomeStreak()` / `longestExactStreak()`), popular scorelines, most-picked winner/top scorer, and a **provisional bonus leaderboard** ("voorlopig op koers": per participant a ✓/–/✗ status per bonus pick + provisional bonus points, from `bonusStandings()`). Picked top-scorer names link to their `/topschutter/[slug]` profile |
 | `/vergelijk` | Compare two participants side by side (selected via two dropdowns or `?a=&b=` for a shareable link): totals, match/bonus split, position, form, exact% / correct-1X2%, the four bonus picks, and a head-to-head over commonly-played matches (who scored more, agreement count) + a per-match prediction diff. Client-rendered from a compact embedded dataset. Has `<LiveScores />`: while a match is live, the "Nog te spelen" rows show the live score and both participants' provisional points |
-| `/favorieten` | "Vergelijk favorieten": the upcoming matches (with known teams) and, per match, each favourited participant's predicted score. Favourites live in `localStorage`; client-rendered from an embedded dataset of every participant's upcoming predictions. Reached via the CTA shown under the Favorieten block on the home page (only when favourites exist) |
+| `/favorieten` | "Vergelijk favorieten": the upcoming matches (with known teams) and, per match, each favourited participant's predicted score, plus a bottom **Klassementsverloop** chart of the favourites' positions over the last 10 game days (client-built SVG in the same style as the stats-page top-5 chart, from `positionTrendAll()` embedded at build time; Y-axis spans the favourites' own position band, max 8 lines — best-placed first — with a "+N meer" note). Favourites live in `localStorage`; client-rendered from an embedded dataset of every participant's upcoming predictions. Reached via the CTA shown under the Favorieten block on the home page (only when favourites exist) |
 | `/reglement` | Competition rules, deadlines and prizes (the prize table is rendered from `PRIZES` in `src/lib/prizes.ts` — single source of truth) |
 | `/changelog` | Per-update changelog (blocks newest-first), driven by `src/data/changelog.json` — see `CLAUDE.md` for the per-session upkeep rule |
 | `/steun` | "Trakteer op een pint" — a client-side **EPC SEPA payment QR** (pick an amount → QR encodes IBAN + amount + mededeling, scannable by Belgian banking apps) + a copyable IBAN, and a tappable **"Trakteer via Bancontact"** button (a Bancontact groepspot link). All details live in `SUPPORT` in `src/lib/links.ts` |
@@ -80,9 +80,14 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
   "Group A 2nd Place"), writes finished-match scores, fills knockout teams as
   brackets resolve, syncs each match's `kickoff` to ESPN's confirmed time (the
   seed's knockout kickoffs were preliminary placeholders),
-  aggregates `scorers.json`, and resolves the bonus `outcomes.json` once the
-  final is played. It commits any changes, which triggers a Netlify rebuild. Run
-  locally with `npm run results:update`.
+  stores each finished match's **per-goal scorers** (`goals`: player, minute,
+  own-goal/penalty flags, from the scoreboard's details) and — via one summary
+  fetch per match, skipped once stored — its **momentum curve** (`momentum`:
+  a signed value per 5 minutes derived from the play-by-play commentary: goals,
+  shots and corners weighted toward the acting side) plus the penalty-shootout
+  kick sequences, aggregates `scorers.json`, and resolves the bonus
+  `outcomes.json` once the final is played. It commits any changes, which
+  triggers a Netlify rebuild. Run locally with `npm run results:update`.
 - **On-demand result refresh.** The results workflow runs on a ~15-min cron, so
   the committed klassement/results can lag a few minutes behind a match. When a
   live match **ends** (it drops out of the live set the client polls), the client
@@ -102,7 +107,11 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
   match card (badge above the score pill); on Poules the playing countries get a
   pulsing red dot with their live score. On a `/land/[id]` page the same overlay
   patches the Programma match cards and the group Stand rows in place (no extra
-  card on top). The client polls
+  card on top). The live payload also carries the match's **goal scorers**
+  (`scorers`, from the scoreboard's per-goal details), which the client renders
+  as a muted scorer line at the foot of live cards, non-compact overlay cards and
+  the match-detail hero (class `.live-scorers`, cleaned up when live turns off;
+  compact kalender/programma cards skip it). The client polls
   [`netlify/functions/live.mjs`](./netlify/functions/live.mjs) (at
   `/.netlify/functions/live`), which fetches ESPN's scoreboard directly (it
   responds in well under a second) and caches the result for ~60 s via a
@@ -116,7 +125,8 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
     bypasses the `/.netlify/functions/live` fetch entirely, never nudges a results
     refresh, and tags the badge/status with "sim" — so the overlay (and the
     home-page provisional klassement recompute) can be tested without a real live
-    match. Accepts `H-A`, `H–A` or `H:A`.
+    match. It fabricates one "Testspeler" scorer per simulated goal so the live
+    scorer line can be exercised too. Accepts `H-A`, `H–A` or `H:A`.
 
 > Knockout scores from this source are the score as reported (no separate
 > after-120-min / penalty handling); double-check knockout results against
@@ -176,7 +186,7 @@ through the bracket). Edit the JSON in `src/data/` directly for real data.
 |------|----------|
 | `teams.json` | Teams: `id`, `iso` (lowercase ISO 3166-1 alpha-2 for flags), Dutch `name`, optional `shortName` (compact display), `group` |
 | `groups.json` | Groups A–L → team ids |
-| `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result`, plus `apiId` / `winnerTeamId` / `penalties` (shootout score, home/away) filled by the results updater. Penalty-decided knockouts keep the 120-min `result` for scoring but set `penalties` + `winnerTeamId`, shown as "Na strafschoppen 3–4 · X gaat door" / "n.s. 3–4" |
+| `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result`, plus `apiId` / `winnerTeamId` / `penalties` (shootout score, home/away) / `goals` (per-goal scorers: `player`, `teamId` — the side the goal counts for, so own goals carry the benefiting team — `minute`, optional `og`/`pen`) / `momentum` (`{ bucketMin, values }`: signed pressure per 5 minutes, + = home; 18 buckets, 24 with extra time) filled by the results updater. Penalty-decided knockouts keep the 120-min `result` for scoring but set `penalties` + `winnerTeamId`, shown as "Na strafschoppen 3–4 · X gaat door" / "n.s. 3–4" |
 | `participants.json` | Participants: `id`, `name`, `bonus` picks. **No phone numbers** (kept off the repo by design) |
 | `predictions.json` | Per-participant, per-match predicted scores (`late: true` ⇒ 0 points) |
 | `outcomes.json` | Actual tournament bonus outcomes (top scorer, winner, most scored/conceded) |
