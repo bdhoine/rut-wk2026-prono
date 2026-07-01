@@ -70,6 +70,11 @@
     "goals": 3
   },
   {
+    "player": "Julián Quiñones",
+    "teamId": "mx",
+    "goals": 3
+  },
+  {
     "player": "Kai Havertz",
     "teamId": "de",
     "goals": 3
@@ -145,11 +150,6 @@
     "goals": 2
   },
   {
-    "player": "Julián Quiñones",
-    "teamId": "mx",
-    "goals": 2
-  },
-  {
     "player": "Leandro Trossard",
     "teamId": "be",
     "goals": 2
@@ -182,6 +182,11 @@
   {
     "player": "Ramin Rezaeian",
     "teamId": "ir",
+    "goals": 2
+  },
+  {
+    "player": "Raúl Jiménez",
+    "teamId": "mx",
     "goals": 2
   },
   {
@@ -677,11 +682,6 @@
   {
     "player": "Rafik Belghali",
     "teamId": "dz",
-    "goals": 1
-  },
-  {
-    "player": "Raúl Jiménez",
-    "teamId": "mx",
     "goals": 1
   },
   {

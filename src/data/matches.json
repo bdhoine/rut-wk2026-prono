@@ -1280,8 +1280,13 @@
     "awayTeamId": "ec",
     "homePlaceholder": "Winnaar Groep A",
     "awayPlaceholder": "Beste 3e (C/E/F/H/I)",
-    "status": "scheduled",
-    "apiId": 760491
+    "status": "finished",
+    "apiId": 760491,
+    "result": {
+      "home": 2,
+      "away": 0
+    },
+    "winnerTeamId": "mx"
   },
   {
     "id": "r32-8",
