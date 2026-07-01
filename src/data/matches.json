@@ -4717,7 +4717,7 @@
     "kickoff": "2026-07-07T00:00Z",
     "venue": "Lumen Field, Seattle",
     "homeTeamId": null,
-    "awayTeamId": null,
+    "awayTeamId": "be",
     "homePlaceholder": "Winnaar R32-9",
     "awayPlaceholder": "Winnaar R32-10",
     "status": "scheduled",
