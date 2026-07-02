@@ -196,23 +196,34 @@ body::before {
    start state) and .in-view when visible (plays the animation). */
 @keyframes chart-draw { to { stroke-dashoffset: 0; } }
 @keyframes chart-pop { from { opacity: 0; } }
+@keyframes chart-pop-up { from { opacity: 0; transform: translateY(5px); } }
 @keyframes bar-grow { from { transform: scaleY(0); } }
 
 /* Hidden start states apply only while armed and not yet visible — once
    .in-view lands, the base style is the visible end state the animation
-   settles into. */
+   settles into. Lines carry their real length in --len (computed at build
+   time) — iOS Safari doesn't reliably support pathLength on polylines. */
+[data-animate] .chart-line { stroke-dasharray: var(--len, 1) var(--len, 1); }
 [data-animate].anim-ready:not(.in-view) .chart-line {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+  stroke-dashoffset: var(--len, 1);
 }
 [data-animate].in-view .chart-line {
-  animation: chart-draw 0.9s ease-out both;
+  animation: chart-draw 1.1s ease-in-out both;
   animation-delay: calc(var(--s, 0) * 120ms);
 }
-[data-animate].anim-ready:not(.in-view) .chart-dot { opacity: 0; }
+[data-animate].anim-ready:not(.in-view) :is(.chart-dot, .chart-area, .chart-end) { opacity: 0; }
 [data-animate].in-view .chart-dot {
   animation: chart-pop 0.3s ease-out both;
-  animation-delay: calc(0.35s + var(--s, 0) * 120ms + min(var(--i, 0), 14) * 45ms);
+  animation-delay: calc(0.35s + var(--s, 0) * 120ms + min(var(--i, 0), 14) * 55ms);
+}
+/* Soft area under a drawn line: fades in while the line finishes. */
+[data-animate].in-view .chart-area {
+  animation: chart-pop 0.7s ease-out 0.7s both;
+}
+/* End label (e.g. current position) lands last, with a little rise. */
+[data-animate] .chart-end { transform-box: fill-box; }
+[data-animate].in-view .chart-end {
+  animation: chart-pop-up 0.45s ease-out 1.05s both;
 }
 [data-animate].anim-ready:not(.in-view) :is(.bar-h, .bar-a) {
   transform: scaleY(0);
@@ -231,7 +242,8 @@ body::before {
   animation-delay: calc(min(var(--row-i, 0), 10) * 30ms);
 }
 
-/* Periodic glint over the gold/silver/bronze position badges. */
+/* Periodic glint over the prize-spot position badges. --mi staggers the wave
+   so the shine runs 1 → 2 → 3 → 4 → 5 down the klassement. */
 .medal-badge {
   position: relative;
   overflow: hidden;
@@ -241,14 +253,28 @@ body::before {
   position: absolute;
   inset: -30% -60%;
   transform: translateX(-130%) rotate(18deg);
-  background: linear-gradient(100deg, transparent 38%, oklch(1 0 0 / 55%) 50%, transparent 62%);
+  background: linear-gradient(100deg, transparent 36%, oklch(1 0 0 / 65%) 50%, transparent 64%);
   animation: medal-glint 6s ease-in-out infinite;
+  animation-delay: calc(var(--mi, 0) * 260ms);
   pointer-events: none;
 }
 @keyframes medal-glint {
   0%, 88%, 100% { transform: translateX(-130%) rotate(18deg); }
   94% { transform: translateX(130%) rotate(18deg); }
 }
+
+/* Prize rows (top 5): the emerald tint breathes gently, staggered per row —
+   a slow wave over the money zone. Static tint stays as the reduced-motion
+   and non-animating fallback (the utility classes on the row). */
+@keyframes money-breathe {
+  0%, 100% { background-color: color-mix(in oklab, oklch(0.72 0.16 145) 9%, transparent); }
+  50% { background-color: color-mix(in oklab, oklch(0.72 0.16 145) 19%, transparent); }
+}
+.money-row {
+  animation: money-breathe 4s ease-in-out infinite;
+  animation-delay: calc(min(var(--row-i, 0), 10) * 350ms);
+}
+.money-row:hover { animation-play-state: paused; }
 
 /* One-time soft light sweep across the hero panel on load. */
 .hero-panel::after {
@@ -285,13 +311,14 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  [data-animate].anim-ready .chart-line { stroke-dasharray: none; stroke-dashoffset: 0; }
-  [data-animate].anim-ready .chart-dot { opacity: 1; }
+  [data-animate] .chart-line { stroke-dasharray: none; stroke-dashoffset: 0; }
+  [data-animate].anim-ready :is(.chart-dot, .chart-area, .chart-end) { opacity: 1; }
   [data-animate].anim-ready :is(.bar-h, .bar-a) { transform: none; }
   [data-animate].in-view .chart-line,
-  [data-animate].in-view .chart-dot,
+  [data-animate].in-view :is(.chart-dot, .chart-area, .chart-end),
   [data-animate].in-view :is(.bar-h, .bar-a),
   .row-rise,
+  .money-row,
   .medal-badge::after,
   .hero-panel::after,
   [data-match-card]:has(.live-badge),

@@ -33,7 +33,9 @@ const built = series.map((s, si) => {
   const coords = s.days.map((d, i) => ({ ...d, cx: x(i), cy: y(d.position) }));
   const line = coords.map((c) => `${c.cx.toFixed(1)},${c.cy.toFixed(1)}`).join(' ');
   const last = coords[coords.length - 1];
-  return { ...s, coords, line, last, color: COLORS[si] };
+  // Real polyline length for the draw-in (--len) — pathLength is unreliable on iOS.
+  const len = coords.slice(1).reduce((acc, c, i) => acc + Math.hypot(c.cx - coords[i].cx, c.cy - coords[i].cy), 0);
+  return { ...s, coords, line, last, len, color: COLORS[si] };
 });
 
 const axisY = H - padB;
@@ -63,7 +65,7 @@ const lastDay = days[days.length - 1];
     <!-- series lines + dots -->
     {built.map((s, si) => (
       <g>
-        <polyline class="chart-line" style={`--s:${si}`} pathLength="1" points={s.line} fill="none" stroke={s.color} stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        <polyline class="chart-line" style={`--s:${si};--len:${Math.ceil(s.len)}`} points={s.line} fill="none" stroke={s.color} stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
         {s.coords.map((c, i) => (
           <circle
             class="chart-dot"

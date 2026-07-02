@@ -243,19 +243,33 @@ const dogH = DOG_ART.length * DOG_PX;
     const totalEl = document.getElementById('hdr-total');
     const target = Number(totalEl?.textContent);
     if (totalEl && Number.isFinite(target) && target > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      totalEl.style.minWidth = `${totalEl.offsetWidth}px`; // keep layout stable while digits change
-      const t0 = performance.now();
-      const dur = 2000;
+      // Reserve the final width and keep the digits right-aligned inside it,
+      // so shorter intermediate numbers don't hug the left edge of the box
+      // (especially visible in the compact mobile hero).
+      totalEl.style.minWidth = `${totalEl.offsetWidth}px`;
+      totalEl.style.textAlign = 'right';
+      const dur = 800;
+      let t0: number | null = null;
       let last = totalEl.textContent;
       const tick = (now: number) => {
         if (totalEl.textContent !== last) return; // external update took over
+        t0 ??= now;
         const p = Math.min((now - t0) / dur, 1);
         last = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
         totalEl.textContent = last;
         if (p < 1) requestAnimationFrame(tick);
-        else totalEl.style.minWidth = '';
+        else {
+          totalEl.style.minWidth = '';
+          totalEl.style.textAlign = '';
+          // Small settle pop so the final number registers.
+          totalEl.animate?.(
+            [{ transform: 'scale(1.14)' }, { transform: 'scale(1)' }],
+            { duration: 280, easing: 'ease-out' },
+          );
+        }
       };
-      requestAnimationFrame(tick);
+      // Give the hero's entrance a beat before the digits start rolling.
+      setTimeout(() => requestAnimationFrame(tick), 350);
     }
   </script>
 
