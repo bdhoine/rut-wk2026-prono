@@ -1,15 +1,34 @@
 ---
-// Small pill showing the prono submission deadline for a round.
+// Small pill showing the prono submission deadline for a round. Once the
+// deadline has passed the pill is pointless — skip it at build time, and a
+// tiny client script also hides it live (a static build can predate the
+// deadline moment).
 import { formatKickoff } from '@/lib/format';
 import { ROUND_DEADLINES, type RoundId } from '@/lib/types';
 
 interface Props {
   round: RoundId;
+  class?: string;
 }
-const { round } = Astro.props;
+const { round, class: cls = '' } = Astro.props;
 const deadline = ROUND_DEADLINES[round];
+const passed = new Date(deadline).getTime() <= Date.now();
 ---
-<span class="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:border-amber-500/40 dark:bg-amber-950/40 dark:text-amber-300">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-  <span>Indienen vóór {formatKickoff(deadline)}</span>
-</span>
+{!passed && (
+  <span
+    data-deadline-badge
+    data-deadline={deadline}
+    class:list={['inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:border-amber-500/40 dark:bg-amber-950/40 dark:text-amber-300', cls]}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+    <span>Indienen vóór {formatKickoff(deadline)}</span>
+  </span>
+)}
+
+<script>
+  // The page is statically built; hide any badge whose deadline has passed by
+  // the time it's actually viewed.
+  document.querySelectorAll<HTMLElement>('[data-deadline-badge]').forEach((el) => {
+    if (new Date(el.dataset.deadline!).getTime() <= Date.now()) el.remove();
+  });
+</script>
