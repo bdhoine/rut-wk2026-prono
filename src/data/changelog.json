@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-07-02",
+    "title": "Subtiele animaties door de hele site",
+    "items": [
+      "De site voelt levendiger: blokken glijden zachtjes in beeld terwijl je scrolt, en de grafieken tekenen zichzelf — het klassementsverloop en de top 5-lijnen worden getekend zodra ze in beeld komen, en de momentum-balken groeien vanuit de middellijn.",
+      "Wedstrijdkaarten van een lopende wedstrijd krijgen een zacht pulserende rode gloed, zodat je in één oogopslag ziet wat er nu live is.",
+      "Kleine details: het klassement verschijnt rij per rij, de goud/zilver/brons-plaatsen glinsteren af en toe, het puntentotaal op een deelnemerspagina telt op bij het openen, en het thema-icoontje draait bij het wisselen.",
+      "Alle animaties respecteren de systeeminstelling 'verminder beweging' — wie dat aan heeft staan, ziet alles gewoon meteen."
+    ]
+  },
+  {
+    "date": "2026-07-02",
     "title": "Doelpuntenmakers, momentum & favorieten-grafiek",
     "items": [
       "Bij elke gespeelde wedstrijd zie je nu wie er scoorde en wanneer: op de wedstrijdpagina onder de score en op de wedstrijdkaarten (bv. op een landpagina en bij 'recent gespeeld' op de homepagina). Strafschoppen zijn gemarkeerd met (p), owngoals met (e.d.).",

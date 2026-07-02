@@ -63,6 +63,18 @@ Reusable brand utilities (all in `global.css`):
 - `.bar-cut` — diagonally-cut gold bar used by `SectionHeading.astro`, echoing the FIFA wordmark
 - `.animate-rise` — subtle hero entrance, disabled under `prefers-reduced-motion`
 
+**Motion layer** (`global.css` + a small IntersectionObserver script in
+`Layout.astro`): below-the-fold blocks fade/slide in on scroll (`.reveal`), and
+the build-time SVG charts animate on first sight — chart wrappers carry
+`data-animate`; lines marked `.chart-line` (with `pathLength="1"`) draw in,
+`.chart-dot` elements pop in staggered, and MomentumChart bars (`.bar-h`/`.bar-a`)
+grow from the centre line. All motion classes are **added by JS only** (nothing
+is hidden without JS) and everything is disabled under `prefers-reduced-motion`.
+Extras: klassement rows enter staggered (`.row-rise`), medal badges get a
+periodic glint (`.medal-badge`), live match cards a pulsing red glow (`:has(.live-badge)`),
+the hero panel a one-time light sweep, and the participant-page points total
+counts up on load.
+
 Long team names have an optional `shortName` in `teams.json`, used on narrow
 viewports and in compact contexts (match cards, standings tables).
 

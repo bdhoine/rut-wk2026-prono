@@ -71,7 +71,7 @@ const goalMarks = (match.goals ?? []).map((g) => {
   };
 });
 ---
-<div class="rounded-xl border bg-card px-3 py-3 shadow-sm">
+<div class="rounded-xl border bg-card px-3 py-3 shadow-sm" data-animate>
   <svg
     viewBox={`0 0 ${W} ${H}`}
     class="mx-auto h-auto w-full max-w-[480px]"
@@ -79,8 +79,8 @@ const goalMarks = (match.goals ?? []).map((g) => {
     aria-label={`Momentum per 5 minuten: boven de middellijn ${home.label}, eronder ${away.label}`}
   >
     <!-- bars -->
-    {bars.map((b) => (
-      <rect x={b.x.toFixed(1)} y={b.y.toFixed(1)} width={barW.toFixed(1)} height={Math.max(b.h, 0.5).toFixed(1)} rx="1" fill={b.home ? HOME_COLOR : AWAY_COLOR} opacity="0.85" />
+    {bars.map((b, i) => (
+      <rect class={b.home ? 'bar-h' : 'bar-a'} style={`--i:${i}`} x={b.x.toFixed(1)} y={b.y.toFixed(1)} width={barW.toFixed(1)} height={Math.max(b.h, 0.5).toFixed(1)} rx="1" fill={b.home ? HOME_COLOR : AWAY_COLOR} opacity="0.85" />
     ))}
     <!-- centre line above the bars -->
     <line x1={padL} y1={midY} x2={W - padR} y2={midY} class="stroke-border" stroke-width="1" />
@@ -89,8 +89,8 @@ const goalMarks = (match.goals ?? []).map((g) => {
       <line x1={minuteX(min)} y1={padT - 2} x2={minuteX(min)} y2={H - padB + 2} class="stroke-border/70" stroke-width="1" stroke-dasharray="3 3" />
     ))}
     <!-- goal markers -->
-    {goalMarks.map((g) => (
-      <text x={g.x} y={g.y.toFixed(1)} text-anchor="middle" font-size="9" aria-hidden="true">⚽<title>{g.title}</title></text>
+    {goalMarks.map((g, i) => (
+      <text class="chart-dot" style={`--i:${i}`} x={g.x} y={g.y.toFixed(1)} text-anchor="middle" font-size="9" aria-hidden="true">⚽<title>{g.title}</title></text>
     ))}
     <!-- minute labels -->
     <text x={padL} y={H - 4} text-anchor="start" class="fill-muted-foreground text-[10px]">0'</text>

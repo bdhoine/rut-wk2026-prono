@@ -174,6 +174,130 @@ body::before {
   .animate-rise { animation: none; }
 }
 
+/* ---------- Motion layer ----------------------------------------------------
+   All classes below are added by JS (Layout.astro's reveal script or a
+   component script), so content is never hidden without JS. Everything is
+   disabled under prefers-reduced-motion. */
+
+/* Scroll-reveal: JS tags below-the-fold blocks with .reveal (hidden state),
+   an IntersectionObserver adds .in-view when they scroll in. */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: none;
+}
+
+/* Charts (RankChart, PositionTrendChart, MomentumChart) mark their wrapper
+   with data-animate; the same observer adds .anim-ready up front (hidden
+   start state) and .in-view when visible (plays the animation). */
+@keyframes chart-draw { to { stroke-dashoffset: 0; } }
+@keyframes chart-pop { from { opacity: 0; } }
+@keyframes bar-grow { from { transform: scaleY(0); } }
+
+/* Hidden start states apply only while armed and not yet visible — once
+   .in-view lands, the base style is the visible end state the animation
+   settles into. */
+[data-animate].anim-ready:not(.in-view) .chart-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+[data-animate].in-view .chart-line {
+  animation: chart-draw 0.9s ease-out both;
+  animation-delay: calc(var(--s, 0) * 120ms);
+}
+[data-animate].anim-ready:not(.in-view) .chart-dot { opacity: 0; }
+[data-animate].in-view .chart-dot {
+  animation: chart-pop 0.3s ease-out both;
+  animation-delay: calc(0.35s + var(--s, 0) * 120ms + min(var(--i, 0), 14) * 45ms);
+}
+[data-animate].anim-ready:not(.in-view) :is(.bar-h, .bar-a) {
+  transform: scaleY(0);
+}
+[data-animate] :is(.bar-h, .bar-a) { transform-box: fill-box; }
+[data-animate].in-view :is(.bar-h, .bar-a) {
+  animation: bar-grow 0.45s ease-out both;
+  animation-delay: calc(min(var(--i, 0), 30) * 14ms);
+}
+[data-animate] .bar-h { transform-origin: bottom; }
+[data-animate] .bar-a { transform-origin: top; }
+
+/* Klassement rows: quick staggered entrance (plays once on page load). */
+.row-rise {
+  animation: rise 0.35s ease-out both;
+  animation-delay: calc(min(var(--row-i, 0), 10) * 30ms);
+}
+
+/* Periodic glint over the gold/silver/bronze position badges. */
+.medal-badge {
+  position: relative;
+  overflow: hidden;
+}
+.medal-badge::after {
+  content: '';
+  position: absolute;
+  inset: -30% -60%;
+  transform: translateX(-130%) rotate(18deg);
+  background: linear-gradient(100deg, transparent 38%, oklch(1 0 0 / 55%) 50%, transparent 62%);
+  animation: medal-glint 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes medal-glint {
+  0%, 88%, 100% { transform: translateX(-130%) rotate(18deg); }
+  94% { transform: translateX(130%) rotate(18deg); }
+}
+
+/* One-time soft light sweep across the hero panel on load. */
+.hero-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-110%) skewX(-16deg);
+  background: linear-gradient(100deg, transparent 30%, oklch(1 0 0 / 7%) 50%, transparent 70%);
+  animation: hero-sheen 1.3s ease-out 0.25s 1 both;
+  pointer-events: none;
+}
+@keyframes hero-sheen {
+  to { transform: translateX(110%) skewX(-16deg); }
+}
+
+/* Soft pulsing ring around a match card while it's live. Covers both overlay
+   mode (LiveScores injects .live-badge into a static [data-match-card]) and
+   the home "Nu live" list (client-built cards carrying data-key). Harmless
+   no-op on browsers without :has(). */
+:is([data-match-card], [data-key]):has(.live-badge) {
+  animation: live-glow 2.6s ease-in-out infinite;
+}
+@keyframes live-glow {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.63 0.22 27 / 0); }
+  50% { box-shadow: 0 0 0 3px oklch(0.63 0.22 27 / 0.14), 0 2px 14px oklch(0.63 0.22 27 / 0.18); }
+}
+
+/* Theme toggle: the freshly shown icon swings in on click (class added by JS,
+   removed on animationend). */
+@keyframes icon-swing {
+  from { transform: rotate(-90deg) scale(0.6); opacity: 0; }
+}
+.theme-spin svg:not(.hidden) { animation: icon-swing 0.35s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  [data-animate].anim-ready .chart-line { stroke-dasharray: none; stroke-dashoffset: 0; }
+  [data-animate].anim-ready .chart-dot { opacity: 1; }
+  [data-animate].anim-ready :is(.bar-h, .bar-a) { transform: none; }
+  [data-animate].in-view .chart-line,
+  [data-animate].in-view .chart-dot,
+  [data-animate].in-view :is(.bar-h, .bar-a),
+  .row-rise,
+  .medal-badge::after,
+  .hero-panel::after,
+  [data-match-card]:has(.live-badge),
+  .theme-spin svg:not(.hidden) { animation: none; }
+}
+
 /* Compact live cards (kalender/programma): the live badge sits absolutely above
    the score pill; a little extra top room keeps it inside the card, without
    adding empty space at the bottom. Toggled by LiveScores.astro. */

@@ -312,8 +312,41 @@ const topLinkCls = (active: boolean) => [
         themeBtn?.querySelectorAll('[data-mode]').forEach((el) => el.classList.toggle('hidden', el.getAttribute('data-mode') !== m));
       };
       applyMode(mode); // sync the icon on load
-      themeBtn?.addEventListener('click', () => applyMode(mode === 'auto' ? 'light' : mode === 'light' ? 'dark' : 'auto'));
+      themeBtn?.addEventListener('click', () => {
+        applyMode(mode === 'auto' ? 'light' : mode === 'light' ? 'dark' : 'auto');
+        themeBtn.classList.add('theme-spin');
+      });
+      themeBtn?.addEventListener('animationend', () => themeBtn.classList.remove('theme-spin'));
       mql.addEventListener('change', () => { if (mode === 'auto') applyMode('auto'); });
+
+      // Motion layer (see global.css): reveal below-the-fold blocks as they
+      // scroll in, and play chart animations ([data-animate]) on first sight.
+      // Classes are only added here, so nothing is ever hidden without JS;
+      // skipped entirely under prefers-reduced-motion.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            e.target.classList.add('in-view');
+            io.unobserve(e.target);
+          }
+        }, { threshold: 0.05, rootMargin: '0px 0px -4% 0px' });
+
+        // Direct children of <main> that start below the fold fade/slide in.
+        const fold = window.innerHeight * 0.92;
+        document.querySelectorAll<HTMLElement>('main > *').forEach((el) => {
+          if (el.tagName === 'SCRIPT' || !el.offsetHeight) return;
+          if (el.getBoundingClientRect().top <= fold) return;
+          el.classList.add('reveal');
+          io.observe(el);
+        });
+
+        // Charts: arm the hidden start state, then play when visible.
+        document.querySelectorAll<HTMLElement>('[data-animate]').forEach((el) => {
+          el.classList.add('anim-ready');
+          io.observe(el);
+        });
+      }
     </script>
   </body>
 </html>

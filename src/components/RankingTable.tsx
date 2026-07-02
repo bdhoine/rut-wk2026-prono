@@ -74,8 +74,11 @@ const BADGE_TONE: Record<number, string> = {
 // badge, not a colour that implies a tier of its own. The exact amount is in the tooltip.
 const BADGE_TONE_LOW = "bg-muted text-foreground ring-1 ring-border shadow-sm";
 
+// The medal spots (1–3) get a subtle periodic glint (see .medal-badge in global.css).
+const medal = (position: number) => (BADGE_TONE[position] ? " medal-badge" : "");
+
 function positionBadge(position: number) {
-  return <span className={`${BADGE_BASE} ${BADGE_TONE[position] ?? "font-semibold text-muted-foreground"}`}>{position}</span>;
+  return <span className={`${BADGE_BASE} ${BADGE_TONE[position] ?? "font-semibold text-muted-foreground"}${medal(position)}`}>{position}</span>;
 }
 
 // Prize spot: the standings badge itself, as a button with a hover/tap tooltip
@@ -88,7 +91,7 @@ function PrizeBadge({ position, amount, open, onToggle }: { position: number; am
         type="button"
         onClick={(e) => { e.stopPropagation(); onToggle(); }}
         aria-label={`${position}e plaats — prijzengeld ${amount}`}
-        className={`${BADGE_BASE} ${tone} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70`}
+        className={`${BADGE_BASE} ${tone}${medal(position)} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70`}
       >{position}</button>
       <span
         role="tooltip"
@@ -297,7 +300,13 @@ export default function RankingTable({
           const inMoney = showPrizeCut && PRIZES[row.position] != null;
           const spot = spotlight && i === 0;
           return (
-            <TableRow key={row.participantId} data-clickable="true" onClick={() => go(row.participantId)} className={inMoney ? "bg-emerald-500/10 hover:bg-emerald-500/15" : undefined}>
+            <TableRow
+              key={row.participantId}
+              data-clickable="true"
+              onClick={() => go(row.participantId)}
+              className={`row-rise${inMoney ? " bg-emerald-500/10 hover:bg-emerald-500/15" : ""}`}
+              style={{ "--row-i": i } as React.CSSProperties}
+            >
               <TableCell className="px-0.5">
                 <button
                   type="button"

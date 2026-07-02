@@ -48,7 +48,7 @@ const markerLines = markers
   .filter((mk) => mk.idx >= 0 && mk.idx < coords.length - 1)
   .map((mk) => ({ label: mk.label, mx: (x(mk.idx) + x(mk.idx + 1)) / 2 }));
 ---
-<div class="rounded-xl border bg-card px-3 py-2 shadow-sm">
+<div class="rounded-xl border bg-card px-3 py-2 shadow-sm" data-animate>
   <svg
     viewBox={`0 0 ${W} ${H}`}
     class="mx-auto h-auto w-full max-w-[440px]"
@@ -80,9 +80,9 @@ const markerLines = markers
     <text x={first.cx} y={H - 5} text-anchor="middle" class="fill-muted-foreground text-[12px]">{fmtDay(first.day)}</text>
     {n > 1 && <text x={last.cx} y={H - 5} text-anchor="middle" class="fill-muted-foreground text-[12px]">{fmtDay(last.day)}</text>}
     <!-- series -->
-    <polyline data-series points={line} fill="none" stroke="#dca21f" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+    <polyline data-series class="chart-line" pathLength="1" points={line} fill="none" stroke="#dca21f" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
     {coords.map((c, i) => (
-      <circle data-last-dot={i === coords.length - 1 ? '' : null} cx={c.cx} cy={c.cy} r={i === coords.length - 1 ? 4 : 2.5} fill="#dca21f" />
+      <circle data-last-dot={i === coords.length - 1 ? '' : null} class="chart-dot" style={`--i:${i}`} cx={c.cx} cy={c.cy} r={i === coords.length - 1 ? 4 : 2.5} fill="#dca21f" />
     ))}
     <!-- tappable hit targets: each shows a place label on click/focus -->
     {coords.map((c) => (

@@ -107,6 +107,17 @@ before committing.
   position (ties count for all). The **Klassementsverloop top 5** chart
   (`top5PositionTrend()` + `PositionTrendChart.astro`) draws lines + dots only —
   no per-line end labels.
+- **Motion layer**: a global IntersectionObserver in `Layout.astro` reveals
+  below-fold `main > *` blocks (`.reveal`) and plays chart animations —
+  wrappers marked `data-animate` get `.anim-ready` (hidden start state, JS-only
+  so nothing hides without JS) then `.in-view` (plays). Charts use
+  `.chart-line` (+`pathLength="1"`), `.chart-dot`, `.bar-h`/`.bar-a` (see
+  `global.css`). Also there: `.row-rise` (klassement row stagger),
+  `.medal-badge` glint, live-card glow via `:has(.live-badge)`, hero sheen
+  (`.hero-panel::after`), and a count-up script on `deelnemer/[id]`'s
+  `#hdr-total` (bails out when LiveScores writes the element). Everything is
+  disabled under `prefers-reduced-motion`; keep new animations behind the same
+  guards.
 - UI vocabulary is fixed: **Groepen** (not poule/poulestand; route stays
   `/poules`) and **Klassement** (not "Stand"/"Top 10"). Qualifying standings rows
   carry a ✓ after the country name, and prize spots use a colour-graded **position

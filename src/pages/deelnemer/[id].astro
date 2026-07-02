@@ -236,6 +236,29 @@ const dogH = DOG_ART.length * DOG_PX;
     </div>
   </header>
 
+  <script>
+    // Count the big points total up from 0 on load. Bails out the moment
+    // something else (the LiveScores recompute) writes the element, and is
+    // skipped under prefers-reduced-motion.
+    const totalEl = document.getElementById('hdr-total');
+    const target = Number(totalEl?.textContent);
+    if (totalEl && Number.isFinite(target) && target > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      totalEl.style.minWidth = `${totalEl.offsetWidth}px`; // keep layout stable while digits change
+      const t0 = performance.now();
+      const dur = 800;
+      let last = totalEl.textContent;
+      const tick = (now: number) => {
+        if (totalEl.textContent !== last) return; // external update took over
+        const p = Math.min((now - t0) / dur, 1);
+        last = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+        totalEl.textContent = last;
+        if (p < 1) requestAnimationFrame(tick);
+        else totalEl.style.minWidth = '';
+      };
+      requestAnimationFrame(tick);
+    }
+  </script>
+
   <a href={`/vergelijk?a=${participant.id}`} class="mb-6 flex items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gold"><path d="M8 3 4 7l4 4" /><path d="M4 7h16" /><path d="m16 21 4-4-4-4" /><path d="M20 17H4" /></svg>
     Vergelijk met een andere deelnemer

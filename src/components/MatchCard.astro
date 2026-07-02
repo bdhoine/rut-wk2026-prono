@@ -32,7 +32,7 @@ const Tag = href ? 'a' : 'div';
   class:list={[
     'block rounded-xl border bg-card shadow-sm',
     compact ? 'px-3 py-2.5' : 'px-4 py-3',
-    href && 'transition-all hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+    href && 'transition-all hover:border-primary/40 hover:shadow-md motion-safe:hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
   ]}
 >
   {!compact && (
