@@ -16,7 +16,12 @@ build/
 # OS / editor
 .DS_Store
 *.log
-.claude/settings.local.json
+
+# Local agent/AI tooling
+.claude/
+.agents/
+skills-lock.json
 
 # Tooling scaffolding / reports
 posthog-setup-report.md
+stats-desk-*.png
