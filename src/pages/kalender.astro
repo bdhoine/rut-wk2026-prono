@@ -1,5 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import InfoToggle from '@/components/InfoToggle.astro';
+import KnockoutBracket from '@/components/KnockoutBracket.astro';
 import MatchCard from '@/components/MatchCard.astro';
 import DeadlineBadge from '@/components/DeadlineBadge.astro';
 import LiveScores from '@/components/LiveScores.astro';
@@ -36,6 +38,15 @@ const koRounds = KO_ROUNDS
 <Layout title="Kalender">
   <PageHeader title="Kalender" />
   <LiveScores />
+
+  {koRounds.length > 0 && (
+    <section class="mb-8">
+      <SectionHeading title="Knock-outschema">
+        <InfoToggle text="De weg naar de finale: van de 1/16de finales aan de buitenkant naar de finale in het midden. De winnaar van elke wedstrijd is goud gemarkeerd. Tik op een wedstrijd voor de uitslag, details en pronostieken." />
+      </SectionHeading>
+      <KnockoutBracket />
+    </section>
+  )}
 
   <section class="mb-8">
     <SectionHeading title={ROUND_LABELS.group}>

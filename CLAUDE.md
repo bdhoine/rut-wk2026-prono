@@ -107,6 +107,21 @@ before committing.
   position (ties count for all). The **Klassementsverloop top 5** chart
   (`top5PositionTrend()` + `PositionTrendChart.astro`) draws lines + dots only —
   no per-line end labels.
+- `/kalender` opens with a **knockout bracket** (`KnockoutBracket.astro`):
+  build-time, two-sided, no centre column: the Finale (trophy + "Finale"
+  label) and the labelled Troostfinale float over the empty middle,
+  vertically aligned with the QF rows (box centres at 25%/75%); the semi-final
+  stubs meet in the central gap and a gold stem rises to the finale box.
+  Flags only — no scores or dates; gold 2px connector lines; boxes must NOT
+  get overflow:hidden (it clips the connector stubs — rows are rounded
+  individually instead); winner row tinted gold, loser dimmed,
+  names in tooltips, each box links to
+  `/wedstrijd/[id]`. The tree comes from parsing `homePlaceholder`/
+  `awayPlaceholder` ("Winnaar R32-2" / "1/8 5" / "KF 3" / "HF 1"); if the
+  wiring doesn't resolve the component renders nothing. Wider than a phone, so
+  its wrapper scrolls horizontally and starts centred on the final. Bracket
+  boxes deliberately do **not** carry `data-match-card` (the LiveScores overlay
+  contract) — the bracket is static.
 - **Motion layer**: a global IntersectionObserver in `Layout.astro` reveals
   below-fold `main > *` blocks (`.reveal`) and plays chart animations —
   wrappers marked `data-animate` get `.anim-ready` (hidden start state, JS-only

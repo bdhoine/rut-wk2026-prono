@@ -1,6 +1,14 @@
 [
   {
     "date": "2026-07-02",
+    "title": "Knock-outschema op de kalender",
+    "items": [
+      "De kalender opent nu met het klassieke toernooischema: van de 1/16de finales aan de buitenkant naar de finale (en troostfinale) in het midden, met de vlaggen van de landen — de winnaar van elke wedstrijd krijgt een gouden tint.",
+      "Tik op een wedstrijd in het schema voor de uitslag en alle pronostieken. Op een smal scherm schuif je horizontaal door het schema; het opent gecentreerd op de finale."
+    ]
+  },
+  {
+    "date": "2026-07-02",
     "title": "Subtiele animaties door de hele site",
     "items": [
       "De site voelt levendiger: blokken glijden zachtjes in beeld terwijl je scrolt, en de grafieken tekenen zichzelf — het klassementsverloop en de top 5-lijnen worden getekend zodra ze in beeld komen, en de momentum-balken groeien vanuit de middellijn.",

@@ -1,0 +1,312 @@
+---
+// Build-time knockout bracket (kalender): the classic two-sided tournament
+// tree — 1/16de finales on the outer edges converging to the Finale in the
+// centre, flags only (names in the tooltip; the box links to the match page,
+// which has the scores). The winner row is tinted gold, the loser dimmed.
+// The tree is derived from the `homePlaceholder`/`awayPlaceholder`
+// wiring in matches.json ("Winnaar R32-2", "Winnaar 1/8 5", "Winnaar KF 3",
+// "Winnaar HF 1"); if that wiring can't be resolved the component renders
+// nothing. Wider than a phone, so the wrapper scrolls horizontally and starts
+// centred on the final (small script below).
+import Flag from './Flag.astro';
+import { matches, getTeam, sideLabel } from '@/lib/data';
+import type { Match } from '@/lib/types';
+
+const ko = new Map(matches.filter((m) => m.round !== 'group').map((m) => [m.id, m]));
+
+// "Winnaar R32-2" → r32-2, "Winnaar 1/8 5" → r16-5, "… KF 3" → qf-3, "… HF 1" → sf-1.
+function feederId(ph?: string | null): string | null {
+  if (!ph) return null;
+  let x: RegExpMatchArray | null;
+  if ((x = ph.match(/R32-(\d+)/i))) return `r32-${x[1]}`;
+  if ((x = ph.match(/1\/8 (\d+)/))) return `r16-${x[1]}`;
+  if ((x = ph.match(/KF (\d+)/i))) return `qf-${x[1]}`;
+  if ((x = ph.match(/HF (\d+)/i))) return `sf-${x[1]}`;
+  return null;
+}
+const get = (id: string | null): Match => {
+  const m = id ? ko.get(id) : undefined;
+  if (!m) throw new Error(`bracket: unresolved feeder ${id}`);
+  return m;
+};
+const feeders = (m: Match): [Match, Match] => [get(feederId(m.homePlaceholder)), get(feederId(m.awayPlaceholder))];
+
+// One half of the tree = everything under one semi-final, ordered so each
+// match sits next to its sibling (pair order drives the connector layout).
+type HalfRounds = Match[][]; // [r32(8), r16(4), qf(2), sf(1)]
+function halfFor(sf: Match): HalfRounds {
+  const qfs = feeders(sf);
+  const r16s = qfs.flatMap((q) => feeders(q));
+  const r32s = r16s.flatMap((r) => feeders(r));
+  return [r32s, r16s, [...qfs], [sf]];
+}
+
+let final: Match | null = null;
+let third: Match | null = null;
+let halves: { cls: string; rounds: HalfRounds }[] = [];
+try {
+  final = get('final-1');
+  third = ko.get('third-1') ?? null;
+  const [sfL, sfR] = feeders(final);
+  halves = [
+    { cls: '', rounds: halfFor(sfL) },
+    { cls: 'bk-r', rounds: halfFor(sfR) },
+  ];
+} catch {
+  final = null; // wiring changed/incomplete — render nothing rather than a wrong tree
+}
+
+const pairsOf = (round: Match[]): Match[][] => {
+  const out: Match[][] = [];
+  for (let i = 0; i < round.length; i += 2) out.push(round.slice(i, Math.min(i + 2, round.length)));
+  return out;
+};
+
+type Row = { iso: string | null; name: string | null; winner: boolean; loser: boolean };
+function rowsFor(m: Match): Row[] {
+  const finished = m.status === 'finished' && !!m.result;
+  return (['home', 'away'] as const).map((side) => {
+    const teamId = side === 'home' ? m.homeTeamId : m.awayTeamId;
+    const team = getTeam(teamId);
+    const winner = finished && m.winnerTeamId != null && m.winnerTeamId === teamId;
+    return {
+      iso: team?.iso ?? null,
+      name: team?.name ?? null,
+      winner,
+      loser: finished && !winner,
+    };
+  });
+}
+const duel = (m: Match) => `${sideLabel(m, 'home').label} – ${sideLabel(m, 'away').label}`;
+
+const champion = final?.status === 'finished' ? getTeam(final.winnerTeamId) : null;
+---
+{final && (
+  <div class="-mx-4 overflow-x-auto px-4 pb-2" data-bracket-scroll>
+    <div class="bk mx-auto">
+      <div class="bk-grid">
+        {halves.map((half) => (
+          <div class:list={['bk-half', half.cls]}>
+            {half.rounds.map((round) => (
+              <div class="bk-round">
+                {pairsOf(round).map((pair) => (
+                  <div class={pair.length === 2 ? 'bk-pair' : 'bk-solo'}>
+                    {pair.map((m) => (
+                      <div class="bk-slot">
+                        <a href={`/wedstrijd/${m.id}`} class="bk-m" title={duel(m)}>
+                          {rowsFor(m).map((r) => (
+                            <span class:list={['bk-t', r.winner && 'bk-w', r.loser && 'bk-l']}>
+                              <Flag iso={r.iso} name={r.name ?? undefined} class="text-base" />
+                            </span>
+                          ))}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ))}
+
+        {/* The finale floats above the tree, centred over the two semi-finals;
+            a gold stem drops from it to where the semi-final lines meet. */}
+        <div class="bk-fin-wrap">
+          <div class="bk-above">
+            {champion ? (
+              <span class="inline-flex flex-col items-center gap-0.5 text-[11px] font-bold">
+                <span aria-hidden="true" class="text-lg leading-none">🏆</span>
+                <span class="inline-flex items-center gap-1"><Flag iso={champion.iso} name={champion.name} class="text-base" />{champion.name}</span>
+              </span>
+            ) : (
+              <span aria-hidden="true" class="text-xl opacity-60">🏆</span>
+            )}
+          </div>
+          <span class="bk-lbl">Finale</span>
+          <a href={`/wedstrijd/${final.id}`} class="bk-m bk-fin" title={duel(final)}>
+            {rowsFor(final).map((r) => (
+              <span class:list={['bk-t bk-t-lg', r.winner && 'bk-w', r.loser && 'bk-l']}>
+                <Flag iso={r.iso} name={r.name ?? undefined} class="text-xl" />
+              </span>
+            ))}
+          </a>
+        </div>
+        {third && (
+          <div class="bk-third-wrap">
+            <a href={`/wedstrijd/${third.id}`} class="bk-m" title={`Troostfinale: ${duel(third)}`}>
+              {rowsFor(third).map((r) => (
+                <span class:list={['bk-t', r.winner && 'bk-w', r.loser && 'bk-l']}>
+                  <Flag iso={r.iso} name={r.name ?? undefined} class="text-base" />
+                </span>
+              ))}
+            </a>
+            <span class="bk-lbl">Troostfinale</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .bk {
+    --g: 18px; /* gap between bracket columns; connector stubs span half of it */
+    --cw: 112px; /* width of the floating finale/troostfinale block */
+    --line: color-mix(in oklab, var(--gold) 55%, var(--border)); /* clearly visible, brand gold */
+    --lw: 2px; /* connector line weight */
+    --bw: 44px; /* fixed card width — cards hug the flag, lines take the rest */
+    width: 100%;
+    min-width: 520px;
+  }
+  .bk-grid {
+    display: flex;
+    gap: var(--g);
+    height: 560px;
+    position: relative;
+  }
+  .bk-half {
+    flex: 1;
+    display: flex;
+    gap: var(--g);
+    min-width: 0;
+  }
+  .bk-r { flex-direction: row-reverse; }
+  .bk-round {
+    flex: 1;
+    min-width: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  .bk-pair, .bk-solo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    position: relative;
+  }
+
+  .bk-slot {
+    position: relative;
+    width: 100%;
+  }
+  .bk-m {
+    position: relative;
+    z-index: 1; /* above the slot's connector line */
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    box-shadow: 0 1px 2px 0 oklch(0 0 0 / 5%);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .bk-slot .bk-m {
+    width: var(--bw);
+    margin-inline: auto;
+  }
+  /* No overflow:hidden (it would clip the connector stubs on the box edges) —
+     round the first/last row instead so the winner tint follows the corners. */
+  .bk-t:first-child { border-radius: 7px 7px 0 0; }
+  .bk-t:last-child { border-radius: 0 0 7px 7px; }
+  .bk-m:hover {
+    border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+    box-shadow: 0 2px 8px 0 oklch(0 0 0 / 12%);
+  }
+  .bk-t {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 26px;
+    padding: 0 4px;
+  }
+  .bk-t + .bk-t { border-top: 1px solid var(--border); }
+  .bk-t-lg { height: 32px; }
+  .bk-w { background: color-mix(in oklab, var(--gold) 18%, transparent); }
+  .bk-l { opacity: 0.55; }
+
+  /* Connectors. Centres land on exact fractions thanks to space-around:
+     a pair's two boxes sit at 25%/75% of the pair, so the vertical joins
+     25%→75% and the next round's box centre meets it at 50%.
+     Each slot draws one horizontal line across its full width plus half a gap
+     on both sides (meeting the pair verticals there); the card sits on top of
+     it, so only the segments left and right of the card show. */
+  .bk-slot::after, .bk-pair::after {
+    content: '';
+    position: absolute;
+    background: var(--line);
+  }
+  .bk-slot::after {
+    top: calc(50% - var(--lw) / 2);
+    height: var(--lw);
+    left: calc(var(--g) / -2);
+    right: calc(var(--g) / -2);
+  }
+  /* First round: no feeder — the line only runs toward the centre of the
+     bracket (the card covers its own middle). */
+  .bk-half:not(.bk-r) .bk-round:first-child .bk-slot::after { left: 50%; }
+  .bk-r .bk-round:first-child .bk-slot::after { right: 50%; }
+  /* The two semi-final lines meet each other in the middle of the central gap. */
+  .bk-pair::after { /* vertical join between a pair's lines */
+    top: 25%;
+    height: 50%;
+    width: var(--lw);
+  }
+  .bk-half:not(.bk-r) .bk-pair::after { right: calc(var(--g) / -2); }
+  .bk-r .bk-pair::after { left: calc(var(--g) / -2); }
+
+  /* Finale floats top-centre above the tree (over the semi-final columns —
+     that area is empty, the semis sit at mid-height); Troostfinale floats
+     bottom-centre. A gold stem drops from the finale box to the junction
+     where the two semi-final stubs meet. */
+  .bk-fin-wrap, .bk-third-wrap {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--cw);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    z-index: 1;
+  }
+  /* Vertically aligned with the quarter-finals: the finale box centre sits at
+     25% (the top QF row), the troostfinale at 75% (the bottom QF row). The
+     offsets compensate for the trophy/label above the finale box (~93px to
+     its centre) and half the troostfinale box (~27px). */
+  .bk-fin-wrap { top: calc(25% - 93px); }
+  .bk-third-wrap { top: calc(75% - 27px); }
+  .bk-above {
+    height: 44px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .bk-lbl {
+    display: block;
+    padding: 2px 0 4px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .bk-third-wrap .bk-lbl { padding: 4px 0 0; }
+  .bk-grid::after { /* stem: finale box ↓ to the semi-final junction at 50% */
+    content: '';
+    position: absolute;
+    left: calc(50% - var(--lw) / 2);
+    top: calc(25% + 31px); /* bottom edge of the finale box (centre 25% + half box) */
+    bottom: 50%;
+    width: var(--lw);
+    background: var(--line);
+  }
+</style>
+
+<script>
+  // The bracket is wider than a phone: start the horizontal scroll centred on
+  // the final so both halves peek in (the reference layout's focal point).
+  const wrap = document.querySelector('[data-bracket-scroll]');
+  if (wrap && wrap.scrollWidth > wrap.clientWidth) {
+    wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) / 2;
+  }
+</script>
