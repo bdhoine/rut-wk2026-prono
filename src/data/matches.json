@@ -4640,8 +4640,53 @@
     "awayTeamId": "at",
     "homePlaceholder": "Winnaar Groep H",
     "awayPlaceholder": "2e Groep J",
-    "status": "scheduled",
-    "apiId": 760497
+    "status": "finished",
+    "apiId": 760497,
+    "result": {
+      "home": 3,
+      "away": 0
+    },
+    "winnerTeamId": "es",
+    "goals": [
+      {
+        "player": "Mikel Oyarzabal",
+        "teamId": "es",
+        "minute": "36'"
+      },
+      {
+        "player": "Pedro Porro",
+        "teamId": "es",
+        "minute": "66'"
+      },
+      {
+        "player": "Mikel Oyarzabal",
+        "teamId": "es",
+        "minute": "89'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        4,
+        4,
+        1,
+        0,
+        0,
+        1,
+        4,
+        11,
+        6,
+        3,
+        5,
+        4,
+        1,
+        8,
+        0,
+        1,
+        1,
+        7
+      ]
+    }
   },
   {
     "id": "r32-13",
@@ -4745,7 +4790,7 @@
     "kickoff": "2026-07-06T19:00Z",
     "venue": "AT&T Stadium, Dallas",
     "homeTeamId": null,
-    "awayTeamId": null,
+    "awayTeamId": "es",
     "homePlaceholder": "Winnaar R32-11",
     "awayPlaceholder": "Winnaar R32-12",
     "status": "scheduled",

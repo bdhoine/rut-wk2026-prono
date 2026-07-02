@@ -25,6 +25,11 @@
     "goals": 4
   },
   {
+    "player": "Mikel Oyarzabal",
+    "teamId": "es",
+    "goals": 4
+  },
+  {
     "player": "Ousmane Dembélé",
     "teamId": "fr",
     "goals": 4
@@ -167,11 +172,6 @@
   {
     "player": "Maxi Araújo",
     "teamId": "uy",
-    "goals": 2
-  },
-  {
-    "player": "Mikel Oyarzabal",
-    "teamId": "es",
     "goals": 2
   },
   {
@@ -677,6 +677,11 @@
   {
     "player": "Omar Rekik",
     "teamId": "tn",
+    "goals": 1
+  },
+  {
+    "player": "Pedro Porro",
+    "teamId": "es",
     "goals": 1
   },
   {
