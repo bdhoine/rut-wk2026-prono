@@ -4502,8 +4502,48 @@
     "awayTeamId": "ba",
     "homePlaceholder": "Winnaar Groep D",
     "awayPlaceholder": "Beste 3e (B/E/F/I/J)",
-    "status": "scheduled",
-    "apiId": 760494
+    "status": "finished",
+    "apiId": 760494,
+    "result": {
+      "home": 2,
+      "away": 0
+    },
+    "winnerTeamId": "us",
+    "goals": [
+      {
+        "player": "Folarin Balogun",
+        "teamId": "us",
+        "minute": "45'"
+      },
+      {
+        "player": "Malik Tillman",
+        "teamId": "us",
+        "minute": "82'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        3,
+        -4,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        7,
+        1,
+        0,
+        -1,
+        0,
+        -6,
+        -3,
+        0,
+        6,
+        -4
+      ]
+    }
   },
   {
     "id": "r32-10",
@@ -4525,7 +4565,7 @@
       {
         "player": "Habib Diarra",
         "teamId": "sn",
-        "minute": "25'"
+        "minute": "24'"
       },
       {
         "player": "Ismaïla Sarr",
@@ -4716,7 +4756,7 @@
     "round": "r16",
     "kickoff": "2026-07-07T00:00Z",
     "venue": "Lumen Field, Seattle",
-    "homeTeamId": null,
+    "homeTeamId": "us",
     "awayTeamId": "be",
     "homePlaceholder": "Winnaar R32-9",
     "awayPlaceholder": "Winnaar R32-10",

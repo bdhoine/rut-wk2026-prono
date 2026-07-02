@@ -55,6 +55,11 @@
     "goals": 3
   },
   {
+    "player": "Folarin Balogun",
+    "teamId": "us",
+    "goals": 3
+  },
+  {
     "player": "Ismael Saibari",
     "teamId": "ma",
     "goals": 3
@@ -137,11 +142,6 @@
   {
     "player": "Ermin Mahmic",
     "teamId": "ba",
-    "goals": 2
-  },
-  {
-    "player": "Folarin Balogun",
-    "teamId": "us",
     "goals": 2
   },
   {
@@ -552,6 +552,11 @@
   {
     "player": "Mahmoud Saber",
     "teamId": "eg",
+    "goals": 1
+  },
+  {
+    "player": "Malik Tillman",
+    "teamId": "us",
     "goals": 1
   },
   {
