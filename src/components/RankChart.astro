@@ -144,15 +144,17 @@ const markerLines = markers
 </div>
 
 <script>
-  // Tap/focus a dot to show its place label; tap elsewhere or the same dot to
-  // hide. One shared label element per chart, repositioned each time.
+  // Hover a dot to peek at its place label; tap/click pins it (tap elsewhere
+  // or the same dot to unpin). One shared label element per chart,
+  // repositioned each time.
   document.querySelectorAll<SVGSVGElement>('[data-rank-chart]').forEach((svg) => {
     const label = svg.querySelector<SVGGElement>('[data-rank-label]');
     const bg = svg.querySelector<SVGRectElement>('[data-rank-label-bg]');
     const txt = svg.querySelector<SVGTextElement>('[data-rank-label-text]');
     if (!label || !bg || !txt) return;
     let openDot: Element | null = null;
-    const hide = () => { label.classList.add('hidden'); openDot = null; };
+    let pinned = false;
+    const hide = () => { label.classList.add('hidden'); openDot = null; pinned = false; };
     const show = (dot: Element) => {
       const cx = parseFloat(dot.getAttribute('data-cx') || '0');
       const cy = parseFloat(dot.getAttribute('data-cy') || '0');
@@ -175,8 +177,15 @@ const markerLines = markers
     };
     const padHalf = (w: number) => w / 2 + 1;
     svg.querySelectorAll('[data-dot]').forEach((dot) => {
-      const toggle = (e: Event) => { e.preventDefault(); e.stopPropagation(); openDot === dot ? hide() : show(dot); };
+      const toggle = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (openDot === dot && pinned) hide();
+        else { show(dot); pinned = true; }
+      };
       dot.addEventListener('click', toggle);
+      dot.addEventListener('mouseenter', () => { if (!pinned) show(dot); });
+      dot.addEventListener('mouseleave', () => { if (!pinned && openDot === dot) hide(); });
       dot.addEventListener('focus', () => show(dot));
       dot.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') toggle(e); });
     });
