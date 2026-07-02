@@ -245,7 +245,7 @@ const dogH = DOG_ART.length * DOG_PX;
     if (totalEl && Number.isFinite(target) && target > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       totalEl.style.minWidth = `${totalEl.offsetWidth}px`; // keep layout stable while digits change
       const t0 = performance.now();
-      const dur = 800;
+      const dur = 2000;
       let last = totalEl.textContent;
       const tick = (now: number) => {
         if (totalEl.textContent !== last) return; // external update took over
