@@ -4,7 +4,8 @@
     "title": "Knock-outschema op de kalender",
     "items": [
       "De kalender opent nu met het klassieke toernooischema: van de 1/16de finales aan de buitenkant naar de finale (en troostfinale) in het midden, met de vlaggen van de landen — de winnaar van elke wedstrijd krijgt een gouden tint.",
-      "Tik op een wedstrijd in het schema voor de uitslag en alle pronostieken. Op een smal scherm schuif je horizontaal door het schema; het opent gecentreerd op de finale."
+      "Tik op een wedstrijd in het schema voor de uitslag en alle pronostieken. Op een smal scherm schuif je horizontaal door het schema; het opent gecentreerd op de finale.",
+      "De speelfases op de kalender (groepsfase, 1/16de finales, kwartfinales, …) zijn nu inklapbaar: alleen de fase die bezig is staat open, afgewerkte en toekomstige fases zijn standaard ingeklapt. Elke fase toont hoeveel wedstrijden al gespeeld zijn."
     ]
   },
   {

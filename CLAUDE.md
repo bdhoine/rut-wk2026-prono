@@ -121,7 +121,9 @@ before committing.
   wiring doesn't resolve the component renders nothing. Wider than a phone, so
   its wrapper scrolls horizontally and starts centred on the final. Bracket
   boxes deliberately do **not** carry `data-match-card` (the LiveScores overlay
-  contract) — the bracket is static.
+  contract) — the bracket is static. Below the bracket every stage is a
+  collapsible `<details>` card; `openKey` = the first stage not fully played
+  (last one when everything is finished), mirroring the deelnemer sections.
 - **Motion layer**: a global IntersectionObserver in `Layout.astro` reveals
   below-fold `main > *` blocks (`.reveal`) and plays chart animations —
   wrappers marked `data-animate` get `.anim-ready` (hidden start state, JS-only

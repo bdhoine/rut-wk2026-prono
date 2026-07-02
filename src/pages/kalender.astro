@@ -34,6 +34,18 @@ const KO_ROUNDS: RoundId[] = ['r32', 'r16', 'qf', 'sf', 'third', 'final'];
 const koRounds = KO_ROUNDS
   .map((round) => ({ round, days: byDay(matches.filter((m) => m.round === round).sort(byKickoff)) }))
   .filter((g) => g.days.length > 0);
+
+// Every stage is a collapsible <details>; only the stage in progress (the
+// first not fully played) is open — finished stages collapse automatically,
+// future ones start collapsed too. When everything is played, the last stage
+// stays open (same pattern as the speeldag sections on deelnemer/[id]).
+const stageStats = (round: RoundId) => {
+  const items = matches.filter((m) => m.round === round);
+  return { total: items.length, finished: items.filter((m) => m.status === 'finished').length };
+};
+const stageKeys: RoundId[] = ['group', ...koRounds.map((g) => g.round)];
+const stats = new Map(stageKeys.map((r) => [r, stageStats(r)]));
+const openKey = stageKeys.find((r) => stats.get(r)!.finished < stats.get(r)!.total) ?? stageKeys[stageKeys.length - 1];
 ---
 <Layout title="Kalender">
   <PageHeader title="Kalender" />
@@ -48,44 +60,53 @@ const koRounds = KO_ROUNDS
     </section>
   )}
 
-  <section class="mb-8">
-    <SectionHeading title={ROUND_LABELS.group}>
-      <DeadlineBadge round="group" />
-    </SectionHeading>
-    <div class="space-y-5">
-      {matchdays.map((d) => (
-        <div>
-          <h3 class="mb-2 text-sm font-semibold text-muted-foreground">Speeldag {d.md}</h3>
-          <div class="space-y-4">
-            {d.days.map(([day, items]) => (
-              <div>
-                <h4 class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{day}</h4>
-                <div class="space-y-1.5">
-                  {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  {koRounds.map((g) => (
-    <section class="mb-8">
-      <SectionHeading title={ROUND_LABELS[g.round]}>
-        <DeadlineBadge round={g.round} />
-      </SectionHeading>
-      <div class="space-y-4">
-        {g.days.map(([day, items]) => (
+  <SectionHeading title="Wedstrijden" />
+  <div class="space-y-3">
+    <details open={openKey === 'group'} class="group rounded-xl border bg-card shadow-sm">
+      <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        {ROUND_LABELS.group}
+        <span class="text-sm font-normal text-muted-foreground">{stats.get('group')!.finished}/{stats.get('group')!.total} gespeeld</span>
+        <DeadlineBadge round="group" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"><path d="m6 9 6 6 6-6" /></svg>
+      </summary>
+      <div class="space-y-5 px-3 pb-3 sm:px-4">
+        {matchdays.map((d) => (
           <div>
-            <h4 class="sticky top-16 z-10 -mx-1 mb-1.5 bg-background/95 px-1 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">{day}</h4>
-            <div class="space-y-1.5">
-              {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
+            <h3 class="mb-2 text-sm font-semibold text-muted-foreground">Speeldag {d.md}</h3>
+            <div class="space-y-4">
+              {d.days.map(([day, items]) => (
+                <div>
+                  <h4 class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{day}</h4>
+                  <div class="space-y-1.5">
+                    {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ))}
       </div>
-    </section>
-  ))}
+    </details>
+
+    {koRounds.map((g) => (
+      <details open={openKey === g.round} class="group rounded-xl border bg-card shadow-sm">
+        <summary class="flex cursor-pointer select-none items-center gap-2 rounded-xl px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+          {ROUND_LABELS[g.round]}
+          <span class="text-sm font-normal text-muted-foreground">{stats.get(g.round)!.finished}/{stats.get(g.round)!.total} gespeeld</span>
+          <DeadlineBadge round={g.round} />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        <div class="space-y-4 px-3 pb-3 sm:px-4">
+          {g.days.map(([day, items]) => (
+            <div>
+              <h4 class="sticky top-16 z-10 -mx-1 mb-1.5 rounded bg-card/95 px-1 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">{day}</h4>
+              <div class="space-y-1.5">
+                {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </details>
+    ))}
+  </div>
 </Layout>
