@@ -4628,8 +4628,54 @@
     "awayTeamId": "hr",
     "homePlaceholder": "2e Groep K",
     "awayPlaceholder": "2e Groep L",
-    "status": "scheduled",
-    "apiId": 760496
+    "status": "finished",
+    "apiId": 760496,
+    "result": {
+      "home": 2,
+      "away": 1
+    },
+    "winnerTeamId": "pt",
+    "goals": [
+      {
+        "player": "Ivan Perisic",
+        "teamId": "hr",
+        "minute": "53'"
+      },
+      {
+        "player": "Cristiano Ronaldo",
+        "teamId": "pt",
+        "minute": "68'",
+        "pen": true
+      },
+      {
+        "player": "Gonçalo Ramos",
+        "teamId": "pt",
+        "minute": "90'+4'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        6,
+        1,
+        3,
+        1,
+        2,
+        -2,
+        3,
+        2,
+        1,
+        -5,
+        -6,
+        -4,
+        1,
+        6,
+        -7,
+        -5,
+        0,
+        7
+      ]
+    }
   },
   {
     "id": "r32-12",
@@ -4789,7 +4835,7 @@
     "round": "r16",
     "kickoff": "2026-07-06T19:00Z",
     "venue": "AT&T Stadium, Dallas",
-    "homeTeamId": null,
+    "homeTeamId": "pt",
     "awayTeamId": "es",
     "homePlaceholder": "Winnaar R32-11",
     "awayPlaceholder": "Winnaar R32-12",

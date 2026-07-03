@@ -50,6 +50,11 @@
     "goals": 3
   },
   {
+    "player": "Cristiano Ronaldo",
+    "teamId": "pt",
+    "goals": 3
+  },
+  {
     "player": "Deniz Undav",
     "teamId": "de",
     "goals": 3
@@ -117,11 +122,6 @@
   {
     "player": "Bradley Barcola",
     "teamId": "fr",
-    "goals": 2
-  },
-  {
-    "player": "Cristiano Ronaldo",
-    "teamId": "pt",
     "goals": 2
   },
   {
@@ -395,6 +395,11 @@
     "goals": 1
   },
   {
+    "player": "Gonçalo Ramos",
+    "teamId": "pt",
+    "goals": 1
+  },
+  {
     "player": "Gonzalo Plata",
     "teamId": "ec",
     "goals": 1
@@ -437,6 +442,11 @@
   {
     "player": "Issa Diop",
     "teamId": "ma",
+    "goals": 1
+  },
+  {
+    "player": "Ivan Perisic",
+    "teamId": "hr",
     "goals": 1
   },
   {
