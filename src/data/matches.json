@@ -4841,7 +4841,19 @@
     ],
     "penalties": {
       "home": 2,
-      "away": 4
+      "away": 4,
+      "homeKicks": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "awayKicks": [
+        true,
+        true,
+        true,
+        true
+      ]
     },
     "momentum": {
       "bucketMin": 5,
