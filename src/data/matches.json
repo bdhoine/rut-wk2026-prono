@@ -4819,8 +4819,59 @@
     "awayTeamId": "eg",
     "homePlaceholder": "2e Groep D",
     "awayPlaceholder": "2e Groep G",
-    "status": "scheduled",
-    "apiId": 760499
+    "status": "finished",
+    "apiId": 760499,
+    "result": {
+      "home": 1,
+      "away": 1
+    },
+    "winnerTeamId": "eg",
+    "goals": [
+      {
+        "player": "Emam Ashour",
+        "teamId": "eg",
+        "minute": "13'"
+      },
+      {
+        "player": "Mohamed Hany",
+        "teamId": "au",
+        "minute": "55'",
+        "og": true
+      }
+    ],
+    "penalties": {
+      "home": 2,
+      "away": 4
+    },
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        0,
+        1,
+        -5,
+        -2,
+        1,
+        0,
+        3,
+        1,
+        2,
+        -1,
+        6,
+        0,
+        2,
+        0,
+        -1,
+        2,
+        2,
+        -8,
+        -1,
+        0,
+        -1,
+        -2,
+        -6,
+        5
+      ]
+    }
   },
   {
     "id": "r16-1",
@@ -4900,7 +4951,7 @@
     "kickoff": "2026-07-07T16:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": null,
-    "awayTeamId": null,
+    "awayTeamId": "eg",
     "homePlaceholder": "Winnaar R32-14",
     "awayPlaceholder": "Winnaar R32-16",
     "status": "scheduled",

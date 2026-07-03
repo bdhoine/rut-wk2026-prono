@@ -150,6 +150,11 @@
     "goals": 2
   },
   {
+    "player": "Emam Ashour",
+    "teamId": "eg",
+    "goals": 2
+  },
+  {
     "player": "Ermin Mahmic",
     "teamId": "ba",
     "goals": 2
@@ -352,11 +357,6 @@
   {
     "player": "Eldor Shomurodov",
     "teamId": "uz",
-    "goals": 1
-  },
-  {
-    "player": "Emam Ashour",
-    "teamId": "eg",
     "goals": 1
   },
   {
