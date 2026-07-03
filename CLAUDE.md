@@ -128,9 +128,9 @@ before committing.
   below-fold `main > *` blocks (`.reveal`) and plays chart animations —
   wrappers marked `data-animate` get `.anim-ready` (hidden start state, JS-only
   so nothing hides without JS) then `.in-view` (plays). Charts use
-  `.chart-line` (+`pathLength="1"`), `.chart-dot`, `.bar-h`/`.bar-a` (see
+  `.chart-line` (real line length via `--len`), `.chart-dot`, `.bar-h`/`.bar-a` (see
   `global.css`). Also there: `.row-rise` (klassement row stagger),
-  `.medal-badge` glint, live-card glow via `:has(.live-badge)`, hero sheen
+  `.medal-badge` glint, hero sheen
   (`.hero-panel::after`), and a count-up script on `deelnemer/[id]`'s
   `#hdr-total` (bails out when LiveScores writes the element). Everything is
   disabled under `prefers-reduced-motion`; keep new animations behind the same

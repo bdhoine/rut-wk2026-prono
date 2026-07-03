@@ -307,7 +307,7 @@ export default function RankingTable({
               key={row.participantId}
               data-clickable="true"
               onClick={() => go(row.participantId)}
-              className={`row-rise${inMoney ? " money-row bg-emerald-500/10 hover:bg-emerald-500/15" : ""}`}
+              className={`row-rise${inMoney ? " bg-emerald-500/10 hover:bg-emerald-500/15" : ""}`}
               style={{ "--row-i": i } as React.CSSProperties}
             >
               <TableCell className="px-0.5">

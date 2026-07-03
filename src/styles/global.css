@@ -263,19 +263,6 @@ body::before {
   94% { transform: translateX(130%) rotate(18deg); }
 }
 
-/* Prize rows (top 5): the emerald tint breathes gently, staggered per row —
-   a slow wave over the money zone. Static tint stays as the reduced-motion
-   and non-animating fallback (the utility classes on the row). */
-@keyframes money-breathe {
-  0%, 100% { background-color: color-mix(in oklab, oklch(0.72 0.16 145) 9%, transparent); }
-  50% { background-color: color-mix(in oklab, oklch(0.72 0.16 145) 19%, transparent); }
-}
-.money-row {
-  animation: money-breathe 4s ease-in-out infinite;
-  animation-delay: calc(min(var(--row-i, 0), 10) * 350ms);
-}
-.money-row:hover { animation-play-state: paused; }
-
 /* One-time soft light sweep across the hero panel on load. */
 .hero-panel::after {
   content: '';
@@ -288,18 +275,6 @@ body::before {
 }
 @keyframes hero-sheen {
   to { transform: translateX(110%) skewX(-16deg); }
-}
-
-/* Soft pulsing ring around a match card while it's live. Covers both overlay
-   mode (LiveScores injects .live-badge into a static [data-match-card]) and
-   the home "Nu live" list (client-built cards carrying data-key). Harmless
-   no-op on browsers without :has(). */
-:is([data-match-card], [data-key]):has(.live-badge) {
-  animation: live-glow 2.6s ease-in-out infinite;
-}
-@keyframes live-glow {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(0.63 0.22 27 / 0); }
-  50% { box-shadow: 0 0 0 3px oklch(0.63 0.22 27 / 0.14), 0 2px 14px oklch(0.63 0.22 27 / 0.18); }
 }
 
 /* Theme toggle: the freshly shown icon swings in on click (class added by JS,
@@ -318,10 +293,8 @@ body::before {
   [data-animate].in-view :is(.chart-dot, .chart-area, .chart-end),
   [data-animate].in-view :is(.bar-h, .bar-a),
   .row-rise,
-  .money-row,
   .medal-badge::after,
   .hero-panel::after,
-  [data-match-card]:has(.live-badge),
   .theme-spin svg:not(.hidden) { animation: none; }
 }
 
