@@ -125,6 +125,11 @@
     "goals": 2
   },
   {
+    "player": "Breel Embolo",
+    "teamId": "ch",
+    "goals": 2
+  },
+  {
     "player": "Crysencio Summerville",
     "teamId": "nl",
     "goals": 2
@@ -305,11 +310,6 @@
     "goals": 1
   },
   {
-    "player": "Breel Embolo",
-    "teamId": "ch",
-    "goals": 1
-  },
-  {
     "player": "Brian Cipenga",
     "teamId": "cd",
     "goals": 1
@@ -332,6 +332,11 @@
   {
     "player": "Daizen Maeda",
     "teamId": "jp",
+    "goals": 1
+  },
+  {
+    "player": "Dan Ndoye",
+    "teamId": "ch",
     "goals": 1
   },
   {
