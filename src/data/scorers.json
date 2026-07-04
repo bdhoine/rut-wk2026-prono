@@ -1,13 +1,13 @@
 [
   {
-    "player": "Lionel Messi",
-    "teamId": "ar",
+    "player": "Kylian Mbappé",
+    "teamId": "fr",
     "goals": 7
   },
   {
-    "player": "Kylian Mbappé",
-    "teamId": "fr",
-    "goals": 6
+    "player": "Lionel Messi",
+    "teamId": "ar",
+    "goals": 7
   },
   {
     "player": "Erling Haaland",
