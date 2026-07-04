@@ -4869,8 +4869,43 @@
     "awayTeamId": "gh",
     "homePlaceholder": "Winnaar Groep K",
     "awayPlaceholder": "Beste 3e (D/E/I/J/L)",
-    "status": "scheduled",
-    "apiId": 760501
+    "status": "finished",
+    "apiId": 760501,
+    "result": {
+      "home": 1,
+      "away": 0
+    },
+    "winnerTeamId": "co",
+    "goals": [
+      {
+        "player": "Jhon Arias",
+        "teamId": "co",
+        "minute": "14'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        -1,
+        0,
+        7,
+        3,
+        0,
+        0,
+        -3,
+        -3,
+        0,
+        1,
+        4,
+        4,
+        0,
+        -3,
+        0,
+        4,
+        4,
+        14
+      ]
+    }
   },
   {
     "id": "r32-16",
@@ -5037,7 +5072,7 @@
     "kickoff": "2026-07-07T20:00Z",
     "venue": "BC Place, Vancouver",
     "homeTeamId": "ch",
-    "awayTeamId": null,
+    "awayTeamId": "co",
     "homePlaceholder": "Winnaar R32-13",
     "awayPlaceholder": "Winnaar R32-15",
     "status": "scheduled",
