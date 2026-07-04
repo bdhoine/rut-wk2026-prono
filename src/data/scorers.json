@@ -120,6 +120,11 @@
     "goals": 2
   },
   {
+    "player": "Azzedine Ounahi",
+    "teamId": "ma",
+    "goals": 2
+  },
+  {
     "player": "Bradley Barcola",
     "teamId": "fr",
     "goals": 2
@@ -217,6 +222,11 @@
   {
     "player": "Rubén Vargas",
     "teamId": "ch",
+    "goals": 2
+  },
+  {
+    "player": "Soufiane Rahimi",
+    "teamId": "ma",
     "goals": 2
   },
   {
@@ -757,11 +767,6 @@
   {
     "player": "Sidny Lopes Cabral",
     "teamId": "cv",
-    "goals": 1
-  },
-  {
-    "player": "Soufiane Rahimi",
-    "teamId": "ma",
     "goals": 1
   },
   {
