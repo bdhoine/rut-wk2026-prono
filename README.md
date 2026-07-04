@@ -70,9 +70,8 @@ the build-time SVG charts animate on first sight — chart wrappers carry
 `.chart-dot` elements pop in staggered, and MomentumChart bars (`.bar-h`/`.bar-a`)
 grow from the centre line. All motion classes are **added by JS only** (nothing
 is hidden without JS) and everything is disabled under `prefers-reduced-motion`.
-Extras: klassement rows enter staggered (`.row-rise`), prize badges get a
-periodic staggered glint (`.medal-badge`), the hero panel a one-time light
-sweep, and the participant-page points total counts up on load.
+Extras: klassement rows enter staggered (`.row-rise`), the hero panel gets a
+one-time light sweep, and the participant-page points total counts up on load.
 
 Long team names have an optional `shortName` in `teams.json`, used on narrow
 viewports and in compact contexts (match cards, standings tables).

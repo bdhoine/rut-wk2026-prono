@@ -129,8 +129,7 @@ before committing.
   wrappers marked `data-animate` get `.anim-ready` (hidden start state, JS-only
   so nothing hides without JS) then `.in-view` (plays). Charts use
   `.chart-line` (real line length via `--len`), `.chart-dot`, `.bar-h`/`.bar-a` (see
-  `global.css`). Also there: `.row-rise` (klassement row stagger),
-  `.medal-badge` glint, hero sheen
+  `global.css`). Also there: `.row-rise` (klassement row stagger), hero sheen
   (`.hero-panel::after`), and a count-up script on `deelnemer/[id]`'s
   `#hdr-total` (bails out when LiveScores writes the element). Everything is
   disabled under `prefers-reduced-motion`; keep new animations behind the same

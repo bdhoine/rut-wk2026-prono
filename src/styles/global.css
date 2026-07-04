@@ -242,27 +242,6 @@ body::before {
   animation-delay: calc(min(var(--row-i, 0), 10) * 30ms);
 }
 
-/* Periodic glint over the prize-spot position badges. --mi staggers the wave
-   so the shine runs 1 → 2 → 3 → 4 → 5 down the klassement. */
-.medal-badge {
-  position: relative;
-  overflow: hidden;
-}
-.medal-badge::after {
-  content: '';
-  position: absolute;
-  inset: -30% -60%;
-  transform: translateX(-130%) rotate(18deg);
-  background: linear-gradient(100deg, transparent 36%, oklch(1 0 0 / 65%) 50%, transparent 64%);
-  animation: medal-glint 6s ease-in-out infinite;
-  animation-delay: calc(var(--mi, 0) * 260ms);
-  pointer-events: none;
-}
-@keyframes medal-glint {
-  0%, 88%, 100% { transform: translateX(-130%) rotate(18deg); }
-  94% { transform: translateX(130%) rotate(18deg); }
-}
-
 /* One-time soft light sweep across the hero panel on load. */
 .hero-panel::after {
   content: '';
@@ -293,7 +272,6 @@ body::before {
   [data-animate].in-view :is(.chart-dot, .chart-area, .chart-end),
   [data-animate].in-view :is(.bar-h, .bar-a),
   .row-rise,
-  .medal-badge::after,
   .hero-panel::after,
   .theme-spin svg:not(.hidden) { animation: none; }
 }

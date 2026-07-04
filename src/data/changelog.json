@@ -3,7 +3,6 @@
     "date": "2026-07-03",
     "title": "Fijnere animaties",
     "items": [
-      "De positie-badges van de prijsplaatsen in het klassement (top 5) glinsteren nu om de beurt van 1 naar 5.",
       "De grafiek op de deelnemerspagina is mooier: de lijn tekent zichzelf met een goudkleurig vlak eronder, en je huidige plaats verschijnt als leesbaar badge aan het einde van de lijn. De teken-animatie van de grafieken werkt nu ook op iPhone.",
       "Het puntentotaal op de deelnemerspagina telt netter op: de cijfers blijven rechts uitgelijnd tijdens het tellen en het eindtotaal landt met een kleine 'pop'.",
       "In de Klassementsverloop-grafiek zie je de plaats nu ook door over een punt te zweven met de muis; tikken/klikken pint het label vast."
@@ -23,7 +22,7 @@
     "title": "Subtiele animaties door de hele site",
     "items": [
       "De site voelt levendiger: blokken glijden zachtjes in beeld terwijl je scrolt, en de grafieken tekenen zichzelf — het klassementsverloop en de top 5-lijnen worden getekend zodra ze in beeld komen, en de momentum-balken groeien vanuit de middellijn.",
-      "Kleine details: het klassement verschijnt rij per rij, de goud/zilver/brons-plaatsen glinsteren af en toe, het puntentotaal op een deelnemerspagina telt op bij het openen, en het thema-icoontje draait bij het wisselen.",
+      "Kleine details: het klassement verschijnt rij per rij, het puntentotaal op een deelnemerspagina telt op bij het openen, en het thema-icoontje draait bij het wisselen.",
       "Alle animaties respecteren de systeeminstelling 'verminder beweging' — wie dat aan heeft staan, ziet alles gewoon meteen."
     ]
   },
