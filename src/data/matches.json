@@ -4795,8 +4795,70 @@
     "awayTeamId": "cv",
     "homePlaceholder": "Winnaar Groep J",
     "awayPlaceholder": "2e Groep H",
-    "status": "scheduled",
-    "apiId": 760500
+    "status": "finished",
+    "apiId": 760500,
+    "result": {
+      "home": 3,
+      "away": 2
+    },
+    "winnerTeamId": "ar",
+    "goals": [
+      {
+        "player": "Lionel Messi",
+        "teamId": "ar",
+        "minute": "29'"
+      },
+      {
+        "player": "Deroy Duarte",
+        "teamId": "cv",
+        "minute": "59'"
+      },
+      {
+        "player": "Lisandro Martínez",
+        "teamId": "ar",
+        "minute": "92'"
+      },
+      {
+        "player": "Sidny Lopes Cabral",
+        "teamId": "cv",
+        "minute": "103'"
+      },
+      {
+        "player": "Diney Borges",
+        "teamId": "ar",
+        "minute": "111'",
+        "og": true
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        0,
+        -2,
+        1,
+        3,
+        0,
+        6,
+        0,
+        0,
+        3,
+        -5,
+        -3,
+        -6,
+        4,
+        3,
+        5,
+        -1,
+        3,
+        14,
+        7,
+        1,
+        -1,
+        -1,
+        6,
+        -14
+      ]
+    }
   },
   {
     "id": "r32-15",
@@ -4962,7 +5024,7 @@
     "round": "r16",
     "kickoff": "2026-07-07T16:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
-    "homeTeamId": null,
+    "homeTeamId": "ar",
     "awayTeamId": "eg",
     "homePlaceholder": "Winnaar R32-14",
     "awayPlaceholder": "Winnaar R32-16",

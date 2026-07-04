@@ -1,12 +1,12 @@
 [
   {
-    "player": "Kylian Mbappé",
-    "teamId": "fr",
-    "goals": 6
-  },
-  {
     "player": "Lionel Messi",
     "teamId": "ar",
+    "goals": 7
+  },
+  {
+    "player": "Kylian Mbappé",
+    "teamId": "fr",
     "goals": 6
   },
   {
@@ -345,6 +345,11 @@
     "goals": 1
   },
   {
+    "player": "Deroy Duarte",
+    "teamId": "cv",
+    "goals": 1
+  },
+  {
     "player": "Derrick Luckassen",
     "teamId": "gh",
     "goals": 1
@@ -550,6 +555,11 @@
     "goals": 1
   },
   {
+    "player": "Lisandro Martínez",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Livano Comenencia",
     "teamId": "cw",
     "goals": 1
@@ -737,6 +747,11 @@
   {
     "player": "Sebastian Berhalter",
     "teamId": "us",
+    "goals": 1
+  },
+  {
+    "player": "Sidny Lopes Cabral",
+    "teamId": "cv",
     "goals": 1
   },
   {
