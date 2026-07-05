@@ -123,8 +123,11 @@ before committing.
   played rounds (a leading r32→qf prefix, capped so the SF column always
   stays) are **hidden by default** (`bk-compact` on the root + `data-done`
   round columns; the first visible round reuses the first-round line
-  clipping via `[data-done] + .bk-round`) with a filter button above the
-  bracket to toggle the full tree. The country-page **Doelpuntenmakers**
+  clipping via `[data-done] + .bk-round`) with a toggle switch centred
+  below the bracket, pulled up into the empty bottom-centre zone
+  (`-mt-12`, pointer-events-none row so bracket scrolling isn't blocked);
+  fixed label “Toon gespeelde rondes” — the switch state, not flipping
+  action text, communicates visibility. The country-page **Doelpuntenmakers**
   table shows a tie-aware position number per scorer. Bracket
   boxes deliberately do **not** carry `data-match-card` (the LiveScores overlay
   contract) — the bracket is static. Below the bracket every stage is a

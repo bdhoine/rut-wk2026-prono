@@ -92,14 +92,6 @@ while (hiddenRounds < 3 && roundDone(HALF_ROUND_IDS[hiddenRounds])) hiddenRounds
 ---
 {final && (
   <Fragment>
-    {hiddenRounds > 0 && (
-      <div class="mb-2 flex justify-end">
-        <button type="button" data-bracket-toggle aria-pressed="false" class="inline-flex items-center gap-1.5 rounded-lg border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
-          <span data-bracket-toggle-label>Toon gespeelde rondes</span>
-        </button>
-      </div>
-    )}
   <div class="-mx-4 overflow-x-auto px-4 pb-2" data-bracket-scroll>
     <div class:list={['bk mx-auto', hiddenRounds > 0 && 'bk-compact']} data-bracket style={`--hidden: ${hiddenRounds}`}>
       <div class="bk-grid">
@@ -164,6 +156,20 @@ while (hiddenRounds < 3 && roundDone(HALF_ROUND_IDS[hiddenRounds])) hiddenRounds
       </div>
     </div>
   </div>
+  {hiddenRounds > 0 && (
+    <div class="pointer-events-none relative z-10 -mt-12 flex justify-center">
+      {/* Switch with a fixed label: the on/off state says whether the played
+          rounds are visible — no flipping action text (that reads ambiguous
+          on a switch: current state or what a tap will do?). The row is pulled
+          up into the bracket's empty bottom-centre zone (about halfway toward
+          the Troostfinale label); pointer-events-none on the full-width row
+          keeps it from blocking horizontal scroll on the bracket underneath. */}
+      <button type="button" role="switch" aria-checked="false" data-bracket-toggle class="bk-sw pointer-events-auto">
+        <span class="bk-sw-track" aria-hidden="true"><span class="bk-sw-thumb"></span></span>
+        <span>Toon gespeelde rondes</span>
+      </button>
+    </div>
+  )}
   </Fragment>
 )}
 
@@ -310,6 +316,44 @@ while (hiddenRounds < 3 && roundDone(HALF_ROUND_IDS[hiddenRounds])) hiddenRounds
     color: var(--muted-foreground);
   }
   .bk-third-wrap .bk-lbl { padding: 4px 0 0; }
+  /* Played-rounds toggle switch (centred under the bracket). */
+  .bk-sw {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    transition: color 0.15s ease;
+  }
+  .bk-sw:hover { color: var(--foreground); }
+  .bk-sw:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .bk-sw-track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+    transition: background-color 0.15s ease;
+  }
+  .bk-sw[aria-checked='true'] .bk-sw-track { background: var(--gold); }
+  .bk-sw-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: #fff;
+    box-shadow: 0 1px 2px oklch(0 0 0 / 25%);
+    transition: transform 0.15s ease;
+  }
+  .bk-sw[aria-checked='true'] .bk-sw-thumb { transform: translateX(16px); }
+
   /* Compact mode: fully played rounds (a leading [data-done] prefix per half)
      collapse away; the narrower tree needs less min-width (2 columns + gaps per
      hidden round). The first visible round then sits right after a hidden one,
@@ -341,15 +385,13 @@ while (hiddenRounds < 3 && roundDone(HALF_ROUND_IDS[hiddenRounds])) hiddenRounds
   };
   centre();
 
-  // Filter toggle: show/hide the fully played rounds (compact ↔ full tree).
+  // Played-rounds switch: show/hide the fully played rounds (compact ↔ full tree).
   const bk = document.querySelector('[data-bracket]');
   const btn = document.querySelector('[data-bracket-toggle]');
-  const lbl = document.querySelector('[data-bracket-toggle-label]');
   btn?.addEventListener('click', () => {
-    if (!bk || !lbl) return;
+    if (!bk) return;
     const compact = bk.classList.toggle('bk-compact');
-    lbl.textContent = compact ? 'Toon gespeelde rondes' : 'Verberg gespeelde rondes';
-    btn.setAttribute('aria-pressed', String(!compact));
+    btn.setAttribute('aria-checked', String(!compact));
     centre();
     (window as unknown as { posthog?: { capture: (e: string, p?: Record<string, unknown>) => void } }).posthog
       ?.capture('bracket_rounds_toggled', { shown: !compact });
