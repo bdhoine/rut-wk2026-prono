@@ -4,7 +4,8 @@
     "title": "Compacter knock-outschema en schutterspositie",
     "items": [
       "Het knock-outschema op de kalender verbergt volledig gespeelde rondes nu standaard, zodat het schema gefocust blijft op wat nog komt. Met de filterknop erboven toon (of verberg) je de gespeelde rondes.",
-      "De doelpuntenmakers op elke landenpagina hebben nu een positienummer; spelers met evenveel doelpunten delen dezelfde plaats."
+      "De doelpuntenmakers op elke landenpagina hebben nu een positienummer; spelers met evenveel doelpunten delen dezelfde plaats.",
+      "De groepsstand op de landenpagina's toont geen live-score meer naast een land dat een knock-outwedstrijd speelt — de groepsfase is voorbij, dus die stand ligt vast."
     ]
   },
   {

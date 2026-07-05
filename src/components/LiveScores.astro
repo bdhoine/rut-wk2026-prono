@@ -79,6 +79,11 @@ const kickoffWindows = matches
   .filter((m) => m.status !== 'finished')
   .map((m) => ({ k: m.kickoff, et: m.round !== 'group' }));
 
+// Once every group match is played the group standings are final: a live match
+// can then only be a knockout match, and its score must never show up as a live
+// overlay on the (group) standings rows. Build-time fact, flagged to the client.
+const groupDone = matches.filter((m) => m.round === 'group').every((m) => m.status === 'finished');
+
 // The next planned match (earliest not-yet-finished, both teams known) — used
 // only by the ?ff-simulate-live=H-A dev/QA flag to fake a live score without a
 // real live match. Embedded in every mode.
@@ -96,7 +101,7 @@ const nextMatch = nextPlanned
     }
   : null;
 ---
-<div data-live-root data-live-mode={mode}>
+<div data-live-root data-live-mode={mode} data-group-done={groupDone ? 'true' : undefined}>
   <div class="mb-4 flex flex-wrap items-center gap-2">
     <button
       id="live-toggle"
@@ -131,6 +136,7 @@ const nextMatch = nextPlanned
   const root = document.querySelector('[data-live-root]') as HTMLElement | null;
   if (root) {
     const mode = root.dataset.liveMode || 'overlay';
+    const groupDone = !!root.dataset.groupDone;
     const LIVE_KEY = 'rut-wk2026-live'; // persists the toggle across page navigation
     const toggle = document.getElementById('live-toggle')!;
     const dot = document.getElementById('live-dot')!;
@@ -344,6 +350,9 @@ const nextMatch = nextPlanned
     // Pulsing red dot + current score next to a team in a standings table
     // (poules page rows carry data-standing-team). Returns true if any row hit.
     function decorateStandings(m: any) {
+      // Group standings are final once the group stage is fully played — a live
+      // knockout score doesn't belong on those rows (data-group-done, build-time).
+      if (groupDone) return false;
       // On /poules, LivePoules fully recomputes + re-renders the tables (with its
       // own live badges), so skip the simple per-row score overlay there — but
       // still return whether a row exists so the "N live" counter stays right.
