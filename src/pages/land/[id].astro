@@ -20,7 +20,11 @@ if (!team) return Astro.redirect('/404');
 const fixtures = matchesForTeam(team.id);
 const standings = standingsForGroup(team.group);
 
-const teamScorers = goalscorersForTeam(team.id);
+// Position per scorer, tie-aware: players with the same goal tally share a rank.
+const teamScorers = goalscorersForTeam(team.id).map((s, _i, all) => ({
+  ...s,
+  pos: all.filter((x) => x.goals > s.goals).length + 1,
+}));
 
 // Who picked this country for which bonus, ranked by klassement position.
 // Kept as three separate sections; empty ones collapse to a compact row.
@@ -76,6 +80,7 @@ const pickSections = [
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b text-muted-foreground">
+              <th class="px-2 py-2 text-center font-medium">#</th>
               <th class="px-2 py-2 text-left font-medium">Speler</th>
               <th class="w-16 px-2 py-2 text-center font-medium" title="Doelpunten">Doelpunten</th>
             </tr>
@@ -83,6 +88,7 @@ const pickSections = [
           <tbody>
             {teamScorers.map((s) => (
               <tr class="border-b last:border-0">
+                <td class="w-8 px-2 py-2.5 text-center tabular-nums text-muted-foreground">{s.pos}</td>
                 <td class="px-2 py-2.5">
                   <div class="flex min-w-0 items-center gap-2 font-medium">
                     <Flag iso={team.iso} name={team.name} class="shrink-0 text-base" />

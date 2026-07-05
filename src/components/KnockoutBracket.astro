@@ -80,15 +80,33 @@ function rowsFor(m: Match): Row[] {
 const duel = (m: Match) => `${sideLabel(m, 'home').label} – ${sideLabel(m, 'away').label}`;
 
 const champion = final?.status === 'finished' ? getTeam(final.winnerTeamId) : null;
+
+// Compact view: fully played rounds at the outer edges are hidden by default
+// (the bracket stays focused on what's still to play); a toggle button shows
+// the full tree. Only a leading prefix of rounds can hide — capped at 3 so the
+// halves always keep at least the semi-final column, even post-tournament.
+const HALF_ROUND_IDS = ['r32', 'r16', 'qf', 'sf'] as const;
+const roundDone = (r: string) => matches.filter((m) => m.round === r).every((m) => m.status === 'finished');
+let hiddenRounds = 0;
+while (hiddenRounds < 3 && roundDone(HALF_ROUND_IDS[hiddenRounds])) hiddenRounds++;
 ---
 {final && (
+  <Fragment>
+    {hiddenRounds > 0 && (
+      <div class="mb-2 flex justify-end">
+        <button type="button" data-bracket-toggle aria-pressed="false" class="inline-flex items-center gap-1.5 rounded-lg border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
+          <span data-bracket-toggle-label>Toon gespeelde rondes</span>
+        </button>
+      </div>
+    )}
   <div class="-mx-4 overflow-x-auto px-4 pb-2" data-bracket-scroll>
-    <div class="bk mx-auto">
+    <div class:list={['bk mx-auto', hiddenRounds > 0 && 'bk-compact']} data-bracket style={`--hidden: ${hiddenRounds}`}>
       <div class="bk-grid">
         {halves.map((half) => (
           <div class:list={['bk-half', half.cls]}>
-            {half.rounds.map((round) => (
-              <div class="bk-round">
+            {half.rounds.map((round, ri) => (
+              <div class="bk-round" data-done={ri < hiddenRounds ? 'true' : undefined}>
                 {pairsOf(round).map((pair) => (
                   <div class={pair.length === 2 ? 'bk-pair' : 'bk-solo'}>
                     {pair.map((m) => (
@@ -146,6 +164,7 @@ const champion = final?.status === 'finished' ? getTeam(final.winnerTeamId) : nu
       </div>
     </div>
   </div>
+  </Fragment>
 )}
 
 <style>
@@ -291,6 +310,15 @@ const champion = final?.status === 'finished' ? getTeam(final.winnerTeamId) : nu
     color: var(--muted-foreground);
   }
   .bk-third-wrap .bk-lbl { padding: 4px 0 0; }
+  /* Compact mode: fully played rounds (a leading [data-done] prefix per half)
+     collapse away; the narrower tree needs less min-width (2 columns + gaps per
+     hidden round). The first visible round then sits right after a hidden one,
+     so it gets the same outward line clipping as a real first round. */
+  .bk-compact { min-width: calc(520px - var(--hidden, 0) * 116px); }
+  .bk-compact .bk-round[data-done] { display: none; }
+  .bk-compact .bk-half:not(.bk-r) .bk-round[data-done] + .bk-round .bk-slot::after { left: 50%; }
+  .bk-compact .bk-r .bk-round[data-done] + .bk-round .bk-slot::after { right: 50%; }
+
   .bk-grid::after { /* stem: finale box ↓ to the semi-final junction at 50% */
     content: '';
     position: absolute;
@@ -306,7 +334,24 @@ const champion = final?.status === 'finished' ? getTeam(final.winnerTeamId) : nu
   // The bracket is wider than a phone: start the horizontal scroll centred on
   // the final so both halves peek in (the reference layout's focal point).
   const wrap = document.querySelector('[data-bracket-scroll]');
-  if (wrap && wrap.scrollWidth > wrap.clientWidth) {
-    wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) / 2;
-  }
+  const centre = () => {
+    if (wrap && wrap.scrollWidth > wrap.clientWidth) {
+      wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) / 2;
+    }
+  };
+  centre();
+
+  // Filter toggle: show/hide the fully played rounds (compact ↔ full tree).
+  const bk = document.querySelector('[data-bracket]');
+  const btn = document.querySelector('[data-bracket-toggle]');
+  const lbl = document.querySelector('[data-bracket-toggle-label]');
+  btn?.addEventListener('click', () => {
+    if (!bk || !lbl) return;
+    const compact = bk.classList.toggle('bk-compact');
+    lbl.textContent = compact ? 'Toon gespeelde rondes' : 'Verberg gespeelde rondes';
+    btn.setAttribute('aria-pressed', String(!compact));
+    centre();
+    (window as unknown as { posthog?: { capture: (e: string, p?: Record<string, unknown>) => void } }).posthog
+      ?.capture('bracket_rounds_toggled', { shown: !compact });
+  });
 </script>
