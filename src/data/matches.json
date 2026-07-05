@@ -5096,8 +5096,54 @@
     "awayTeamId": "no",
     "homePlaceholder": "Winnaar R32-4",
     "awayPlaceholder": "Winnaar R32-6",
-    "status": "scheduled",
-    "apiId": 760504
+    "status": "finished",
+    "apiId": 760504,
+    "result": {
+      "home": 1,
+      "away": 2
+    },
+    "winnerTeamId": "no",
+    "goals": [
+      {
+        "player": "Erling Haaland",
+        "teamId": "no",
+        "minute": "79'"
+      },
+      {
+        "player": "Erling Haaland",
+        "teamId": "no",
+        "minute": "90'"
+      },
+      {
+        "player": "Neymar",
+        "teamId": "br",
+        "minute": "90'+10'",
+        "pen": true
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        0,
+        -1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        3,
+        -4,
+        -1,
+        1,
+        1,
+        6,
+        -2,
+        -3,
+        -6,
+        3,
+        1
+      ]
+    }
   },
   {
     "id": "r16-4",
