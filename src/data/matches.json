@@ -5314,7 +5314,7 @@
     "round": "qf",
     "kickoff": "2026-07-10T19:00Z",
     "venue": "SoFi Stadium, Los Angeles",
-    "homeTeamId": null,
+    "homeTeamId": "es",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar 1/8 5",
     "awayPlaceholder": "Winnaar 1/8 6",
