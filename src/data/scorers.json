@@ -17,11 +17,21 @@
   {
     "player": "Harry Kane",
     "teamId": "gbeng",
-    "goals": 5
+    "goals": 6
   },
   {
     "player": "Ismaïla Sarr",
     "teamId": "sn",
+    "goals": 4
+  },
+  {
+    "player": "Jude Bellingham",
+    "teamId": "gbeng",
+    "goals": 4
+  },
+  {
+    "player": "Julián Quiñones",
+    "teamId": "mx",
     "goals": 4
   },
   {
@@ -85,11 +95,6 @@
     "goals": 3
   },
   {
-    "player": "Julián Quiñones",
-    "teamId": "mx",
-    "goals": 3
-  },
-  {
     "player": "Kai Havertz",
     "teamId": "de",
     "goals": 3
@@ -97,6 +102,11 @@
   {
     "player": "Matheus Cunha",
     "teamId": "br",
+    "goals": 3
+  },
+  {
+    "player": "Raúl Jiménez",
+    "teamId": "mx",
     "goals": 3
   },
   {
@@ -170,11 +180,6 @@
     "goals": 2
   },
   {
-    "player": "Jude Bellingham",
-    "teamId": "gbeng",
-    "goals": 2
-  },
-  {
     "player": "Leandro Trossard",
     "teamId": "be",
     "goals": 2
@@ -202,11 +207,6 @@
   {
     "player": "Ramin Rezaeian",
     "teamId": "ir",
-    "goals": 2
-  },
-  {
-    "player": "Raúl Jiménez",
-    "teamId": "mx",
     "goals": 2
   },
   {

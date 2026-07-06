@@ -5154,8 +5154,65 @@
     "awayTeamId": "gbeng",
     "homePlaceholder": "Winnaar R32-7",
     "awayPlaceholder": "Winnaar R32-8",
-    "status": "scheduled",
-    "apiId": 760505
+    "status": "finished",
+    "apiId": 760505,
+    "result": {
+      "home": 2,
+      "away": 3
+    },
+    "winnerTeamId": "gbeng",
+    "goals": [
+      {
+        "player": "Jude Bellingham",
+        "teamId": "gbeng",
+        "minute": "36'"
+      },
+      {
+        "player": "Jude Bellingham",
+        "teamId": "gbeng",
+        "minute": "38'"
+      },
+      {
+        "player": "Julián Quiñones",
+        "teamId": "mx",
+        "minute": "42'"
+      },
+      {
+        "player": "Harry Kane",
+        "teamId": "gbeng",
+        "minute": "60'",
+        "pen": true
+      },
+      {
+        "player": "Raúl Jiménez",
+        "teamId": "mx",
+        "minute": "69'",
+        "pen": true
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        2,
+        -1,
+        4,
+        3,
+        -1,
+        -3,
+        1,
+        -12,
+        12,
+        1,
+        0,
+        -5,
+        1,
+        6,
+        0,
+        6,
+        1,
+        11
+      ]
+    }
   },
   {
     "id": "r16-5",
@@ -5235,7 +5292,7 @@
     "kickoff": "2026-07-11T21:00Z",
     "venue": "Hard Rock Stadium, Miami",
     "homeTeamId": "no",
-    "awayTeamId": null,
+    "awayTeamId": "gbeng",
     "homePlaceholder": "Winnaar 1/8 3",
     "awayPlaceholder": "Winnaar 1/8 4",
     "status": "scheduled",
