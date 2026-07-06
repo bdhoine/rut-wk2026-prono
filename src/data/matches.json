@@ -5223,8 +5223,43 @@
     "awayTeamId": "es",
     "homePlaceholder": "Winnaar R32-11",
     "awayPlaceholder": "Winnaar R32-12",
-    "status": "scheduled",
-    "apiId": 760506
+    "status": "finished",
+    "apiId": 760506,
+    "result": {
+      "home": 0,
+      "away": 1
+    },
+    "winnerTeamId": "es",
+    "goals": [
+      {
+        "player": "Mikel Merino",
+        "teamId": "es",
+        "minute": "90'+1'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        -3,
+        3,
+        3,
+        -7,
+        -1,
+        -1,
+        -1,
+        4,
+        1,
+        0,
+        0,
+        1,
+        -9,
+        0,
+        -4,
+        -2,
+        0,
+        -4
+      ]
+    }
   },
   {
     "id": "r16-6",
