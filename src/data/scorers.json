@@ -1,5 +1,10 @@
 [
   {
+    "player": "Lionel Messi",
+    "teamId": "ar",
+    "goals": 8
+  },
+  {
     "player": "Erling Haaland",
     "teamId": "no",
     "goals": 7
@@ -7,11 +12,6 @@
   {
     "player": "Kylian Mbappé",
     "teamId": "fr",
-    "goals": 7
-  },
-  {
-    "player": "Lionel Messi",
-    "teamId": "ar",
     "goals": 7
   },
   {
@@ -210,6 +210,11 @@
     "goals": 2
   },
   {
+    "player": "Mostafa Zico",
+    "teamId": "eg",
+    "goals": 2
+  },
+  {
     "player": "Nicolas Pépé",
     "teamId": "ci",
     "goals": 2
@@ -355,6 +360,11 @@
     "goals": 1
   },
   {
+    "player": "Cristian Romero",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Daizen Maeda",
     "teamId": "jp",
     "goals": 1
@@ -382,6 +392,11 @@
   {
     "player": "Eldor Shomurodov",
     "teamId": "uz",
+    "goals": 1
+  },
+  {
+    "player": "Enzo Fernández",
+    "teamId": "ar",
     "goals": 1
   },
   {
@@ -670,11 +685,6 @@
     "goals": 1
   },
   {
-    "player": "Mostafa Zico",
-    "teamId": "eg",
-    "goals": 1
-  },
-  {
     "player": "Mousa Al-Tamari",
     "teamId": "jo",
     "goals": 1
@@ -827,6 +837,11 @@
   {
     "player": "Wilson Isidor",
     "teamId": "ht",
+    "goals": 1
+  },
+  {
+    "player": "Yasser Ibrahim",
+    "teamId": "eg",
     "goals": 1
   }
 ]
