@@ -5448,7 +5448,7 @@
     "round": "qf",
     "kickoff": "2026-07-12T01:00Z",
     "venue": "Arrowhead Stadium, Kansas City",
-    "homeTeamId": null,
+    "homeTeamId": "ar",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar 1/8 7",
     "awayPlaceholder": "Winnaar 1/8 8",
