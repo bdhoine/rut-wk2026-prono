@@ -110,6 +110,11 @@
     "goals": 3
   },
   {
+    "player": "Romelu Lukaku",
+    "teamId": "be",
+    "goals": 3
+  },
+  {
     "player": "Yoane Wissa",
     "teamId": "cd",
     "goals": 3
@@ -142,6 +147,11 @@
   {
     "player": "Breel Embolo",
     "teamId": "ch",
+    "goals": 2
+  },
+  {
+    "player": "Charles De Ketelaere",
+    "teamId": "be",
     "goals": 2
   },
   {
@@ -185,6 +195,11 @@
     "goals": 2
   },
   {
+    "player": "Malik Tillman",
+    "teamId": "us",
+    "goals": 2
+  },
+  {
     "player": "Marko Arnautovic",
     "teamId": "at",
     "goals": 2
@@ -212,11 +227,6 @@
   {
     "player": "Riyad Mahrez",
     "teamId": "dz",
-    "goals": 2
-  },
-  {
-    "player": "Romelu Lukaku",
-    "teamId": "be",
     "goals": 2
   },
   {
@@ -430,6 +440,11 @@
     "goals": 1
   },
   {
+    "player": "Hans Vanaken",
+    "teamId": "be",
+    "goals": 1
+  },
+  {
     "player": "Hassan Al-Haydos",
     "teamId": "qa",
     "goals": 1
@@ -592,11 +607,6 @@
   {
     "player": "Mahmoud Saber",
     "teamId": "eg",
-    "goals": 1
-  },
-  {
-    "player": "Malik Tillman",
-    "teamId": "us",
     "goals": 1
   },
   {

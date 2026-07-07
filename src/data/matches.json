@@ -5270,8 +5270,63 @@
     "awayTeamId": "be",
     "homePlaceholder": "Winnaar R32-9",
     "awayPlaceholder": "Winnaar R32-10",
-    "status": "scheduled",
-    "apiId": 760507
+    "status": "finished",
+    "apiId": 760507,
+    "result": {
+      "home": 1,
+      "away": 4
+    },
+    "winnerTeamId": "be",
+    "goals": [
+      {
+        "player": "Charles De Ketelaere",
+        "teamId": "be",
+        "minute": "9'"
+      },
+      {
+        "player": "Malik Tillman",
+        "teamId": "us",
+        "minute": "31'"
+      },
+      {
+        "player": "Charles De Ketelaere",
+        "teamId": "be",
+        "minute": "33'"
+      },
+      {
+        "player": "Hans Vanaken",
+        "teamId": "be",
+        "minute": "57'"
+      },
+      {
+        "player": "Romelu Lukaku",
+        "teamId": "be",
+        "minute": "90'+3'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        -11,
+        -7,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        -4,
+        0,
+        0,
+        -1,
+        -6,
+        -2,
+        1,
+        0,
+        1,
+        5,
+        -8
+      ]
+    }
   },
   {
     "id": "r16-7",
@@ -5315,7 +5370,7 @@
     "kickoff": "2026-07-10T19:00Z",
     "venue": "SoFi Stadium, Los Angeles",
     "homeTeamId": "es",
-    "awayTeamId": null,
+    "awayTeamId": "be",
     "homePlaceholder": "Winnaar 1/8 5",
     "awayPlaceholder": "Winnaar 1/8 6",
     "status": "scheduled",
