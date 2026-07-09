@@ -5552,7 +5552,7 @@
     "round": "sf",
     "kickoff": "2026-07-14T19:00Z",
     "venue": "AT&T Stadium, Dallas",
-    "homeTeamId": null,
+    "homeTeamId": "fr",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar KF 1",
     "awayPlaceholder": "Winnaar KF 2",
