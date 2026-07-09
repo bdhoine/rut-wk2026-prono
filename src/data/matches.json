@@ -5468,8 +5468,48 @@
     "awayTeamId": "ma",
     "homePlaceholder": "Winnaar 1/8 1",
     "awayPlaceholder": "Winnaar 1/8 2",
-    "status": "scheduled",
-    "apiId": 760510
+    "status": "finished",
+    "apiId": 760510,
+    "result": {
+      "home": 2,
+      "away": 0
+    },
+    "winnerTeamId": "fr",
+    "goals": [
+      {
+        "player": "Kylian Mbappé",
+        "teamId": "fr",
+        "minute": "60'"
+      },
+      {
+        "player": "Ousmane Dembélé",
+        "teamId": "fr",
+        "minute": "66'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        5,
+        2,
+        0,
+        4,
+        0,
+        0,
+        5,
+        2,
+        3,
+        -2,
+        2,
+        7,
+        0,
+        6,
+        -1,
+        1,
+        -5,
+        8
+      ]
+    }
   },
   {
     "id": "qf-2",

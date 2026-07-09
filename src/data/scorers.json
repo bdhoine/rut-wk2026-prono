@@ -1,5 +1,10 @@
 [
   {
+    "player": "Kylian Mbappé",
+    "teamId": "fr",
+    "goals": 8
+  },
+  {
     "player": "Lionel Messi",
     "teamId": "ar",
     "goals": 8
@@ -10,14 +15,14 @@
     "goals": 7
   },
   {
-    "player": "Kylian Mbappé",
-    "teamId": "fr",
-    "goals": 7
-  },
-  {
     "player": "Harry Kane",
     "teamId": "gbeng",
     "goals": 6
+  },
+  {
+    "player": "Ousmane Dembélé",
+    "teamId": "fr",
+    "goals": 5
   },
   {
     "player": "Ismaïla Sarr",
@@ -37,11 +42,6 @@
   {
     "player": "Mikel Oyarzabal",
     "teamId": "es",
-    "goals": 4
-  },
-  {
-    "player": "Ousmane Dembélé",
-    "teamId": "fr",
     "goals": 4
   },
   {
