@@ -55,6 +55,11 @@
     "goals": 3
   },
   {
+    "player": "Charles De Ketelaere",
+    "teamId": "be",
+    "goals": 3
+  },
+  {
     "player": "Cody Gakpo",
     "teamId": "nl",
     "goals": 3
@@ -150,11 +155,6 @@
     "goals": 2
   },
   {
-    "player": "Charles De Ketelaere",
-    "teamId": "be",
-    "goals": 2
-  },
-  {
     "player": "Crysencio Summerville",
     "teamId": "nl",
     "goals": 2
@@ -207,6 +207,11 @@
   {
     "player": "Maxi Araújo",
     "teamId": "uy",
+    "goals": 2
+  },
+  {
+    "player": "Mikel Merino",
+    "teamId": "es",
     "goals": 2
   },
   {
@@ -397,6 +402,11 @@
   {
     "player": "Enzo Fernández",
     "teamId": "ar",
+    "goals": 1
+  },
+  {
+    "player": "Fabián Ruiz",
+    "teamId": "es",
     "goals": 1
   },
   {
@@ -667,11 +677,6 @@
   {
     "player": "Michal Sadílek",
     "teamId": "cz",
-    "goals": 1
-  },
-  {
-    "player": "Mikel Merino",
-    "teamId": "es",
     "goals": 1
   },
   {
