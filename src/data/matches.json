@@ -5577,8 +5577,59 @@
     "awayTeamId": "gbeng",
     "homePlaceholder": "Winnaar 1/8 3",
     "awayPlaceholder": "Winnaar 1/8 4",
-    "status": "scheduled",
-    "apiId": 760512
+    "status": "finished",
+    "apiId": 760512,
+    "result": {
+      "home": 1,
+      "away": 2
+    },
+    "winnerTeamId": "gbeng",
+    "goals": [
+      {
+        "player": "Andreas Schjelderup",
+        "teamId": "no",
+        "minute": "36'"
+      },
+      {
+        "player": "Jude Bellingham",
+        "teamId": "gbeng",
+        "minute": "45'+2'"
+      },
+      {
+        "player": "Jude Bellingham",
+        "teamId": "gbeng",
+        "minute": "93'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        0,
+        0,
+        0,
+        -1,
+        0,
+        -1,
+        3,
+        10,
+        -10,
+        -2,
+        2,
+        0,
+        0,
+        0,
+        1,
+        1,
+        4,
+        -2,
+        -13,
+        0,
+        2,
+        -8,
+        4,
+        0
+      ]
+    }
   },
   {
     "id": "qf-4",
@@ -5609,7 +5660,7 @@
     "round": "sf",
     "kickoff": "2026-07-15T19:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
-    "homeTeamId": null,
+    "homeTeamId": "gbeng",
     "awayTeamId": null,
     "homePlaceholder": "Winnaar KF 3",
     "awayPlaceholder": "Winnaar KF 4",

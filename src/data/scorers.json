@@ -20,6 +20,11 @@
     "goals": 6
   },
   {
+    "player": "Jude Bellingham",
+    "teamId": "gbeng",
+    "goals": 6
+  },
+  {
     "player": "Ousmane Dembélé",
     "teamId": "fr",
     "goals": 5
@@ -27,11 +32,6 @@
   {
     "player": "Ismaïla Sarr",
     "teamId": "sn",
-    "goals": 4
-  },
-  {
-    "player": "Jude Bellingham",
-    "teamId": "gbeng",
     "goals": 4
   },
   {
@@ -312,6 +312,11 @@
   {
     "player": "Amine Gouiri",
     "teamId": "dz",
+    "goals": 1
+  },
+  {
+    "player": "Andreas Schjelderup",
+    "teamId": "no",
     "goals": 1
   },
   {
