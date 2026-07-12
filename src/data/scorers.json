@@ -170,6 +170,11 @@
     "goals": 2
   },
   {
+    "player": "Dan Ndoye",
+    "teamId": "ch",
+    "goals": 2
+  },
+  {
     "player": "Daniel Muñoz",
     "teamId": "co",
     "goals": 2
@@ -187,6 +192,11 @@
   {
     "player": "Habib Diarra",
     "teamId": "sn",
+    "goals": 2
+  },
+  {
+    "player": "Lautaro Martínez",
+    "teamId": "ar",
     "goals": 2
   },
   {
@@ -295,6 +305,11 @@
     "goals": 1
   },
   {
+    "player": "Alexis Mac Allister",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Alexis Saelemaekers",
     "teamId": "be",
     "goals": 1
@@ -377,11 +392,6 @@
   {
     "player": "Daizen Maeda",
     "teamId": "jp",
-    "goals": 1
-  },
-  {
-    "player": "Dan Ndoye",
-    "teamId": "ch",
     "goals": 1
   },
   {
@@ -550,6 +560,11 @@
     "goals": 1
   },
   {
+    "player": "Julián Álvarez",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Julio Enciso",
     "teamId": "py",
     "goals": 1
@@ -597,11 +612,6 @@
   {
     "player": "Lamine Yamal",
     "teamId": "es",
-    "goals": 1
-  },
-  {
-    "player": "Lautaro Martínez",
-    "teamId": "ar",
     "goals": 1
   },
   {

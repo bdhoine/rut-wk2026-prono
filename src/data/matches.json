@@ -5640,8 +5640,64 @@
     "awayTeamId": "ch",
     "homePlaceholder": "Winnaar 1/8 7",
     "awayPlaceholder": "Winnaar 1/8 8",
-    "status": "scheduled",
-    "apiId": 760513
+    "status": "finished",
+    "apiId": 760513,
+    "result": {
+      "home": 3,
+      "away": 1
+    },
+    "winnerTeamId": "ar",
+    "goals": [
+      {
+        "player": "Alexis Mac Allister",
+        "teamId": "ar",
+        "minute": "10'"
+      },
+      {
+        "player": "Dan Ndoye",
+        "teamId": "ch",
+        "minute": "67'"
+      },
+      {
+        "player": "Julián Álvarez",
+        "teamId": "ar",
+        "minute": "112'"
+      },
+      {
+        "player": "Lautaro Martínez",
+        "teamId": "ar",
+        "minute": "120'+1'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        -2,
+        10,
+        0,
+        -3,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        -3,
+        -4,
+        -9,
+        0,
+        0,
+        0,
+        8,
+        9,
+        -1,
+        5,
+        0,
+        9,
+        12
+      ]
+    }
   },
   {
     "id": "sf-1",
@@ -5661,7 +5717,7 @@
     "kickoff": "2026-07-15T19:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "gbeng",
-    "awayTeamId": null,
+    "awayTeamId": "ar",
     "homePlaceholder": "Winnaar KF 3",
     "awayPlaceholder": "Winnaar KF 4",
     "status": "scheduled",
