@@ -170,6 +170,19 @@ before committing.
   with `<LiveScores />`. It fakes a live score on the **next planned match**,
   auto-enables live, skips the API fetch and any results-refresh nudge, and tags
   the badge with "sim" — the easiest way to test the live overlay off-tournament.
+- The **WK Recap** (`Recap.tsx`, mounted globally via `RecapOverlay.astro` in
+  `Layout.astro`) is an Instagram-story-style overlay: build-time data from
+  `recapData()` in `data.ts` (reusing `longestOutcomeStreak()` /
+  `topCorrectOutcomes()` / `longestExactStreak()` / `ranking()` / `topScorers()`
+  so the numbers match `/statistieken` and `/klassement`), rendered as a chain
+  of tap-through slides (progress bars, hold-to-pause, auto-advance via a JS
+  timer — not CSS `animationend`, so it survives pause/resume and reduced
+  motion) ending on a confetti/fireworks finale for whoever is #1. Ties share a
+  slide (all names shown, capped with "+N anderen"). Opens via `?ff-recap=1`
+  (any page, mirrors `?ff-simulate-live`) or `window.dispatchEvent(new
+  CustomEvent('rut:open-recap'))` — the homepage's "Bekijk je WK Recap
+  opnieuw" button (shown once `localStorage['rut-wk2026-recap-seen']` is set)
+  uses the latter.
 - `astro.config.mjs` forces `react`, `react-dom` and `scheduler` into one
   `react-vendor` Vite chunk (`build.rollupOptions.output.manualChunks`). Don't
   remove this: otherwise react-dom (which **sets** React's hooks dispatcher

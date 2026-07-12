@@ -25,6 +25,32 @@ const rows = ranking().map((r) => {
 ---
 <Layout title="Rut Prono WK 2026">
   <HomeHero />
+
+  <button
+    type="button"
+    id="recap-replay"
+    hidden
+    class="mb-6 flex w-full items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
+  >
+    🏆 Bekijk je WK Recap opnieuw
+  </button>
+  <script>
+    // The button only appears once the recap has actually been shown
+    // (localStorage flag set by Recap.tsx on close), and reveals itself live
+    // if the recap is dismissed while already on this page — no reload needed.
+    const btn = document.getElementById('recap-replay') as HTMLButtonElement | null;
+    if (btn) {
+      const SEEN_KEY = 'rut-wk2026-recap-seen';
+      const reveal = () => { try { if (localStorage.getItem(SEEN_KEY)) btn.hidden = false; } catch { /* ignore */ } };
+      reveal();
+      window.addEventListener('rut:recap-seen', reveal);
+      btn.addEventListener('click', () => {
+        (window as unknown as { posthog?: { capture: (e: string) => void } }).posthog?.capture('recap_replay_clicked');
+        window.dispatchEvent(new CustomEvent('rut:open-recap'));
+      });
+    }
+  </script>
+
   <LiveScores mode="list" />
   <SectionHeading title="Klassement">
     <InfoToggle text="Tik op een deelnemer voor zijn pronostieken. Tik op de ster om favorieten te volgen. De vlag toont de getipte eindwinnaar. Een muntje markeert de prijsplaatsen (top 5) — tik erop voor het bedrag. Klassement en resultaten updaten niet meteen na een wedstrijd — dit kan even duren." />

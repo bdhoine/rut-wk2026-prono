@@ -300,6 +300,51 @@ body::before {
   font-size: 0.85em;
 }
 
+/* ---------- Recap (Instagram-story-style season recap) --------------------
+   Purely decorative flourishes are disabled under prefers-reduced-motion; the
+   story mechanics themselves (progress bars) are driven imperatively in JS,
+   not by these keyframes, so navigation keeps working either way. */
+@keyframes recap-pop { from { opacity: 0; transform: scale(0.85); } }
+.recap-pop { animation: recap-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@keyframes recap-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.recap-bounce { display: inline-block; animation: recap-bounce 1.6s ease-in-out infinite; }
+
+@keyframes recap-fall {
+  0% { transform: translate(0, -10vh) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate(var(--drift, 0px), 120vh) rotate(360deg); opacity: 0.9; }
+}
+.recap-particle {
+  position: absolute;
+  top: 0;
+  animation-name: recap-fall;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes recap-burst {
+  0% { transform: scale(0.2); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: scale(7); opacity: 0; }
+}
+.recap-burst {
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--gold), transparent 70%);
+  animation: recap-burst 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recap-pop { animation: none; }
+  .recap-bounce { animation: none; }
+  .recap-particle { animation: none; opacity: 0.7; top: 45%; }
+  .recap-burst { animation: none; opacity: 0.5; transform: scale(2); }
+}
+
 @layer base {
   * {
     border-color: var(--border);

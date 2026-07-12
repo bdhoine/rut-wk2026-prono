@@ -12,6 +12,7 @@ import scorersRaw from '@/data/scorers.json';
 import type { BonusOutcomes, BonusPicks, Group, Match, Participant, Prediction, Scorer, Settings, Team } from './types';
 import { multiplierFor, rankParticipants, scoreMatch, type MatchScore, type RankRow } from './scoring';
 import { byKickoff, dayKey, slugify } from './format';
+import { prizeFor } from './prizes';
 
 export const teams = teamsRaw as Team[];
 export const groups = groupsRaw as Group[];
@@ -899,6 +900,118 @@ export function top5PositionTrend(maxDays = 10): PositionTrendSeries[] {
     name: s.name,
     days: days.map((day, i) => ({ day, position: s.pos[i] })),
   }));
+}
+
+// ---- Recap (Instagram-story-style season recap) -------------------------
+
+const RECAP_NAME_CAP = 4; // names shown per tied leader before "+N anderen"
+
+interface NameGroup { names: string[]; moreCount: number }
+
+function nameGroup(names: string[], cap = RECAP_NAME_CAP): NameGroup {
+  return { names: names.slice(0, cap), moreCount: Math.max(0, names.length - cap) };
+}
+
+export interface RecapStatLeader extends NameGroup { value: number }
+
+/** Tied leaders (a positive top value) from a topStreakStat/topPredictionStat
+ *  row list, or null when nothing has been played yet. */
+function statLeader(rows: PredictionStatRow[]): RecapStatLeader | null {
+  const top = rows[0]?.correct ?? 0;
+  if (top <= 0) return null;
+  return { ...nameGroup(rows.filter((r) => r.correct === top).map((r) => r.name)), value: top };
+}
+
+export interface RecapStanding extends NameGroup {
+  position: number;
+  total: number;
+  prize: number;
+}
+
+export interface RecapTopScorer {
+  player: string;
+  teamName: string | null;
+  teamIso: string | null;
+  goals: number;
+  moreCount: number; // other players tied at the same goal count
+}
+
+export interface RecapChampion {
+  teamName: string;
+  teamIso: string;
+}
+
+export interface RecapData {
+  matchesPlayed: number;
+  matchesTotal: number;
+  goalsTotal: number;
+  topScorer: RecapTopScorer | null;
+  champion: RecapChampion | null;
+  longestOutcomeStreak: RecapStatLeader | null;
+  mostCorrectOutcomes: RecapStatLeader | null;
+  longestExactStreak: RecapStatLeader | null;
+  // Klassement positions 1..5 (skipping ranks a tie jumps over), climb order:
+  // 5th first, 1st (the finale) last. Every participant sharing a position is
+  // included.
+  standings: RecapStanding[];
+}
+
+/** Everything the Instagram-story-style recap needs, computed once at build
+ *  time. Reuses the existing stats/streak/ranking helpers so the numbers stay
+ *  identical to the ones shown on /statistieken and /klassement. */
+export function recapData(): RecapData {
+  const finished = matches.filter((m) => m.status === 'finished' && m.result);
+  const goalsTotal = finished.reduce((sum, m) => sum + m.result!.home + m.result!.away, 0);
+
+  const scorerList = topScorers();
+  const topGoals = scorerList[0]?.goals ?? 0;
+  const topScorerLeaders = topGoals > 0 ? scorerList.filter((s) => s.goals === topGoals) : [];
+  const topScorer: RecapTopScorer | null = topScorerLeaders.length
+    ? {
+        player: topScorerLeaders[0].player,
+        teamName: topScorerLeaders[0].team?.name ?? null,
+        teamIso: topScorerLeaders[0].team?.iso ?? null,
+        goals: topGoals,
+        moreCount: topScorerLeaders.length - 1,
+      }
+    : null;
+
+  const finalMatch = matches.find((m) => m.round === 'final');
+  let champion: RecapChampion | null = null;
+  if (finalMatch?.status === 'finished' && finalMatch.result) {
+    const winnerId = finalMatch.winnerTeamId
+      ?? (finalMatch.result.home > finalMatch.result.away ? finalMatch.homeTeamId
+        : finalMatch.result.away > finalMatch.result.home ? finalMatch.awayTeamId : null);
+    const team = getTeam(winnerId);
+    if (team) champion = { teamName: team.name, teamIso: team.iso };
+  }
+
+  const byPosition = new Map<number, RankRow[]>();
+  for (const r of ranking()) {
+    if (r.position > 5) continue;
+    const arr = byPosition.get(r.position);
+    if (arr) arr.push(r); else byPosition.set(r.position, [r]);
+  }
+  const standings: RecapStanding[] = [...byPosition.entries()]
+    .sort((a, b) => b[0] - a[0]) // descending: build suspense toward 1st
+    .map(([position, rows]) => ({
+      position,
+      total: rows[0].total,
+      prize: prizeFor(position, rows.length),
+      ...nameGroup(rows.map((r) => r.name)),
+    }));
+
+  return {
+    matchesPlayed: finished.length,
+    matchesTotal: matches.length,
+    goalsTotal,
+    topScorer,
+    champion,
+    longestOutcomeStreak: statLeader(longestOutcomeStreak()),
+    mostCorrectOutcomes: statLeader(topCorrectOutcomes()),
+    longestExactStreak: statLeader(longestExactStreak()),
+    standings,
+  };
 }
 
 /** Most-predicted scorelines across all participants' predictions. */

@@ -1,0 +1,11 @@
+---
+// Mounts the Instagram-story-style season recap globally (Layout.astro), so
+// ?ff-recap=1 opens it from any page. The component renders nothing until
+// triggered (the URL flag, or the homepage's "bekijk opnieuw" button
+// dispatching `rut:open-recap`), so this only costs one idle-loaded JS chunk.
+import Recap from './Recap.tsx';
+import { recapData } from '@/lib/data';
+
+const data = recapData();
+---
+<Recap client:idle data={data} />
