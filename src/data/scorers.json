@@ -25,6 +25,11 @@
     "goals": 6
   },
   {
+    "player": "Mikel Oyarzabal",
+    "teamId": "es",
+    "goals": 5
+  },
+  {
     "player": "Ousmane Dembélé",
     "teamId": "fr",
     "goals": 5
@@ -37,11 +42,6 @@
   {
     "player": "Julián Quiñones",
     "teamId": "mx",
-    "goals": 4
-  },
-  {
-    "player": "Mikel Oyarzabal",
-    "teamId": "es",
     "goals": 4
   },
   {
@@ -237,6 +237,11 @@
   {
     "player": "Pape Gueye",
     "teamId": "sn",
+    "goals": 2
+  },
+  {
+    "player": "Pedro Porro",
+    "teamId": "es",
     "goals": 2
   },
   {
@@ -767,11 +772,6 @@
   {
     "player": "Omar Rekik",
     "teamId": "tn",
-    "goals": 1
-  },
-  {
-    "player": "Pedro Porro",
-    "teamId": "es",
     "goals": 1
   },
   {
