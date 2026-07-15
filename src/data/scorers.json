@@ -105,6 +105,11 @@
     "goals": 3
   },
   {
+    "player": "Lautaro Martínez",
+    "teamId": "ar",
+    "goals": 3
+  },
+  {
     "player": "Matheus Cunha",
     "teamId": "br",
     "goals": 3
@@ -185,6 +190,11 @@
     "goals": 2
   },
   {
+    "player": "Enzo Fernández",
+    "teamId": "ar",
+    "goals": 2
+  },
+  {
     "player": "Ermin Mahmic",
     "teamId": "ba",
     "goals": 2
@@ -192,11 +202,6 @@
   {
     "player": "Habib Diarra",
     "teamId": "sn",
-    "goals": 2
-  },
-  {
-    "player": "Lautaro Martínez",
-    "teamId": "ar",
     "goals": 2
   },
   {
@@ -345,6 +350,11 @@
     "goals": 1
   },
   {
+    "player": "Anthony Gordon",
+    "teamId": "gbeng",
+    "goals": 1
+  },
+  {
     "player": "Antonio Nusa",
     "teamId": "no",
     "goals": 1
@@ -417,11 +427,6 @@
   {
     "player": "Eldor Shomurodov",
     "teamId": "uz",
-    "goals": 1
-  },
-  {
-    "player": "Enzo Fernández",
-    "teamId": "ar",
     "goals": 1
   },
   {
