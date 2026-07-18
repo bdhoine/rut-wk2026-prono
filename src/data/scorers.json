@@ -2,7 +2,7 @@
   {
     "player": "Kylian Mbappé",
     "teamId": "fr",
-    "goals": 8
+    "goals": 10
   },
   {
     "player": "Lionel Messi",
@@ -15,23 +15,23 @@
     "goals": 7
   },
   {
+    "player": "Jude Bellingham",
+    "teamId": "gbeng",
+    "goals": 7
+  },
+  {
     "player": "Harry Kane",
     "teamId": "gbeng",
     "goals": 6
   },
   {
-    "player": "Jude Bellingham",
-    "teamId": "gbeng",
+    "player": "Ousmane Dembélé",
+    "teamId": "fr",
     "goals": 6
   },
   {
     "player": "Mikel Oyarzabal",
     "teamId": "es",
-    "goals": 5
-  },
-  {
-    "player": "Ousmane Dembélé",
-    "teamId": "fr",
     "goals": 5
   },
   {
@@ -50,8 +50,18 @@
     "goals": 4
   },
   {
+    "player": "Bradley Barcola",
+    "teamId": "fr",
+    "goals": 3
+  },
+  {
     "player": "Brian Brobbey",
     "teamId": "nl",
+    "goals": 3
+  },
+  {
+    "player": "Bukayo Saka",
+    "teamId": "gbeng",
     "goals": 3
   },
   {
@@ -147,11 +157,6 @@
   {
     "player": "Azzedine Ounahi",
     "teamId": "ma",
-    "goals": 2
-  },
-  {
-    "player": "Bradley Barcola",
-    "teamId": "fr",
     "goals": 2
   },
   {
@@ -410,6 +415,11 @@
     "goals": 1
   },
   {
+    "player": "Declan Rice",
+    "teamId": "gbeng",
+    "goals": 1
+  },
+  {
     "player": "Deroy Duarte",
     "teamId": "cv",
     "goals": 1
@@ -427,6 +437,11 @@
   {
     "player": "Eldor Shomurodov",
     "teamId": "uz",
+    "goals": 1
+  },
+  {
+    "player": "Ezri Konsa",
+    "teamId": "gbeng",
     "goals": 1
   },
   {

@@ -5818,8 +5818,89 @@
     "awayTeamId": "gbeng",
     "homePlaceholder": "Verliezer HF 1",
     "awayPlaceholder": "Verliezer HF 2",
-    "status": "scheduled",
-    "apiId": 760516
+    "status": "finished",
+    "apiId": 760516,
+    "result": {
+      "home": 4,
+      "away": 6
+    },
+    "winnerTeamId": "gbeng",
+    "goals": [
+      {
+        "player": "Declan Rice",
+        "teamId": "gbeng",
+        "minute": "3'"
+      },
+      {
+        "player": "Ezri Konsa",
+        "teamId": "gbeng",
+        "minute": "18'"
+      },
+      {
+        "player": "Bukayo Saka",
+        "teamId": "gbeng",
+        "minute": "37'"
+      },
+      {
+        "player": "Bukayo Saka",
+        "teamId": "gbeng",
+        "minute": "45'+1'"
+      },
+      {
+        "player": "Kylian Mbappé",
+        "teamId": "fr",
+        "minute": "48'"
+      },
+      {
+        "player": "Bradley Barcola",
+        "teamId": "fr",
+        "minute": "54'"
+      },
+      {
+        "player": "Kylian Mbappé",
+        "teamId": "fr",
+        "minute": "66'"
+      },
+      {
+        "player": "Bukayo Saka",
+        "teamId": "gbeng",
+        "minute": "87'",
+        "pen": true
+      },
+      {
+        "player": "Ousmane Dembélé",
+        "teamId": "fr",
+        "minute": "90'+6'"
+      },
+      {
+        "player": "Jude Bellingham",
+        "teamId": "gbeng",
+        "minute": "90'+8'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        -4,
+        -5,
+        6,
+        -9,
+        1,
+        0,
+        1,
+        -11,
+        -9,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
   },
   {
     "id": "final-1",
