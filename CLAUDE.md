@@ -89,11 +89,16 @@ before committing.
 - Provisional bonus status (used on `deelnemer/[id]` and the `/statistieken`
   "voorlopig op koers" board) comes from `bonusStandings()` in `data.ts`
   (`eliminatedTeamIds()` + `currentBonusLeaders()`); bonus outcomes only resolve
-  at the final, so this is the meaningful mid-tournament view.
+  at the final, so this is the meaningful mid-tournament view. Dead picks show
+  as `bad`/"Niet meer mogelijk" via `bonusPickAlive()` (same file): a pick is
+  alive only while the picked player/country still plays or already shares the
+  lead — so an eliminated topschutter below the leader, or a team that can no
+  longer catch the most-scored/most-conceded max, no longer counts as open.
 - A bottom **Mathematisch kan het nog** block on `deelnemer/[id]` (money/podium/
   win Ja/Nee) comes from `mathematicalOutlook()` in `data.ts`: a simple sound
   upper bound where the participant scores the max on everything left (9×mult per
-  unfinished match + open bonus picks) and nobody else gains — gives `bestPos`.
+  unfinished match + bonus picks that pass `bonusPickAlive()`) and nobody else
+  gains — gives `bestPos`.
   Build-time only (not recomputed live) and shown **from the quarter-finals
   onward** (gated on the round of 16 being complete; earlier the bound is too
   loose — everyone is trivially "Ja"). The **Beste vorm** card on `/statistieken`

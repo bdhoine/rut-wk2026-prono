@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-07-19",
+    "title": "Slimmere bonus- en kansberekening",
+    "items": [
+      "Bonusvoorspellingen die wiskundig niet meer kunnen (bv. een topschutter die de leider niet meer kan inhalen, of een land dat 'meeste goals' niet meer kan pakken) staan nu als 'Niet meer mogelijk' op de deelnemerspagina en als ✗ op het bonusbord bij de statistieken.",
+      "Het blok 'Mathematisch kan het nog' telt die kansloze bonuspicks niet langer mee, waardoor de best haalbare eindpositie een stuk realistischer is."
+    ]
+  },
+  {
     "date": "2026-07-16",
     "title": "Kalender: finale en troostfinale samengevoegd",
     "items": [

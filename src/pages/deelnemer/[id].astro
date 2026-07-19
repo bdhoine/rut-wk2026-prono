@@ -8,7 +8,7 @@ import SectionHeading from '@/components/SectionHeading.astro';
 import RankChart from '@/components/RankChart.astro';
 import {
   participants, getParticipant, getTeam, positionOf, predictionsForParticipant, outcomes, settings,
-  eliminatedTeamIds, currentBonusLeaders, ranking, matches, rankingTimeline, mathematicalOutlook,
+  eliminatedTeamIds, currentBonusLeaders, bonusPickAlive, ranking, matches, rankingTimeline, mathematicalOutlook,
 } from '@/lib/data';
 import { bonusBreakdown } from '@/lib/scoring';
 import { byKickoff, dayKey } from '@/lib/format';
@@ -131,9 +131,10 @@ function provisional(key: keyof BonusPicks): { tone: 'good' | 'bad' | 'open'; la
     : key === 'mostScoredTeamId' ? leaders.mostScoredTeamId
     : leaders.mostConcededTeamId;
   if (!lead.length) return { tone: 'open', label: 'Voorlopig geen punten' };
-  return lead.includes(value)
-    ? { tone: 'good', label: `Voorlopig juist · +${settings.bonusPoints}` }
-    : { tone: 'open', label: 'Voorlopig geen punten' };
+  if (lead.includes(value)) return { tone: 'good', label: `Voorlopig juist · +${settings.bonusPoints}` };
+  return bonusPickAlive(key, value, eliminated, leaders)
+    ? { tone: 'open', label: 'Voorlopig geen punten' }
+    : { tone: 'bad', label: 'Niet meer mogelijk' };
 }
 
 // Form: last 5 finished matches (chronological) as coloured dots.

@@ -227,18 +227,20 @@ export function mathematicalOutlook(participantId: string): Outlook | null {
     matchMax += 9 * multiplierFor(m.round, settings);
   }
   // Bonus picks still able to gain points: only those whose outcome isn't known
-  // yet (an undecided pick can still come true), and the eindwinnaar only while
-  // the picked country isn't eliminated.
+  // yet AND that can mathematically still come true (bonusPickAlive: the
+  // eindwinnaar while the picked country isn't eliminated, the other three
+  // while the pick still plays or already shares the lead).
   const eliminated = eliminatedTeamIds();
+  const leaders = currentBonusLeaders();
   const p = getParticipant(participantId);
   const undecided = (key: keyof BonusOutcomes) => { const o = outcomes[key]; return o === undefined || o === ''; };
   let possibleBonus = 0;
   if (p) {
-    const b = p.bonus;
-    if (b.winnerTeamId && undecided('winnerTeamId') && !eliminated.has(b.winnerTeamId)) possibleBonus++;
-    if (b.topScorer && undecided('topScorer')) possibleBonus++;
-    if (b.mostScoredTeamId && undecided('mostScoredTeamId')) possibleBonus++;
-    if (b.mostConcededTeamId && undecided('mostConcededTeamId')) possibleBonus++;
+    const keys: (keyof BonusPicks)[] = ['winnerTeamId', 'topScorer', 'mostScoredTeamId', 'mostConcededTeamId'];
+    for (const key of keys) {
+      const v = p.bonus[key];
+      if (v && undecided(key as keyof BonusOutcomes) && bonusPickAlive(key, v, eliminated, leaders)) possibleBonus++;
+    }
   }
   const bonusMax = possibleBonus * settings.bonusPoints;
   const myMax = me.total + matchMax + bonusMax;
@@ -447,6 +449,27 @@ export function currentBonusLeaders(): { topScorer: string[]; mostScoredTeamId: 
   };
 }
 
+/** Can a bonus pick mathematically still score points? The eindwinnaar only
+ *  while the picked team isn't eliminated; the other three while the picked
+ *  player/country either still plays (can add goals/tegengoals) or already
+ *  shares the lead (nobody is forced to pass them). Pass precomputed
+ *  eliminated/leaders when calling in a loop. */
+export function bonusPickAlive(
+  key: keyof BonusPicks,
+  value: string,
+  eliminated: Set<string> = eliminatedTeamIds(),
+  leaders: ReturnType<typeof currentBonusLeaders> = currentBonusLeaders(),
+): boolean {
+  if (key === 'winnerTeamId') return !eliminated.has(value);
+  if (key === 'topScorer') {
+    if (leaders.topScorer.includes(value)) return true;
+    const team = scorerInfo(value).team;
+    return !team || !eliminated.has(team.id);
+  }
+  const lead = key === 'mostScoredTeamId' ? leaders.mostScoredTeamId : leaders.mostConcededTeamId;
+  return lead.includes(value) || !eliminated.has(value);
+}
+
 export type BonusStatus = 'good' | 'open' | 'bad';
 export interface BonusPickCell {
   iso: string | null; // flag of the picked country (or the top scorer's country)
@@ -484,7 +507,8 @@ export function bonusStandings(): BonusStandingRow[] {
       : key === 'mostScoredTeamId' ? leaders.mostScoredTeamId
       : leaders.mostConcededTeamId;
     if (!lead.length) return 'open';
-    return lead.includes(value) ? 'good' : 'open';
+    if (lead.includes(value)) return 'good';
+    return bonusPickAlive(key, value, eliminated, leaders) ? 'open' : 'bad';
   };
   const cellFor = (key: keyof BonusPicks, value?: string): BonusPickCell => {
     const status = statusFor(key, value);
