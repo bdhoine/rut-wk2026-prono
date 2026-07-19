@@ -20,8 +20,10 @@ session's changes as ONE new block at the top of `src/data/changelog.json`
 
 - Write **user-facing** summaries in Dutch — what changed for a visitor, not the
   technical diff. Group related tweaks into a single readable bullet.
-- Skip purely internal changes (refactors, dependency bumps, data result updates)
-  unless they change what people see or how they use the site.
+- Skip data-only updates entirely — results, predictions, scorers and other
+  `src/data/*.json` refreshes never get a changelog block, even when they add
+  visible content. Also skip purely internal changes (refactors, dependency
+  bumps) unless they change what people see or how they use the site.
 - Newest block on top; use the real date (Europe/Brussels).
 
 This is a hard step: treat updating the changelog like updating README.md/CLAUDE.md
