@@ -20,8 +20,10 @@ session's changes as ONE new block at the top of `src/data/changelog.json`
 
 - Write **user-facing** summaries in Dutch — what changed for a visitor, not the
   technical diff. Group related tweaks into a single readable bullet.
-- Skip purely internal changes (refactors, dependency bumps, data result updates)
-  unless they change what people see or how they use the site.
+- Skip data-only updates entirely — results, predictions, scorers and other
+  `src/data/*.json` refreshes never get a changelog block, even when they add
+  visible content. Also skip purely internal changes (refactors, dependency
+  bumps) unless they change what people see or how they use the site.
 - Newest block on top; use the real date (Europe/Brussels).
 
 This is a hard step: treat updating the changelog like updating README.md/CLAUDE.md
@@ -87,11 +89,16 @@ before committing.
 - Provisional bonus status (used on `deelnemer/[id]` and the `/statistieken`
   "voorlopig op koers" board) comes from `bonusStandings()` in `data.ts`
   (`eliminatedTeamIds()` + `currentBonusLeaders()`); bonus outcomes only resolve
-  at the final, so this is the meaningful mid-tournament view.
+  at the final, so this is the meaningful mid-tournament view. Dead picks show
+  as `bad`/"Niet meer mogelijk" via `bonusPickAlive()` (same file): a pick is
+  alive only while the picked player/country still plays or already shares the
+  lead — so an eliminated topschutter below the leader, or a team that can no
+  longer catch the most-scored/most-conceded max, no longer counts as open.
 - A bottom **Mathematisch kan het nog** block on `deelnemer/[id]` (money/podium/
   win Ja/Nee) comes from `mathematicalOutlook()` in `data.ts`: a simple sound
   upper bound where the participant scores the max on everything left (9×mult per
-  unfinished match + open bonus picks) and nobody else gains — gives `bestPos`.
+  unfinished match + bonus picks that pass `bonusPickAlive()`) and nobody else
+  gains — gives `bestPos`.
   Build-time only (not recomputed live) and shown **from the quarter-finals
   onward** (gated on the round of 16 being complete; earlier the bound is too
   loose — everyone is trivially "Ja"). The **Beste vorm** card on `/statistieken`

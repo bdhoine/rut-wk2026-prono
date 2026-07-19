@@ -29,11 +29,18 @@ const matchdays = [1, 2, 3].map((md) => ({
   days: byDay(matches.filter((m) => m.round === 'group' && m.matchday === md).sort(byKickoff)),
 }));
 
-// Knockout rounds, each its own section.
-const KO_ROUNDS: RoundId[] = ['r32', 'r16', 'qf', 'sf', 'third', 'final'];
+// Knockout rounds, each its own section (Finale/Troostfinale are merged below
+// into one section instead, so they're excluded here).
+const KO_ROUNDS: RoundId[] = ['r32', 'r16', 'qf', 'sf'];
 const koRounds = KO_ROUNDS
   .map((round) => ({ round, days: byDay(matches.filter((m) => m.round === round).sort(byKickoff)) }))
   .filter((g) => g.days.length > 0);
+
+// Finale + Troostfinale share a deadline and are played a day apart — merge
+// them into a single "Finale & troostfinale" section instead of two.
+const finalStageMatches = matches.filter((m) => m.round === 'third' || m.round === 'final').sort(byKickoff);
+const finalStageDays = byDay(finalStageMatches);
+const finalStageStats = { total: finalStageMatches.length, finished: finalStageMatches.filter((m) => m.status === 'finished').length };
 
 // Every stage is a collapsible <details>; only the stage in progress (the
 // first not fully played) is open — finished stages collapse automatically,
@@ -45,13 +52,24 @@ const stageStats = (round: RoundId) => {
 };
 const stageKeys: RoundId[] = ['group', ...koRounds.map((g) => g.round)];
 const stats = new Map(stageKeys.map((r) => [r, stageStats(r)]));
-const openKey = stageKeys.find((r) => stats.get(r)!.finished < stats.get(r)!.total) ?? stageKeys[stageKeys.length - 1];
+const stageKeysDone = stageKeys.every((r) => stats.get(r)!.finished === stats.get(r)!.total);
+const openKey: string = !stageKeysDone
+  ? stageKeys.find((r) => stats.get(r)!.finished < stats.get(r)!.total)!
+  : finalStageDays.length > 0
+    ? 'finalStage'
+    : stageKeys[stageKeys.length - 1];
+
+// The bracket becomes redundant once only the Finale/Troostfinale remain —
+// everything else is decided and both matches are already shown, merged, just
+// below — so hide it once the semi-finals are done.
+const sfMatches = matches.filter((m) => m.round === 'sf');
+const finalPhase = sfMatches.length > 0 && sfMatches.every((m) => m.status === 'finished');
 ---
 <Layout title="Kalender">
   <PageHeader title="Kalender" />
   <LiveScores />
 
-  {koRounds.length > 0 && (
+  {koRounds.length > 0 && !finalPhase && (
     <section class="mb-8">
       <SectionHeading title="Knock-outschema">
         <InfoToggle text="De weg naar de finale: van de buitenkant naar de finale in het midden. Volledig gespeelde rondes zijn standaard verborgen — toon ze met de knop. De winnaar van elke wedstrijd is goud gemarkeerd. Tik op een wedstrijd voor de uitslag, details en pronostieken." />
@@ -112,5 +130,28 @@ const openKey = stageKeys.find((r) => stats.get(r)!.finished < stats.get(r)!.tot
         </div>
       </details>
     ))}
+
+    {finalStageDays.length > 0 && (
+      <details open={openKey === 'finalStage'} class="group rounded-xl border bg-card shadow-sm">
+        <summary class="flex cursor-pointer select-none flex-col gap-1.5 rounded-xl px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+          <span class="flex items-center gap-2">
+            <span class="font-medium">Finale & troostfinale</span>
+            <span class="ml-auto text-sm font-normal tabular-nums text-muted-foreground">{finalStageStats.finished}/{finalStageStats.total} gespeeld</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"><path d="m6 9 6 6 6-6" /></svg>
+          </span>
+          <DeadlineBadge round="final" class="self-start" />
+        </summary>
+        <div class="space-y-4 px-3 pb-3 sm:px-4">
+          {finalStageDays.map(([day, items]) => (
+            <div>
+              <h4 class="sticky top-16 z-10 -mx-1 mb-1.5 rounded bg-card/95 px-1 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">{day}</h4>
+              <div class="space-y-1.5">
+                {items.map((m) => <MatchCard match={m} compact href={`/wedstrijd/${m.id}`} />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </details>
+    )}
   </div>
 </Layout>

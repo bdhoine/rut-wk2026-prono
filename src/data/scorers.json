@@ -2,7 +2,7 @@
   {
     "player": "Kylian Mbappé",
     "teamId": "fr",
-    "goals": 8
+    "goals": 10
   },
   {
     "player": "Lionel Messi",
@@ -15,18 +15,23 @@
     "goals": 7
   },
   {
-    "player": "Harry Kane",
+    "player": "Jude Bellingham",
     "teamId": "gbeng",
-    "goals": 6
+    "goals": 7
   },
   {
-    "player": "Jude Bellingham",
+    "player": "Harry Kane",
     "teamId": "gbeng",
     "goals": 6
   },
   {
     "player": "Ousmane Dembélé",
     "teamId": "fr",
+    "goals": 6
+  },
+  {
+    "player": "Mikel Oyarzabal",
+    "teamId": "es",
     "goals": 5
   },
   {
@@ -40,18 +45,23 @@
     "goals": 4
   },
   {
-    "player": "Mikel Oyarzabal",
-    "teamId": "es",
-    "goals": 4
-  },
-  {
     "player": "Vinícius Júnior",
     "teamId": "br",
     "goals": 4
   },
   {
+    "player": "Bradley Barcola",
+    "teamId": "fr",
+    "goals": 3
+  },
+  {
     "player": "Brian Brobbey",
     "teamId": "nl",
+    "goals": 3
+  },
+  {
+    "player": "Bukayo Saka",
+    "teamId": "gbeng",
     "goals": 3
   },
   {
@@ -105,6 +115,11 @@
     "goals": 3
   },
   {
+    "player": "Lautaro Martínez",
+    "teamId": "ar",
+    "goals": 3
+  },
+  {
     "player": "Matheus Cunha",
     "teamId": "br",
     "goals": 3
@@ -145,11 +160,6 @@
     "goals": 2
   },
   {
-    "player": "Bradley Barcola",
-    "teamId": "fr",
-    "goals": 2
-  },
-  {
     "player": "Breel Embolo",
     "teamId": "ch",
     "goals": 2
@@ -170,6 +180,11 @@
     "goals": 2
   },
   {
+    "player": "Dan Ndoye",
+    "teamId": "ch",
+    "goals": 2
+  },
+  {
     "player": "Daniel Muñoz",
     "teamId": "co",
     "goals": 2
@@ -177,6 +192,11 @@
   {
     "player": "Emam Ashour",
     "teamId": "eg",
+    "goals": 2
+  },
+  {
+    "player": "Enzo Fernández",
+    "teamId": "ar",
     "goals": 2
   },
   {
@@ -227,6 +247,11 @@
   {
     "player": "Pape Gueye",
     "teamId": "sn",
+    "goals": 2
+  },
+  {
+    "player": "Pedro Porro",
+    "teamId": "es",
     "goals": 2
   },
   {
@@ -295,6 +320,11 @@
     "goals": 1
   },
   {
+    "player": "Alexis Mac Allister",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Alexis Saelemaekers",
     "teamId": "be",
     "goals": 1
@@ -322,6 +352,11 @@
   {
     "player": "Ante Budimir",
     "teamId": "hr",
+    "goals": 1
+  },
+  {
+    "player": "Anthony Gordon",
+    "teamId": "gbeng",
     "goals": 1
   },
   {
@@ -380,8 +415,8 @@
     "goals": 1
   },
   {
-    "player": "Dan Ndoye",
-    "teamId": "ch",
+    "player": "Declan Rice",
+    "teamId": "gbeng",
     "goals": 1
   },
   {
@@ -405,8 +440,8 @@
     "goals": 1
   },
   {
-    "player": "Enzo Fernández",
-    "teamId": "ar",
+    "player": "Ezri Konsa",
+    "teamId": "gbeng",
     "goals": 1
   },
   {
@@ -550,6 +585,11 @@
     "goals": 1
   },
   {
+    "player": "Julián Álvarez",
+    "teamId": "ar",
+    "goals": 1
+  },
+  {
     "player": "Julio Enciso",
     "teamId": "py",
     "goals": 1
@@ -597,11 +637,6 @@
   {
     "player": "Lamine Yamal",
     "teamId": "es",
-    "goals": 1
-  },
-  {
-    "player": "Lautaro Martínez",
-    "teamId": "ar",
     "goals": 1
   },
   {
@@ -757,11 +792,6 @@
   {
     "player": "Omar Rekik",
     "teamId": "tn",
-    "goals": 1
-  },
-  {
-    "player": "Pedro Porro",
-    "teamId": "es",
     "goals": 1
   },
   {

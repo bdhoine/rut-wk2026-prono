@@ -5640,8 +5640,64 @@
     "awayTeamId": "ch",
     "homePlaceholder": "Winnaar 1/8 7",
     "awayPlaceholder": "Winnaar 1/8 8",
-    "status": "scheduled",
-    "apiId": 760513
+    "status": "finished",
+    "apiId": 760513,
+    "result": {
+      "home": 3,
+      "away": 1
+    },
+    "winnerTeamId": "ar",
+    "goals": [
+      {
+        "player": "Alexis Mac Allister",
+        "teamId": "ar",
+        "minute": "10'"
+      },
+      {
+        "player": "Dan Ndoye",
+        "teamId": "ch",
+        "minute": "67'"
+      },
+      {
+        "player": "Julián Álvarez",
+        "teamId": "ar",
+        "minute": "112'"
+      },
+      {
+        "player": "Lautaro Martínez",
+        "teamId": "ar",
+        "minute": "120'+1'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        -2,
+        10,
+        0,
+        -3,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        -3,
+        -4,
+        -9,
+        0,
+        0,
+        0,
+        8,
+        9,
+        -1,
+        5,
+        0,
+        9,
+        12
+      ]
+    }
   },
   {
     "id": "sf-1",
@@ -5652,8 +5708,49 @@
     "awayTeamId": "es",
     "homePlaceholder": "Winnaar KF 1",
     "awayPlaceholder": "Winnaar KF 2",
-    "status": "scheduled",
-    "apiId": 760514
+    "status": "finished",
+    "apiId": 760514,
+    "result": {
+      "home": 0,
+      "away": 2
+    },
+    "winnerTeamId": "es",
+    "goals": [
+      {
+        "player": "Mikel Oyarzabal",
+        "teamId": "es",
+        "minute": "22'",
+        "pen": true
+      },
+      {
+        "player": "Pedro Porro",
+        "teamId": "es",
+        "minute": "58'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        0,
+        2,
+        -2,
+        1,
+        -6,
+        0,
+        -1,
+        -3,
+        1,
+        0,
+        -1,
+        -8,
+        3,
+        5,
+        0,
+        -1,
+        3,
+        8
+      ]
+    }
   },
   {
     "id": "sf-2",
@@ -5661,31 +5758,157 @@
     "kickoff": "2026-07-15T19:00Z",
     "venue": "Mercedes-Benz Stadium, Atlanta",
     "homeTeamId": "gbeng",
-    "awayTeamId": null,
+    "awayTeamId": "ar",
     "homePlaceholder": "Winnaar KF 3",
     "awayPlaceholder": "Winnaar KF 4",
-    "status": "scheduled",
-    "apiId": 760515
+    "status": "finished",
+    "apiId": 760515,
+    "result": {
+      "home": 1,
+      "away": 2
+    },
+    "winnerTeamId": "ar",
+    "goals": [
+      {
+        "player": "Anthony Gordon",
+        "teamId": "gbeng",
+        "minute": "55'"
+      },
+      {
+        "player": "Enzo Fernández",
+        "teamId": "ar",
+        "minute": "85'"
+      },
+      {
+        "player": "Lautaro Martínez",
+        "teamId": "ar",
+        "minute": "90'+2'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        1,
+        -3,
+        1,
+        -5,
+        5,
+        -1,
+        -1,
+        0,
+        0,
+        -2,
+        -10,
+        -8
+      ]
+    }
   },
   {
     "id": "third-1",
     "round": "third",
     "kickoff": "2026-07-18T21:00Z",
     "venue": "Hard Rock Stadium, Miami",
-    "homeTeamId": null,
-    "awayTeamId": null,
+    "homeTeamId": "fr",
+    "awayTeamId": "gbeng",
     "homePlaceholder": "Verliezer HF 1",
     "awayPlaceholder": "Verliezer HF 2",
-    "status": "scheduled",
-    "apiId": 760516
+    "status": "finished",
+    "apiId": 760516,
+    "result": {
+      "home": 4,
+      "away": 6
+    },
+    "winnerTeamId": "gbeng",
+    "goals": [
+      {
+        "player": "Declan Rice",
+        "teamId": "gbeng",
+        "minute": "3'"
+      },
+      {
+        "player": "Ezri Konsa",
+        "teamId": "gbeng",
+        "minute": "18'"
+      },
+      {
+        "player": "Bukayo Saka",
+        "teamId": "gbeng",
+        "minute": "37'"
+      },
+      {
+        "player": "Bukayo Saka",
+        "teamId": "gbeng",
+        "minute": "45'+1'"
+      },
+      {
+        "player": "Kylian Mbappé",
+        "teamId": "fr",
+        "minute": "48'"
+      },
+      {
+        "player": "Bradley Barcola",
+        "teamId": "fr",
+        "minute": "54'"
+      },
+      {
+        "player": "Kylian Mbappé",
+        "teamId": "fr",
+        "minute": "66'"
+      },
+      {
+        "player": "Bukayo Saka",
+        "teamId": "gbeng",
+        "minute": "87'",
+        "pen": true
+      },
+      {
+        "player": "Ousmane Dembélé",
+        "teamId": "fr",
+        "minute": "90'+6'"
+      },
+      {
+        "player": "Jude Bellingham",
+        "teamId": "gbeng",
+        "minute": "90'+8'"
+      }
+    ],
+    "momentum": {
+      "bucketMin": 5,
+      "values": [
+        -4,
+        -5,
+        6,
+        -9,
+        1,
+        0,
+        1,
+        -11,
+        -9,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
   },
   {
     "id": "final-1",
     "round": "final",
     "kickoff": "2026-07-19T19:00Z",
     "venue": "MetLife Stadium, New York",
-    "homeTeamId": null,
-    "awayTeamId": null,
+    "homeTeamId": "es",
+    "awayTeamId": "ar",
     "homePlaceholder": "Winnaar HF 1",
     "awayPlaceholder": "Winnaar HF 2",
     "status": "scheduled",
