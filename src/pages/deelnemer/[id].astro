@@ -203,6 +203,44 @@ const dogRects = DOG_ART.flatMap((row, y) =>
 ).filter((r): r is { x: number; y: number; fill: string } => r !== null);
 const dogW = Math.max(...DOG_ART.map((r) => r.length)) * DOG_PX;
 const dogH = DOG_ART.length * DOG_PX;
+
+// 8-bit crying dunce ("de kenner", donkey ears included) — Maxim's personal
+// visitor. Same pixel-map approach as the dog; the tears are separate divs so
+// they can drip on their own loop.
+const EZEL_COLORS: Record<string, string> = {
+  E: '#8a7258', // donkey-ear outside
+  I: '#c9a6b0', // donkey-ear inside
+  S: '#f2c99c', // skin
+  H: '#6b4a2b', // hair
+  K: '#1a1410', // outline / closed eyes / mouth
+  W: '#f4e9d6', // shirt
+};
+const EZEL_ART = [
+  '..EE..............EE..',
+  '.EIIE............EIIE.',
+  '.EIIE............EIIE.',
+  '.EIIE............EIIE.',
+  '..EIIE..........EIIE..',
+  '...EIIE.HHHHHH.EIIE...',
+  '....EEHHHHHHHHHHEE....',
+  '.....KHHSSSSSSHHK.....',
+  '.....KSSSSSSSSSSK.....',
+  '....KSSKKSSSSKKSSK....',
+  '....KSSSSSSSSSSSSK....',
+  '....KSSSSSKKSSSSSK....',
+  '....KSSSSSSSSSSSSK....',
+  '.....KSSKKKKKKSSK.....',
+  '.....KSKSSSSSSKSK.....',
+  '......KSSSSSSSSK......',
+  '.......KKKKKKKK.......',
+  '......KWWWWWWWWK......',
+  '.....KWWWWWWWWWWK.....',
+];
+const ezelRects = EZEL_ART.flatMap((row, y) =>
+  [...row].map((ch, x) => (EZEL_COLORS[ch] ? { x: x * DOG_PX, y: y * DOG_PX, fill: EZEL_COLORS[ch] } : null))
+).filter((r): r is { x: number; y: number; fill: string } => r !== null);
+const ezelW = Math.max(...EZEL_ART.map((r) => r.length)) * DOG_PX;
+const ezelH = EZEL_ART.length * DOG_PX;
 ---
 <Layout title={`${participant.name} — Rut Prono WK 2026`} analytics={{ username: participant.name }}>
   <header class="hero-panel qc-decor mb-6 shadow-sm">
@@ -236,6 +274,21 @@ const dogH = DOG_ART.length * DOG_PX;
       )}
     </div>
   </header>
+
+  {participant.id === 'maxim' && (
+    <div class="kenner-banner mb-6 mt-3 flex flex-col items-center rounded-xl border border-gold/40 bg-card px-6 py-5" aria-label="Eretitel: de kenner">
+      <div class="flex items-center gap-3">
+        <span class="kenner-l text-3xl" aria-hidden="true">👎</span>
+        <span class="font-display text-2xl font-extrabold tracking-widest text-gold" aria-hidden="true">
+          {'DE KENNER'.split('').map((ch, i) => (
+            <span class="kenner-ch inline-block" style={`animation-delay:${0.4 + i * 0.09}s`}>{ch === ' ' ? ' ' : ch}</span>
+          ))}
+        </span>
+        <span class="kenner-l kenner-l-alt text-3xl" aria-hidden="true">👎</span>
+      </div>
+      <p class="kenner-sub mt-1 text-xs text-muted-foreground">officieel erkende titel · uitgereikt door heel De Rut</p>
+    </div>
+  )}
 
   <script>
     // Count the big points total up from 0 on load. Bails out the moment
@@ -388,6 +441,23 @@ const dogH = DOG_ART.length * DOG_PX;
 
   {/* Easter-egg data + a dog sprite template; the script below decides which (if
       any) to show from the live-aware position and animates it once. */}
+  {participant.id === 'maxim' && (
+    <div class="kenner-man pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-end pr-6" aria-hidden="true">
+      <div class="kenner-man-cycle flex flex-col items-center gap-1.5">
+        <span class="laugh-bubble">BUHU… IK WIST HET NOCHTANS ZEKER…</span>
+        <div class="relative">
+          <svg class="block h-auto w-[130px]" viewBox={`0 0 ${ezelW} ${ezelH}`} shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+            {ezelRects.map((r) => (
+              <rect x={r.x} y={r.y} width={DOG_PX} height={DOG_PX} fill={r.fill} />
+            ))}
+          </svg>
+          <span class="kenner-tear" style="left: 29%; top: 46%;"></span>
+          <span class="kenner-tear" style="left: 64%; top: 46%; animation-delay: 0.7s;"></span>
+        </div>
+      </div>
+    </div>
+  )}
+
   <script type="application/json" id="live-egg-data" set:html={JSON.stringify(liveEggData)} />
   <template id="dog-template">
     <svg class="dog-laughs block h-auto w-[160px]" viewBox={`0 0 ${dogW} ${dogH}`} shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
@@ -461,6 +531,38 @@ const dogH = DOG_ART.length * DOG_PX;
     }
     .dog-pop { animation: dog-cycle 4.5s ease-in-out forwards; }
     .dog-laughs { animation: dog-laugh 0.26s steps(2, end) infinite; }
+
+    /* "De kenner" komt wenen: het ezelsoren-mannetje schuift op Maxims pagina
+       vanaf onder in beeld, snikt even na (schokschouderend) en zakt weer weg.
+       De tranen druppen op hun eigen loop uit de (dichte) ogen. */
+    @keyframes kenner-man-cycle {
+      0% { transform: translateY(115%); }
+      12% { transform: translateY(0); }
+      86% { transform: translateY(0); }
+      100% { transform: translateY(115%); }
+    }
+    @keyframes kenner-sob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4%); }
+    }
+    .kenner-man-cycle { animation: kenner-man-cycle 8s ease-in-out 1.2s both; }
+    .kenner-man-cycle svg { animation: kenner-sob 0.55s steps(2, end) infinite; }
+    .kenner-tear {
+      position: absolute;
+      width: 6px;
+      height: 9px;
+      border-radius: 0 0 3px 3px;
+      background: #58b5f0;
+      animation: kenner-tear-fall 1.3s ease-in infinite;
+    }
+    @keyframes kenner-tear-fall {
+      0% { transform: translateY(0); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translateY(42px); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .kenner-man { display: none; }
+    }
 
     @media (prefers-reduced-motion: reduce) {
       .pixel-amount, #money-egg { animation: none; }
