@@ -6,7 +6,14 @@ import LiveScores from '@/components/LiveScores.astro';
 import InfoToggle from '@/components/InfoToggle.astro';
 import SectionHeading from '@/components/SectionHeading.astro';
 import MovementSection from '@/components/MovementSection.astro';
-import { ranking, getParticipant, getTeam, participantForm } from '@/lib/data';
+import { ranking, getParticipant, getTeam, participantForm, recapData } from '@/lib/data';
+import { SUPPORT_HREF } from '@/lib/links';
+
+// Once the final has a result in the committed data (the site rebuilds when
+// the results bot commits it), the recap is "live": the replay + pint buttons
+// render visible for everyone. Before that they only appear for visitors who
+// already saw the recap (QA via ?ff-recap=1), revealed by the script below.
+const recapReady = recapData().champion !== null;
 
 const rows = ranking().map((r) => {
   const winner = getTeam(getParticipant(r.participantId)?.bonus.winnerTeamId);
@@ -26,24 +33,33 @@ const rows = ranking().map((r) => {
 <Layout title="Rut Prono WK 2026">
   <HomeHero />
 
-  <button
-    type="button"
-    id="recap-replay"
-    hidden
-    class="mb-6 flex w-full items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
-  >
-    🏆 Bekijk je WK Recap opnieuw
-  </button>
+  <div id="recap-cta" hidden={!recapReady} class="mb-6 flex flex-col gap-2">
+    <button
+      type="button"
+      id="recap-replay"
+      class="flex w-full items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
+    >
+      🏆 Toon Rut Prono WK 2026 recap
+    </button>
+    <a
+      href={SUPPORT_HREF}
+      class="flex w-full items-center justify-center gap-1.5 rounded-lg border bg-card px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-muted"
+    >
+      🍺 Trakteer op een pint
+    </a>
+  </div>
   <script>
-    // The button only appears once the recap has actually been shown
-    // (localStorage flag set by Recap.tsx on close), and reveals itself live
-    // if the recap is dismissed while already on this page — no reload needed.
+    // Before the final is played the block only appears once the recap has
+    // actually been shown (localStorage flag set by Recap.tsx on close), and
+    // reveals itself live if the recap is dismissed while already on this
+    // page — no reload needed. Once the rebuilt site marks the recap ready,
+    // the block is visible from the start (no `hidden` attribute).
+    const cta = document.getElementById('recap-cta');
     const btn = document.getElementById('recap-replay') as HTMLButtonElement | null;
-    if (btn) {
+    if (cta && btn) {
       const SEEN_KEY = 'rut-wk2026-recap-seen';
-      const reveal = () => { try { if (localStorage.getItem(SEEN_KEY)) btn.hidden = false; } catch { /* ignore */ } };
-      reveal();
-      window.addEventListener('rut:recap-seen', reveal);
+      const reveal = () => { try { if (localStorage.getItem(SEEN_KEY)) cta.hidden = false; } catch { /* ignore */ } };
+      if (cta.hidden) { reveal(); window.addEventListener('rut:recap-seen', reveal); }
       btn.addEventListener('click', () => {
         (window as unknown as { posthog?: { capture: (e: string) => void } }).posthog?.capture('recap_replay_clicked');
         window.dispatchEvent(new CustomEvent('rut:open-recap'));

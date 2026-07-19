@@ -930,9 +930,12 @@ export function top5PositionTrend(maxDays = 10): PositionTrendSeries[] {
 
 const RECAP_NAME_CAP = 4; // names shown per tied leader before "+N anderen"
 
-interface NameGroup { names: string[]; moreCount: number }
+/** A participant name plus their eindwinnaar pick (flag shown before the name). */
+export interface RecapName { name: string; winnerIso: string | null }
 
-function nameGroup(names: string[], cap = RECAP_NAME_CAP): NameGroup {
+interface NameGroup { names: RecapName[]; moreCount: number }
+
+function nameGroup(names: RecapName[], cap = RECAP_NAME_CAP): NameGroup {
   return { names: names.slice(0, cap), moreCount: Math.max(0, names.length - cap) };
 }
 
@@ -943,7 +946,10 @@ export interface RecapStatLeader extends NameGroup { value: number }
 function statLeader(rows: PredictionStatRow[]): RecapStatLeader | null {
   const top = rows[0]?.correct ?? 0;
   if (top <= 0) return null;
-  return { ...nameGroup(rows.filter((r) => r.correct === top).map((r) => r.name)), value: top };
+  return {
+    ...nameGroup(rows.filter((r) => r.correct === top).map((r) => ({ name: r.name, winnerIso: r.winnerIso }))),
+    value: top,
+  };
 }
 
 export interface RecapStanding extends NameGroup {
@@ -953,11 +959,8 @@ export interface RecapStanding extends NameGroup {
 }
 
 export interface RecapTopScorer {
-  player: string;
-  teamName: string | null;
-  teamIso: string | null;
+  players: { player: string; teamName: string | null; teamIso: string | null }[]; // all tied leaders
   goals: number;
-  moreCount: number; // other players tied at the same goal count
 }
 
 export interface RecapChampion {
@@ -969,6 +972,7 @@ export interface RecapData {
   matchesPlayed: number;
   matchesTotal: number;
   goalsTotal: number;
+  teamIsos: string[]; // all participating countries (flag wall on the matches slide)
   topScorer: RecapTopScorer | null;
   champion: RecapChampion | null;
   longestOutcomeStreak: RecapStatLeader | null;
@@ -992,11 +996,12 @@ export function recapData(): RecapData {
   const topScorerLeaders = topGoals > 0 ? scorerList.filter((s) => s.goals === topGoals) : [];
   const topScorer: RecapTopScorer | null = topScorerLeaders.length
     ? {
-        player: topScorerLeaders[0].player,
-        teamName: topScorerLeaders[0].team?.name ?? null,
-        teamIso: topScorerLeaders[0].team?.iso ?? null,
+        players: topScorerLeaders.map((s) => ({
+          player: s.player,
+          teamName: s.team?.name ?? null,
+          teamIso: s.team?.iso ?? null,
+        })),
         goals: topGoals,
-        moreCount: topScorerLeaders.length - 1,
       }
     : null;
 
@@ -1022,13 +1027,17 @@ export function recapData(): RecapData {
       position,
       total: rows[0].total,
       prize: prizeFor(position, rows.length),
-      ...nameGroup(rows.map((r) => r.name)),
+      ...nameGroup(rows.map((r) => ({
+        name: r.name,
+        winnerIso: getTeam(getParticipant(r.participantId)?.bonus.winnerTeamId)?.iso ?? null,
+      }))),
     }));
 
   return {
     matchesPlayed: finished.length,
     matchesTotal: matches.length,
     goalsTotal,
+    teamIsos: teams.map((t) => t.iso),
     topScorer,
     champion,
     longestOutcomeStreak: statLeader(longestOutcomeStreak()),

@@ -184,12 +184,23 @@ before committing.
   so the numbers match `/statistieken` and `/klassement`), rendered as a chain
   of tap-through slides (progress bars, hold-to-pause, auto-advance via a JS
   timer — not CSS `animationend`, so it survives pause/resume and reduced
-  motion) ending on a confetti/fireworks finale for whoever is #1. Ties share a
-  slide (all names shown, capped with "+N anderen"). Opens via `?ff-recap=1`
-  (any page, mirrors `?ff-simulate-live`) or `window.dispatchEvent(new
-  CustomEvent('rut:open-recap'))` — the homepage's "Bekijk je WK Recap
-  opnieuw" button (shown once `localStorage['rut-wk2026-recap-seen']` is set)
-  uses the latter.
+  motion): bouncing-trophies intro → matches played + a staggered 48-flag wall
+  → bouncing-balls goals total → wereldkampioen → topschutter (all tied players;
+  the goal count and "goals" label centered on two lines) → three streak slides
+  → the top-5 climb → an app-usage slide (hand-curated `APP_STATS` in
+  `Recap.tsx`) → a thank-you slide (Ruub, Hakke & Barry) with a "Trakteer op
+  een pint" CTA (`z-10`, must stay above the tap zones). Participant names are
+  always prefixed with their eindwinnaar flag (`RecapName`/`NameList`); hero
+  numbers count up via rAF (`CountUp`, honors reduced motion); ties share a
+  slide (all names shown, capped with "+N anderen"); #1 gets the
+  confetti/fireworks finale. **Activation**: once the final has a result in the
+  committed data (`ready` = `recapData().champion !== null`, so only after the
+  post-final rebuild) the recap auto-opens on a first visit (then never again —
+  `localStorage['rut-wk2026-recap-seen']`), and the homepage shows the
+  `#recap-cta` block ("🏆 Toon Rut Prono WK 2026 recap" + a pint button)
+  unconditionally; before that the block only appears for visitors who already
+  saw it. QA: `?ff-recap=1` opens it on any page (mirrors `?ff-simulate-live`);
+  `window.dispatchEvent(new CustomEvent('rut:open-recap'))` is the button path.
 - `astro.config.mjs` forces `react`, `react-dom` and `scheduler` into one
   `react-vendor` Vite chunk (`build.rollupOptions.output.manualChunks`). Don't
   remove this: otherwise react-dom (which **sets** React's hooks dispatcher
