@@ -60,12 +60,14 @@ export function scoreMatch(pred: Prediction | undefined, match: Match, settings:
   };
 }
 
-/** Bonus points (rules.md §5): each correct pick is worth settings.bonusPoints. */
+/** Bonus points (rules.md §5): each correct pick is worth settings.bonusPoints.
+ *  Tie-aware: an outcome that ended in a shared lead is an array of all tied
+ *  leaders, and any pick among them is correct. */
 export function bonusBreakdown(picks: BonusPicks, outcomes: BonusOutcomes, settings: Settings) {
   const items: { key: keyof BonusPicks; correct: boolean | null; points: number }[] = [];
-  const cmp = (a?: string, b?: string): boolean | null => {
-    if (b === undefined || b === '') return null; // outcome not yet known
-    return !!a && a === b;
+  const cmp = (a?: string, b?: string | string[]): boolean | null => {
+    if (b === undefined || b === '' || (Array.isArray(b) && b.length === 0)) return null; // outcome not yet known
+    return !!a && (Array.isArray(b) ? b.includes(a) : a === b);
   };
   const keys: (keyof BonusPicks)[] = ['topScorer', 'winnerTeamId', 'mostConcededTeamId', 'mostScoredTeamId'];
   let total = 0;

@@ -117,9 +117,13 @@ is required.** (The code degrades gracefully when it's temporarily unavailable.)
   fetch per match, skipped once stored — its **momentum curve** (`momentum`:
   a signed value per 5 minutes derived from the play-by-play commentary: goals,
   shots and corners weighted toward the acting side) plus the penalty-shootout
-  kick sequences, aggregates `scorers.json`, and resolves the bonus
-  `outcomes.json` once the final is played. It commits any changes, which
-  triggers a Netlify rebuild. Run locally with `npm run results:update`.
+  kick sequences, and aggregates `scorers.json`. It commits any changes, which
+  triggers a Netlify rebuild. Run locally with `npm run results:update`. Bonus
+  outcomes are **not** written by the updater: the site resolves them at build
+  time (`resolveOutcomes()` in `src/lib/data.ts`) once every match is finished
+  — tie-aware, so a shared lead (topschutter / most scored / most conceded)
+  counts for every pick among the tied leaders; `outcomes.json` remains a
+  manual override only.
 - **On-demand result refresh.** The results workflow runs on a ~15-min cron, so
   the committed klassement/results can lag a few minutes behind a match. When a
   live match **ends** (it drops out of the live set the client polls), the client
@@ -223,7 +227,7 @@ through the bracket). Edit the JSON in `src/data/` directly for real data.
 | `matches.json` | Matches: round, kickoff, venue, teams (or placeholders), `status`, `result`, plus `apiId` / `winnerTeamId` / `penalties` (shootout score, home/away) / `goals` (per-goal scorers: `player`, `teamId` — the side the goal counts for, so own goals carry the benefiting team — `minute`, optional `og`/`pen`) / `momentum` (`{ bucketMin, values }`: signed pressure per 5 minutes, + = home; 18 buckets, 24 with extra time) filled by the results updater. Penalty-decided knockouts keep the 120-min `result` for scoring but set `penalties` + `winnerTeamId`, shown as "Na strafschoppen 3–4 · X gaat door" / "n.s. 3–4" |
 | `participants.json` | Participants: `id`, `name`, `bonus` picks. **No phone numbers** (kept off the repo by design) |
 | `predictions.json` | Per-participant, per-match predicted scores (`late: true` ⇒ 0 points) |
-| `outcomes.json` | Actual tournament bonus outcomes (top scorer, winner, most scored/conceded) |
+| `outcomes.json` | Manual override for the bonus outcomes (normally left empty: once every match is finished the site auto-resolves them from the match data, tie-aware — see `resolveOutcomes()`) |
 | `scorers.json` | Player goal tallies for the stats page |
 | `settings.json` | Round multipliers and bonus points |
 
@@ -234,7 +238,7 @@ results* above) does this automatically. To update by hand instead:
 
 1. Enter final scores on the relevant match in `matches.json` (set `status: "finished"` and `result`). For knockouts, use the **score after 120 min** (penalties don't count for scoring — see `docs/rules.md`); when decided on penalties, also set `winnerTeamId` and `penalties` ({home, away} shootout goals) so the UI shows who advanced. The results updater fills these from ESPN automatically.
 2. Fill in `homeTeamId` / `awayTeamId` on knockout matches as brackets resolve.
-3. Update `scorers.json` and `outcomes.json` as the tournament progresses.
+3. Update `scorers.json` as the tournament progresses (bonus outcomes resolve automatically once everything is finished; `outcomes.json` only needs a value to overrule the computed outcome).
 4. Commit & push — Netlify rebuilds and the ranking updates automatically.
 
 > The repo data uses the **real WK 2026 draw and fixture schedule** (groups, dates, venues, kickoff times). Kickoffs are stored as ISO instants (group matches with each venue's UTC offset, knockout matches in UTC as synced from ESPN) and always shown in Belgium time. The **79 real contestants** and their predictions (full group stage + tournament bonus picks) come from the official Café De Rut prono sheet. Real results are entered as matches are played; matchday 3 and the knockout bracket are still to come.

@@ -8,9 +8,11 @@
 //  - fetches all 104 matches, links each to our match (by stored apiId = ESPN
 //    event id, resolved team pair, or knockout bracket-token pair), fills
 //    knockout teams as brackets resolve, and writes finished scores;
-//  - aggregates goal scorers (from finished events) into scorers.json;
-//  - once the final is played, resolves the bonus outcomes (winner, top scorer,
-//    most goals scored / conceded) into outcomes.json.
+//  - aggregates goal scorers (from finished events) into scorers.json.
+//
+// Bonus outcomes are NOT resolved here: the site derives them at build time
+// (resolveOutcomes() in src/lib/data.ts, tie-aware) once every match is
+// finished; outcomes.json is a manual override only.
 //
 // It never marks matches "live" (that is shown client-side via the live
 // function) so reruns don't produce noisy commits mid-match.
@@ -152,33 +154,17 @@ async function main() {
     log(`scorer aggregation failed (${err.message}) — keeping existing scorers.json`);
   }
 
-  // --- Bonus outcomes (only once the final is played) --------------------
-  const outcomes = read('outcomes.json');
-  const final = matches.find((m) => m.round === 'final');
-  if (final && final.status === 'finished' && final.winnerTeamId) {
-    const gf = new Map();
-    const ga = new Map();
-    for (const m of matches) {
-      if (m.status !== 'finished' || !m.result || !m.homeTeamId || !m.awayTeamId) continue;
-      gf.set(m.homeTeamId, (gf.get(m.homeTeamId) ?? 0) + m.result.home);
-      gf.set(m.awayTeamId, (gf.get(m.awayTeamId) ?? 0) + m.result.away);
-      ga.set(m.homeTeamId, (ga.get(m.homeTeamId) ?? 0) + m.result.away);
-      ga.set(m.awayTeamId, (ga.get(m.awayTeamId) ?? 0) + m.result.home);
-    }
-    const top = (map) => [...map.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '';
-    outcomes.winnerTeamId = final.winnerTeamId;
-    outcomes.mostScoredTeamId = top(gf);
-    outcomes.mostConcededTeamId = top(ga);
-    if (scorers[0]?.player) outcomes.topScorer = scorers[0].player;
-    log('final played — bonus outcomes resolved');
-  }
+  // Bonus outcomes are NOT written here: the site resolves them at build time
+  // from the committed match/scorer data (resolveOutcomes() in src/lib/data.ts)
+  // once every match is finished — tie-aware (a shared lead counts for every
+  // pick among the tied leaders), which a single-value write here can't
+  // express. outcomes.json stays a manual override only.
 
   const wM = writeIfChanged('matches.json', matches);
   const wS = writeIfChanged('scorers.json', scorers);
-  const wO = writeIfChanged('outcomes.json', outcomes);
   log(
     `filled ${teamsFilled} knockout teams, ${scored} new/changed results, ${kickoffsFixed} kickoffs synced. ` +
-      `wrote: matches=${wM} scorers=${wS} outcomes=${wO}`,
+      `wrote: matches=${wM} scorers=${wS}`,
   );
 }
 

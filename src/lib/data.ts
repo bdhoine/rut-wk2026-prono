@@ -19,7 +19,7 @@ export const groups = groupsRaw as Group[];
 export const matches = matchesRaw as Match[];
 export const participants = participantsRaw as Participant[];
 export const predictions = predictionsRaw as Prediction[];
-export const outcomes = outcomesRaw as BonusOutcomes;
+const manualOutcomes = outcomesRaw as BonusOutcomes;
 export const settings = settingsRaw as Settings;
 
 // The WK API only exposes scorers as free-text per-match strings ("Breel Embolo
@@ -68,6 +68,45 @@ export function sideLabel(match: Match, side: 'home' | 'away'): { team?: Team; l
   return { label, short };
 }
 
+/** Effective bonus outcomes: anything set by hand in outcomes.json wins; once
+ *  EVERY match is finished the rest resolves automatically from the match
+ *  data, so the klassement includes the bonus points right after the final's
+ *  result lands. Tie-aware — topschutter / meeste (tegen)doelpunten resolve
+ *  to ALL tied leaders (rules.md §5 doesn't break ties), so every pick that
+ *  shares the lead scores the bonus. */
+function resolveOutcomes(): BonusOutcomes {
+  const resolved: BonusOutcomes = { ...manualOutcomes };
+  if (!matches.length || !matches.every((m) => m.status === 'finished' && m.result)) return resolved;
+  if (!resolved.winnerTeamId) {
+    const final = matches.find((m) => m.round === 'final');
+    const winnerId = final?.winnerTeamId
+      ?? (final?.result && final.result.home !== final.result.away
+        ? (final.result.home > final.result.away ? final.homeTeamId : final.awayTeamId)
+        : null);
+    if (winnerId) resolved.winnerTeamId = winnerId;
+  }
+  const leaders = currentBonusLeaders();
+  const fill = (key: 'topScorer' | 'mostScoredTeamId' | 'mostConcededTeamId', value: string[]) => {
+    const cur = resolved[key];
+    if ((cur === undefined || cur === '') && value.length) resolved[key] = value;
+  };
+  fill('topScorer', leaders.topScorer);
+  fill('mostScoredTeamId', leaders.mostScoredTeamId);
+  fill('mostConcededTeamId', leaders.mostConcededTeamId);
+  return resolved;
+}
+// NOTE: initialized right after currentBonusLeaders() below — resolveOutcomes
+// depends on the stats helpers (topScorers/mostGoalsScored are const arrows,
+// TDZ until their definition). Only functions read `outcomes`, and they all
+// run after module init.
+export let outcomes: BonusOutcomes;
+
+// Bonus points belong only to standings that already include every match (the
+// post-final state) — partial snapshots (timeline, per-match walks) must not
+// count them retroactively.
+const NO_OUTCOMES: BonusOutcomes = {};
+const outcomesFor = (upToCount: number): BonusOutcomes => (upToCount === matches.length ? outcomes : NO_OUTCOMES);
+
 /** Full ranking table (rules.md §4). */
 export function ranking(): RankRow[] {
   return rankParticipants(participants, predictions, matches, outcomes, settings);
@@ -87,14 +126,15 @@ export interface DaySnapshot {
 
 /** The standings as they stood at the end of each calendar day that had at
  *  least one finished match. Each snapshot ranks only the matches finished up
- *  to and including that day (bonus outcomes only resolve at the final, i.e.
- *  the last day, so they don't affect earlier snapshots). */
+ *  to and including that day; bonus outcomes only count once a snapshot
+ *  includes every match (the post-final day), so they don't inflate earlier
+ *  snapshots. */
 export function rankingTimeline(): DaySnapshot[] {
   const finished = matches.filter((m) => m.status === 'finished' && m.result);
   const days = [...new Set(finished.map((m) => dayKey(m.kickoff)))].sort();
   return days.map((day) => {
     const upTo = finished.filter((m) => dayKey(m.kickoff) <= day);
-    const rank = rankParticipants(participants, predictions, upTo, outcomes, settings);
+    const rank = rankParticipants(participants, predictions, upTo, outcomesFor(upTo.length), settings);
     return {
       day,
       posById: new Map(rank.map((r) => [r.participantId, r.position])),
@@ -234,7 +274,10 @@ export function mathematicalOutlook(participantId: string): Outlook | null {
   const eliminated = eliminatedTeamIds();
   const leaders = currentBonusLeaders();
   const p = getParticipant(participantId);
-  const undecided = (key: keyof BonusOutcomes) => { const o = outcomes[key]; return o === undefined || o === ''; };
+  const undecided = (key: keyof BonusOutcomes) => {
+    const o = outcomes[key];
+    return o === undefined || o === '' || (Array.isArray(o) && o.length === 0);
+  };
   let possibleBonus = 0;
   if (p) {
     const keys: (keyof BonusPicks)[] = ['winnerTeamId', 'topScorer', 'mostScoredTeamId', 'mostConcededTeamId'];
@@ -601,6 +644,10 @@ export function teamGoalStats(): TeamGoalStat[] {
 export const mostGoalsScored = () => [...teamGoalStats()].sort((a, b) => b.scored - a.scored || b.played - a.played || a.team.name.localeCompare(b.team.name, 'nl'));
 export const mostGoalsConceded = () => [...teamGoalStats()].sort((a, b) => b.conceded - a.conceded || b.played - a.played || a.team.name.localeCompare(b.team.name, 'nl'));
 
+// All stats helpers above are initialized now — safe to resolve the effective
+// bonus outcomes (see resolveOutcomes near the top of this file).
+outcomes = resolveOutcomes();
+
 // Per-finished-match aggregate of all participants' scores.
 export interface MatchPointStat {
   match: Match;
@@ -856,7 +903,7 @@ export function matchPositionExtremes(): { first: PredictionStatRow[]; last: Pre
   const upTo: Match[] = [];
   for (const m of finished) {
     upTo.push(m);
-    const rank = rankParticipants(participants, predictions, upTo, outcomes, settings);
+    const rank = rankParticipants(participants, predictions, upTo, outcomesFor(upTo.length), settings);
     let maxPos = 0;
     for (const r of rank) if (r.position > maxPos) maxPos = r.position;
     for (const r of rank) {

@@ -77,11 +77,15 @@ export interface Prediction {
   late?: boolean; // submitted after the match started -> 0 points
 }
 
+/** Resolved bonus outcomes. The three stat-based ones can end in a tie, in
+ *  which case they hold ALL tied leaders (an array) and every pick among them
+ *  counts as correct — the rules don't break ties. Empty string/array =
+ *  outcome not decided yet. */
 export interface BonusOutcomes {
-  topScorer?: string;
+  topScorer?: string | string[];
   winnerTeamId?: string;
-  mostConcededTeamId?: string;
-  mostScoredTeamId?: string;
+  mostConcededTeamId?: string | string[];
+  mostScoredTeamId?: string | string[];
 }
 
 export interface Settings {

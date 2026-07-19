@@ -33,7 +33,16 @@ before committing.
 
 - Dutch UI copy throughout. Keep team `shortName`s for narrow viewports.
 - All data lives in `src/data/*.json` and is the single source of truth; the
-  scoring/ranking engine computes everything at build time.
+  scoring/ranking engine computes everything at build time. Bonus outcomes
+  (`outcomes.json`) auto-resolve once **every** match is finished
+  (`resolveOutcomes()` in `data.ts`): winner from the final, the other three
+  from the stats — **tie-aware**: a shared lead resolves to an array of ALL
+  tied leaders and every pick among them scores the 30 points
+  (`bonusBreakdown()` accepts `string | string[]`). Hand-filled values in
+  `outcomes.json` always win over the computed ones. Partial standings
+  snapshots (`rankingTimeline()`, `matchPositionExtremes()`) only include the
+  bonus once a snapshot spans every match (`outcomesFor()`), so historical
+  days aren't inflated retroactively.
 - `/` is the landing page (hero, favourites, **top 10** + button, and the
   `MovementSection` stijgers/dalers block); `/klassement` is the full ranking
   with a client-side name search. Both reuse `RankingTable.tsx`
