@@ -1,0 +1,15 @@
+---
+// Mounts the Instagram-story-style season recap globally (Layout.astro), so
+// ?ff-recap=1 opens it from any page. Once the final has a result in the
+// committed data (`ready`, decided at build time — the site regenerates when
+// the results bot commits the final), the recap also auto-opens on a
+// visitor's first visit; before that it renders nothing until triggered (the
+// URL flag, or the homepage button dispatching `rut:open-recap`), so this
+// only costs one idle-loaded JS chunk.
+import Recap from './Recap.tsx';
+import { recapData } from '@/lib/data';
+
+const data = recapData();
+const ready = data.champion !== null;
+---
+<Recap client:idle data={data} ready={ready} />

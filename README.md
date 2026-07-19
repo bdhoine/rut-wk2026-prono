@@ -37,6 +37,28 @@ The competition rules, scoring, and tournament schedule are documented in [`docs
 | `/steun` | "Trakteer op een pint" — a client-side **EPC SEPA payment QR** (pick an amount → QR encodes IBAN + amount + mededeling, scannable by Belgian banking apps) + a copyable IBAN, and a tappable **"Trakteer via Bancontact"** button (a Bancontact groepspot link). All details live in `SUPPORT` in `src/lib/links.ts` |
 | any other URL | Branded 404 page ("Buitenspel!") |
 
+### WK Recap
+
+An Instagram-story-style overlay (`src/components/Recap.tsx`, mounted globally
+via `RecapOverlay.astro` in `Layout.astro`, so it works on **any** page) that
+walks through the tournament and the prono: a bouncing-trophies title slide,
+matches played with a staggered wall of all 48 participating flags, the goals
+total under bouncing footballs, the wereldkampioen, the topschutter (all tied
+players; goal count centered on two lines), the longest/most 1X2 and
+exact-score streaks (reusing the same `src/lib/data.ts` helpers as
+`/statistieken`), a climb through the klassement top 5 (points as a counting
+hero number, prize money as a 💰 pill) ending on a confetti/fireworks finale
+for whoever is #1 (tie-aware throughout — shared positions show every name;
+participant names always carry their eindwinnaar flag), app-usage numbers
+(views, sessions, devices, top day) and a thank-you slide with a "Trakteer op
+een pint" button. Each slide has a tappable progress bar (left third =
+previous, right two-thirds = next), auto-advances, and can be held to pause.
+Once the final's result is in the committed data (i.e. after the post-final
+rebuild) the recap **auto-opens on a first visit** and the home page shows a
+"Toon Rut Prono WK 2026 recap" + pint CTA block; before that it only opens via
+the `?ff-recap=1` query flag (mirrors `?ff-simulate-live`) or that button once
+`localStorage` (`rut-wk2026-recap-seen`) shows it's been seen.
+
 Navigation is `Home · Klassement · Wedstrijden ▾ · Statistieken · ⋮` on desktop —
 the Wedstrijden dropdown groups Programma, Kalender and Poules, and the ⋮ "Meer"
 dropdown holds Reglement, Changelog and a "Trakteer op een pint" link — and a
