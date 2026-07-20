@@ -48,38 +48,6 @@ const rows = ranking().map((r) => {
       🍺 Trakteer op een pint
     </a>
   </div>
-  <aside id="kenner-msg" hidden class="relative mb-6 rounded-xl border bg-card p-4 pr-11">
-    <p class="text-sm font-bold">🎓 Mededeling voor “de kenner”</p>
-    <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-      <a href="/deelnemer/maxim" class="font-semibold text-foreground underline decoration-gold decoration-2 underline-offset-2">Maxim Breugelmans</a>,
-      bedankt voor mee te doen! Haaland als topschutter, Haïti voor de meeste tegendoelpunten en wiskundig bewezen
-      dat boven Glenn eindigen er niet meer in zat — zoveel zelfvertrouwen met zo weinig bewijs, dat verdient een
-      staande ovatie. Tot bij het volgende toernooi, kenner. Santé! 🍺
-    </p>
-    <button
-      type="button"
-      id="kenner-dismiss"
-      aria-label="Bericht verbergen"
-      class="absolute right-2 top-2 grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-4"><path d="M6 6l12 12M18 6 6 18" /></svg>
-    </button>
-  </aside>
-  <script>
-    // "De kenner"-boodschap: dismissable via localStorage; hidden-by-default
-    // so dismissed visitors never see a flash.
-    const kenner = document.getElementById('kenner-msg');
-    const kennerDismiss = document.getElementById('kenner-dismiss');
-    if (kenner && kennerDismiss) {
-      const KENNER_KEY = 'rut-wk2026-kenner-dismissed';
-      try { if (!localStorage.getItem(KENNER_KEY)) kenner.hidden = false; } catch { kenner.hidden = false; }
-      kennerDismiss.addEventListener('click', () => {
-        kenner.hidden = true;
-        try { localStorage.setItem(KENNER_KEY, '1'); } catch { /* ignore */ }
-        (window as unknown as { posthog?: { capture: (e: string) => void } }).posthog?.capture('kenner_msg_dismissed');
-      });
-    }
-  </script>
   <script>
     // Before the final is played the block only appears once the recap has
     // actually been shown (localStorage flag set by Recap.tsx on close), and
